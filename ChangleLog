@@ -1,24 +1,26 @@
-v0.2.3 - XX/04/2004
+v0.2.3 - 09/26/2004
 
-- fix unsolved symbols for RTNet
+- fixed unsolve symbols for RTNet
 - fix aclocal script for 1.8.3 version (admin/linux.m4)
 - add support shared lobraries (libtool)
 - added new target (FreeBSD)
+- ortemanager runable like windows service
+- MinGW pthread corection (when is instaled a version of pthread)
 
-v0.2.2 - 11/04/2004
+v0.2.2 - 04/11/2004
 
 - added support new targets (Solaris, MacOS)
 - now ortemanager can be runnig like windows service
 - tested on big-endian machines
 
-v0.2.1 - 02/04/2004
+v0.2.1 - 04/02/2004
 
 - bug in CDRStream format -> char -> uint8_t
 - no fill callBack rutine in subscriber cause SIGSEV
 - change types u_intXX_t to uintXX_t
 
 
-v0.2.0 - 08/01/2004
+v0.2.0 - 01/08/2004
 
 - many things (circa 80% of code scratched)
 - event subssystem
@@ -26,7 +28,7 @@ v0.2.0 - 08/01/2004
 - support serialization/deserialization functions
 - ...
 
-V0.1.1 - 14/12/2002
+V0.1.1 - 12/14/2002
 
 - cleaned up source code a little.
 
