@@ -1,1 +1,1 @@
-SUBDIRS = liborte manager examples
+SUBDIRS = include liborte manager examples

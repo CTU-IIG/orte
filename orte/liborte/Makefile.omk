@@ -6,14 +6,6 @@ lib_LIBRARIES = orte
 
 INCLUDES = -I $(srcdir)/../include
 
-include_HEADERS = \
-../include/orte.h \
-../include/orte_config_omk_unix.h \
-../include/orte/typedefs_defines_rtps.h \
-../include/orte/defines_api.h \
-../include/orte/typedefs_api.h \
-../include/orte/protos_api.h
-
 orte_SOURCES = \
 conv.c \
 debug.c \
@@ -72,14 +64,6 @@ ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
 rtlinux_LIBRARIES = orte_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../include
-
-rtlinux_HEADERS = \
-../include/orte.h \
-../include/orte_config_omk_rtl.h \
-../include/orte/typedefs_defines_rtps.h \
-../include/orte/defines_api.h \
-../include/orte/typedefs_api.h \
-../include/orte/protos_api.h
 
 ortert_SOURCES = \
 conv.c \

@@ -7,6 +7,7 @@
 #
 #
 # input variables
+# V                .. if set to 1, full command text is shown else short form is used
 # SUBDIRS          .. list of subdirectories intended for make from actual directory
 # lib_LIBRARIES    .. list of the user-space libraries
 # shared_LIBRARIES .. list of the user-space shared libraries
@@ -109,13 +110,13 @@ OMK_INCLUDED := 1
 endif
 
 export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
-export CONFIG_FILE OMK_SERIALIZE_INCLUDED
+export CONFIG_FILE OMK_SERIALIZE_INCLUDED OMK_VERBOSE OMK_SILENT
 
 #CFLAGS += -ggdb
 CFLAGS += -O2 
 CFLAGS += -Wall
 #CXXFLAGS += -ggdb
-CXXFLAGS += -O2 
+CXXFLAGS += -O2
 CXXFLAGS += -Wall
 
 
@@ -128,6 +129,7 @@ LOADLIBES += $(lib_LOADLIBES:%=-l%)
 LIB_CPPFLAGS += $(CPPFLAGS)
 LIB_CFLAGS   += $(CFLAGS)
 
+SOLIB_PICFLAGS += --shared
 
 ifndef RELATIVE_DIR
 RELATIVE_DIR := $(SOURCES_DIR:$(MAKERULES_DIR)%=%)
@@ -168,8 +170,29 @@ kernel-pass: kernel-mod-pass kernel-modpost-pass
 OMK_SERIALIZE_INCLUDED = y
 endif
 
-default: check-make-ver check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass
+# Defines for quiet compilation
+ifdef V
+  ifeq ("$(origin V)", "command line")
+    OMK_VERBOSE = $(V)
+  endif
+endif
+ifndef OMK_VERBOSE
+  OMK_VERBOSE = 0
+endif
+ifeq ($(OMK_VERBOSE),1)
+  Q =
+else
+  Q = @
+endif
+ifneq ($(findstring s,$(MAKEFLAGS)),)
+  QUIET_CMD_ECHO = true
+  OMK_SILENT = 1
+else
+  QUIET_CMD_ECHO = echo
+  CPHEADER_FLAGS += -v
+endif
 
+default: check-make-ver check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass
 
 #=====================================================================
 # Common utility rules
@@ -237,7 +260,8 @@ endif
 
 define COMPILE_c_o_template
 $(2): $(1) $(LOCAL_CONFIG_H)
-	if $$(c_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+	@$(QUIET_CMD_ECHO) "  CC      $$@"
+	$(Q) if $$(c_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
 	else rm -f "$$@.d.tmp" ; exit 1; \
 	fi
@@ -247,7 +271,8 @@ endef
 
 define COMPILE_cc_o_template
 $(2): $(1) $(LOCAL_CONFIG_H)
-	if $$(cc_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+	@$(QUIET_CMD_ECHO) "  CXX     $$@"
+	$(Q) if $$(cc_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
 	else rm -f "$$@.d.tmp" ; exit 1; \
 	fi
@@ -264,7 +289,8 @@ USER_OBJS  += $$($(1)_OBJS)
 USER_SOURCES += $$($(1)_SOURCES)
 
 $(2)/$(1): $$($(1)_OBJS)
-	$$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
+	@$(QUIET_CMD_ECHO) "  LINK    $$@"
+	$(Q) $$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
 	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $(2)/$(1)
 	@echo "$(2)/$(1): \\" >$(USER_OBJS_DIR)/$(1).exe.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(USER_OBJS_DIR)/$(1).exe.map  >>$(USER_OBJS_DIR)/$(1).exe.d
@@ -282,8 +308,23 @@ USER_OBJS  += $$($(1)_OBJS)
 USER_SOURCES += $$($(1)_SOURCES)
 
 $(USER_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
-	$(AR) rcs $$@ $$^
-	#ranlib $$@
+	@$(QUIET_CMD_ECHO) "  AR      $$@"
+	$(Q) $(AR) rcs $$@ $$^
+endef
+
+
+
+define SOLIB_template
+$(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.c=%.lo))
+$(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cc=%.lo))
+$(1)_OBJSLO := $$(sort $$($(1)_OBJSLO))
+
+SOLIB_OBJS  += $$($(1)_OBJSLO)
+SOLIB_SOURCES += $$($(1)_SOURCES)
+
+$(USER_LIB_DIR)/lib$(1).so: $$($(1)_OBJSLO)
+	@$(QUIET_CMD_ECHO) "  LINK    $$@"
+	$(Q) $(LD) --shared --soname=lib$(1).so -o $$@ $$^
 endef
 
 
@@ -300,6 +341,8 @@ $(foreach prog,$(bin_PROGRAMS),$(eval $(call PROGRAM_template,$(prog),$(USER_BIN
 
 $(foreach lib,$(lib_LIBRARIES),$(eval $(call LIBRARY_template,$(lib))))
 
+$(foreach lib,$(shared_LIBRARIES),$(eval $(call SOLIB_template,$(lib))))
+
 -include $(USER_OBJS_DIR)/*.d
 
 endif
@@ -310,7 +353,8 @@ endif
 ifdef KERN_RULE_TEMPLATES
 
 $(KERN_LIB_DIR)/kernel.mk: $(LINUX_DIR)/.config $(MAKERULES_DIR)/kernelcfg2mk
-	$(MAKERULES_DIR)/kernelcfg2mk $(LINUX_DIR) $(KERN_LIB_DIR)
+	@$(QUIET_CMD_ECHO) "  KCFG2MK $$@"
+	$(Q) $(MAKERULES_DIR)/kernelcfg2mk $(LINUX_DIR) $(KERN_LIB_DIR)
 
 ifeq ($(CONFIG_RTLINUX),y)
 include $(RTL_DIR)/rtl.mk
@@ -389,7 +433,8 @@ endif
 define COMPILE_c_o_kern_template
 
 $(2): $(1) $(LOCAL_CONFIG_H)
-	if $$(c_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -DKBUILD_BASENAME=$(notdir $(basename $(1))) \
+	@$(QUIET_CMD_ECHO) "  CC [K]  $$@"
+	$(Q) if $$(c_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -DKBUILD_BASENAME=$(notdir $(basename $(1))) \
 	-o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
 	else rm -f "$$@.d.tmp" ; exit 1; \
@@ -401,7 +446,8 @@ endef
 define COMPILE_cc_o_kern_template
 
 $(2): $(1) $(LOCAL_CONFIG_H)
-	if $$(cc_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -DKBUILD_BASENAME=$(notdir $(basename $(1))) \
+	@$(QUIET_CMD_ECHO) "  CXX [K] $$@"
+	$(Q) if $$(cc_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -DKBUILD_BASENAME=$(notdir $(basename $(1))) \
 	-o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
 	else rm -f "$$@.d.tmp" ; exit 1; \
@@ -447,7 +493,8 @@ KERN_SOURCES += $$($(1)_SOURCES)
 #$(eval $(call COMPILE_c_o_kern_template,$(1).mod.c,$(1).mod.o,-DKBUILD_MODNAME=$(1)))
 
 $(2)/$(1)$(KERN_LINK_SUFFIX): $$($(1)_OBJS)
-	$$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $$@
+	@$(QUIET_CMD_ECHO) "  LD [K]  $$@"
+	$(Q) $$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $$@
 	@echo "$(2)/$(1)$(KERN_LINK_SUFFIX): \\" >$(KERN_OBJS_DIR)/$(1).mod.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(KERN_OBJS_DIR)/$(1).mod.map  >>$(KERN_OBJS_DIR)/$(1).mod.d
 	@echo >>$(KERN_OBJS_DIR)/$(1).mod.d
@@ -469,8 +516,8 @@ KERN_OBJS  += $$($(1)_OBJS)
 KERN_SOURCES += $$($(1)_SOURCES)
 
 $(KERN_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
-	$(KERN_AR) rcs $$@ $$^
-	#ranlib $$@
+	@$(QUIET_CMD_ECHO) "  AR [K]  $$@"
+	$(Q) $(KERN_AR) rcs $$@ $$^
 endef
 
 
@@ -506,14 +553,16 @@ MODULES_LIST := $(MODULES_LIST:%.mod.stamp=%)
 
 define MODPOST_kern_template
 $(2) : $(1)$(KERN_LINK_SUFFIX) $(1).mod.c
-	$$(cc_o_kern_COMPILE) -DKBUILD_BASENAME=$(1) -DKBUILD_MODNAME=$(1) -o $(1).mod.o -c $(1).mod.c
-	$$(KERN_LD) $$(KERN_LDFLAGS) $(1)$(KERN_LINK_SUFFIX) $(1).mod.o -r -o $$@
+	@$(QUIET_CMD_ECHO) "  LD [M]  $$@"
+	$(Q) $$(cc_o_kern_COMPILE) -DKBUILD_BASENAME=$(1) -DKBUILD_MODNAME=$(1) -o $(1).mod.o -c $(1).mod.c
+	$(Q) $$(KERN_LD) $$(KERN_LDFLAGS) $(1)$(KERN_LINK_SUFFIX) $(1).mod.o -r -o $$@
 endef
 
 kernel-modpost-versions: $(wildcard $(LINUX_DIR)/Module.symvers)
+	@$(QUIET_CMD_ECHO) "  MODPOST    $(KERN_MODPOST_DIR)"
 	@echo  >$(KERN_MODPOST_DIR)/modpost-running
 	@rm -f $(KERN_MODPOST_DIR)/module-changes
-	$(KERN_MODPOST) $(MODULES_LIST:%=%$(KERN_LINK_SUFFIX)) $(^:%=-i %)
+	$(Q) $(KERN_MODPOST) $(MODULES_LIST:%=%$(KERN_LINK_SUFFIX)) $(^:%=-i %)
 
 $(MODULES_LIST:%=%.mod.c) : kernel-modpost-versions
 
@@ -616,17 +665,19 @@ default-config-pass-local:
 include-pass-local:
 	@$(call mkdir_def,$(USER_INCLUDE_DIR))
 	@$(foreach f, $(include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) \
-	   || cp -v $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) ; )
+	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) ; )
 	@$(foreach f, $(nobase_include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) \
-	   || mkdir -p $(USER_INCLUDE_DIR)/$(dir $(f)) && cp -v $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) ; )
+	   || mkdir -p $(USER_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) ; )
 # Kernel and RT-Linux stuff
 	@$(call mkdir_def,$(KERN_INCLUDE_DIR))
 	@$(foreach f, $(kernel_HEADERS) $(rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) \
-	   || cp -v $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) ; )
+	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) ; )
 	@$(foreach f, $(nobase_kernel_HEADERS) $(nobase_rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) \
-	   || mkdir -p $(KERN_INCLUDE_DIR)/$(dir $(f)) && cp -v $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) ; )
+	   || mkdir -p $(KERN_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) ; )
 
 ifdef USER_RULE_TEMPLATES
+
+# User-space static libraries and applications object files
 
 USER_SOURCES := $(sort $(USER_SOURCES))
 
@@ -635,6 +686,16 @@ USER_SOURCES := $(sort $(USER_SOURCES))
 $(foreach src,$(filter %.c,$(USER_SOURCES)),$(eval $(call COMPILE_c_o_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.o),)))
 
 $(foreach src,$(filter %.cc,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.o),)))
+
+# User-space shared libraries object files
+
+SOLIB_SOURCES := $(sort $(SOLIB_SOURCES))
+
+#$(warning SOLIB_SOURCES = $(SOLIB_SOURCES))
+
+$(foreach src,$(filter %.c,$(SOLIB_SOURCES)),$(eval $(call COMPILE_c_o_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.lo),$(SOLIB_PICFLAGS))))
+
+$(foreach src,$(filter %.cc,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.lo),$(SOLIB_PICFLAGS))))
 
 endif
 

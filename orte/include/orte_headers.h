@@ -199,6 +199,7 @@ extern "C" {
   #include <orte/ew_types.h>
   #define ioctl ioctlsocket
   #define ORTE_PACKAGE_STRING "orte 0.2.3"
+  #define CONFIG_ORTE_WIN
 #endif
 
 #ifdef __cplusplus
