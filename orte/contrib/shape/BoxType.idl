@@ -1,3 +1,9 @@
+const short CL_BLUE = 0;
+const short CL_GREEN = 1;
+const short CL_RED = 2;
+const short CL_BLACK = 3;
+const short CL_YELLOW = 4;
+
 struct BoxRect {
     short 	top_left_x;
     short 	top_left_y;

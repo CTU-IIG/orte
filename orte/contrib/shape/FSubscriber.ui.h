@@ -56,15 +56,15 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
       break;
     case DEADLINE:
       if (strcmp(info->topic,"Blue")==0)
-        s->view->deactivateObject(0);
+        s->view->deactivateObject(CL_BLUE);
       if (strcmp(info->topic,"Green")==0)
-        s->view->deactivateObject(1);
+        s->view->deactivateObject(CL_GREEN);
       if (strcmp(info->topic,"Red")==0)
-        s->view->deactivateObject(2);
+        s->view->deactivateObject(CL_RED);
       if (strcmp(info->topic,"Black")==0)
-        s->view->deactivateObject(3);
+        s->view->deactivateObject(CL_BLACK);
       if (strcmp(info->topic,"Yellow")==0)
-        s->view->deactivateObject(4);
+        s->view->deactivateObject(CL_YELLOW);
       break;
   }
   a->unlock();

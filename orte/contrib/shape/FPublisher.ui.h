@@ -38,11 +38,11 @@ void FPublisher::initPublisher(int icolor,int istrength)
     view->activateObject(0,color,strength);//color,shape
     NtpTimeAssembFromMs(persistence, 5, 0);
     switch(color) {
-	case 0:topic="Blue";break;
-	case 1:topic="Green";break;
-	case 2:topic="Red";break;
-	case 3:topic="Black";break;
-	case 4:topic="Yellow";break;
+	case CL_BLUE:topic="Blue";break;
+	case CL_GREEN:topic="Green";break;
+	case CL_RED:topic="Red";break;
+	case CL_BLACK:topic="Black";break;
+	case CL_YELLOW:topic="Yellow";break;
     }
     publisher=ORTEPublicationCreate(
         domain,

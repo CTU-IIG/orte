@@ -14,6 +14,26 @@ extern "C" {
 #endif /* EXCLUDE_ORTE_H */
 
 /** typedefs **/
+#ifndef CL_BLUE
+#define CL_BLUE 0
+#endif /* !CL_BLUE */
+
+#ifndef CL_GREEN
+#define CL_GREEN 1
+#endif /* !CL_GREEN */
+
+#ifndef CL_RED
+#define CL_RED 2
+#endif /* !CL_RED */
+
+#ifndef CL_BLACK
+#define CL_BLACK 3
+#endif /* !CL_BLACK */
+
+#ifndef CL_YELLOW
+#define CL_YELLOW 4
+#endif /* !CL_YELLOW */
+
 #if !defined(_BoxRect_defined)
 #define _BoxRect_defined 1
 typedef struct BoxRect_type BoxRect;
