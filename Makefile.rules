@@ -32,11 +32,11 @@
 # Hack to check RT-Linux rules
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
-OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../.. ; pwd -L ) )
+OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
 
 BUILD_DIR_NAME = _build
 COMPILED_DIR_NAME = _compiled
-GROUP_DIR_NAME = can
+GROUP_DIR_NAME = orte
 
 
 # We need to ensure definition of sources directory first
