@@ -40,7 +40,7 @@
 //#include "pthread.h"
 //#include "implement.h"
 
-#include "orte.h"
+#include "orte_all.h"
 
 int
 pthread_rwlock_wrlock(pthread_rwlock_t * rwlock)

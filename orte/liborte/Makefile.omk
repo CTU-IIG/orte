@@ -7,12 +7,12 @@ lib_LIBRARIES = orte
 INCLUDES = -I $(srcdir)/../include
 
 include_HEADERS = \
+../include/orte.h \
 ../include/orte_config_omk_unix.h \
-../include/orte_api.h \
-../include/typedefs_defines_rtps.h \
-../include/defines_api.h \
-../include/typedefs_api.h \
-../include/protos_api.h
+../include/orte/typedefs_defines_rtps.h \
+../include/orte/defines_api.h \
+../include/orte/typedefs_api.h \
+../include/orte/protos_api.h
 
 orte_SOURCES = \
 conv.c \
@@ -65,23 +65,23 @@ endif #CONFIG_OC_ETH_ORTE
 #############################################################################
 # RT-Linux version of build
 
-default_CONFIG += CONFIG_OC_ETH_ORTE_RTL=n
+default_CONFIG = CONFIG_OC_ETH_ORTE_RTL=n
 
 ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
 
-rtlinux_LIBRARIES = ortertl
+rtlinux_LIBRARIES = orte_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../include
 
 rtlinux_HEADERS = \
+../include/orte.h \
 ../include/orte_config_omk_rtl.h \
-../include/orte_api.h \
-../include/typedefs_defines_rtps.h \
-../include/defines_api.h \
-../include/typedefs_api.h \
-../include/protos_api.h
+../include/orte/typedefs_defines_rtps.h \
+../include/orte/defines_api.h \
+../include/orte/typedefs_api.h \
+../include/orte/protos_api.h
 
-ortertl_SOURCES = \
+ortert_SOURCES = \
 conv.c \
 debug.c \
 event.c \
@@ -127,9 +127,9 @@ sock.c \
 ul_gavl.c \
 ul_gavlprim.c
 
-rtlinux_MODULES = orte
+rtlinux_MODULES = orte_rt
 
-orte_SOURCES = $(ortertl_SOURCES)
+orte_rt_SOURCES = $(ortert_SOURCES)
 
 SUBDIRS = rtl
 

@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 /*****************************************************************************/
 void ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta) {

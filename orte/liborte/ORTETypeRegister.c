@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 GAVL_CUST_NODE_INT_IMP(ORTEType, TypeEntry, TypeNode, const char *,
     types, node, typeRegister.typeName, gavl_cmp_str)

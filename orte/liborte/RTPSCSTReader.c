@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 GAVL_CUST_NODE_INT_IMP(CSTReader, 
                        CSTSubscriptions, CSTReader, GUID_RTPS,

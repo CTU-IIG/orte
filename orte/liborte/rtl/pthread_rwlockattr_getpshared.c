@@ -40,7 +40,7 @@
 //#include "pthread.h"
 //#include "implement.h"
 
-#include "orte.h"
+#include "orte_all.h"
 
 int
 pthread_rwlockattr_getpshared (const pthread_rwlockattr_t * attr,

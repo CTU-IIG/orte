@@ -19,7 +19,7 @@
  *
  */
  
-#include "orte.h"
+#include "orte_all.h"
 
 #ifndef CONFIG_ORTE_RT
 //global variables
@@ -68,18 +68,29 @@ int managerStop(void) {
 
 #ifdef CONFIG_ORTE_UNIX
 //Unix daemon support
-pthread_mutex_t     mutex;
+pthread_mutex_t     mutex; //for wake up
+pthread_cond_t	    cond; //for wake up
+int		    cvalue;
 void sig_usr(int signo) {
   if ((signo==SIGTERM) || (signo==SIGINT)) {
+    pthread_mutex_lock(&mutex);
+    cvalue=1;
+    pthread_cond_signal(&cond);
     pthread_mutex_unlock(&mutex);
   }
 }
 void waitForEndingCommand(void) {
   pthread_mutex_init(&mutex, NULL);
-  pthread_mutex_lock(&mutex);
+  pthread_cond_init(&cond, NULL);
+  cvalue=0;
   signal(SIGTERM,sig_usr);
   signal(SIGINT,sig_usr);
   pthread_mutex_lock(&mutex);
+  while(cvalue==0)
+    pthread_cond_wait(&cond,&mutex);
+  pthread_mutex_unlock(&mutex);
+  pthread_mutex_destroy(&mutex);
+  pthread_cond_destroy(&cond);
 }
 static int daemonInit(void) {
   pid_t pid;
@@ -259,6 +270,13 @@ MODULE_PARM_DESC(peer,"possible locations of fellow managers");
 MODULE_LICENSE("GPL");
 ORTEDomain *d=NULL;
 pthread_t  thread;
+ORTEDomainProp dp;
+
+void *
+domainInit(void *arg) {
+  d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_TRUE);
+  return arg;
+}
 
 void *
 domainDestroy(void *arg) {
@@ -267,16 +285,16 @@ domainDestroy(void *arg) {
   return arg;
 }
 
-
 int
 init_module(void) {
-  ORTEDomainProp      dp;
-
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
   ORTEVerbositySetOptions(verbosity);
   dp.mgrs=peer;
-  d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
+  pthread_create(&thread,NULL,&domainInit,NULL);  //allocate resources in RT 
+  pthread_join(thread,NULL);
+  if (d)
+    ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE); //manager start
   return 0;
 }
 void

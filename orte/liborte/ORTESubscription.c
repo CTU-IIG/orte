@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 GAVL_CUST_NODE_INT_IMP(SubscriptionList, 
                        PSEntry, ObjectEntryOID, GUID_RTPS,

@@ -9,7 +9,7 @@ area, which is build on top of standard UDP stack.
 
 Which targets are supported by ORTE?
 -----------------------------------
-UNIX - Linux, Solars, MacOS
+UNIX - Linux, Solars, MacOS, FreeBSD
 Windows - MinGW, CygWin, MSVC
 RTLinux - with preliminary UDP stack
 RTAI - with RTNet
@@ -28,15 +28,16 @@ UserSpace compilation:
 make 
 make install
 
-after this procedure ortemanager and orteping are placed in /usr/local/bin.
+after this procedure ortemanager and orteping are placed in /usr/local/bin
+, library in /usr/local/lib and include headers /usr/local/include
 
 RTLinux compilation:
-./configure --with-rtlinuxdir=/rtlinux dir/ --with-linuxdir=/patched linux dir/
+./configure --with-linux=/patched linux dir/ --with-rtlinux=/rtlinux dir/ 
 make 
 make install
 
 RTAI compilation:
-./configure --with-rtaidir=/rtai dir/ --with-linuxdir=/patched linux dir/
+./configure --with-linux=/patched linux dir/ --with-rtai=/rtai dir/ --with-rtnet=/rtnet dir/ 
 make 
 make install
 
@@ -71,8 +72,6 @@ is not probably running.
 See "orteping -h" for usaged.
 
 Now, you can develop self applications (see documentation).
-
-
 
 
 

@@ -37,7 +37,7 @@
 //#include "pthread.h"
 //#include "implement.h"
 
-#include "orte.h"
+#include "orte_all.h"
 
 void
 ptw32_rwlock_cancelwrwait(void * arg)

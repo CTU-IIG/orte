@@ -15,17 +15,17 @@ endif #CONFIG_OC_ETH_ORTE_MANAGER
 #############################################################################
 # RT-Linux version of build
 
-default_CONFIG += CONFIG_OC_ETH_ORTE_MANAGER_RTL=n
+default_CONFIG = CONFIG_OC_ETH_ORTE_MANAGER_RTL=n
 
 ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER_RTL),y)
 
-rtlinux_MODULES = rt_ortemanager
+rtlinux_MODULES = ortemanager_rt
                
 rtlinux_INCLUDES = -I $(srcdir)/../include
 
-rt_ortemanager_SOURCES = ortemanager.c
+ortemanager_rt_SOURCES = ortemanager.c
 
-rtlinux_LOADLIBES =  orte_rt pthread_rwlock
+rtlinux_LOADLIBES =  orte_rt pthread_rwlock_rt
 
 endif #CONFIG_OC_ETH_ORTE_MANAGER_RTL
 

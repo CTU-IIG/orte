@@ -1,7 +1,7 @@
 #############################################################################
 # RT-Linux version of build
 
-rtlinux_LIBRARIES = pthread_rwlock
+rtlinux_LIBRARIES = pthread_rwlock_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../../include
 
@@ -22,6 +22,6 @@ pthread_rwlock_unlock.c \
 pthread_rwlock_tryrdlock.c \
 pthread_rwlock_trywrlock.c
 
-rtlinux_MODULES = rtl_pthread_rwlock
+rtlinux_MODULES = pthread_rwlock_rt
 
-rtl_pthread_rwlock_SOURCES = $(pthread_rwlock_SOURCES)
+pthread_rwlock_rt_SOURCES = $(pthread_rwlock_SOURCES)

@@ -4,7 +4,7 @@
 #  $Id: Makefile.am,v 1.0 2003/08/04
 #
 
-LIBORTE_SOURCES = \
+LIBORTE_FILES = \
 conv.c \
 debug.c \
 event.c \
@@ -50,18 +50,40 @@ sock.c \
 ul_gavl.c \
 ul_gavlprim.c
 
-if CONFIG_ORTE_RT
-module_PROGRAMS = rt_orte.ko
-#rt_orte_ko_CFLAGS = $(ORTE_CFLAGS) 
-rt_orte_ko_SOURCES = $(LIBORTE_SOURCES)
-rt_orte_ko_LINK = $(top_builddir)/modtool --link -o $@
+LIBORTE_HDRS1 = \
+../include/orte.h \
+$(top_builddir)/orte/include/orte_config.h
 
+LIBORTE_HDRS2 = \
+../include/orte/typedefs_defines_rtps.h \
+../include/orte/defines_api.h \
+../include/orte/typedefs_api.h \
+../include/orte/protos_api.h 
+
+if CONFIG_ORTE_RT
+# --------------- KERNEL SPACE ---------------
+module_PROGRAMS = orte_rt.ko
+orte_rt_ko_SOURCES = $(LIBORTE_FILES)
+orte_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
 if USE_RTLINUX
 SUBDIRS = rtl
 endif
 else
-lib_LIBRARIES = liborte.a
-liborte_a_SOURCES = $(LIBORTE_SOURCES)
+# --------------- USER  SPACE ---------------
+lib_LTLIBRARIES = liborte.la
+liborte_la_SOURCES = $(LIBORTE_FILES)
+liborte_la_LDFLAGS = \
+    -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+    -release $(LT_RELEASE) \
+    -export-dynamic \
+    $(LDADDS)
+liborte_la_CFLAGS = $(AM_CFLAGS)
 endif
+
+# headers
+liborte1dir=$(includedir)
+liborte1_HEADERS= $(LIBORTE_HDRS1)
+liborte2dir=$(includedir)/orte
+liborte2_HEADERS= $(LIBORTE_HDRS2)
 
 EXTRA_DIST = usedSections.txt

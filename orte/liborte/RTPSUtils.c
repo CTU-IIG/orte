@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 /**********************************************************************************/
 int gavl_cmp_ntp_time(const NtpTime *a,const NtpTime *b) {

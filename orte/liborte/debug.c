@@ -19,7 +19,7 @@
  *
  */
 
-#include "orte.h"
+#include "orte_all.h"
 
 /* global debug variables */
 int db_level;

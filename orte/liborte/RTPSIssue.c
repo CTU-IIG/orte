@@ -19,7 +19,8 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
+
 /**********************************************************************************/
 int32_t
 RTPSIssueCreateHeader(uint8_t *rtps_msg,uint32_t max_msg_len,uint32_t length,

@@ -11,6 +11,8 @@ If you are a developper and wants to help, enjoy !
 
 4) java interface, Lukas is working on this implementation
 
+5) implement reference counting into main tree (separate usertraffic/metatraffic)
+
 ...
 
 ################################################################

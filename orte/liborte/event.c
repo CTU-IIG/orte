@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 /*
  * ORTEEventAdd - add a event into event system (root and application)

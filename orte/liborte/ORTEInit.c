@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 #ifdef __RTL__
 #include <rtl.h>
 #endif

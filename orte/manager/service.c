@@ -1,4 +1,4 @@
-#include "orte.h"
+#include "orte_all.h"
 
 HANDLE                         killServiceEvent = NULL;
 static SERVICE_STATUS          ssStatus;       // current status of the service

@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 void NewPublisher(ORTEDomain *d,ObjectEntryOID *op);
 void NewSubscriber(ORTEDomain *d,ObjectEntryOID *os);

@@ -37,7 +37,7 @@
 //#include "pthread.h"
 //#include "implement.h"
 
-#include "orte.h"
+#include "orte_all.h"
 
 inline int
 ptw32_rwlock_check_need_init(pthread_rwlock_t *rwlock)

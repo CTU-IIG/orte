@@ -19,7 +19,7 @@
  *  
  */ 
 
-#include "orte.h"
+#include "orte_all.h"
 
 /*
  * AppParamsInit - Initalization default values of an application

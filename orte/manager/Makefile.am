@@ -1,8 +1,8 @@
 if CONFIG_ORTE_RT
-  module_PROGRAMS = rt_ortemanager.ko 
-  rt_ortemanager_ko_CFLAGS = $(ORTE_CFLAGS) 
-  rt_ortemanager_ko_SOURCES = ortemanager.c  
-  rt_ortemanager_ko_LINK = $(top_builddir)/modtool --link -o $@
+  module_PROGRAMS = ortemanager_rt.ko 
+  ortemanager_rt_ko_CFLAGS = $(ORTE_CFLAGS) 
+  ortemanager_rt_ko_SOURCES = ortemanager.c  
+  ortemanager_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
 else
 bin_PROGRAMS = ortemanager
 ortemanager_SOURCES = ortemanager.c
@@ -12,5 +12,6 @@ endif
 if CONFIG_ORTE_MINGW
   win_libs= $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
 endif
-ortemanager_LDADD   = ../liborte/liborte.a $(win_libs)
+ortemanager_LDADD   = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+ortemanager_LDFLAGS = -static
 endif

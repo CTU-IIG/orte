@@ -1,9 +1,9 @@
 
-AC_DEFUN(DS_LINUX_DIR,
+AC_DEFUN([DS_LINUX_DIR],
 [
 	AC_ARG_WITH([linuxdir],
-		[AC_HELP_STRING([--with-linuxdir=DIR],
-			[specify path to Linux source directory])],
+		[AC_HELP_STRING([--with-linux=DIR],
+			[path to Linux patched source directory])],
 		[LINUX_DIR="${withval}"],
 		[LINUX_DIR=default])
 
@@ -12,7 +12,7 @@ AC_DEFUN(DS_LINUX_DIR,
 ])
 
 
-AC_DEFUN(DS_LINUX,
+AC_DEFUN([DS_LINUX],
 [
 
 	DS_LINUX_DIR()
@@ -69,7 +69,7 @@ AC_DEFUN(DS_LINUX,
         DS_RT()
 ])
 
-AC_DEFUN(DS_LINUX_2_6,
+AC_DEFUN([DS_LINUX_2_6],
 [
 	AC_MSG_CHECKING(for Linux CFLAGS)
 
@@ -121,7 +121,7 @@ EOF
 ])
 
 
-AC_DEFUN(DS_LINUX_2_4,
+AC_DEFUN([DS_LINUX_2_4],
 [
 	AC_MSG_CHECKING(for Linux CFLAGS)
 
@@ -173,7 +173,7 @@ EOF
 	AC_MSG_RESULT([ok])
 ])
 
-AC_DEFUN(DS_CHECK_LINUX_CONFIG_OPTION,
+AC_DEFUN([DS_CHECK_LINUX_CONFIG_OPTION],
 [
 	AC_MSG_CHECKING([Linux config option $1])
 
@@ -192,7 +192,7 @@ AC_DEFUN(DS_CHECK_LINUX_CONFIG_OPTION,
 	AC_MSG_RESULT([$result])
 ])
 
-AC_DEFUN(DS_LINUX_CONFIG_OPTION,
+AC_DEFUN([DS_LINUX_CONFIG_OPTION],
 [
 	DS_CHECK_LINUX_CONFIG_OPTION([$1],
 		[$1=yes],
@@ -202,7 +202,7 @@ AC_DEFUN(DS_LINUX_CONFIG_OPTION,
 	AM_CONDITIONAL([$1],[test "${$1}" = yes])
 ])
 
-AC_DEFUN(DS_LINUX_CONFIG_OPTION_MODULE,
+AC_DEFUN([DS_LINUX_CONFIG_OPTION_MODULE],
 [
 	DS_CHECK_LINUX_CONFIG_OPTION([$1],
 		[$1=yes],
@@ -212,17 +212,17 @@ AC_DEFUN(DS_LINUX_CONFIG_OPTION_MODULE,
 	AM_CONDITIONAL([$1],[test "${$1}" = yes -o "${$1}" = module])
 ])
 
-AC_DEFUN(DS_RTAI,
+AC_DEFUN([DS_RTAI],
 [
 	AC_ARG_WITH([rtaidir],
-		[AC_HELP_STRING([--with-rtaidir=DIR],
-    		    [specify path to RTAI source/installation directory])],
+		[AC_HELP_STRING([--with-rtai=DIR],
+    		    [path to configured RTAI 24.1.X sources, or RTAI 3 installation])],
 		[RTAI_DIR="${withval}"],
 		[RTAI_DIR=/usr/src/rtai])
 
 	AC_ARG_WITH([rtnetdir],
-		[AC_HELP_STRING([--with-rtnetdir=DIR],
-			[specify path to RTnet source/installation directory])],
+		[AC_HELP_STRING([--with-rtnet=DIR],
+			[path to RTnet installation directory])],
 		[RTNET_DIR="${withval}"],
 		[RTNET_DIR=/usr/src/rtnet])
 
@@ -259,17 +259,17 @@ AC_DEFUN(DS_RTAI,
 
 ])
 
-AC_DEFUN(DS_RTLINUX,
+AC_DEFUN([DS_RTLINUX],
 [
 	AC_ARG_WITH([rtlinuxdir],
-		[AC_HELP_STRING([--with-rtlinuxdir=DIR],
-			[specify path to RTLinux source directory])],
+		[AC_HELP_STRING([--with-rtlinux=DIR],
+			[path to RTLinux source directory])],
 		[RTLINUX_DIR="${withval}"],
 		[RTLINUX_DIR=/usr/src/rtlinux])
 		
 	AC_ARG_WITH([rtlinuxudpdir],
-		[AC_HELP_STRING([--with-rtlinuxudpdir=DIR],
-			[specify path to RTLinux UDP source directory])],
+		[AC_HELP_STRING([--with-rtlinuxudp=DIR],
+			[path to RTLinux UDP source directory])],
 		[RTLINUXUDP_DIR="${withval}"],
 		[RTLINUXUDP_DIR="${RTLINUX_DIR}"])
 
@@ -304,7 +304,7 @@ AC_DEFUN(DS_RTLINUX,
 	AC_SUBST(RTLINUX_CC)
 ])
 
-AC_DEFUN(DS_RT,
+AC_DEFUN([DS_RT],
 [
 	DS_RTAI([USE_RTAI=yes],[USE_RTAI=no])
 	DS_RTLINUX([USE_RTLINUX=yes],[USE_RTLINUX=no])

@@ -1,35 +1,57 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.8 2004/04/20 08:36:14 smolik Exp $
+# $Id: configure.in,v 1.9 2004/07/12 20:27:05 smolik Exp $
 
 # autoconf requirement
 
-AC_PREREQ([2.56])
+AC_PREREQ([2.57])
 
-AC_INIT([orte],[0.2.2],[petr.smolik@wo.cz])
+AC_INIT([orte],[0.2.3],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
-
-#Check for CPU / vendor / OS
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-AM_CONFIG_HEADER(orte/include/config.h)
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-# Activate maintainer mode
-AM_MAINTAINER_MODE
-
-DS_LINUX()
 
 ###############################
 # Package info
 ORTE_MAJOR_VERSION=0
 ORTE_MINOR_VERSION=2
-ORTE_MICRO_VERSION=2
+ORTE_MICRO_VERSION=3
+ORTE_INTERFACE_AGE=0
+ORTE_BINARY_AGE=0
 ORTE_VERSION=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION.$ORTE_MICRO_VERSION
 AC_SUBST(ORTE_MAJOR_VERSION)
 AC_SUBST(ORTE_MINOR_VERSION)
 AC_SUBST(ORTE_MICRO_VERSION)
 AC_SUBST(ORTE_VERSION)
+AC_SUBST(ORTE_INTERFACE_AGE)
+AC_SUBST(ORTE_BINARY_AGE)
+#Libtool versioning
+ORTE_MICRO_VERSION_NUM=`echo $ORTE_MICRO_VERSION | sed 's/[[a-zA-Z]]//g'`
+LT_RELEASE=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION
+LT_CURRENT=`expr $ORTE_MICRO_VERSION_NUM - $ORTE_INTERFACE_AGE`
+LT_REVISION=$ORTE_INTERFACE_AGE
+LT_AGE=`expr $ORTE_BINARY_AGE - $ORTE_INTERFACE_AGE`
+AC_SUBST(LT_RELEASE)
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
+VERSION=$ORTE_VERSION
+PACKAGE=orte
 
+echo
+echo "ORTE version $PACKAGE_VERSION"
+echo "Configuring..."
+echo
+
+#Check for CPU / vendor / OS
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+AM_CONFIG_HEADER(orte/include/config.h)
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
+
+
+# Activate maintainer mode
+AM_MAINTAINER_MODE
+
+DS_LINUX()
 
 ###############################
 # target
@@ -54,7 +76,7 @@ case "$target" in
     AC_DEFINE([HAVE_GETPOT_LONG_ORTE],[1],[Define for ORTE getopt_long self implemetation])
     ;;
   *)
-    # Assume Unix.
+    # Assume a Unix.
     if test -z ${CONFIG_ORTE_RT} -a ${CONFIG_ORTE_KERNEL} ; then
       UNIX='yes'
       AC_DEFINE([CONFIG_ORTE_UNIX],[1],[Define if is target a unix system])
@@ -96,12 +118,20 @@ AC_PROG_CC
 AC_PROG_RANLIB
 
 ###############################
-# Checks for libraries
+# Checks for libraries and init libtools
 if test -z ${CONFIG_ORTE_RT} ; then
+  #Initialize libtool
+  AM_PROG_LIBTOOL
+  
   AC_CHECK_LIB([ws2_32], [main])
-  AC_CHECK_LIB([pthread], [main])
   AC_CHECK_LIB([socket], [main])
   AC_CHECK_LIB([nsl], [main])
+  dnl Check for pthreads
+  AC_CHECK_LIB(pthread, pthread_create, ,
+         AC_CHECK_LIB(c_r, pthread_create, ,
+              AC_MSG_NOTICE([Can't compile on 100% without pthreads!!!])
+         )
+  )
 fi
 
 ###############################
@@ -141,7 +171,7 @@ fi
 # win32
 if test ${WIN} == 'yes' ; then
     AC_CHECK_HEADERS([\
-    winsock2.h ws2tcpip.h windows.h],,,[[]])
+    winsock2.h ws2tcpip.h windows.h w32api/windows.h],,,[[]])
 fi
 # kernel
 if test ${CONFIG_ORTE_KERNEL} == 'yes' ; then
@@ -234,6 +264,10 @@ Configuration ORTE:
   Compiler flags:             ${CFLAGS}
   Host System Type:           ${host}
   
-  See config.h for further configuration information.
+  See config.h for future configuration information.
+  
+  Now you can run
+  make  
+  
 ------------------------------------------------------------------------"
 	    
