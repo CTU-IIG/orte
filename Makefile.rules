@@ -48,8 +48,9 @@ COMPILED_DIR_NAME = _compiled
 
 ifdef OCERA_DIR
 ifeq ($(wildcard $(OCERA_DIR)/ocera.mk),)
-$(warning ocera.mk file does not exist. Adapt Makefile.rules for standalone compilation or)
-$(error go to the ocera/ directory and do 'make' to generate the ocera.mk file first, please)
+$(warning "ocera.mk" file does not exist. Adapt Makefile.rules for standalone compilation)
+$(warning (comment out definition of OCERA_DIR line and optionally select RTL_DIR) )
+$(error or go to the ocera/ directory and do 'make' to generate the "ocera.mk" file first, please)
 endif
 KERN_INCLUDE_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/include
 KERN_LIB_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/lib
@@ -61,7 +62,7 @@ USER_UTILS_DIR   := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/utils
 USER_BIN_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/bin
 USER_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/user/orte
 LINUX_DIR        := $(OCERA_DIR)/kernel/linux
-#RTL_DIR         := $(OCERA_DIR)/kernel/rtlinux
+#RTL_DIR          := $(OCERA_DIR)/kernel/rtlinux
 CONFIG_FILE      := $(OCERA_DIR)/emdebsys/.config 
 else 
 KERN_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include-kern
@@ -247,7 +248,7 @@ KERN_CC = $(CC)
 kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )
 INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
 #-DEXPORT_NO_SYMBOLS
-c_o_kern_COMPILE = $(KERN_CC) $(INCLUDES) -I$(kern_GCCLIB_DIR)/include $(CFLAGS) -DEXPORT_SYMTAB -nostdinc
+c_o_kern_COMPILE = $(KERN_CC) -idirafter $(kern_GCCLIB_DIR)/include $(INCLUDES)  $(CFLAGS) -DEXPORT_SYMTAB -nostdinc
 cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
@@ -257,13 +258,15 @@ else # RTL_DIR
 
 include $(KERN_MODULES_DIR)/kernel.mk
 
+kernel_INCLUDES += -idirafter $(LINUX_DIR)/include/linux
+
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
 kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )
 else
 KERN_CC = echo KERN_CC not defined - compilation skipped
 endif
-c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -I$(kern_GCCLIB_DIR)/include $(LINUX_CFLAGS) -DEXPORT_SYMTAB -nostdinc
+c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CFLAGS) -DEXPORT_SYMTAB -nostdinc
 cc_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) $(LINUX_CFLAGS) -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := $(LINUX_MODULE_EXT)
 KERN_LDFLAGS = $(LINUX_LDFLAGS)
