@@ -328,8 +328,8 @@ kern_GCCLIB_DIR=$(shell $(LINUX_CC) -print-search-dirs | sed -n -e 's/^install: 
 else
 KERN_CC = echo KERN_CC not defined - compilation skipped
 endif
-c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB -nostdinc
-cc_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) $(LINUX_CFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB
+c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CPPFLAGS) $(LINUX_CFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB -nostdinc
+cc_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CPPFLAGS) $(LINUX_CFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := $(LINUX_MODULE_EXT)
 KERN_LDFLAGS = $(LINUX_LDFLAGS)
 ifdef LINUX_ARCH
@@ -399,7 +399,27 @@ KERN_SOURCES += $$($(1)_SOURCES)
 # this is required to build right "__this_module" structure for 2.6.x kernels
 
 $(1).mod.c:
-	echo '#include <linux/module.h>' >$$@
+	echo  "\
+	#include <linux/version.h>@\
+	#include <linux/module.h>@\
+	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,5))@\
+	#include <linux/vermagic.h>@\
+	#include <linux/compiler.h>@\
+	@\
+	MODULE_INFO(vermagic, VERMAGIC_STRING);@\
+	@\
+	#undef unix@\
+	struct module __this_module@\
+	__attribute__((section(\".gnu.linkonce.this_module\"))) = {@\
+	 .name = __stringify(KBUILD_MODNAME),@\
+	 .init = init_module,@\
+	#ifdef CONFIG_MODULE_UNLOAD@\
+	 .exit = cleanup_module,@\
+	#endif@\
+	};@\
+	#endif@\
+	" | tr @ \\n >$$@ 
+   
 
 $(eval $(call COMPILE_c_o_kern_template,$(1).mod.c,$(1).mod.o,-DKBUILD_MODNAME=$(1)))
 
