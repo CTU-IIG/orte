@@ -163,15 +163,15 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   while (objectEntryOID) {
     ObjectEntryOID *objectEntryOID_delete=objectEntryOID;
     objectEntryOID=ObjectEntryOID_next(robjectEntryOID->objectEntryAID,objectEntryOID);
-    switch (objectEntryOID->oid & 0x07) {
+    switch (objectEntryOID_delete->oid & 0x07) {
       case OID_PUBLICATION:
         pthread_rwlock_wrlock(&d->psEntry.publicationsLock);
-        PublicationList_delete(&d->psEntry,objectEntryOID);
+        PublicationList_delete(&d->psEntry,objectEntryOID_delete);
         pthread_rwlock_unlock(&d->psEntry.publicationsLock);
         break;
       case OID_SUBSCRIPTION: 
         pthread_rwlock_wrlock(&d->psEntry.subscriptionsLock);
-        SubscriptionList_delete(&d->psEntry,objectEntryOID);
+        SubscriptionList_delete(&d->psEntry,objectEntryOID_delete);
         pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
         break;
     }
@@ -203,9 +203,9 @@ removeManager(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
     while (objectEntryAID) {
       ObjectEntryAID *objectEntryAID_delete=objectEntryAID;
       objectEntryAID=ObjectEntryAID_next(robjectEntryOID->objectEntryHID,objectEntryAID);
-      if ((objectEntryAID->aid & 0x03) == MANAGEDAPPLICATION) {
+      if ((objectEntryAID_delete->aid & 0x03) == MANAGEDAPPLICATION) {
         ObjectEntryOID   *objectEntryOID;
-        objectEntryOID=ObjectEntryOID_find(objectEntryAID,&guid.oid);
+        objectEntryOID=ObjectEntryOID_find(objectEntryAID_delete,&guid.oid);
         if (gavl_cmp_guid(&objectEntryOID->guid,&d->guid)) { //!=
           removeApplication(d,objectEntryOID);
         }
