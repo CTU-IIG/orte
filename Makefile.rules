@@ -143,8 +143,8 @@ USER_OBJS_DIR = $(USER_BUILD_DIR)/$(RELATIVE_DIR)
 KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
 
 .PHONY: default dep subdirs clean cleandepend default-config
-.PHONY: check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass
-.PHONY: kernel-pass default-config-pass
+.PHONY: check-make-ver check-dir include-pass library-pass binary-pass utils-pass
+.PHONY: kernel-lib-pass kernel-pass default-config-pass
 .PHONY: check-dir-local include-pass-local library-pass-local binary-pass-local 
 .PHONY: utils-pass-local kernel-lib-pass-local kernel-pass-local default-config-pass-local
 
@@ -159,7 +159,7 @@ kernel-pass: kernel-lib-pass
 OMK_SERIALIZE_INCLUDED = y
 endif
 
-default: check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass 
+default: check-make-ver check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass 
 
 
 #=====================================================================
@@ -188,6 +188,13 @@ $(LOCAL_CONFIG_H) : $(wildcard $(CONFIG_FILE)) $(wildcard $(CONFIG_FILE)-default
 	echo Updated configuration "$(LOCAL_CONFIG_H)" ; fi
 
 endif
+
+check-make-ver:
+	@GOOD_MAKE_VERSION=`echo $(MAKE_VERSION) | sed -n -e 's/^[4-9]\..*\|^3\.9[0-9].*\|^3\.8[1-9].*/y/p'` ; \
+	if [ x$$GOOD_MAKE_VERSION != xy ] ; then \
+		echo "Your make program version is too old and does not support OMK system." ; \
+		echo "Please update to make program 3.81beta1 or newer." ; exit 1 ; \
+	fi
 
 #=====================================================================
 # User-space rules and templates to compile programs, libraries etc.
