@@ -1,4 +1,4 @@
-#  Makefile.rules - OCERA make framework common project rules
+#  Makefile.rules - OCERA make framework common project rules -*- makefile -*-
 #   
 #  (C) Copyright 2003 by Pavel Pisa - OCERA team member
 #
@@ -15,6 +15,7 @@
 # rtlinux_LIBRARIES.. list of the RT-Linux kernel-space libraries
 # include_HEADERS  .. list of the user-space public header files
 # nobase_include_HEADERS .. public headers copied even with directory part
+# renamed_include_HEADERS .. public headers copied to the different target name
 # kernel_HEADERS   .. list of the kernel-space public header files
 # rtlinux_HEADERS  .. list of the RT-Linux kernel-space public header files
 # bin_PROGRAMS     .. list of the require binary programs
@@ -72,7 +73,7 @@ ifneq ($(wildcard $(CONFIG_FILE)),)
 #include $(CONFIG_FILE)
 CONFIG_FILE_OK = y
 endif
-else 
+else # OCERA_DIR
 KERN_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include-kern
 KERN_LIB_DIR     := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/lib-kern
 KERN_MODULES_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/modules
@@ -101,7 +102,7 @@ endif
 ifndef LINUX_DIR
 LINUX_DIR=/lib/modules/$(LINUX_VERSION)/build
 endif
-endif
+endif # OCERA_DIR
 
 # Check and include real OCERA style Makefile.omk now
 ifndef OMK_INCLUDED
@@ -129,13 +130,16 @@ LOADLIBES += $(lib_LOADLIBES:%=-l%)
 LIB_CPPFLAGS += $(CPPFLAGS)
 LIB_CFLAGS   += $(CFLAGS)
 
-SOLIB_PICFLAGS += --shared
+SOLIB_PICFLAGS += -shared -fpic
 
 ifndef RELATIVE_DIR
 RELATIVE_DIR := $(SOURCES_DIR:$(MAKERULES_DIR)%=%)
-RELATIVE_DIR := $(RELATIVE_DIR:/%=%)
-RELATIVE_DIR := $(RELATIVE_DIR:\\%=%)
 endif
+override RELATIVE_DIR := $(RELATIVE_DIR:/%=%)
+override RELATIVE_DIR := $(RELATIVE_DIR:\\%=%)
+#$(warning  RELATIVE_DIR $(RELATIVE_DIR))
+override BACK2TOP_DIR := $(shell echo $(RELATIVE_DIR)/ | sed -e 's_//_/_g' -e 's_/\./_/_g' -e 's_^\./__g'  -e 's_\([^/][^/]*\)_.._g' -e 's_/$$__')
+#$(warning  BACK2TOP_DIR $(BACK2TOP_DIR))
 
 #$(warning SOURCES_DIR = $(SOURCES_DIR))
 #$(warning MAKERULES_DIR = $(MAKERULES_DIR))
@@ -143,6 +147,7 @@ endif
 
 #vpath %.c $(SOURCES_DIR)
 #vpath %.cc $(SOURCES_DIR)
+#vpath %.cxx $(SOURCES_DIR)
 
 VPATH = $(SOURCES_DIR)
 srcdir = $(SOURCES_DIR)
@@ -150,7 +155,7 @@ srcdir = $(SOURCES_DIR)
 USER_OBJS_DIR = $(USER_BUILD_DIR)/$(RELATIVE_DIR)
 KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
 
-.PHONY: default dep subdirs clean cleandepend default-config
+.PHONY: default dep subdirs clean clean-custom cleandepend default-config
 .PHONY: check-make-ver check-dir include-pass library-pass binary-pass utils-pass
 .PHONY: kernel-lib-pass kernel-pass kernel-mod-pass kernel-modpost-pass default-config-pass
 .PHONY: check-dir-local include-pass-local library-pass-local binary-pass-local 
@@ -283,6 +288,7 @@ endef
 define PROGRAM_template
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
 $(1)_OBJS := $$(sort $$($(1)_OBJS))
 
 USER_OBJS  += $$($(1)_OBJS)
@@ -290,7 +296,7 @@ USER_SOURCES += $$($(1)_SOURCES)
 
 $(2)/$(1): $$($(1)_OBJS)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
-	$(Q) $$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
+	$(Q) $$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES:%.cxx=%.cc))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
 	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) $$(LDFLAGS) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $(2)/$(1)
 	@echo "$(2)/$(1): \\" >$(USER_OBJS_DIR)/$(1).exe.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(USER_OBJS_DIR)/$(1).exe.map  >>$(USER_OBJS_DIR)/$(1).exe.d
@@ -302,6 +308,7 @@ endef
 define LIBRARY_template
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
 $(1)_OBJS := $$(sort $$($(1)_OBJS))
 
 USER_OBJS  += $$($(1)_OBJS)
@@ -317,6 +324,7 @@ endef
 define SOLIB_template
 $(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.c=%.lo))
 $(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cc=%.lo))
+$(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cxx=%.lo))
 $(1)_OBJSLO := $$(sort $$($(1)_OBJSLO))
 
 SOLIB_OBJS  += $$($(1)_OBJSLO)
@@ -375,7 +383,7 @@ else # CONFIG_RTLINUX
 include $(KERN_LIB_DIR)/kernel.mk
 
 ifeq ($(LINUX_SRC),)
-LINUX_SRC = LINUX_DIR
+LINUX_SRC = $(LINUX_DIR)
 endif
 kernel_INCLUDES += -idirafter $(LINUX_SRC)/include/linux
 
@@ -466,6 +474,7 @@ endef
 define MODULE_kern_template
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
 $(1)_OBJS := $$(sort $$($(1)_OBJS))
 
 KERN_OBJS  += $$($(1)_OBJS)
@@ -501,7 +510,7 @@ KERN_SOURCES += $$($(1)_SOURCES)
 
 $(2)/$(1)$(KERN_LINK_SUFFIX): $$($(1)_OBJS)
 	@$(QUIET_CMD_ECHO) "  LD [K]  $$@"
-	$(Q) $$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $$@
+	$(Q) $$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) -L$$(kern_GCCLIB_DIR) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $$@
 	@echo "$(2)/$(1)$(KERN_LINK_SUFFIX): \\" >$(KERN_OBJS_DIR)/$(1).mod.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(KERN_OBJS_DIR)/$(1).mod.map  >>$(KERN_OBJS_DIR)/$(1).mod.d
 	@echo >>$(KERN_OBJS_DIR)/$(1).mod.d
@@ -517,6 +526,7 @@ endef
 define LIBRARY_kern_template
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
 $(1)_OBJS := $$(sort $$($(1)_OBJS))
 
 KERN_OBJS  += $$($(1)_OBJS)
@@ -623,6 +633,14 @@ library-pass binary-pass utils-pass:
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
 		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(USER_OBJS_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
+	+@$(foreach dir, $(QT_SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
+		if [ "$@" != "binary-pass" ] ; then exit 0 ; fi ; \
+		if [ ! -e $(SOURCES_DIR)/$(dir)/Makefile ] ; then  \
+		( cd $(SOURCES_DIR)/$(dir) ; $$QTDIR/bin/qmake TOP_DIR=$(MAKERULES_DIR) \
+		     RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) || exit 1 ;) ; fi ; \
+		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(SOURCES_DIR)/$(dir) \
+		-f $(SOURCES_DIR)/$(dir)/Makefile || exit 1 ;)
 	+@$(call mkdir_def,$(USER_OBJS_DIR))
 	@$(MAKE) --no-print-directory -C $(USER_OBJS_DIR) \
 		-f $(SOURCES_DIR)/Makefile USER_RULE_TEMPLATES=y $(@:%=%-local)
@@ -675,12 +693,20 @@ include-pass-local:
 	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) || exit 1 ; )
 	@$(foreach f, $(nobase_include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) \
 	   || ( mkdir -p $(USER_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) ) || exit 1 ; )
+	@$(foreach f, $(renamed_include_HEADERS), \
+	   srcfname=`echo '$(f)' | sed -e 's/^\(.*\)->.*$$/\1/'` ; destfname=`echo '$(f)' | sed -e 's/^.*->\(.*\)$$/\1/'` ; \
+	   cmp --quiet $(SOURCES_DIR)/$${srcfname} $(USER_INCLUDE_DIR)/$${destfname} \
+	   || ( mkdir -p `dirname $(USER_INCLUDE_DIR)/$${destfname}` && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$${srcfname} $(USER_INCLUDE_DIR)/$${destfname} ) || exit 1 ; )
 # Kernel and RT-Linux stuff
 	@$(call mkdir_def,$(KERN_INCLUDE_DIR))
 	@$(foreach f, $(kernel_HEADERS) $(rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) \
 	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) || exit 1 ; )
 	@$(foreach f, $(nobase_kernel_HEADERS) $(nobase_rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) \
 	   || ( mkdir -p $(KERN_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) ) || exit 1 ; )
+	@$(foreach f, $(renamed_kernel_HEADERS) $(renamed_rtlinux_HEADERS), \
+	   srcfname=`echo '$(f)' | sed -e 's/^\(.*\)->.*$$/\1/'` ; destfname=`echo '$(f)' | sed -e 's/^.*->\(.*\)$$/\1/'` ; \
+	   cmp --quiet $(SOURCES_DIR)/$${srcfname} $(KERN_INCLUDE_DIR)/$${destfname} \
+	   || ( mkdir -p `dirname $(KERN_INCLUDE_DIR)/$${destfname}` && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$${srcfname} $(KERN_INCLUDE_DIR)/$${destfname} ) || exit 1 ; )
 
 ifdef USER_RULE_TEMPLATES
 
@@ -694,6 +720,8 @@ $(foreach src,$(filter %.c,$(USER_SOURCES)),$(eval $(call COMPILE_c_o_template,$
 
 $(foreach src,$(filter %.cc,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.o),)))
 
+$(foreach src,$(filter %.cxx,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.o),)))
+
 # User-space shared libraries object files
 
 SOLIB_SOURCES := $(sort $(SOLIB_SOURCES))
@@ -703,6 +731,8 @@ SOLIB_SOURCES := $(sort $(SOLIB_SOURCES))
 $(foreach src,$(filter %.c,$(SOLIB_SOURCES)),$(eval $(call COMPILE_c_o_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.lo),$(SOLIB_PICFLAGS))))
 
 $(foreach src,$(filter %.cc,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.lo),$(SOLIB_PICFLAGS))))
+
+$(foreach src,$(filter %.cxx,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.lo),$(SOLIB_PICFLAGS))))
 
 endif
 
@@ -716,10 +746,12 @@ $(foreach src,$(filter %.c,$(KERN_SOURCES)),$(eval $(call COMPILE_c_o_kern_templ
 
 $(foreach src,$(filter %.cc,$(KERN_SOURCES)),$(eval $(call COMPILE_cc_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.o),)))
 
+$(foreach src,$(filter %.cxx,$(KERN_SOURCES)),$(eval $(call COMPILE_cc_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.o),)))
+
 endif
 
 
-clean-local:
+clean-local: clean-custom
 	@echo Cleaning in $(KERN_OBJS_DIR) and $(USER_OBJS_DIR)
 	@rm -f $(KERN_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.lo \
 	       $(KERN_OBJS_DIR)/*.d $(USER_OBJS_DIR)/*.d \
