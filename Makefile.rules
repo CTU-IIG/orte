@@ -53,15 +53,15 @@ $(warning (comment out definition of OCERA_DIR line and optionally select RTL_DI
 $(error or go to the ocera/ directory and do 'make' to generate the "ocera.mk" file first, please)
 endif
 include $(OCERA_DIR)/ocera.mk
-KERN_INCLUDE_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/include
-KERN_LIB_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/lib
-KERN_MODULES_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/modules
-KERN_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/kern/$(GROUP_DIR_NAME)
-USER_INCLUDE_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/include
-USER_LIB_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/lib
-USER_UTILS_DIR   := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/utils
-USER_BIN_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/bin
-USER_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/user/$(GROUP_DIR_NAME)
+KERN_INCLUDE_DIR := $(OCERA_KERNEL_INCLUDES_DIR)
+KERN_LIB_DIR     := $(OCERA_KERNEL_LIBRARIES_DIR)
+KERN_MODULES_DIR := $(OCERA_MODULES_DIR)
+KERN_BUILD_DIR   := $(BUILD_DIR)/kern/$(GROUP_DIR_NAME)
+USER_INCLUDE_DIR := $(OCERA_USER_INCLUDES_DIR)
+USER_LIB_DIR     := $(OCERA_USER_LIBRARIES_DIR)
+USER_UTILS_DIR   := $(TARGET_DIR)/usr/bin
+USER_BIN_DIR     := $(TARGET_DIR)/usr/bin
+USER_BUILD_DIR   := $(BUILD_DIR)/user/$(GROUP_DIR_NAME)
 #LINUX_DIR        := $(OCERA_DIR)/kernel/linux
 #RTL_DIR          := $(OCERA_DIR)/kernel/rtlinux
 #CONFIG_FILE      := $(OCERA_DIR)/emdebsys/.config 
@@ -273,7 +273,7 @@ c_o_kern_COMPILE = $(KERN_CC) -idirafter $(kern_GCCLIB_DIR)/include $(INCLUDES) 
 cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
-KERN_LD = ld -m elf_$(KERN_ARCH)
+KERN_LD = $(LD)
 
 else # RTL_DIR
 
@@ -283,7 +283,7 @@ kernel_INCLUDES += -idirafter $(LINUX_DIR)/include/linux
 
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
-kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )
+kern_GCCLIB_DIR=$(shell $(LINUX_CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )
 else
 KERN_CC = echo KERN_CC not defined - compilation skipped
 endif
