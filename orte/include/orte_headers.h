@@ -96,6 +96,9 @@ extern "C" {
 #ifdef HAVE_NET_IF_H
   #include <net/if.h>
 #endif
+#ifdef HAVE_ERRNO_H
+  #include <errno.h>
+#endif
 //win32 headers
 #if defined HAVE_WINSOCK2_H && !HAVE_SYS_SOCKET_H
   #include <winsock2.h>
@@ -108,6 +111,9 @@ extern "C" {
 #endif
 #ifdef HAVE_W32API_WINDOWS_H
   #include <w32api/windows.h>
+#endif
+#ifdef HAVE_ERRNO_H
+  #include <errno.h>
 #endif
 //kernel headers
 #ifdef HAVE_ASM_BYTEORDER_H

@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.9 2004/07/12 20:27:05 smolik Exp $
+# $Id: configure.in,v 1.10 2004/08/30 19:18:21 smolik Exp $
 
 # autoconf requirement
 
@@ -151,7 +151,7 @@ if test ${UNIX} == 'yes' -o ${WIN} == 'yes' ; then
     arpa/inet.h fcntl.h stdio.h netdb.h stdlib.h \
     string.h sys/ioctl.h sys/time.h unistd.h pthread.h \
     sys/types.h sys/sockio.h stdarg.h byteswap.h getopt.h \
-    ctype.h signal.h stdint.h],,,[[]])
+    ctype.h signal.h stdint.h errno.h],,,[[]])
     AC_CHECK_HEADERS([sys/socket.h], [], [],
           [#ifdef HAVE_SYS_TYPES_H
 	     #include <sys/types.h>

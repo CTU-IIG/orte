@@ -239,24 +239,24 @@ ORTEPublicationPrepareQueue(ORTEPublication *cstWriter) {
       NtpTimeAdd(expire,atime,cstWriter->domain->domainProp.baseProp.maxBlockTime);
       NtpTimeDisAssembToUs(wtime.tv_sec,wtime.tv_nsec,expire);
       wtime.tv_nsec*=1000;  //conver to nano seconds
-      pthread_rwlock_unlock(&cstWriter->lock);    
-      //wait till a message will be processed
-      pthread_mutex_lock(&cstWriter->mutexCSChangeDestroyed);
-      if (cstWriter->condValueCSChangeDestroyed==0) {
-        pthread_cond_timedwait(&cstWriter->condCSChangeDestroyed,
-			       &cstWriter->mutexCSChangeDestroyed,
-			       &wtime);
-      }
-      cstWriter->condValueCSChangeDestroyed=0;
-      pthread_mutex_unlock(&cstWriter->mutexCSChangeDestroyed);
-
-      pthread_rwlock_wrlock(&cstWriter->lock);    
-      pp=(ORTEPublProp*)cstWriter->objectEntryOID->attributes;
-      if (cstWriter->csChangesCounter>=pp->sendQueueSize) {
-        debug(31,5) ("Publication: queue level (%d), queue full!!!\n",
-                      cstWriter->csChangesCounter);
-        pthread_rwlock_unlock(&cstWriter->lock);
-        return ORTE_QUEUE_FULL;
+      while(cstWriter->csChangesCounter>=pp->sendQueueSize) {
+        pthread_rwlock_unlock(&cstWriter->lock);    
+        //wait till a message will be processed
+        pthread_mutex_lock(&cstWriter->mutexCSChangeDestroyed);
+        if (cstWriter->condValueCSChangeDestroyed==0) {
+          if (pthread_cond_timedwait(&cstWriter->condCSChangeDestroyed,
+  			         &cstWriter->mutexCSChangeDestroyed,
+ 			         &wtime)==ETIMEDOUT) {
+            debug(31,5) ("Publication: queue level (%d), queue full!!!\n",
+                          cstWriter->csChangesCounter);
+            pthread_mutex_unlock(&cstWriter->mutexCSChangeDestroyed);
+            pthread_rwlock_unlock(&cstWriter->lock);
+            return ORTE_QUEUE_FULL;
+	  }
+        }
+        cstWriter->condValueCSChangeDestroyed=0;
+        pthread_mutex_unlock(&cstWriter->mutexCSChangeDestroyed);
+        pthread_rwlock_wrlock(&cstWriter->lock);    
       }
     }
   }
@@ -303,8 +303,9 @@ ORTEPublicationSendLocked(ORTEPublication *cstWriter) {
       csChange->cdrStream.bufferPtr+=cstWriter->typeRegister->getMaxSize;
     }
     csChange->cdrStream.needByteSwap=ORTE_FALSE;
-    debug(31,10) ("ORTEPublicationCreate: message length:%d\n",
-                   cstWriter->typeRegister->getMaxSize);
+    debug(31,10) ("ORTEPublicationCreate: message length:%d,sn(low):%u\n",
+                   cstWriter->typeRegister->getMaxSize,snNext.low);
+		  
     CSTWriterAddCSChange(cstWriter->domain,
                         cstWriter,
                         csChange);

@@ -9374,11 +9374,12 @@ fi
 
 
 
+
 for ac_header in \
     arpa/inet.h fcntl.h stdio.h netdb.h stdlib.h \
     string.h sys/ioctl.h sys/time.h unistd.h pthread.h \
     sys/types.h sys/sockio.h stdarg.h byteswap.h getopt.h \
-    ctype.h signal.h stdint.h
+    ctype.h signal.h stdint.h errno.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_header" >&5
