@@ -37,7 +37,7 @@ typedef struct ObjectEntry ObjectEntry;
  */
 typedef struct sock_t {
   int         fd;
-  u_int16_t   port;
+  uint16_t    port;
 } sock_t;
 
 /**
@@ -192,7 +192,9 @@ struct ObjectEntry{
   pthread_rwlock_t       objRootLock;
   ul_htim_queue_t        htimRoot;     //root of tree htimers
   pthread_rwlock_t       htimRootLock;
-  sem_t                  htimSendSem;  //for wake up
+  pthread_cond_t	 htimSendCond; //for wake up
+  pthread_mutex_t	 htimSendMutex;
+  int			 htimSendCondValue;
   Boolean                htimNeedWakeUp;
 };
 
@@ -305,7 +307,9 @@ struct CSTWriter {
   //only for CSTPublications
   unsigned int           strictReliableCounter;
   unsigned int           bestEffortsCounter;
-  sem_t                  semCSChangeDestroyed;
+  pthread_cond_t	 condCSChangeDestroyed; //for wake up
+  pthread_mutex_t	 mutexCSChangeDestroyed;
+  int			 condValueCSChangeDestroyed;
 };
 
 /**
@@ -391,7 +395,7 @@ struct CSTReader {
 struct CSTPublications {
   gavl_cust_root_field_t cstWriter;
   pthread_rwlock_t       lock;        
-  u_int32_t              counter;  
+  uint32_t               counter;  
 };
   
 /**
@@ -400,7 +404,7 @@ struct CSTPublications {
 struct CSTSubscriptions {
   gavl_cust_root_field_t cstReader;
   pthread_rwlock_t       lock;        
-  u_int32_t              counter;  
+  uint32_t               counter;  
 };
 
 /**
@@ -417,7 +421,7 @@ typedef struct PSEntry {
  * struct ORTEDomain - 
  */
 struct ORTEDomain {
-  u_int32_t              domain;      //domain value
+  uint32_t               domain;      //domain value
   GUID_RTPS              guid;        //guid of self application
   AppParams              *appParams;  //self parameters (share from objectEntry)
   ObjectEntryOID         *objectEntryOID;//entry point for self OID

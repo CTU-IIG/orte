@@ -23,7 +23,7 @@
 
 /*****************************************************************************/
 void
-ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,u_int16_t port) {
+ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,uint16_t port) {
   struct sockaddr_in    des;
   char                  sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   int                   i;
@@ -52,11 +52,13 @@ void
 ORTEDomainWakeUpSendingThread(ObjectEntry *objectEntry) {
   debug(25,10) ("WakeUpSendingThread : start\n");
   if (objectEntry->htimNeedWakeUp) {
-    int value;
-    sem_getvalue(&objectEntry->htimSendSem,&value);
-    debug(25,8) ("WakeUpSendingThread : value:%d\n",value);
-    if (value<1)
-      sem_post(&objectEntry->htimSendSem);
+    pthread_mutex_lock(&objectEntry->htimSendMutex);
+    if (objectEntry->htimSendCondValue==0) {
+      debug(25,8) ("WakeUpSendingThread : send wakeup signal\n");
+      pthread_cond_signal(&objectEntry->htimSendCond);
+      objectEntry->htimSendCondValue=1;
+    }
+    pthread_mutex_unlock(&objectEntry->htimSendMutex);
   }
 }
 

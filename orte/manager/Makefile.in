@@ -36,6 +36,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@am__append_1 = service.c
 ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
@@ -172,7 +173,7 @@ target_vendor = @target_vendor@
 @CONFIG_ORTE_RT_TRUE@rt_ortemanager_ko_SOURCES = ortemanager.c  
 @CONFIG_ORTE_RT_TRUE@rt_ortemanager_ko_LINK = $(top_builddir)/modtool --link -o $@
 @CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ortemanager
-@CONFIG_ORTE_RT_FALSE@ortemanager_SOURCES = ortemanager.c
+@CONFIG_ORTE_RT_FALSE@ortemanager_SOURCES = ortemanager.c $(am__append_1)
 @CONFIG_ORTE_MINGW_TRUE@@CONFIG_ORTE_RT_FALSE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
 @CONFIG_ORTE_RT_FALSE@ortemanager_LDADD = ../liborte/liborte.a $(win_libs)
 subdir = orte/manager
@@ -186,8 +187,11 @@ CONFIG_CLEAN_FILES =
 @CONFIG_ORTE_RT_FALSE@module_PROGRAMS =
 PROGRAMS = $(bin_PROGRAMS) $(module_PROGRAMS)
 
-am__ortemanager_SOURCES_DIST = ortemanager.c
-@CONFIG_ORTE_RT_FALSE@am_ortemanager_OBJECTS = ortemanager.$(OBJEXT)
+am__ortemanager_SOURCES_DIST = ortemanager.c service.c
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@am__objects_1 = \
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@	service.$(OBJEXT)
+@CONFIG_ORTE_RT_FALSE@am_ortemanager_OBJECTS = ortemanager.$(OBJEXT) \
+@CONFIG_ORTE_RT_FALSE@	$(am__objects_1)
 ortemanager_OBJECTS = $(am_ortemanager_OBJECTS)
 @CONFIG_ORTE_MINGW_FALSE@@CONFIG_ORTE_RT_TRUE@ortemanager_DEPENDENCIES =
 @CONFIG_ORTE_MINGW_FALSE@@CONFIG_ORTE_RT_FALSE@ortemanager_DEPENDENCIES = \
@@ -209,7 +213,8 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/orte/include
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ortemanager.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po
+@AMDEP_TRUE@	./$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/service.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -290,6 +295,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ortemanager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/service.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \

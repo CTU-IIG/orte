@@ -194,7 +194,7 @@ generateEvent(ORTEDomain *d,GUID_RTPS *guid,void *params,Boolean live) {
 Boolean
 getTypeApp(ORTEDomain *d,AppParams *ap,IPAddress senderIPAddress) {
   Boolean       result=ORTE_FALSE;
-  u_int16_t     i,j,k;
+  uint16_t      i,j,k;
   
   //test if the app is MOM
   for (i=0;i<d->appParams->managerKeyCount;i++) {

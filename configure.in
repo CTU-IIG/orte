@@ -1,12 +1,12 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.7 2004/04/03 11:27:21 smolik Exp $
+# $Id: configure.in,v 1.8 2004/04/20 08:36:14 smolik Exp $
 
 # autoconf requirement
 
 AC_PREREQ([2.56])
 
-AC_INIT([orte],[0.2.1],[petr.smolik@wo.cz])
+AC_INIT([orte],[0.2.2],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
 
 #Check for CPU / vendor / OS
@@ -23,7 +23,7 @@ DS_LINUX()
 # Package info
 ORTE_MAJOR_VERSION=0
 ORTE_MINOR_VERSION=2
-ORTE_MICRO_VERSION=1
+ORTE_MICRO_VERSION=2
 ORTE_VERSION=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION.$ORTE_MICRO_VERSION
 AC_SUBST(ORTE_MAJOR_VERSION)
 AC_SUBST(ORTE_MINOR_VERSION)
@@ -51,6 +51,7 @@ case "$target" in
     MINGW='yes'
     AC_DEFINE([CONFIG_ORTE_WIN],[1],[Define if is target windows])
     AC_DEFINE([CONFIG_ORTE_MINGW],[1],[Define if is target MINGW])
+    AC_DEFINE([HAVE_GETPOT_LONG_ORTE],[1],[Define for ORTE getopt_long self implemetation])
     ;;
   *)
     # Assume Unix.
@@ -99,6 +100,8 @@ AC_PROG_RANLIB
 if test -z ${CONFIG_ORTE_RT} ; then
   AC_CHECK_LIB([ws2_32], [main])
   AC_CHECK_LIB([pthread], [main])
+  AC_CHECK_LIB([socket], [main])
+  AC_CHECK_LIB([nsl], [main])
 fi
 
 ###############################
@@ -115,10 +118,25 @@ AH_VERBATIM([_GNU_SOURCE],[
 if test ${UNIX} == 'yes' -o ${WIN} == 'yes' ; then
     AC_HEADER_STDC
     AC_CHECK_HEADERS([\
-    arpa/inet.h fcntl.h stdio.h netdb.h netinet/in.h stdlib.h \
-    string.h sys/ioctl.h sys/socket.h sys/time.h unistd.h pthread.h \
-    stdarg.h sys/types.h net/if.h byteswap.h getopt.h \
-    ctype.h semaphore.h signal.h],,,[[]])
+    arpa/inet.h fcntl.h stdio.h netdb.h stdlib.h \
+    string.h sys/ioctl.h sys/time.h unistd.h pthread.h \
+    sys/types.h sys/sockio.h stdarg.h byteswap.h getopt.h \
+    ctype.h signal.h stdint.h],,,[[]])
+    AC_CHECK_HEADERS([sys/socket.h], [], [],
+          [#ifdef HAVE_SYS_TYPES_H
+	     #include <sys/types.h>
+           #endif])
+    AC_CHECK_HEADERS([netinet/in.h], [], [],
+          [#ifdef HAVE_SYS_TYPES_H
+	     #include <sys/types.h>
+           #endif])
+    AC_CHECK_HEADERS([net/if.h], [], [],
+          [#ifdef HAVE_SYS_TYPES_H
+	     #include <sys/types.h>
+           #endif
+           #ifdef HAVE_SYS_SOCKET_H
+	     #include <sys/socket.h>
+           #endif])
 fi
 # win32
 if test ${WIN} == 'yes' ; then
@@ -140,7 +158,7 @@ fi
 # RTLinux
 if test ${USE_RTLINUX} == 'yes' ; then
     AC_CHECK_HEADERS([\
-    string.h pthread.h semaphore.h \
+    string.h pthread.h \
     rtl.h rtl_malloc.h udp.h nic.h time.h],,,[[]])
     AC_CHECK_HEADERS([nictab.h],,,[
     #ifdef HAVE_UDP_H
@@ -172,7 +190,7 @@ AC_C_INLINE
 # Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
 if test -z ${CONFIG_ORTE_RT} ; then
-AC_CHECK_FUNCS([strdup gethostbyname])
+AC_CHECK_FUNCS([strdup gethostbyname getopt_long])
 fi
 
 AC_CONFIG_FILES([Makefile

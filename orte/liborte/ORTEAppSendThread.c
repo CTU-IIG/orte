@@ -36,7 +36,7 @@ void ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta) {
       des.sin_family=AF_INET; 
       des.sin_addr.s_addr = htonl(appParams->unicastIPAddressList[i]);
       if (meta) {
-        des.sin_port = htons((u_int16_t)appParams->metatrafficUnicastPort); 
+        des.sin_port = htons((uint16_t)appParams->metatrafficUnicastPort); 
         sock_sendto (
             &d->taskSend.sock,
             d->mbSend.cdrStream.buffer,
@@ -44,7 +44,7 @@ void ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta) {
             &des,
             sizeof(des)); 
       } else {
-        des.sin_port = htons((u_int16_t)appParams->userdataUnicastPort); 
+        des.sin_port = htons((uint16_t)appParams->userdataUnicastPort); 
         if (d->mbSend.cdrStreamDirect)
           sock_sendto (
               &d->taskSend.sock,
@@ -93,9 +93,14 @@ void ORTEAppSendThread(ORTEDomain *d) {
     if (s<0) s=ms=0;
     debug(24,4) ("ORTEAppSendThread: sleeping for %lis %lims\n",s,ms);
     if (!((wtime.tv_sec==0) && (wtime.tv_nsec==0))) {
-      sem_timedwait(
-          &d->objectEntry.htimSendSem,
-	  &wtime);
+      pthread_mutex_lock(&d->objectEntry.htimSendMutex);
+      if (d->objectEntry.htimSendCondValue==0) {
+        pthread_cond_timedwait(&d->objectEntry.htimSendCond,
+	                       &d->objectEntry.htimSendMutex,
+			       &wtime);
+      }
+      d->objectEntry.htimSendCondValue=0;
+      pthread_mutex_unlock(&d->objectEntry.htimSendMutex);
     }
     debug(24,7) ("ORTEAppSendThread: fired\n");
     actTime=getActualNtpTime();

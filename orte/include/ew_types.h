@@ -25,11 +25,11 @@
 extern "C" {
 #endif
 
-#define u_int8_t  unsigned char
+#define uint8_t   unsigned char
 #define int8_t    char
-#define u_int16_t unsigned short
+#define uint16_t  unsigned short
 #define int16_t   short
-#define u_int32_t unsigned int
+#define uint32_t  unsigned int
 #define int32_t   int
 
 #ifdef __cplusplus

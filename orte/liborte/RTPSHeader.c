@@ -23,7 +23,7 @@
 
 /**********************************************************************************/
 int16_t
-RTPSHeaderCreate(u_int8_t *msg,HostId hid,AppId aid) {
+RTPSHeaderCreate(uint8_t *msg,HostId hid,AppId aid) {
   msg[0]='R';msg[1]='T'; msg[2]='P'; msg[3]='S';
   //Protocol version
   PROTOCOL_VERSION_1_0((*((ProtocolVersion*)(msg+4))));
@@ -39,7 +39,7 @@ RTPSHeaderCreate(u_int8_t *msg,HostId hid,AppId aid) {
 } 
 /**********************************************************************************/
 int16_t
-RTPSHeaderCheck(u_int8_t *msg,int32_t len,MessageInterpret *mi) {
+RTPSHeaderCheck(uint8_t *msg,int32_t len,MessageInterpret *mi) {
   if (len<16) return -1;                          /* message is too small */
   if (msg[0]!='R') return -2;                     /* header is invalid */
   if (msg[1]!='T') return -2;                     /* header is invalid */

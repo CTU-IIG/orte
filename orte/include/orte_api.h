@@ -33,7 +33,9 @@ extern "C" {
   #include "orte_config_omk_rtl.h"
 #endif
 
-#ifdef HAVE_SYS_TYPES_H
+#ifdef HAVE_STDINT_H
+  #include <stdint.h>
+#elif defined HAVE_SYS_TYPES_H
   #include <sys/types.h>
 #endif
 #ifdef HAVE_LINUX_TYPES_H

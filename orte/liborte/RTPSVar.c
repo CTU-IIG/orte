@@ -26,12 +26,12 @@ void NewSubscriber(ORTEDomain *d,ObjectEntryOID *os);
 
 /**********************************************************************************/
 void 
-RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
+RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
   GUID_RTPS          objectGUID,writerGUID;
   ObjectId           roid,woid;
   SequenceNumber     sn;   
   int8_t             e_bit,p_bit,a_bit;
-  u_int16_t          submsg_len;
+  uint16_t           submsg_len;
   CSTReader          *cstReader=NULL;
   CSTRemoteWriter    *cstRemoteWriter=NULL;
   CSTRemoteReader    *cstRemoteReader=NULL;
@@ -42,7 +42,7 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
   e_bit=rtps_msg[1] & 0x01;
   p_bit=(rtps_msg[1] & 0x02)>>1;
   a_bit=(rtps_msg[1] & 0x04)>>2;
-  submsg_len=*((u_int16_t*)(rtps_msg+2));
+  submsg_len=*((uint16_t*)(rtps_msg+2));
   conv_u16(&submsg_len,e_bit);
   roid=*((ObjectId*)(rtps_msg+4));              /* readerObjectId */
   conv_u32(&roid,0);

@@ -21,17 +21,26 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #ifndef _WIN32
   #include <signal.h>
 #endif
 #include "orte_api.h"
+#ifdef HAVE_CONFIG_H
+  #ifdef HAVE_GETOPT_H
+    #include <getopt.h>
+  #endif
+  #ifdef HAVE_UNISTD_H
+    #include <unistd.h> //getopt.h for DarWin, Solaris, ...
+  #endif
+#else
+  #include <getopt.h>
+#endif
 
 Boolean                 quite=ORTE_FALSE;
 
 void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
-  u_int32_t *instance=(u_int32_t*)vinstance;
+  uint32_t *instance=(uint32_t*)vinstance;
   
   switch (info->status) {
     case NEW_DATA:
@@ -46,7 +55,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 
 void
 sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
-  u_int32_t *instance=(u_int32_t*)vinstance;
+  uint32_t *instance=(uint32_t*)vinstance;
   
   switch (info->status) {
     case NEED_DATA:
@@ -60,7 +69,7 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) 
 }
 
 static void usage(void) {
-  printf("usage: ORTEPing <parameters> \n");
+  printf("usage: orteping <parameters> \n");
   printf("  -d, --domain <domain>         working manager domain\n");
   printf("  -p, --publisher               create publisher Ping,PingData\n");
   printf("  -S, --strength                strength of publisher <1>\n");
@@ -71,8 +80,8 @@ static void usage(void) {
   printf("  -E, --expiration <s>          expiration time of application\n");
   printf("  -m, --minimumSeparation <s>   minimumSeparation between two issues\n");
   printf("  -v, --verbosity <level>       set verbosity level SECTION, up to LEVEL:...\n");
-  printf("      examples: ORTEManager -v 51,7:32,5 sections 51 and 32\n");
-  printf("                ORTEManager -v ALL,7     all sections up to level 7\n");
+  printf("      examples: ORTEManager -v 51.7:32.5 sections 51 and 32\n");
+  printf("                ORTEManager -v ALL.7     all sections up to level 7\n");
   printf("  -q  --quiet                   \n");
   printf("  -l, --logfile <filename>      set log file name\n");
   printf("  -V, --version                 show version\n");
@@ -80,6 +89,7 @@ static void usage(void) {
 }
 
 int main(int argc,char *argv[]) {
+#if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   static struct option long_opts[] = {
     { "domain",1,0, 'd' },
     { "publisher",0,0, 'p' },
@@ -97,6 +107,7 @@ int main(int argc,char *argv[]) {
     { "help",  0, 0, 'h' },
     { 0, 0, 0, 0}
   };
+#endif
   ORTEDomain              *d;
   ORTEDomainProp          dp; 
   ORTEPublication         *p=NULL;
@@ -112,8 +123,12 @@ int main(int argc,char *argv[]) {
   ORTEDomainPropDefaultGet(&dp);
   NTPTIME_BUILD(minimumSeparation,0); 
   NTPTIME_BUILD(delay,1); //1s
- 
+
+#if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   while ((opt = getopt_long(argc, argv, "m:S:d:v:R:E:P:l:D:Vhpsq",&long_opts[0], NULL)) != EOF) {
+#else
+  while ((opt = getopt(argc, argv, "m:S:d:v:R:E:P:l:D:Vhpsq")) != EOF) {
+#endif
     switch (opt) {
       case 'S':
         strength=strtol(optarg,NULL,0);

@@ -23,11 +23,11 @@
 
 /**********************************************************************************/
 int 
-RTPSHeardBeatCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
+RTPSHeardBeatCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
     SequenceNumber *firstSeqNumber,SequenceNumber *lastSeqNumber,
     ObjectId woid,ObjectId roid,Boolean f_bit) {
   if (max_msg_len<28) return -1;
-  rtps_msg[0]=(u_int8_t)HEARTBEAT;
+  rtps_msg[0]=(uint8_t)HEARTBEAT;
   rtps_msg[1]=ORTE_MY_MBO;
   if (f_bit) rtps_msg[1]|=2;
   *((ParameterLength*)(rtps_msg+2))=24;
@@ -91,7 +91,7 @@ HeardBeatProc(CSTReader *cstReader,GUID_RTPS *writerGUID,
 
 /**********************************************************************************/
 void 
-RTPSHeardBeat(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi) {
+RTPSHeardBeat(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi) {
   GUID_RTPS          writerGUID;
   ObjectId	         roid,woid;
   SequenceNumber     fsn,lsn;

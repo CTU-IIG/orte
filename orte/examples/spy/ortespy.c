@@ -21,12 +21,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #ifndef _WIN32
   #include <signal.h>
 #endif
 #include "orte_api.h"
-
+#ifdef HAVE_CONFIG_H
+  #ifdef HAVE_GETOPT_H
+    #include <getopt.h>
+  #endif
+  #ifdef HAVE_UNISTD_H
+    #include <unistd.h> //getopt.h for DarWin, Solaris, ...
+  #endif
+#else
+  #include <getopt.h>
+#endif
 #include "string.h"
 
 ORTEDomain              *d;
@@ -70,11 +78,11 @@ subscriptionCallBack(const char *topic, const char *type, void *param) {
 }
 
 static void usage(void) {
-  printf("usage: ORTESpy <parameters> \n");
+  printf("usage: ortespy <parameters> \n");
   printf("  -d, --domain <domain>         working manager domain\n");
   printf("  -v, --verbosity <level>       set verbosity level SECTION, up to LEVEL:...\n");
-  printf("      examples: ORTEManager -v 51,7:32,5 sections 51 and 32\n");
-  printf("                ORTEManager -v ALL,7     all sections up to level 7\n");
+  printf("      examples: ORTEManager -v 51.7:32.5 sections 51 and 32\n");
+  printf("                ORTEManager -v ALL.7     all sections up to level 7\n");
   printf("  -R, --refresh <s>             refresh period in second(s)\n");
   printf("  -P, --purge <s>               purge time in second(s)\n");
   printf("  -e, --expiration <s>          expiration time of manager in second(s)\n");
@@ -84,6 +92,7 @@ static void usage(void) {
 }
 
 int main(int argc,char *argv[]) {
+#if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   static struct option long_opts[] = {
     { "domain",1,0, 'd' },
     { "verbosity",1,0, 'v' },
@@ -95,6 +104,7 @@ int main(int argc,char *argv[]) {
     { "help",  0, 0, 'h' },
     { 0, 0, 0, 0}
   };
+#endif
   ORTEDomainProp          dp; 
   int                     opt,domain=ORTE_DEFAULT_DOMAIN;
   
@@ -102,8 +112,12 @@ int main(int argc,char *argv[]) {
   ORTEDomainPropDefaultGet(&dp);
   NTPTIME_BUILD(deadline,3); 
   NTPTIME_BUILD(minimumSeparation,0); 
- 
+
+#if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   while ((opt = getopt_long(argc, argv, "d:v:R:E:P:l:Vh",&long_opts[0], NULL)) != EOF) {
+#else
+  while ((opt = getopt(argc, argv, "d:v:R:E:P:l:Vh")) != EOF) {
+#endif
     switch (opt) {
       case 'd':
         domain=strtol(optarg,NULL,0);

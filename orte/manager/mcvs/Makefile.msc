@@ -17,13 +17,13 @@ CC=		    $(MSCDIR)\bin\cl
 LINK=		$(MSCDIR)\bin\link
 LIBRARIAN=	$(MSCDIR)\bin\lib
 
-TARGETS=ORTEManager.exe
+TARGETS=ortemanager.exe
 
 all :	default
 
 default : $(TARGETS)
 
-ORTEManager.exe: ..\ORTEManager.obj getopt.obj getopt_long.obj
+ortemanager.exe: ..\service.obj ..\ortemanager.obj getopt.obj getopt_long.obj
 
 # ---------------------------------------------------------------------
 # Generic Compilation Rules
@@ -36,7 +36,7 @@ ORTEManager.exe: ..\ORTEManager.obj getopt.obj getopt_long.obj
 	$(CC) $(CFLAGS) $< -Fo$*.obj
 
 .obj.exe:
-	$(LINK) -out:$@ getopt.obj getopt_long.obj $(ORTELIB) $< $(LIBS)
+	$(LINK) -out:$@ ..\service.obj getopt.obj getopt_long.obj $(ORTELIB) $< $(LIBS)
 
 clean :
     del *.obj

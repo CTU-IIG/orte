@@ -1,7 +1,14 @@
+v0.2.2 - 11/04/2004
+
+- added support new targets (Solaris, MacOS)
+- now ortemanager can be runnig like windows service
+- tested on big-endian machines
+
 v0.2.1 - 02/04/2004
 
-- bug in CDRStream format -> char -> u_int8_t
+- bug in CDRStream format -> char -> uint8_t
 - no fill callBack rutine in subscriber cause SIGSEV
+- change types u_intXX_t to uintXX_t
 
 
 v0.2.0 - 08/01/2004

@@ -23,13 +23,13 @@
 
 /**********************************************************************************/
 int32_t 
-RTPSAckCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
+RTPSAckCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
     SequenceNumber *seqNumber,
     ObjectId roid,ObjectId woid,Boolean f_bit) {
   SequenceNumber        sn_tmp;                    
                     
   if (max_msg_len<28) return -1;
-  rtps_msg[0]=(u_int8_t)ACK;
+  rtps_msg[0]=(uint8_t)ACK;
   rtps_msg[1]=ORTE_MY_MBO;
   if (f_bit) rtps_msg[1]|=2;
   *((ParameterLength*)(rtps_msg+2))=24;
@@ -39,14 +39,14 @@ RTPSAckCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
   *((ObjectId*)(rtps_msg+8))=woid;
   SeqNumberInc(sn_tmp,*seqNumber);
   *((SequenceNumber*)(rtps_msg+12))=sn_tmp;
-  *((u_int32_t*)(rtps_msg+20))=32;
-  *((u_int32_t*)(rtps_msg+24))=0;
+  *((uint32_t*)(rtps_msg+20))=32;
+  *((uint32_t*)(rtps_msg+24))=0;
   return 28;
 } 
 
 /**********************************************************************************/
 void 
-RTPSAck(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
+RTPSAck(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
   GUID_RTPS          readerGUID;
   CSTWriter          *cstWriter=NULL;
   CSTRemoteReader    *cstRemoteReader;

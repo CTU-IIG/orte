@@ -330,30 +330,30 @@ CSTWriterSendTimer(ORTEDomain *d,void *vcstRemoteReader) {
                        cstRemoteReader->guid.hid,
                        cstRemoteReader->guid.aid);
           len=32;
-          d->mbSend.cdrStream.bufferPtr[0]=(u_int8_t)VAR;
+          d->mbSend.cdrStream.bufferPtr[0]=(uint8_t)VAR;
           d->mbSend.cdrStream.bufferPtr[1]=ORTE_MY_MBO;
           if (csChangeForReader->csChange->alive) 
             d->mbSend.cdrStream.bufferPtr[1]|=4;
           *((ObjectId*)(d->mbSend.cdrStream.bufferPtr+4))=OID_UNKNOWN;
-          conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+4),0);
+          conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+4),0);
           *((ObjectId*)(d->mbSend.cdrStream.bufferPtr+8))=
             cstRemoteReader->cstWriter->guid.oid;
-          conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+8),0);
+          conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+8),0);
           if (csChangeForReader->csChange->guid.oid==OID_APP) {
             d->mbSend.cdrStream.bufferPtr[1]|=8;
             *((HostId*)(d->mbSend.cdrStream.bufferPtr+12))=
               csChangeForReader->csChange->guid.hid;
-            conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+12),0);
+            conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+12),0);
             *((AppId*)(d->mbSend.cdrStream.bufferPtr+16))=
               csChangeForReader->csChange->guid.aid;
-            conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+16),0);
+            conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+16),0);
           } else {
             len-=8;
             off=-8;
           }
           *((ObjectId*)(d->mbSend.cdrStream.bufferPtr+20+off))=
             csChangeForReader->csChange->guid.oid;
-          conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+20+off),0);
+          conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+20+off),0);
           *((SequenceNumber*)(d->mbSend.cdrStream.bufferPtr+24+off))=
             csChangeForReader->csChange->sn;
           if (!CSChangeAttributes_is_empty(csChangeForReader->csChange)) {
@@ -373,13 +373,13 @@ CSTWriterSendTimer(ORTEDomain *d,void *vcstRemoteReader) {
                        cstRemoteReader->guid.hid,
                        cstRemoteReader->guid.aid);
           len=32;
-          d->mbSend.cdrStream.bufferPtr[0]=(u_int8_t)GAP;
+          d->mbSend.cdrStream.bufferPtr[0]=(uint8_t)GAP;
           d->mbSend.cdrStream.bufferPtr[1]=ORTE_MY_MBO;
           *((ObjectId*)(d->mbSend.cdrStream.bufferPtr+4))=OID_UNKNOWN;
-          conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+4),0);
+          conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+4),0);
           *((ObjectId*)(d->mbSend.cdrStream.bufferPtr+8))=
             cstRemoteReader->cstWriter->guid.oid;
-          conv_u32((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+8),0);
+          conv_u32((uint32_t*)(d->mbSend.cdrStream.bufferPtr+8),0);
           *((SequenceNumber*)(d->mbSend.cdrStream.bufferPtr+12))=
             csChangeForReader->csChange->sn;
           conv_sn((SequenceNumber*)(d->mbSend.cdrStream.bufferPtr+12),ORTE_MY_MBO);
@@ -387,7 +387,7 @@ CSTWriterSendTimer(ORTEDomain *d,void *vcstRemoteReader) {
                        csChangeForReader->csChange->sn,
                        csChangeForReader->csChange->gapSN);
           conv_sn((SequenceNumber*)(d->mbSend.cdrStream.bufferPtr+20),ORTE_MY_MBO);
-          *((u_int32_t*)(d->mbSend.cdrStream.bufferPtr+28))=0;    //NumBits 
+          *((uint32_t*)(d->mbSend.cdrStream.bufferPtr+28))=0;    //NumBits 
         }
         *((ParameterLength*)(d->mbSend.cdrStream.bufferPtr+2))=len-4; 
         d->mbSend.cdrStream.bufferPtr+=len;

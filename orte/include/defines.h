@@ -74,7 +74,8 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////////////
 // conv
-#if defined CONFIG_ORTE_WIN || defined _MSC_VER
+//#if defined CONFIG_ORTE_WIN || defined _MSC_VER || !define HAVE_BYTESWAP_H
+#if !defined HAVE_BYTESWAP_H && !defined HAVE_ASM_BYTEORDER_H
 /* Swap bytes in 16 bit value.  */
 #define bswap_16(x) \
      ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)) 

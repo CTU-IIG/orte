@@ -27,7 +27,7 @@
 #include "orte.h"
 
 /**********************************************************************************/
-void conv_u16(u_int16_t *x,char ef) {
+void conv_u16(uint16_t *x,char ef) {
   #if WORDS_BIGENDIAN
      if(ef) *x=bswap_16(*x);
   #else
@@ -36,7 +36,7 @@ void conv_u16(u_int16_t *x,char ef) {
 }
 
 /**********************************************************************************/
-void conv_u32(u_int32_t *x,char ef) {
+void conv_u32(uint32_t *x,char ef) {
   #if WORDS_BIGENDIAN
      if(ef) *x=bswap_32(*x);
   #else
@@ -93,8 +93,8 @@ getStringPart(char *string,char divChar,int *iterator,char *buff) {
     *dcp=0;           //temporary end of string
     strcpy(buff,cp);  
     *dcp=tcp;         //restore value
-    if (dcp[0]!=0) (*iterator)=dcp-cp+1;//next value
-    else (*iterator)=dcp-cp;
+    if (dcp[0]!=0) (*iterator)+=dcp-cp+1;//next value
+    else (*iterator)=len;
     return 1;
   }
   return 0;

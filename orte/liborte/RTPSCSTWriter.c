@@ -56,7 +56,9 @@ CSTWriterInit(ORTEDomain *d,CSTWriter *cstWriter,ObjectEntryOID *object,
   cstWriter->domain=d;
   cstWriter->typeRegister=typeRegister;
   if ((cstWriter->guid.oid & 0x07)==OID_PUBLICATION) {
-    sem_init(&cstWriter->semCSChangeDestroyed, 0, 0);
+    pthread_cond_init(&cstWriter->condCSChangeDestroyed,NULL);
+    pthread_mutex_init(&cstWriter->mutexCSChangeDestroyed,NULL);
+    cstWriter->condValueCSChangeDestroyed=0;
   }
   //add event for refresh
   if (NtpTimeCmp(cstWriter->params.refreshPeriod,iNtpTime)!=0) {
@@ -95,7 +97,8 @@ CSTWriterDelete(ORTEDomain *d,CSTWriter *cstWriter) {
       &cstWriter->refreshPeriodTimer,
       0);
   if ((cstWriter->guid.oid & 0x07)==OID_PUBLICATION) {
-    sem_destroy(&cstWriter->semCSChangeDestroyed);
+    pthread_cond_destroy(&cstWriter->condCSChangeDestroyed);
+    pthread_mutex_destroy(&cstWriter->mutexCSChangeDestroyed);
   }
   pthread_rwlock_destroy(&cstWriter->lock);
   debug(51,10) ("CSTWriterDelete: finished\n");
@@ -402,7 +405,10 @@ CSTWriterDestroyCSChangeForReader(CSTRemoteReader *cstRemoteReader,
         CSTWriterDestroyCSChange(cstRemoteReader->cstWriter->domain,
             cstRemoteReader->cstWriter,csChange);
       }
-      sem_post(&cstRemoteReader->cstWriter->semCSChangeDestroyed);
+      pthread_mutex_lock(&cstRemoteReader->cstWriter->mutexCSChangeDestroyed);
+      cstRemoteReader->cstWriter->condValueCSChangeDestroyed=1;
+      pthread_cond_signal(&cstRemoteReader->cstWriter->condCSChangeDestroyed);
+      pthread_mutex_unlock(&cstRemoteReader->cstWriter->mutexCSChangeDestroyed);
       debug(51,5) ("Publication: new queue level (%d)\n",
                   cstRemoteReader->cstWriter->csChangesCounter);
     }

@@ -115,8 +115,8 @@ typedef struct ORTEMulticastProp {
  * Struct @ORTECDRStream is used by serialization and deserialization functions.
  */
 typedef struct ORTECDRStream {
-  u_int8_t       *buffer;
-  u_int8_t       *bufferPtr;
+  uint8_t        *buffer;
+  uint8_t        *bufferPtr;
   Boolean        needByteSwap;
   int            length;
 } ORTECDRStream;
@@ -204,10 +204,10 @@ typedef struct ORTEPublProp {
   TypeChecksum           typeChecksum;
   Boolean                expectsAck;
   NtpTime                persistence;
-  u_int32_t              reliabilityOffered;
-  u_int32_t              sendQueueSize;
+  uint32_t               reliabilityOffered;
+  uint32_t               sendQueueSize;
   int32_t                strength;
-  u_int32_t              criticalQueueLevel;
+  uint32_t               criticalQueueLevel;
   NtpTime                HBNornalRate;
   NtpTime                HBCQLRate;
   unsigned int           HBMaxRetries;
@@ -230,11 +230,11 @@ typedef struct ORTESubsProp {
   TypeName               typeName;
   TypeChecksum           typeChecksum;
   NtpTime                minimumSeparation;
-  u_int32_t              recvQueueSize;
-  u_int32_t              reliabilityRequested;
+  uint32_t               recvQueueSize;
+  uint32_t               reliabilityRequested;
   //additional parameters
   NtpTime                deadline;
-  u_int32_t              mode;
+  uint32_t               mode;
 }  ORTESubsProp;
 
 /**

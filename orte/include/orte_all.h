@@ -45,9 +45,6 @@ extern "C" {
 #ifdef HAVE_NETDB_H
   #include <netdb.h>
 #endif
-#ifdef HAVE_NETINET_IN_H
-  #include <netinet/in.h>
-#endif
 #ifdef HAVE_STDLIB_H
   #include <stdlib.h>
 #endif
@@ -56,9 +53,6 @@ extern "C" {
 #endif
 #ifdef HAVE_SYS_IOCTL_H
   #include <sys/ioctl.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-  #include <sys/socket.h>
 #endif
 #ifdef HAVE_SYS_TIME_H
   #include <sys/time.h>
@@ -69,29 +63,38 @@ extern "C" {
 #ifdef HAVE_PTHREAD_H
   #include <pthread.h>
 #endif
-#ifdef HAVE_STDARG_H
-  #include <stdarg.h>
-#endif
 #ifdef HAVE_SYS_TYPES_H
   #include <sys/types.h>
 #endif
-#ifdef HAVE_NET_IF_H
-  #include <net/if.h>
+#ifdef HAVE_SYS_SOCKIO_H
+  #include <sys/sockio.h>
+#endif
+#ifdef HAVE_STDARG_H
+  #include <stdarg.h>
 #endif
 #ifdef HAVE_BYTESWAP_H
   #include <byteswap.h>
 #endif
-#ifdef HAVE_CTYPE_H
-  #include <ctype.h>
-#endif
-#ifdef HAVE_SEMAPHORE_H
-  #include <semaphore.h>
-#endif
 #ifdef HAVE_GETOPT_H
   #include <getopt.h>
 #endif
+#ifdef HAVE_CTYPE_H
+  #include <ctype.h>
+#endif
 #ifdef HAVE_SIGNAL_H
   #include <signal.h>
+#endif
+#ifdef HAVE_STDINT_H
+  #include <stdint.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+  #include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+  #include <netinet/in.h>
+#endif
+#ifdef HAVE_NET_IF_H
+  #include <net/if.h>
 #endif
 //win32 headers
 #if defined HAVE_WINSOCK2_H && !HAVE_SYS_SOCKET_H
@@ -162,7 +165,6 @@ extern "C" {
 #elif CONFIG_ORTE_MINGW
   #define SOCK_WIN
   #include <win32/pthread.h>
-  #include <win32/semaphore.h>
   #include <win32/timeval.h>
   #ifndef __GETOPT_H__  //mingw
     #include <win32/getopt.h>
@@ -189,12 +191,11 @@ extern "C" {
   #include <ws2tcpip.h>
   #include <windows.h>
   #include <win32/pthread.h>
-  #include <win32/semaphore.h>
   #include <win32/timeval.h>
   #include <win32/getopt.h>
   #include <ew_types.h>
   #define ioctl ioctlsocket
-  #define ORTE_PACKAGE_STRING "orte 0.2.1"
+  #define ORTE_PACKAGE_STRING "orte 0.2.2"
 #endif
 
 #ifdef __cplusplus

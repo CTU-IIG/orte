@@ -22,13 +22,13 @@
 #include "orte.h"
 /**********************************************************************************/
 int32_t
-RTPSIssueCreateHeader(u_int8_t *rtps_msg,u_int32_t max_msg_len,u_int32_t length,
+RTPSIssueCreateHeader(uint8_t *rtps_msg,uint32_t max_msg_len,uint32_t length,
     ObjectId roid,ObjectId woid,SequenceNumber sn) {
   
   if (max_msg_len<20) return -1;
-  rtps_msg[0]=(u_int8_t)ISSUE;
+  rtps_msg[0]=(uint8_t)ISSUE;
   rtps_msg[1]=ORTE_MY_MBO;
-  *((ParameterLength*)(rtps_msg+2))=(u_int16_t)length;
+  *((ParameterLength*)(rtps_msg+2))=(uint16_t)length;
   conv_u32(&roid,0);
   *((ObjectId*)(rtps_msg+4))=roid;
   conv_u32(&woid,0);
@@ -39,19 +39,19 @@ RTPSIssueCreateHeader(u_int8_t *rtps_msg,u_int32_t max_msg_len,u_int32_t length,
 
 /**********************************************************************************/
 void 
-RTPSIssue(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
+RTPSIssue(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
   GUID_RTPS          guid,writerGUID;
   ObjectId           roid,woid;
   SequenceNumber     sn,sn_tmp;   
   int8_t             e_bit,p_bit;
-  u_int16_t          submsg_len;
+  uint16_t           submsg_len;
   CSTReader          *cstReader;
   CSTRemoteWriter    *cstRemoteWriter;
   CSChange           *csChange=NULL;
 
   e_bit=rtps_msg[1] & 0x01;
   p_bit=(rtps_msg[1] & 0x02)>>1;
-  submsg_len=*((u_int16_t*)(rtps_msg+2));
+  submsg_len=*((uint16_t*)(rtps_msg+2));
   conv_u16(&submsg_len,e_bit);
   roid=*((ObjectId*)(rtps_msg+4));              /* readerObjectId */
   conv_u32(&roid,0);

@@ -47,15 +47,4 @@ static inline int atoi(const char* nptr)
     return simple_strtol(nptr, (char **)NULL, 10);
 }
 
-/*static char inet_ntoa_buf[16];
-static inline char *inet_ntoa(struct in_addr in) {
-  unsigned char *octet;
-
-  octet = (unsigned char *)&(in.s_addr);
-  sprintf(inet_ntoa_buf, "%u.%u.%u.%u", octet[0], octet[1], octet[2], octet[3]);
-
-  return inet_ntoa_buf;
-}
-*/
-
 #endif /* _COMPAT_H */

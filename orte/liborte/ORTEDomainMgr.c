@@ -34,7 +34,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   char              sbuff[128];
   int               i;
-  u_int16_t         port=0;
+  uint16_t          port=0;
 
   debug(29,10) ("ORTEDomainMgrCreate: start\n");
   //Create domainApplication
@@ -51,7 +51,9 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   pthread_rwlock_init(&d->objectEntry.objRootLock,NULL);
   htimerRoot_init_queue(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.htimRootLock,NULL);
-  sem_init(&d->objectEntry.htimSendSem, 0, 0);
+  pthread_cond_init(&d->objectEntry.htimSendCond,NULL);
+  pthread_mutex_init(&d->objectEntry.htimSendMutex,NULL);
+  d->objectEntry.htimSendCondValue=0;
   
   //create domainProp 
   if (prop!=NULL) {
@@ -67,7 +69,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
       strcat(iflocal,IPAddressToString(d->domainProp.IFProp[i].ipAddress,sIPAddress));
     debug(29,2) ("ORTEDomainMgrCreate: localIPAddres(es) %s\n",iflocal);
   } else{
-    debug(29,2) ("ORTEDomainMgrCreate: no activ interface card\n");
+    debug(29,2) ("ORTEDomainMgrCreate: no active interface card\n");
   }
 
   //DomainEvents
@@ -79,10 +81,10 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
 
   //local buffers
   d->mbRecvMetatraffic.cdrStream.buffer=
-      (u_int8_t*)MALLOC(d->domainProp.recvBuffSize);
+      (uint8_t*)MALLOC(d->domainProp.recvBuffSize);
   d->mbRecvUserdata.cdrStream.buffer=NULL;
   d->mbSend.cdrStream.buffer=
-      (u_int8_t*)MALLOC(d->domainProp.sendBuffSize);
+      (uint8_t*)MALLOC(d->domainProp.sendBuffSize);
   if ((!d->mbRecvMetatraffic.cdrStream.buffer) || 
       (!d->mbSend.cdrStream.buffer)) {    //no memory
     FREE(d->mbRecvMetatraffic.cdrStream.buffer);
@@ -314,8 +316,9 @@ ORTEDomainMgrDestroy(ORTEDomain *d) {
   sock_cleanup(&d->taskRecvMetatraffic.sock);
   sock_cleanup(&d->taskSend.sock);
 
-  //Semas
-  sem_destroy(&d->objectEntry.htimSendSem);
+  //Signals
+  pthread_cond_destroy(&d->objectEntry.htimSendCond);
+  pthread_mutex_destroy(&d->objectEntry.htimSendMutex);
   
   //rwLocks
   pthread_rwlock_destroy(&d->objectEntry.objRootLock);

@@ -22,7 +22,7 @@
 #include "orte.h"
 
 /**********************************************************************************/
-void RTPSPad(u_int8_t *rtps_msg,MessageInterpret *mi) {
+void RTPSPad(uint8_t *rtps_msg,MessageInterpret *mi) {
   //nothing to do
 
   debug(41,3) ("  RTPSInfoPAD:\n");

@@ -40,7 +40,7 @@ sock_setsockopt(sock_t *sock,int optname,const char *optval, int optlen);
 extern int
 sock_getsockopt(sock_t *sock,int optname,char *optval, int *optlen);
 extern int
-sock_bind(sock_t *sock,u_int16_t port);
+sock_bind(sock_t *sock,uint16_t port);
 extern int
 sock_recvfrom(sock_t *sock, void *buf, int max_len,struct sockaddr_in *des,int des_len);
 extern int
@@ -53,9 +53,9 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount);
 ///////////////////////////////////////////////////////////////////////////////
 // conv.c
 extern void 
-conv_u16(u_int16_t *x,char ef);
+conv_u16(uint16_t *x,char ef);
 extern void 
-conv_u32(u_int32_t *x,char ef);
+conv_u32(uint32_t *x,char ef);
 extern void 
 conv_sn(SequenceNumber *sn,char ef);
 extern void 
@@ -199,10 +199,10 @@ extern int
 parameterDelete(CSChange *csChange);
 extern int
 parameterCodeStreamFromCSChange(CSChange *csChange,
-    u_int8_t *rtps_msg,u_int32_t max_msg_len);
+    uint8_t *rtps_msg,uint32_t max_msg_len);
 extern int
-parameterDecodeStreamToCSChange(CSChange *csChange,u_int8_t *rtps_msg,
-    u_int16_t submsg_len,u_int8_t needByteSwap);
+parameterDecodeStreamToCSChange(CSChange *csChange,uint8_t *rtps_msg,
+    uint16_t submsg_len,uint8_t needByteSwap);
 extern int
 parameterUpdateCSChange(
      CSChange *csChange,AppParams *ap,Boolean Manager);
@@ -233,7 +233,7 @@ GAVL_CUST_NODE_INT_DEC(ORTEType, TypeEntry, TypeNode, const char *,
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEThreadUtils.c
 extern void
-ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,u_int16_t port);
+ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,uint16_t port);
 extern void
 ORTEDomainWakeUpSendingThread(ObjectEntry *objectEntry);
 
@@ -255,75 +255,75 @@ ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta);
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSHeader.c
 extern int16_t 
-RTPSHeaderCreate(u_int8_t *msg,HostId hid,AppId aid);
+RTPSHeaderCreate(uint8_t *msg,HostId hid,AppId aid);
 extern int16_t 
-RTPSHeaderCheck(u_int8_t *msg,int32_t len,MessageInterpret *mi);
+RTPSHeaderCheck(uint8_t *msg,int32_t len,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSPad.c
 extern void 
-RTPSPad(u_int8_t *rtps_msg,MessageInterpret *mi);
+RTPSPad(uint8_t *rtps_msg,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoDST.c
 extern void 
-RTPSInfoDST(u_int8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoDST(uint8_t *rtps_msg,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoREPLY.c
 extern void 
-RTPSInfoREPLY(u_int8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoREPLY(uint8_t *rtps_msg,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoREPLY.c
 extern int32_t 
-RTPSInfoREPLYCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
+RTPSInfoREPLYCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
     IPAddress ipaddress,Port port);
 extern void 
-RTPSInfoSRC(u_int8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoSRC(uint8_t *rtps_msg,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoTS.c
 extern int32_t 
-RTPSInfoTSCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,NtpTime time);
+RTPSInfoTSCreate(uint8_t *rtps_msg,uint32_t max_msg_len,NtpTime time);
 extern void 
-RTPSInfoTS(u_int8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoTS(uint8_t *rtps_msg,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSVar.c
 extern void 
-RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSAck.c
 extern int32_t 
-RTPSAckCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
+RTPSAckCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
     SequenceNumber *seqNumber,
     ObjectId roid,ObjectId woid,Boolean f_bit);
 extern void 
-RTPSAck(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSAck(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSHeardBeat.c
 extern int 
-RTPSHeardBeatCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
+RTPSHeardBeatCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
     SequenceNumber *firstSeqNumber,SequenceNumber *lastSeqNumber,
     ObjectId woid,ObjectId roid,Boolean f_bit);
 extern void 
-RTPSHeardBeat(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi);
+RTPSHeardBeat(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSGap.c
 extern void 
-RTPSGap(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSIssue.c
 extern int32_t
-RTPSIssueCreateHeader(u_int8_t *rtps_msg,u_int32_t max_msg_len,u_int32_t length,
+RTPSIssueCreateHeader(uint8_t *rtps_msg,uint32_t max_msg_len,uint32_t length,
     ObjectId roid,ObjectId woid,SequenceNumber sn);
 extern void 
-RTPSIssue(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSIssue(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSUtils.c

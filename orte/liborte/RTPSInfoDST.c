@@ -22,14 +22,14 @@
 #include "orte.h"
 
 /**********************************************************************************/
-void RTPSInfoDST(u_int8_t *rtps_msg,MessageInterpret *mi) {
+void RTPSInfoDST(uint8_t *rtps_msg,MessageInterpret *mi) {
   HostId             hid;
   AppId              aid;
 
   //parsing
   hid=*((HostId*)(rtps_msg+4));                 /* HostId */
   conv_u32(&hid,0);
-  aid=*((u_int32_t*)(rtps_msg+8));              /* AppId */
+  aid=*((uint32_t*)(rtps_msg+8));              /* AppId */
   conv_u32(&aid,0);
 
   debug(42,3) ("  RTPSInfoDST:\n");

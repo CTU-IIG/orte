@@ -23,11 +23,11 @@
 
 /**********************************************************************************/
 int32_t 
-RTPSInfoREPLYCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
+RTPSInfoREPLYCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
     IPAddress ipaddress,Port port) {
 
   if (max_msg_len<12) return -1;
-  rtps_msg[0]=(u_int8_t)INFO_REPLY;
+  rtps_msg[0]=(uint8_t)INFO_REPLY;
   rtps_msg[1]=ORTE_MY_MBO;
   *((ParameterLength*)(rtps_msg+2))=8;
   *((ObjectId*)(rtps_msg+4))=ipaddress;
@@ -37,7 +37,7 @@ RTPSInfoREPLYCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
 
 /**********************************************************************************/
 void 
-RTPSInfoREPLY(u_int8_t *rtps_msg,MessageInterpret *mi) {
+RTPSInfoREPLY(uint8_t *rtps_msg,MessageInterpret *mi) {
   IPAddress          ipa;
   Port               port;
   int8_t             e_bit;
@@ -57,9 +57,9 @@ RTPSInfoREPLY(u_int8_t *rtps_msg,MessageInterpret *mi) {
   }
   mi->unicastReplyPort=port;
   if (rtps_msg[1] & 0x02) {
-    ipa=*((u_int32_t*)(rtps_msg+12));           /* multicastReplyIPAddress */
+    ipa=*((uint32_t*)(rtps_msg+12));           /* multicastReplyIPAddress */
     conv_u32(&ipa,e_bit);
-    port=*((u_int32_t*)(rtps_msg+16));          /* multicastReplyPort */
+    port=*((uint32_t*)(rtps_msg+16));          /* multicastReplyPort */
     conv_u32(&port,e_bit);
     mi->multicastReplyIPAddress=ipa;
     mi->multicastReplyPort=port;

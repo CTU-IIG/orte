@@ -8,11 +8,15 @@ RTPS is new application layer protocol targeted to real-time communication
 area, which is build on top of standard UDP stack.
 
 Which targets are supported by ORTE?
---------------------------
-Linux
+-----------------------------------
+UNIX - Linux, Solars, MacOS
 Windows - MinGW, CygWin, MSVC
-RTLinux
-RTAI - RTNet
+RTLinux - with preliminary UDP stack
+RTAI - with RTNet
+
+note: was tested on
+sparc-sun-solaris2.9
+powerpc-apple-darwin6.8
 
 How to install it?
 ------------------

@@ -43,14 +43,14 @@ parameterDelete(CSChange *csChange) {
 /*****************************************************************************/
 int
 parameterCodeStreamFromCSChange(CSChange *csChange,
-    u_int8_t *rtps_msg,u_int32_t max_msg_len) {
+    uint8_t *rtps_msg,uint32_t max_msg_len) {
   ParameterSequence *ps;
   int               result=0;
 
   ul_list_for_each(CSChangeAttributes,
                    csChange,
                    ps) {
-    if (max_msg_len<(u_int32_t)(4+ps->parameterLength)) return -1; //no memory for copy
+    if (max_msg_len<(uint32_t)(4+ps->parameterLength)) return -1; //no memory for copy
     *((ParameterId*)rtps_msg)=ps->parameterID;
     *((ParameterLength*)(rtps_msg+2))=ps->parameterLength; 
     if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH) {
@@ -67,13 +67,13 @@ parameterCodeStreamFromCSChange(CSChange *csChange,
 
 /*****************************************************************************/
 int
-parameterDecodeStreamToCSChange(CSChange *csChange,u_int8_t *rtps_msg,
-    u_int16_t submsg_len,u_int8_t e_bit) {
+parameterDecodeStreamToCSChange(CSChange *csChange,uint8_t *rtps_msg,
+    uint16_t submsg_len,uint8_t e_bit) {
   ParameterId       parameterId;
   ParameterLength   parameterLength;
   ParameterSequence *ps;
-  u_int16_t         counter=0;
-  u_int8_t          *rtps_msg_it=rtps_msg;
+  uint16_t          counter=0;
+  uint8_t           *rtps_msg_it=rtps_msg;
 
   CSChangeAttributes_init_head(csChange);
   //count number of parameters
@@ -117,8 +117,8 @@ parameterDecodeStreamToCSChange(CSChange *csChange,u_int8_t *rtps_msg,
       case PID_RELIABILITY_OFFERED:
       case PID_RELIABILITY_REQUESTED:
       case PID_MANAGER_KEY:
-        *(u_int32_t*)ps->parameterLocal=*((u_int32_t*)(rtps_msg_it+4));
-        conv_u32((u_int32_t*)ps->parameterLocal,e_bit);
+        *(uint32_t*)ps->parameterLocal=*((uint32_t*)(rtps_msg_it+4));
+        conv_u32((uint32_t*)ps->parameterLocal,e_bit);
         break;
       //IPAddress
       case PID_MATATRAFFIC_MULTICAST_IPADDRESS:
@@ -255,7 +255,7 @@ parameterUpdateCSChange(
   for (i=0;i<ap->managerKeyCount;i++) {
     ps->parameterID=PID_MANAGER_KEY;
     ps->parameterLength=4;
-    *(u_int32_t*)ps->parameterLocal=ap->managerKeyList[i];
+    *(uint32_t*)ps->parameterLocal=ap->managerKeyList[i];
     ps->parameter=NULL;
     CSChangeAttributes_insert(csChange,ps);
     ps++;
@@ -286,21 +286,21 @@ parameterUpdateCSChangeFromPublication(CSChange *csChange,ORTEPublProp *pp) {
   /* reliabitityOffered */
   ps->parameterID=PID_RELIABILITY_OFFERED;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=pp->reliabilityOffered;
+  *(uint32_t*)ps->parameterLocal=pp->reliabilityOffered;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
   /* sendQueueSize */
   ps->parameterID=PID_SEND_QUEUE_SIZE;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=pp->sendQueueSize;
+  *(uint32_t*)ps->parameterLocal=pp->sendQueueSize;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
   /* strength */
   ps->parameterID=PID_STRENGTH;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=pp->strength;
+  *(uint32_t*)ps->parameterLocal=pp->strength;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
@@ -308,16 +308,16 @@ parameterUpdateCSChangeFromPublication(CSChange *csChange,ORTEPublProp *pp) {
   ps->parameterID=PID_TOPIC;
   len=strlen(pp->topic);
   ps->parameter=(int8_t*)MALLOC(len+8);
-  *(u_int32_t*)ps->parameter=len+1;
+  *(uint32_t*)ps->parameter=len+1;
   strncpy((4+ps->parameter),pp->topic,len);
-  *(u_int32_t*)(ps->parameter+len+4)=0;
+  *(uint32_t*)(ps->parameter+len+4)=0;
   ps->parameterLength=len+8;
   CSChangeAttributes_insert(csChange,ps);
   ps++;  
   /* typeCheckSum */
   ps->parameterID=PID_TYPE_CHECKSUM;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=pp->typeChecksum;
+  *(uint32_t*)ps->parameterLocal=pp->typeChecksum;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
@@ -325,9 +325,9 @@ parameterUpdateCSChangeFromPublication(CSChange *csChange,ORTEPublProp *pp) {
   ps->parameterID=PID_TYPE_NAME;
   len=strlen(pp->typeName);
   ps->parameter=(int8_t*)MALLOC(len+8);
-  *(u_int32_t*)ps->parameter=len+1;
+  *(uint32_t*)ps->parameter=len+1;
   strncpy((4+ps->parameter),pp->typeName,len);
-  *(u_int32_t*)(ps->parameter+len+4)=0;
+  *(uint32_t*)(ps->parameter+len+4)=0;
   ps->parameterLength=len+8;
   CSChangeAttributes_insert(csChange,ps);
   ps++;  
@@ -357,14 +357,14 @@ parameterUpdateCSChangeFromSubscription(CSChange *csChange,ORTESubsProp *sp) {
   /* receive queue size*/
   ps->parameterID=PID_RECV_QUEUE_SIZE;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=sp->recvQueueSize;
+  *(uint32_t*)ps->parameterLocal=sp->recvQueueSize;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
   /* reliabitityRequested */
   ps->parameterID=PID_RELIABILITY_REQUESTED;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=sp->reliabilityRequested;
+  *(uint32_t*)ps->parameterLocal=sp->reliabilityRequested;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
@@ -372,16 +372,16 @@ parameterUpdateCSChangeFromSubscription(CSChange *csChange,ORTESubsProp *sp) {
   ps->parameterID=PID_TOPIC;
   len=strlen(sp->topic);
   ps->parameter=(int8_t*)MALLOC(len+8);
-  *(u_int32_t*)ps->parameter=len+1;
+  *(uint32_t*)ps->parameter=len+1;
   strncpy((4+ps->parameter),sp->topic,len);
-  *(u_int32_t*)(ps->parameter+len+4)=0;
+  *(uint32_t*)(ps->parameter+len+4)=0;
   ps->parameterLength=len+8;
   CSChangeAttributes_insert(csChange,ps);
   ps++;  
   /* typeCheckSum */
   ps->parameterID=PID_TYPE_CHECKSUM;
   ps->parameterLength=4;
-  *(u_int32_t*)ps->parameterLocal=sp->typeChecksum;
+  *(uint32_t*)ps->parameterLocal=sp->typeChecksum;
   ps->parameter=NULL;
   CSChangeAttributes_insert(csChange,ps);
   ps++;
@@ -389,9 +389,9 @@ parameterUpdateCSChangeFromSubscription(CSChange *csChange,ORTESubsProp *sp) {
   ps->parameterID=PID_TYPE_NAME;
   len=strlen(sp->typeName);
   ps->parameter=(int8_t*)MALLOC(len+8);
-  *(u_int32_t*)ps->parameter=len+1;
+  *(uint32_t*)ps->parameter=len+1;
   strncpy((4+ps->parameter),sp->typeName,len);
-  *(u_int32_t*)(ps->parameter+len+4)=0;
+  *(uint32_t*)(ps->parameter+len+4)=0;
   ps->parameterLength=len+8;
   CSChangeAttributes_insert(csChange,ps);
   ps++;  
@@ -420,7 +420,7 @@ parameterUpdateApplication(CSChange *csChange,AppParams *ap) {
         break;
       case PID_MANAGER_KEY:
         ap->managerKeyList[ap->managerKeyCount]=
-            *(u_int32_t*)ps->parameterLocal;
+            *(uint32_t*)ps->parameterLocal;
         ap->managerKeyCount++;
         break;
       case PID_MATATRAFFIC_MULTICAST_IPADDRESS:
@@ -508,10 +508,10 @@ parameterUpdateSubscription(CSChange *csChange,ORTESubsProp *sp) {
         sp->minimumSeparation=*(NtpTime*)&ps->parameterLocal;
       break;
       case PID_RECV_QUEUE_SIZE:
-        sp->recvQueueSize=*(u_int32_t*)&ps->parameterLocal;
+        sp->recvQueueSize=*(uint32_t*)&ps->parameterLocal;
       break;
       case PID_RELIABILITY_REQUESTED:
-        sp->reliabilityRequested=*(u_int32_t*)&ps->parameterLocal;
+        sp->reliabilityRequested=*(uint32_t*)&ps->parameterLocal;
       break;
       case PID_TOPIC:
         if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH)

@@ -181,7 +181,7 @@ int
 ORTESubscriptionWaitForPublications(ORTESubscription *cstReader,NtpTime wait,
     unsigned int retries,unsigned int noPublications) {
   unsigned int wPublications;
-  u_int32_t sec,ms;
+  uint32_t sec,ms;
 
   if (!cstReader) return ORTE_BAD_HANDLE;
   NtpTimeDisAssembToMs(sec,ms,wait);

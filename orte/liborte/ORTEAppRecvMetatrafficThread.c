@@ -24,7 +24,7 @@
 /*****************************************************************************/
 void ORTEAppRecvMetatrafficThread(ORTEDomain *d) {
   struct sockaddr_in    des;
-  u_int16_t             submsg_len;
+  uint16_t              submsg_len;
   MessageInterpret      mi; 
 
   debug(22,10) ("ORTEAppRecvMetatrafficThread: start\n");
@@ -52,7 +52,7 @@ void ORTEAppRecvMetatrafficThread(ORTEDomain *d) {
         if ((d->mbRecvMetatraffic.cdrStream.bufferPtr-
              d->mbRecvMetatraffic.cdrStream.buffer+3)<=d->mbRecvMetatraffic.cdrStream.length) {
           char e_bit=d->mbRecvMetatraffic.cdrStream.bufferPtr[1] & 1;
-          submsg_len=*(u_int16_t*)&d->mbRecvMetatraffic.cdrStream.bufferPtr[2];
+          submsg_len=*(uint16_t*)&d->mbRecvMetatraffic.cdrStream.bufferPtr[2];
 	  conv_u16(&submsg_len,e_bit);
 	  // check if length of submessage OK
 	  if ((submsg_len+d->mbRecvMetatraffic.cdrStream.bufferPtr-

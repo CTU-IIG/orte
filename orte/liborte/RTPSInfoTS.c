@@ -23,9 +23,9 @@
 
 /**********************************************************************************/
 int32_t 
-RTPSInfoTSCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,NtpTime time) {
+RTPSInfoTSCreate(uint8_t *rtps_msg,uint32_t max_msg_len,NtpTime time) {
   if (max_msg_len<12) return -1;
-  rtps_msg[0]=(u_int8_t)INFO_TS;
+  rtps_msg[0]=(uint8_t)INFO_TS;
   rtps_msg[1]=ORTE_MY_MBO; //I-bit = 0
   *((ParameterLength*)(rtps_msg+2))=8;
   *((NtpTime*)(rtps_msg+4))=time;
@@ -34,7 +34,7 @@ RTPSInfoTSCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,NtpTime time) {
 
 /**********************************************************************************/
 void 
-RTPSInfoTS(u_int8_t *rtps_msg,MessageInterpret *mi) {
+RTPSInfoTS(uint8_t *rtps_msg,MessageInterpret *mi) {
   int8_t   e_bit=rtps_msg[1] & 0x01;
   char buff[MAX_STRING_NTPTIME_LENGTH];
 

@@ -24,12 +24,12 @@
 /*****************************************************************************/
 void 
 RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
-    SequenceNumber *sn,u_int32_t numbits,u_int8_t *bitmaps,Boolean e_bit) {
+    SequenceNumber *sn,uint32_t numbits,uint8_t *bitmaps,Boolean e_bit) {
   SequenceNumber      lsn,ssn;
-  u_int32_t           i;
+  uint32_t            i;
   int8_t              bit,bit_last=0;
   CSChange            *csChange;
-  u_int32_t           bitmap;
+  uint32_t            bitmap;
   
   if (SeqNumberCmp(*sn,cstRemoteWriter->sn)<0) return;//have to be sn>=writer_sn ! 
   if (SeqNumberCmp(*fsn,*sn)==1) return;              //cannot be fsn>sn ! 
@@ -52,7 +52,7 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
   //second case of GAP sn
   lsn=ssn=*sn;bit=0;
   for(i=0;i<numbits;i++) {
-    bitmap=*(((u_int32_t*)bitmaps)+i/32);
+    bitmap=*(((uint32_t*)bitmaps)+i/32);
     conv_u32(&bitmap,e_bit);
     bit=(bitmap & (1<<(31-i%32))) ? 1:0;
     if (i>0) {
@@ -96,13 +96,13 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
 
 /**********************************************************************************/
 void 
-RTPSGap(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
+RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
   CSTReader          *cstReader=NULL;
   CSTRemoteWriter    *cstRemoteWriter;
   GUID_RTPS          writerGUID;
   ObjectId	         roid,woid;
   SequenceNumber     sn,fsn;
-  u_int32_t          numbits;
+  uint32_t           numbits;
   int8_t             e_bit;
 
   e_bit=rtps_msg[1] & 0x01;
@@ -114,7 +114,7 @@ RTPSGap(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
   conv_sn(&fsn,e_bit);
   sn=*((SequenceNumber*)(rtps_msg+20));         /* Bitmap - SN    */
   conv_sn(&sn,e_bit);
-  numbits=*((u_int32_t*)(rtps_msg+28));         /* numbits */
+  numbits=*((uint32_t*)(rtps_msg+28));         /* numbits */
   conv_u32(&numbits,e_bit);
   writerGUID.hid=mi->sourceHostId;
   writerGUID.aid=mi->sourceAppId;

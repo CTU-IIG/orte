@@ -97,9 +97,6 @@
 /* Define to 1 if you have the <rtnet.h> header file. */
 /* #undef HAVE_RTNET_H */
 
-/* Define to 1 if you have the <semaphore.h> header file. */
-#define HAVE_SEMAPHORE_H 1
-
 /* Define to 1 if you have the <signal.h> header file. */
 /* #undef HAVE_SIGNAL_H */
 
@@ -158,19 +155,19 @@
 #define ORTE_PACKAGE_NAME "orte"
 
 /* Define to the full name and version of this package. */
-#define ORTE_PACKAGE_STRING "orte 0.2.1"
+#define ORTE_PACKAGE_STRING "orte 0.2.2"
 
 /* Define to the one symbol short name of this package. */
 #define ORTE_PACKAGE_TARNAME "orte"
 
 /* Define to the version of this package. */
-#define ORTE_PACKAGE_VERSION "0.2.1"
+#define ORTE_PACKAGE_VERSION "0.2.2"
 
 /* Define to 1 if you have the ANSI C header files. */
 /* #undef STDC_HEADERS */
 
 /* Version number of package */
-#define ORTE_VERSION "0.2.1"
+#define ORTE_VERSION "0.2.2"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

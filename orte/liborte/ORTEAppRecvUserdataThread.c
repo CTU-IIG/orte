@@ -24,7 +24,7 @@
 /*****************************************************************************/
 void ORTEAppRecvUserdataThread(ORTEDomain *d) {
   struct sockaddr_in    des;
-  u_int16_t             submsg_len;
+  uint16_t              submsg_len;
   MessageInterpret      mi; 
 
   debug(23,10) ("ORTEAppRecvUserdataThread: start\n");
@@ -52,7 +52,7 @@ void ORTEAppRecvUserdataThread(ORTEDomain *d) {
         if ((d->mbRecvUserdata.cdrStream.bufferPtr-
              d->mbRecvUserdata.cdrStream.buffer+3)<=d->mbRecvUserdata.cdrStream.length) {
           char e_bit=d->mbRecvUserdata.cdrStream.bufferPtr[1] & 1;
-          submsg_len=*(u_int16_t*)&d->mbRecvUserdata.cdrStream.bufferPtr[2];
+          submsg_len=*(uint16_t*)&d->mbRecvUserdata.cdrStream.bufferPtr[2];
           conv_u16(&submsg_len,e_bit);
           // check if length of submessage OK 
           if ((submsg_len+d->mbRecvUserdata.cdrStream.bufferPtr-

@@ -22,7 +22,7 @@
 #include "orte.h"
 
 /**********************************************************************************/
-void RTPSInfoSRC(u_int8_t *rtps_msg,MessageInterpret *mi) {
+void RTPSInfoSRC(uint8_t *rtps_msg,MessageInterpret *mi) {
   IPAddress          ipa;
   ProtocolVersion    protocol;
   VendorId           vid;

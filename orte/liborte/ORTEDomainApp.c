@@ -35,7 +35,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   char              sbuff[128];
   int               i;
-  u_int16_t         port=0;
+  uint16_t          port=0;
 
   debug(21,10) ("ORTEDomainAppCreate: start\n");
   //Create domainApplication
@@ -54,7 +54,9 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   pthread_rwlock_init(&d->objectEntry.objRootLock,NULL);
   htimerRoot_init_queue(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.htimRootLock,NULL);
-  sem_init(&d->objectEntry.htimSendSem, 0, 0);
+  pthread_cond_init(&d->objectEntry.htimSendCond,NULL);
+  pthread_mutex_init(&d->objectEntry.htimSendMutex,NULL);
+  d->objectEntry.htimSendCondValue=0;
   //publication,subscriptions
   d->publications.counter=d->subscriptions.counter=0;
   CSTWriter_init_root_field(&d->publications);
@@ -86,7 +88,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
       strcat(iflocal,IPAddressToString(d->domainProp.IFProp[i].ipAddress,sIPAddress));
     debug(21,2) ("ORTEDomainAppCreate: localIPAddres(es) %s\n",iflocal);
   } else{
-    debug(21,2) ("ORTEDomainAppCreate: no activ interface card\n");
+    debug(21,2) ("ORTEDomainAppCreate: no active interface card\n");
   }
 
   //DomainEvents
@@ -98,11 +100,11 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
 
   //local buffers
   d->mbRecvMetatraffic.cdrStream.buffer=
-      (u_int8_t*)MALLOC(d->domainProp.recvBuffSize);
+      (uint8_t*)MALLOC(d->domainProp.recvBuffSize);
   d->mbRecvUserdata.cdrStream.buffer=
-      (u_int8_t*)MALLOC(d->domainProp.recvBuffSize);
+      (uint8_t*)MALLOC(d->domainProp.recvBuffSize);
   d->mbSend.cdrStream.buffer=
-      (u_int8_t*)MALLOC(d->domainProp.sendBuffSize);
+      (uint8_t*)MALLOC(d->domainProp.sendBuffSize);
   if ((!d->mbRecvMetatraffic.cdrStream.buffer) || 
       (!d->mbRecvUserdata.cdrStream.buffer) || 
       (!d->mbSend.cdrStream.buffer)) {    //no memory
@@ -365,8 +367,9 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
   sock_cleanup(&d->taskRecvUserdata.sock);
   sock_cleanup(&d->taskSend.sock);
 
-  //Semas
-  sem_destroy(&d->objectEntry.htimSendSem);
+  //Signals
+  pthread_cond_destroy(&d->objectEntry.htimSendCond);
+  pthread_mutex_destroy(&d->objectEntry.htimSendMutex);
 
   //rwLocks
   pthread_rwlock_destroy(&d->objectEntry.objRootLock);

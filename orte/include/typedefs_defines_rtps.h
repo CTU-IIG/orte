@@ -49,7 +49,7 @@ typedef int32_t                  TypeChecksum;
    
   for example: IP address working nodes
 */
-typedef u_int32_t                HostId;
+typedef uint32_t                 HostId;
 #define HID_UNKNOWN              0x00
 
 /**
@@ -58,7 +58,7 @@ typedef u_int32_t                HostId;
   composed from: 3 bytes - instance Id
                  1 byte  - appKind (1 - ManagedApplication, 2 - Manager) 
 */
-typedef u_int32_t                AppId;
+typedef uint32_t                 AppId;
 #define AID_UNKNOWN              0x00
 #define MANAGEDAPPLICATION       0x01
 #define MANAGER                  0x02
@@ -69,7 +69,7 @@ typedef u_int32_t                AppId;
   composed from: 3 bytes - instance Id
                  1 byte  - objKind  
 */
-typedef u_int32_t                ObjectId;
+typedef uint32_t                 ObjectId;
 
 #define OID_UNKNOWN              0x00000000
 #define OID_APP                  0x000001C1
@@ -129,18 +129,18 @@ typedef struct {
 
 typedef struct {
        int32_t               seconds;    /* time in seconds */
-       u_int32_t             fraction;   /* time in seconds / 2^32 */
+       uint32_t              fraction;   /* time in seconds / 2^32 */
      } NtpTime;
 
 #define NTPTIME_ZERO(t)          {t.seconds=0;t.fraction=0;}
 #define NTPTIME_BUILD(t,s)       {t.seconds=s;t.fraction=0;}
 #define NTPTIME_INFINITE(t)      {t.seconds=0xffffffff;t.fraction=0;}
 
-typedef u_int32_t                IPAddress;
+typedef uint32_t                 IPAddress;
 
 #define IPADDRESS_INVALID        0
 
-typedef u_int32_t                Port;
+typedef uint32_t                 Port;
 
 #define PORT_INVALID             0
 
@@ -206,8 +206,8 @@ typedef struct {
 #define PID_VALUE_RELIABILITY_BEST_EFFORTS  0x01
 #define PID_VALUE_RELIABILITY_STRICT        0x02
 
-typedef u_int16_t ParameterId;
-typedef u_int16_t ParameterLength;
+typedef uint16_t ParameterId;
+typedef uint16_t ParameterLength;
 
 /* State Machines */
 typedef enum {

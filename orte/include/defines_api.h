@@ -62,7 +62,7 @@ extern "C" {
  * 
  * res = sn + 1
  */
- #define SeqNumberInc(res,sn) {                   \
+#define SeqNumberInc(res,sn) {                   \
       (res) = (sn);                              \
           if (++(res).low==0) (res).high++;      \
         }
@@ -77,7 +77,7 @@ extern "C" {
  *
  * res = sn1 + sn2
  */
- #define SeqNumberAdd(res,sn1,sn2) {              \
+#define SeqNumberAdd(res,sn1,sn2) {              \
     (res).low = (sn1).low+(sn2).low;             \
     (res).high = (sn1).high+(sn2).high;          \
     if (((res).low < (sn1).low) ||               \
@@ -177,7 +177,7 @@ extern "C" {
  * @msec: miliseconds portion of given time
  */
 #define NtpTimeAssembFromMs(time, s, msec) {         \
-    register u_int32_t ms = msec;                \
+    register uint32_t ms = msec;                     \
     (time).seconds  = s;                             \
     (time).fraction = (ms<<22) + ((ms*393)<<8);      \
 }
@@ -202,7 +202,7 @@ extern "C" {
  * @usec: microseconds portion of given time
  */
 #define NtpTimeAssembFromUs(time, s, usec) {         \
-    register u_int32_t us = usec;                     \
+    register uint32_t us = usec;                     \
     (time).seconds  = s;                             \
     (time).fraction = (us<<12)+ ((us*99)<<1)+ ((us*15 + ((us*61)>>7))>>4); \
 }
@@ -214,7 +214,7 @@ extern "C" {
  * @time: time given in NtpTime structure
  */
 #define NtpTimeDisAssembToUs(s, usec, time) {        \
-    register u_int32_t NtpTemp = (time).fraction;     \
+    register uint32_t NtpTemp = (time).fraction;     \
     s    = (time).seconds;                           \
     usec = ((time).fraction - (NtpTemp>>5)-(NtpTemp>>7)-(NtpTemp>>8)- \
             (NtpTemp>>9)-(NtpTemp>>10) - (NtpTemp>>12) - \

@@ -1,5 +1,5 @@
 /*
- *  $Id: ORTEManager.c,v 0.0.0.1        2003/10/07
+ *  $Id: ortemanager.c,v 0.0.0.1        2003/10/07
  *
  *  DEBUG:  section                     Manager
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
@@ -22,6 +22,15 @@
 #include "orte.h"
 
 #ifndef CONFIG_ORTE_RT
+//global variables
+ORTEDomain          *d;
+ORTEDomainProp      dp;
+int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
+Boolean             orteDaemon=ORTE_FALSE;
+Boolean             orteWinService=ORTE_FALSE;
+ORTEDomainAppEvents *events=NULL;
+
+//event system
 Boolean
 onMgrAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param) {
   printf("%s 0x%x-0x%x was accepted\n",
@@ -37,7 +46,28 @@ onMgrAppDelete(const struct ORTEAppInfo *appInfo, void *param) {
          appInfo->hostId,appInfo->appId);
 }
 
+#ifdef _WIN32
+//Windows service support
+void serviceDispatchTable(void);  //forward declaration
+void removeService(void);         //forward declaration
+void installService(void);        //forward declaration
+int managerInit(void) {
+  d=ORTEDomainMgrCreate(domain,&dp,events,ORTE_TRUE);
+  if (d==NULL) return -1;
+  return 0;
+}
+int managerStart(void) {
+  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE);
+  return 0;
+}
+int managerStop(void) {
+  ORTEDomainMgrDestroy(d);
+  return 0;
+}
+#endif
+
 #ifdef CONFIG_ORTE_UNIX
+//Unix daemon support
 pthread_mutex_t     mutex;
 void sig_usr(int signo) {
   if ((signo==SIGTERM) || (signo==SIGINT)) {
@@ -51,7 +81,7 @@ void waitForEndingCommand(void) {
   signal(SIGINT,sig_usr);
   pthread_mutex_lock(&mutex);
 }
-static int daemon_init(void) {
+static int daemonInit(void) {
   pid_t pid;
 
   if ((pid = fork()) < 0) {
@@ -71,7 +101,7 @@ static int daemon_init(void) {
 #endif
 
 static void usage(void) {
-  printf("usage: ORTEManager <parameters> \n");
+  printf("usage: ortemanager <parameters> \n");
   printf("  -p, --peer <IPAdd:IPAdd:...>  possible locations of fellow managers\n");
   printf("  -k, --key  <IPAdd:IPAdd:...>  manualy assigned manager's keys\n");
   printf("  -d, --domain <domain>         working manager domain\n");
@@ -87,10 +117,15 @@ static void usage(void) {
   printf("  -e, --events                  register event system\n");
   printf("  -l, --logfile <filename>      set log file name\n");
   printf("  -V, --version                 show version\n");
+#ifdef _WIN32
+  printf("  -i, --install_service         install service into service manager on Windows\n");
+  printf("  -r, --remove_service          remove service from service manager on Windows\n");
+#endif
   printf("  -h, --help                    this usage screen\n");
 }
 
 int main(int argc,char *argv[]) {
+#if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   static struct option long_opts[] = {
     { "peer",1,0, 'p' },
     { "key",1,0, 'k' },
@@ -105,19 +140,21 @@ int main(int argc,char *argv[]) {
     { "events",0,0, 'e' },
     { "logfile",1,0, 'l' },
     { "version",0,0, 'V' },
+    { "install_service",0,0, 'i' },
+    { "remove_service",0,0, 'r' },
     { "help",  0, 0, 'h' },
     { 0, 0, 0, 0}
   };
-  ORTEDomain	      *d;
-  ORTEDomainProp      dp;
-  int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
-  Boolean	      daemon=ORTE_FALSE;
-  ORTEDomainAppEvents *events=NULL;
+#endif
 
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
 
-  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:l:VhDe",&long_opts[0], NULL)) != EOF) {
+#if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
+  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:l:VhDesir",&long_opts[0], NULL)) != EOF) {
+#else
+  while ((opt = getopt(argc, argv, "k:p:d:v:R:E:P:l:VhDesir")) != EOF) {
+#endif
     switch (opt) {
       case 'p':
         dp.mgrs=strdup(optarg);
@@ -156,22 +193,40 @@ int main(int argc,char *argv[]) {
         exit(0);
         break;
       case 'D':
-        daemon=ORTE_TRUE;
+        orteDaemon=ORTE_TRUE;
         break;
+      #ifdef _WIN32
+      case 's':
+        serviceDispatchTable();
+        exit(0);
+        break;
+      case 'i':
+        installService();
+        orteWinService=ORTE_TRUE;
+        break;
+      case 'r':
+        removeService();
+        exit(0);
+        break;
+      #endif
       case 'h':
       default:
         usage();
         exit(opt == 'h' ? 0 : 1);
     }
   }
-
+  
+  if (orteWinService) { 
+    exit(0);
+  }
+  
   d=ORTEDomainMgrCreate(domain,&dp,events,ORTE_TRUE);
   if (!d)
     exit(1);
 
   #ifdef CONFIG_ORTE_UNIX
-  if (daemon)
-    daemon_init();
+  if (orteDaemon)
+    daemonInit();
   #endif
 
   ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE);

@@ -11,7 +11,7 @@
 
 
 /**********************************************************************************/
-void conv_u32(u_int32_t *x,u_int8_t ef) {
+void conv_u32(uint32_t *x,uint8_t ef) {
   #if __BYTE_ORDER == __LITTLE_ENDIAN
      if(ef) bswap_32(*x);
   #elif __BYTE_ORDER == __BIG_ENDIAN
@@ -22,7 +22,7 @@ void conv_u32(u_int32_t *x,u_int8_t ef) {
 /**********************************************************************************/
 void print_obj(void *obj) {
   fprintf(ptr_out," (");
-  switch (bswap_32(*((u_int32_t*)obj))) {
+  switch (bswap_32(*((uint32_t*)obj))) {
     case OID_APP:
       fprintf(ptr_out,"ManagedApplicaton or Manager");
       break;
@@ -61,7 +61,7 @@ void print_obj(void *obj) {
 }		      
 
 /**********************************************************************************/
-void print_app(u_int8_t app) {
+void print_app(uint8_t app) {
   switch (app) {
     case MANAGEDAPPLICATION:
       fprintf(ptr_out,"(managed application)\n");
@@ -76,13 +76,13 @@ void print_app(u_int8_t app) {
 }  			   
 
 /**********************************************************************************/
-void decode_parametr_sequence(u_int8_t *msg) {
+void decode_parametr_sequence(uint8_t *msg) {
   NtpTime            ts;
   ProtocolVersion    pv;
   VendorId           vid;
   SequenceNumber     sn;
-  u_int8_t      i,j,l;
-  u_int8_t      *k;
+  uint8_t      i,j,l;
+  uint8_t      *k;
 
   while(*((ParameterId*)msg)!=PID_SENTINEL) {
     printf("id%d,len%d\n",*((ParameterId*)msg),*((ParameterLength*)(msg+2)));
@@ -110,7 +110,7 @@ void decode_parametr_sequence(u_int8_t *msg) {
         fprintf(ptr_out,"     PID_TOPIC                            :\n");
         k=msg+4;
 	//len of message is also in message (first ulong)
-        l=(*(u_int32_t*)(msg+4))+4;
+        l=(*(uint32_t*)(msg+4))+4;
         while(l!=0) {
           if (l>8) j=8;
     	  else j=l;
@@ -127,13 +127,13 @@ void decode_parametr_sequence(u_int8_t *msg) {
         break;
       case PID_STRENGTH:
         fprintf(ptr_out,"     PID_STRENGTH                         : %u\n",
-	                *(u_int32_t*)(msg+4));
+	                *(uint32_t*)(msg+4));
         break;
       case PID_TYPE_NAME:
         fprintf(ptr_out,"     PID_TYPE_NAME                        :\n");
         k=msg+4;
 	//len of message is also in message (first ulong)
-        l=(*(u_int32_t*)(msg+4))+4;
+        l=(*(uint32_t*)(msg+4))+4;
         while(l!=0) {
           if (l>8) j=8;
     	  else j=l;
@@ -176,7 +176,7 @@ void decode_parametr_sequence(u_int8_t *msg) {
         break;
       case PID_EXPECTS_ACK:
         fprintf(ptr_out,"     PID_EXPECTS_ACK                      : %u\n",
-	                *(u_int32_t*)(msg+4));
+	                *(uint32_t*)(msg+4));
         break;
       case PID_USERDATA_MULTICAST_IPADDRESS:
         fprintf(ptr_out,"     PID_USERDATA_MULTICAST_IPADDRESS     : %u.%u.%u.%u\n",
@@ -188,7 +188,7 @@ void decode_parametr_sequence(u_int8_t *msg) {
         break;
       case PID_SEND_QUEUE_SIZE:
         fprintf(ptr_out,"     PID_SEND_QUEUE_SIZE                  : %u\n",
-	                *(u_int32_t*)(msg+4));
+	                *(uint32_t*)(msg+4));
         break;
       case PID_PROTOCOL_VERSION:
         pv=*((ProtocolVersion*)(msg+4));
@@ -206,15 +206,15 @@ void decode_parametr_sequence(u_int8_t *msg) {
         break;
       case PID_RECV_QUEUE_SIZE:
         fprintf(ptr_out,"     PID_RECV_QUEUE_SIZE                  : %u\n",
-	                *(u_int32_t*)(msg+4));
+	                *(uint32_t*)(msg+4));
         break;
       case PID_RELIABILITY_OFFERED:
         fprintf(ptr_out,"     PID_RELIABILITY_OFFERED              : %u\n",
-	                *(u_int32_t*)(msg+4));
+	                *(uint32_t*)(msg+4));
         break;
       case PID_RELIABILITY_REQUESTED:
         fprintf(ptr_out,"     PID_RELIABILITY_REQUESTED            : %u\n",
-	                *(u_int32_t*)(msg+4));
+	                *(uint32_t*)(msg+4));
         break;
       default:
         fprintf(ptr_out,"     unknow paramerId                 : %d len : %d\n",
@@ -228,7 +228,7 @@ void decode_parametr_sequence(u_int8_t *msg) {
 
 
 /**********************************************************************************/
-int decode_header(u_int8_t *msg, unsigned len, MessageInterpret *mi) {
+int decode_header(uint8_t *msg, unsigned len, MessageInterpret *mi) {
   if (len<16) return -1;                          /* message is to small */
   if (msg[0]!='R') return -2;                     /* header is invalid */
   if (msg[1]!='T') return -2;                     /* header is invalid */
@@ -243,13 +243,13 @@ int decode_header(u_int8_t *msg, unsigned len, MessageInterpret *mi) {
 }
 
 /**********************************************************************************/
-int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
+int decode_submessage(uint8_t *msg, int ptr, MessageInterpret *mi) {
   IPAddress          ipa;
   Port               port;
   ObjectId           roid,woid,oid;
   SequenceNumber     fsn,lsn,wsn;
-  u_int8_t      i,j,l;
-  u_int8_t      *k;
+  uint8_t      i,j,l;
+  uint8_t      *k;
   HostId             hid;
   AppId              aid;
   int                ptr_off;
@@ -265,25 +265,25 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       fprintf(ptr_out,"     p-bit          : %d\n",(msg[ptr+1] & 2) ? 1:0);
       roid=*((ObjectId*)(msg+ptr+4));
       fprintf(ptr_out,"     ObjectId       : %d.%d.%d.%02x",
-                        *(u_int8_t*)&roid,*(((u_int8_t*)&roid)+1),*(((u_int8_t*)&roid)+2),*(((u_int8_t*)&roid)+3));
+                        *(uint8_t*)&roid,*(((uint8_t*)&roid)+1),*(((uint8_t*)&roid)+2),*(((uint8_t*)&roid)+3));
       print_obj(&roid);		      
       woid=*((ObjectId*)(msg+ptr+8));
       fprintf(ptr_out,"     ObjectId       : %d.%d.%d.%02x",
-                        *(u_int8_t*)&woid,*(((u_int8_t*)&woid)+1),*(((u_int8_t*)&woid)+2),*(((u_int8_t*)&woid)+3));
+                        *(uint8_t*)&woid,*(((uint8_t*)&woid)+1),*(((uint8_t*)&woid)+2),*(((uint8_t*)&woid)+3));
       print_obj(&woid);		      
       if (msg[ptr+1] & 8) {
         hid=*((HostId*)(msg+ptr+12));                   /* hostId */
         aid=*((AppId*)(msg+ptr+16));                   /* appId */
         fprintf(ptr_out,"     HostId         : %d.%d.%d.%d\n",
-                        *(u_int8_t*)&hid,*(((u_int8_t*)&hid)+1),*(((u_int8_t*)&hid)+2),*(((u_int8_t*)&hid)+3));
+                        *(uint8_t*)&hid,*(((uint8_t*)&hid)+1),*(((uint8_t*)&hid)+2),*(((uint8_t*)&hid)+3));
         fprintf(ptr_out,"     AppId          : %d.%d.%d.%d ",
-                        *(u_int8_t*)&aid,*(((u_int8_t*)&aid)+1),*(((u_int8_t*)&aid)+2),*(((u_int8_t*)&aid)+3));
-        print_app(*(((u_int8_t*)&aid)+3));
+                        *(uint8_t*)&aid,*(((uint8_t*)&aid)+1),*(((uint8_t*)&aid)+2),*(((uint8_t*)&aid)+3));
+        print_app(*(((uint8_t*)&aid)+3));
         ptr_off=8;
       } else ptr_off=0;
       oid=*((ObjectId*)(msg+ptr+12+ptr_off));
       fprintf(ptr_out,"     ObjectId       : %d.%d.%d.%02x",
-                        *(u_int8_t*)&oid,*(((u_int8_t*)&oid)+1),*(((u_int8_t*)&oid)+2),*(((u_int8_t*)&oid)+3));
+                        *(uint8_t*)&oid,*(((uint8_t*)&oid)+1),*(((uint8_t*)&oid)+2),*(((uint8_t*)&oid)+3));
       print_obj(&oid);		      
       wsn=*((SequenceNumber*)(msg+ptr+16+ptr_off));
       fprintf(ptr_out,"     sequenceNumber : %u\n",wsn.low);		      
@@ -297,10 +297,10 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       fsn=*((SequenceNumber*)(msg+ptr+12));
       fprintf(ptr_out,"     p-bit          : %d\n",(msg[ptr+1] & 2) ? 1:0);
       fprintf(ptr_out,"     readerObjectId : %d.%d.%d.%02x",
-                      *(u_int8_t*)&roid,*(((u_int8_t*)&roid)+1),*(((u_int8_t*)&roid)+2),*(((u_int8_t*)&roid)+3));
+                      *(uint8_t*)&roid,*(((uint8_t*)&roid)+1),*(((uint8_t*)&roid)+2),*(((uint8_t*)&roid)+3));
       print_obj(&roid);		      
       fprintf(ptr_out,"     writeObjectId  : %d.%d.%d.%02x",
-                      *(u_int8_t*)&woid,*(((u_int8_t*)&woid)+1),*(((u_int8_t*)&woid)+2),*(((u_int8_t*)&woid)+3));
+                      *(uint8_t*)&woid,*(((uint8_t*)&woid)+1),*(((uint8_t*)&woid)+2),*(((uint8_t*)&woid)+3));
       print_obj(&woid);		      
       fprintf(ptr_out,"     issueSeqNumber : %u\n",fsn.low);		      
       k=msg+ptr+20;
@@ -309,7 +309,7 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       }
 //      l=(*(unsigned*)(msg+ptr+2))-(k-(msg+ptr+20)+16);
       //len of message is also in message (first ulong), internaly defined by RTI !!! 
-      l=(*(u_int32_t*)k)+4;
+      l=(*(uint32_t*)k)+4;
       while(l!=0) {
         if (l>8) j=8;
 	else j=l;
@@ -329,13 +329,13 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       roid=*((ObjectId*)(msg+ptr+4));woid=*((ObjectId*)(msg+ptr+8));
       fprintf(ptr_out,"     final-bit      : %d\n",(msg[ptr+1] & 2) ? 1:0);
       fprintf(ptr_out,"     readerObjectId : %d.%d.%d.%02x",
-                      *(u_int8_t*)&roid,*(((u_int8_t*)&roid)+1),*(((u_int8_t*)&roid)+2),*(((u_int8_t*)&roid)+3));
+                      *(uint8_t*)&roid,*(((uint8_t*)&roid)+1),*(((uint8_t*)&roid)+2),*(((uint8_t*)&roid)+3));
       print_obj(&roid);		      
       fprintf(ptr_out,"     writeObjectId  : %d.%d.%d.%02x",
-                      *(u_int8_t*)&woid,*(((u_int8_t*)&woid)+1),*(((u_int8_t*)&woid)+2),*(((u_int8_t*)&woid)+3));
+                      *(uint8_t*)&woid,*(((uint8_t*)&woid)+1),*(((uint8_t*)&woid)+2),*(((uint8_t*)&woid)+3));
       print_obj(&woid);		      
-      fprintf(ptr_out,"     bitmap         : %u/%u:",*((u_int32_t*)(msg+ptr+16)),
-                      *((u_int32_t*)(msg+ptr+20)));
+      fprintf(ptr_out,"     bitmap         : %u/%u:",*((uint32_t*)(msg+ptr+16)),
+                      *((uint32_t*)(msg+ptr+20)));
       for(i=0;i<msg[ptr+20]/8;) {
         for(j=128;j!=0;j>>=1) fprintf(ptr_out,"%d",(msg[ptr+24+i] & j) ? 1:0);
 	fprintf(ptr_out," ");
@@ -350,10 +350,10 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       fsn=*((SequenceNumber*)(msg+ptr+12));lsn=*((SequenceNumber*)(msg+ptr+20));
       fprintf(ptr_out,"     final-bit      : %d\n",(msg[ptr+1] & 2) ? 1:0);
       fprintf(ptr_out,"     readerObjectId : %d.%d.%d.%02x",
-                      *(u_int8_t*)&roid,*(((u_int8_t*)&roid)+1),*(((u_int8_t*)&roid)+2),*(((u_int8_t*)&roid)+3));
+                      *(uint8_t*)&roid,*(((uint8_t*)&roid)+1),*(((uint8_t*)&roid)+2),*(((uint8_t*)&roid)+3));
       print_obj(&roid);		      
       fprintf(ptr_out,"     writeObjectId  : %d.%d.%d.%02x",
-                      *(u_int8_t*)&woid,*(((u_int8_t*)&woid)+1),*(((u_int8_t*)&woid)+2),*(((u_int8_t*)&woid)+3));
+                      *(uint8_t*)&woid,*(((uint8_t*)&woid)+1),*(((uint8_t*)&woid)+2),*(((uint8_t*)&woid)+3));
       print_obj(&woid);		      
       fprintf(ptr_out,"     firstSeqNumber : %u\n",fsn.low);		      
       fprintf(ptr_out,"     lastSeqNumber  : %u\n",lsn.low);		      
@@ -364,16 +364,16 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       fsn=*((SequenceNumber*)(msg+ptr+12));
       lsn=*((SequenceNumber*)(msg+ptr+20));
       fprintf(ptr_out,"     readerObjectId : %d.%d.%d.%02x",
-                      *(u_int8_t*)&roid,*(((u_int8_t*)&roid)+1),*(((u_int8_t*)&roid)+2),*(((u_int8_t*)&roid)+3));
+                      *(uint8_t*)&roid,*(((uint8_t*)&roid)+1),*(((uint8_t*)&roid)+2),*(((uint8_t*)&roid)+3));
       print_obj(&roid);		      
       fprintf(ptr_out,"     writeObjectId  : %d.%d.%d.%02x",
-                      *(u_int8_t*)&woid,*(((u_int8_t*)&woid)+1),*(((u_int8_t*)&woid)+2),*(((u_int8_t*)&woid)+3));
+                      *(uint8_t*)&woid,*(((uint8_t*)&woid)+1),*(((uint8_t*)&woid)+2),*(((uint8_t*)&woid)+3));
       print_obj(&woid);		      
       fprintf(ptr_out,"     firstSeqNumber : %u\n",fsn.low);		      
       fprintf(ptr_out,"     bitmap         : %u/%u:",lsn.low,
-                      *((u_int32_t*)(msg+ptr+28)));
-      for(i=0;i<(*((u_int32_t*)(msg+ptr+28)));i++) {
-        l=((*(((u_int32_t*)(msg+ptr+32))+i/32)) & (1<<(31-i%32))) ? 1:0;
+                      *((uint32_t*)(msg+ptr+28)));
+      for(i=0;i<(*((uint32_t*)(msg+ptr+28)));i++) {
+        l=((*(((uint32_t*)(msg+ptr+32))+i/32)) & (1<<(31-i%32))) ? 1:0;
         fprintf(ptr_out,"%d",l);
       }
       fprintf(ptr_out,"\n");		      
@@ -392,20 +392,20 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       break;
     case INFO_REPLY:
       fprintf(ptr_out,"   INFO_REPLY\n");
-      ipa=*((u_int32_t*)(msg+ptr+4));                  /* unicastReplyIPAddress */
-      port=*((u_int32_t*)(msg+ptr+8));                 /* unicastReplyPort */
+      ipa=*((uint32_t*)(msg+ptr+4));                  /* unicastReplyIPAddress */
+      port=*((uint32_t*)(msg+ptr+8));                 /* unicastReplyPort */
       fprintf(ptr_out,"     unicastReplyIPAddress   : %d.%d.%d.%d\n",
-                      *(u_int8_t*)&ipa,*(((u_int8_t*)&ipa)+1),*(((u_int8_t*)&ipa)+2),*(((u_int8_t*)&ipa)+3));
+                      *(uint8_t*)&ipa,*(((uint8_t*)&ipa)+1),*(((uint8_t*)&ipa)+2),*(((uint8_t*)&ipa)+3));
       fprintf(ptr_out,"     unicastReplyPort        : %u\n",port);
       if (ipa!=IPADDRESS_INVALID) {
         mi->unicastReplyIPAddress=ipa;
       }
       mi->unicastReplyPort=port; 
       if ((msg[ptr+1] & 0x02) !=0) {
-        ipa=*((u_int32_t*)(msg+ptr+12));               /* multicastReplyIPAddress */
-        port=*((u_int32_t*)(msg+ptr+16));              /* multicastReplyPort */
+        ipa=*((uint32_t*)(msg+ptr+12));               /* multicastReplyIPAddress */
+        port=*((uint32_t*)(msg+ptr+16));              /* multicastReplyPort */
         fprintf(ptr_out,"     multicastReplyIPAddress : %d.%d.%d.%d\n",
-                      *(u_int8_t*)&ipa,*(((u_int8_t*)&ipa)+1),*(((u_int8_t*)&ipa)+2),*(((u_int8_t*)&ipa)+3));
+                      *(uint8_t*)&ipa,*(((uint8_t*)&ipa)+1),*(((uint8_t*)&ipa)+2),*(((uint8_t*)&ipa)+3));
         fprintf(ptr_out,"     multicastReplyPort      : %u\n",port);
         mi->multicastReplyIPAddress=ipa;
         mi->multicastReplyPort=port; 
@@ -419,10 +419,10 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
       hid=*((HostId*)(msg+ptr+4));                   /* hostId */
       aid=*((AppId*)(msg+ptr+8));                   /* appId */
       fprintf(ptr_out,"     HostId                  : %d.%d.%d.%d\n",
-                        *(u_int8_t*)&hid,*(((u_int8_t*)&hid)+1),*(((u_int8_t*)&hid)+2),*(((u_int8_t*)&hid)+3));
+                        *(uint8_t*)&hid,*(((uint8_t*)&hid)+1),*(((uint8_t*)&hid)+2),*(((uint8_t*)&hid)+3));
       fprintf(ptr_out,"     AppId                   : %d.%d.%d.%d ",
-                        *(u_int8_t*)&aid,*(((u_int8_t*)&aid)+1),*(((u_int8_t*)&aid)+2),*(((u_int8_t*)&aid)+3));
-      print_app(*(((u_int8_t*)&aid)+3));
+                        *(uint8_t*)&aid,*(((uint8_t*)&aid)+1),*(((uint8_t*)&aid)+2),*(((uint8_t*)&aid)+3));
+      print_app(*(((uint8_t*)&aid)+3));
       break;                
     default:
       fprintf(ptr_out,"   undefined submessage code\n");
@@ -434,7 +434,7 @@ int decode_submessage(u_int8_t *msg, int ptr, MessageInterpret *mi) {
 
 /**********************************************************************************/
 int main(int argc, char * argv[]) {
-  u_int8_t rtps_msg[16384],rtps_msg_c[3]={0,0,0};
+  uint8_t rtps_msg[16384],rtps_msg_c[3]={0,0,0};
   unsigned rtps_msg_ptr=0,rtps_msg_len,rtps_submsg_cnt,submsg_len;
   int err,c,no_lchar=1;
   MessageInterpret mi;
@@ -506,11 +506,11 @@ int main(int argc, char * argv[]) {
       else {
         if ((no_lchar>5) && (no_lchar<57)) {              /* converted data from */ 
 	  if ((rtps_msg_c[0]!=0) && (isxdigit(c))) {      /* position 6 to 56    */
-	    rtps_msg_c[1]=(u_int8_t)c;
-	    rtps_msg[rtps_msg_ptr++]=(u_int8_t)strtol(rtps_msg_c,NULL,16);
+	    rtps_msg_c[1]=(uint8_t)c;
+	    rtps_msg[rtps_msg_ptr++]=(uint8_t)strtol(rtps_msg_c,NULL,16);
 	    rtps_msg_c[0]=0;
 	  } else {
-  	    if ((rtps_msg_c[0]==0) && (isxdigit(c))) rtps_msg_c[0]=(u_int8_t)c;
+  	    if ((rtps_msg_c[0]==0) && (isxdigit(c))) rtps_msg_c[0]=(uint8_t)c;
 	  }
 	}
       }

@@ -13,6 +13,8 @@ extern "C" {
 #define LIST_POISON1  ((void *) 0)
 #define LIST_POISON2  ((void *) 0)
 
+#undef LIST_HEAD
+
 /*
  * Simple doubly linked list implementation.
  *

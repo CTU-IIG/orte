@@ -84,7 +84,7 @@ sock_getsockopt(sock_t *sock,int optname,char *optval, int *optlen) {
 
 /*********************************************************************/
 int
-sock_bind(sock_t *sock,u_int16_t port) {
+sock_bind(sock_t *sock,uint16_t port) {
   struct sockaddr_in name;
   int size;
 
