@@ -45,8 +45,8 @@ ul_htimer_cmp_fnc(const ul_htim_time_t *a, const ul_htim_time_t *b)
 #endif /*UL_HTIMER_WITH_MSTIME*/
 
 #ifdef UL_HTIMER_WITH_NTPTIME
-#include "typedefs_defines_rtps.h"
-#include "defines_api.h"
+#include "orte/typedefs_defines_rtps.h"
+#include "orte/defines_api.h"
 typedef NtpTime ul_htim_time_t;
 
 static inline int

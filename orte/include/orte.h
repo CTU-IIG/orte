@@ -1,5 +1,5 @@
 /*
- *  $Id: orte.h,v 0.0.0.1               2003/08/21 
+ *  $Id: orte_api.h.h,v 0.0.0.1         2003/08/21
  *
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
@@ -10,46 +10,47 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
-#ifndef _ORTE_H
-#define _ORTE_H
+#ifndef _ORTE_API_H
+#define _ORTE_API_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "orte_all.h"
-#include "ul_gavl.h"
-#include "ul_gavlcust.h"
-#include "ul_gavlflesint.h"
-#include "ul_gavlrepcust.h"
-#include "ul_list.h"
-#include "typedefs_defines_rtps.h"
-#include "ul_htimer.h"          //after typedefs_defines_rtps.h 
-#include "defines.h"
-#include "defines_api.h"
-#include "typedefs_api.h"
-#include "typedefs.h"
-#include "protos.h"
-#include "protos_api.h"
-#include "globals.h"
-
-
-#if WORDS_BIGENDIAN
-  #define ORTE_MY_MBO    0     //ORTE my Machine Byte Order - big endian
-#else
-  #define ORTE_MY_MBO    1     //ORTE my Machine Byte Order - little endian
+#ifdef HAVE_CONFIG_H
+  #include "orte_config.h"
+#elif defined OMK_FOR_USER
+  #include "orte_config_omk_unix.h"
+#elif defined OMK_FOR_KERNEL
+  #include "orte_config_omk_rtl.h"
 #endif
+
+#ifdef HAVE_STDINT_H
+  #include <stdint.h>
+#elif defined HAVE_SYS_TYPES_H
+  #include <sys/types.h>
+#endif
+#ifdef HAVE_LINUX_TYPES_H
+  #include <linux/types.h>
+#endif
+#if defined _MSC_VER || defined CONFIG_ORTE_MINGW
+  #include <orte/ew_types.h>
+#endif
+#include <orte/typedefs_defines_rtps.h>
+#include <orte/defines_api.h>
+#include <orte/typedefs_api.h>
+#include <orte/protos_api.h>
 
 #ifdef __cplusplus
 } /* extern "C"*/
 #endif
 
-#endif /* _ORTE_H */
+#endif /* _ORTE_API_H */

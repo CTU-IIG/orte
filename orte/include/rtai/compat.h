@@ -27,8 +27,6 @@
 #include "rtai_posix.h.patched"
 #include <defines.h>  //macro MALLOC
 
-
-
 /* This should become a bit more generic for all platforms... */
 #define rtl_printf  rt_printk
 #define printf      rt_printk /* catch some probably forgotten printf's */
@@ -108,15 +106,27 @@ static inline char *strdup(const char *s)
 #define pthread_join                pthread_join_rt
 #define pthread_exit                pthread_exit_rt
 
+#define pthread_cond_init           pthread_cond_init_rt
+#define pthread_cond_timedwait      pthread_cond_timedwait_rt
+#define pthread_cond_signal         pthread_cond_signal_rt
+#define pthread_cond_destroy        pthread_cond_destroy_rt
 
-#define socket                      rt_socket
-#define close                       rt_socket_close
-#define setsockopt                  rt_socket_setsockopt
-#define getsockopt(a, b, c, d, e)   -1
-#define ioctl                       rt_socket_ioctl
-#define bind                        rt_socket_bind
-#define getsockname                 rt_socket_getsockname
-#define recvfrom                    rt_socket_recvfrom
-#define sendto                      rt_socket_sendto
+#define socket                      socket_rt
+#define setsockopt                  setsockopt_rt
+#define getsockopt                  getsockopt_rt
+#define ioctl                       ioctl_rt
+#define bind                        bind_rt
+#define getsockname                 getsockname_rt
+#define recvfrom                    recvfrom_rt
+#define sendto                      sendto_rt
+
+static inline int close(int s)
+{
+    int result;
+
+    while ((result = close_rt(s)) == -EAGAIN)
+        rt_sleep(nano2count(100000000));
+    return result;
+}
 
 #endif /* _COMPAT_H */
