@@ -86,6 +86,7 @@ modules:
 	echo LINUX_CC="\$(CC)" >>flags
 	echo LINUX_LD="\$(LD) \$(LDFLAGS)" >>flags
 	echo LINUX_AS="\$(AS)" >>flags
+	echo LINUX_AR="\$(AR)" >>flags
 	echo LINUX_MODULE_EXT=".o" >>flags
 
 EOF
@@ -135,6 +136,7 @@ flags:
 	echo LINUX_CC="\$(CC)" >>\$(obj)/flags
 	echo LINUX_LD="\$(LD) \$(LDFLAGS) \$(LDFLAGS_MODULE)" >>\$(obj)/flags
 	echo LINUX_AS="\$(AS)" >>\$(obj)/flags
+	echo LINUX_AR="\$(AR)" >>\$(obj)/flags
 	echo LINUX_MODULE_EXT=".ko" >>\$(obj)/flags
 EOF
 

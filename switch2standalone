@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Script to modify Makefile.rules for standalone build
+# without OCERA framework
+
+if [ ! -e Makefile.rules-ocera ] ; then
+  mv Makefile.rules Makefile.rules-ocera
+fi
+
+# Commentout definition of OCERA location
+sed -e 's/^OCERA_DIR := /#OCERA_DIR := /' <Makefile.rules-ocera >Makefile.rules
+
+# Prepare "config.omk-default" file, user overrides should go into "config.omk"
+make default-config
+
+echo 
+echo 'To modify required configuration options, create "config.omk" file'
+echo 'and add modified lines from "config.omk-default" file into it'
+echo 
+echo 'To build project, call simple "make"'
+echo
+echo 'GNU make program version 3.81beta1 or newer is required to build project'
+echo 'check by "make --version" command' 
+echo

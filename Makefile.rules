@@ -111,9 +111,11 @@ endif
 export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
 export CONFIG_FILE OMK_SERIALIZE_INCLUDED
 
-CFLAGS += -ggdb
+#CFLAGS += -ggdb
 CFLAGS += -O2 
 CFLAGS += -Wall
+#CXXFLAGS += -ggdb
+CXXFLAGS += -O2 
 CXXFLAGS += -Wall
 
 
@@ -280,8 +282,8 @@ USER_OBJS  += $$($(1)_OBJS)
 USER_SOURCES += $$($(1)_SOURCES)
 
 $(USER_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
-	ar rcs $$@ $$^
-	ranlib $$@
+	$(AR) rcs $$@ $$^
+	#ranlib $$@
 endef
 
 
@@ -322,6 +324,7 @@ cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DOMK_FOR_KERNEL -DEXPORT_SYM
 KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
 KERN_LD = $(LD)
+KERN_AR = $(AR)
 
 else # CONFIG_RTLINUX
 
@@ -348,6 +351,11 @@ ifdef LINUX_LD
 KERN_LD = $(LINUX_LD)
 else
 KERN_LD = echo KERN_LD  not defined - skipped
+endif
+ifneq ($(LINUX_AR),)
+KERN_AR = $(LINUX_AR)
+else
+KERN_AR = $(AR)
 endif
 endif # CONFIG_RTLINUX
 
@@ -461,8 +469,8 @@ KERN_OBJS  += $$($(1)_OBJS)
 KERN_SOURCES += $$($(1)_SOURCES)
 
 $(KERN_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
-	ar rcs $$@ $$^
-	ranlib $$@
+	$(KERN_AR) rcs $$@ $$^
+	#ranlib $$@
 endef
 
 
