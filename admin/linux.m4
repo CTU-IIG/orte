@@ -235,7 +235,7 @@ AC_DEFUN(DS_RTAI,
 		fi
 		$1
                 RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
-		RTAI_CFLAGS="${RTAI_CFLAGS} -I${RT_GCCLIB_DIR}/include -nostdinc"
+		RTAI_CFLAGS="${RTAI_CFLAGS} -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 		AC_MSG_RESULT([found])
 		AC_DEFINE([CONFIG_ORTE_RTAI],[1],[Define if kernel is RTAI patched])
 	else
@@ -280,7 +280,7 @@ AC_DEFUN(DS_RTLINUX,
 			AC_MSG_ERROR([incorrect RTLinux UDP directory!!!])
 		fi
                 RT_GCCLIB_DIR=`${RTLINUX_CC} -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
-		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -I${RT_GCCLIB_DIR}/include -nostdinc"
+		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 		AC_MSG_RESULT([found])
 		$1
 	else
