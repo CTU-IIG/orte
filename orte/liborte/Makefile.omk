@@ -1,8 +1,13 @@
+default_CONFIG = CONFIG_OC_ETH_ORTE=y
+
+ifeq ($(CONFIG_OC_ETH_ORTE),y)
+
 lib_LIBRARIES = orte
 
-INCLUDES = -I $(srcdir)/../include -DORTE_OMK_UNIX
+INCLUDES = -I $(srcdir)/../include
 
 include_HEADERS = \
+../include/orte_config_omk_unix.h \
 ../include/orte_api.h \
 ../include/typedefs_defines_rtps.h \
 ../include/defines_api.h \
@@ -55,21 +60,28 @@ sock.c \
 ul_gavl.c \
 ul_gavlprim.c
 
+endif #CONFIG_OC_ETH_ORTE
+
 #############################################################################
 # RT-Linux version of build
 
-rtlinux_LIBRARIES = orte_rt
+default_CONFIG = CONFIG_OC_ETH_ORTE_RTL=n
 
-rtlinux_INCLUDES = -I $(srcdir)/../include -DORTE_OMK_RTL
+ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
+
+rtlinux_LIBRARIES = ortertl
+
+rtlinux_INCLUDES = -I $(srcdir)/../include
 
 rtlinux_HEADERS = \
+../include/orte_config_omk_rtl.h \
 ../include/orte_api.h \
 ../include/typedefs_defines_rtps.h \
 ../include/defines_api.h \
 ../include/typedefs_api.h \
 ../include/protos_api.h
 
-orte_rt_SOURCES = \
+ortertl_SOURCES = \
 conv.c \
 debug.c \
 event.c \
@@ -115,8 +127,10 @@ sock.c \
 ul_gavl.c \
 ul_gavlprim.c
 
-rtlinux_MODULES = rt_orte
+rtlinux_MODULES = orte
 
-rt_orte_SOURCES = $(orte_rt_SOURCES)
+orte_SOURCES = $(ortertl_SOURCES)
 
 SUBDIRS = rtl
+
+endif #CONFIG_OC_ETH_ORTE_RTL

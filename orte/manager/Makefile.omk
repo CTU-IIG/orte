@@ -1,18 +1,31 @@
+default_CONFIG = CONFIG_OC_ETH_ORTE_MANAGER=y
+
+ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER),y)
+
 bin_PROGRAMS = ortemanager
 
-INCLUDES = -I $(srcdir)/../include -DORTE_OMK_UNIX
+INCLUDES = -I $(srcdir)/../include
 
 ortemanager_SOURCES = ortemanager.c
 
 lib_LOADLIBES =  orte pthread
 
+endif #CONFIG_OC_ETH_ORTE_MANAGER
+
 #############################################################################
 # RT-Linux version of build
 
+default_CONFIG = CONFIG_OC_ETH_ORTE_MANAGER_RTL=n
+
+ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER_RTL),y)
+
 rtlinux_MODULES = rt_ortemanager
                
-rtlinux_INCLUDES = -I $(srcdir)/../include -DORTE_OMK_RTL
+rtlinux_INCLUDES = -I $(srcdir)/../include
 
 rt_ortemanager_SOURCES = ortemanager.c
 
 rtlinux_LOADLIBES =  orte_rt pthread_rwlock
+
+endif #CONFIG_OC_ETH_ORTE_MANAGER_RTL
+

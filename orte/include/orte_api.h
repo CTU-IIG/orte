@@ -27,12 +27,11 @@ extern "C" {
 
 #ifdef HAVE_CONFIG_H
   #include "orte_config.h"
-#elif defined ORTE_OMK_UNIX
+#elif defined OMK_FOR_USER
   #include "orte_config_omk_unix.h"
-#elif defined ORTE_OMK_RTL
+#elif defined OMK_FOR_KERNEL
   #include "orte_config_omk_rtl.h"
 #endif
-
 
 #ifdef HAVE_SYS_TYPES_H
   #include <sys/types.h>

@@ -1,4 +1,4 @@
-INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_UNIX
+INCLUDES = -I $(srcdir)/../../include
 
 utils_PROGRAMS = publisher subscriberreliable subscriberbesteffort
 
