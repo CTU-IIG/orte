@@ -23,7 +23,7 @@
 #ifdef __RTL__
   #include <posix/pthread.h>
 #endif
-#include "orte_api.h"
+#include "orte.h"
 
 ORTEDomain        *d;
 char              instance2Send[64];

@@ -148,7 +148,7 @@
     </connection>
 </connections>
 <includes>
-    <include location="global" impldecl="in declaration">orte_api.h</include>
+    <include location="global" impldecl="in declaration">orte.h</include>
     <include location="local" impldecl="in declaration">ortedemo_types.h</include>
     <include location="local" impldecl="in implementation">FPublisher.ui.h</include>
 </includes>

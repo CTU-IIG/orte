@@ -17,14 +17,14 @@ endif #CONFIG_OC_ETH_ORTE_EXAMPLES
 
 ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_RTL),y)
 
-rtlinux_MODULES = HelloWorldPublisher HelloWorldSubscriber
+rtlinux_MODULES = HelloWorldPublisher_rt HelloWorldSubscriber_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../../include
                
-HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
+HelloWorldPublisher_rt_SOURCES = HelloWorldPublisher.c
 
-HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
+HelloWorldSubscriber_rt_SOURCES = HelloWorldSubscriber.c
 
-rtlinux_LOADLIBES =  orte_rt pthread_rwlock
+rtlinux_LOADLIBES =  orte_rt pthread_rwlock_rt
 
 endif #CONFIG_OC_ETH_ORTE_EXAMPLES

@@ -19,7 +19,7 @@ IMAGES	= ocera_logo.png \
 	shapes.png
 TEMPLATE	=app
 CONFIG	+= qt-mt 
-INCLUDEPATH	+= /orte/orte/include .
+INCLUDEPATH	+= .
 DEFINES += HAVE_STDINT_H QT_THREAD_SUPPORT
-LIBS	+= ../../../debug/orte/liborte/liborte.a -lpthread
+LIBS	+= -lorte -lpthread 
 LANGUAGE	= C++

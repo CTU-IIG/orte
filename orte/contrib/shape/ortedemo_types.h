@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 //#include <stdint.h>
-#include <orte_api.h>
+#include <orte.h>
 
 
 #define ELLIPSE		0

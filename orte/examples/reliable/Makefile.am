@@ -5,10 +5,13 @@ if CONFIG_ORTE_MINGW
 endif
 
 publisher_SOURCES = publisher.c
-publisher_LDADD   = ../../liborte/liborte.a $(win_libs)
+publisher_LDADD   = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+publisher_LDFLAGS = -static
 
 subscriberreliable_SOURCES = subscriberreliable.c
-subscriberreliable_LDADD   = ../../liborte/liborte.a $(win_libs)
+subscriberreliable_LDADD   = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+subscriberreliable_LDFLAGS = -static
 
 subscriberbesteffort_SOURCES = subscriberbesteffort.c
-subscriberbesteffort_LDADD   = ../../liborte/liborte.a $(win_libs)
+subscriberbesteffort_LDADD   = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+subscriberbesteffort_LDFLAGS = -static

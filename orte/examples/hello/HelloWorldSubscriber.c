@@ -18,7 +18,7 @@
  *  GNU General Public License for more details.
  *
  */
-#include "orte_api.h"
+#include "orte.h"
 #ifdef CONFIG_ORTE_RTL
   #include <linux/module.h>
   #include <posix/pthread.h>
@@ -98,6 +98,13 @@ MODULE_PARM(manager,"s");
 MODULE_PARM_DESC(manager,"IP address of local manager");
 MODULE_LICENSE("GPL");
 pthread_t thread;
+ORTEDomainProp dp;
+
+void *
+domainInit(void *arg) {
+  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_TRUE);
+  return arg;
+}
 
 void *
 domainDestroy(void *arg) {
@@ -108,14 +115,14 @@ domainDestroy(void *arg) {
 
 int
 init_module(void) {
-  ORTEDomainProp      dp;
-
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
   ORTEVerbositySetOptions(verbosity);
   dp.appLocalManager=StringToIPAddress(manager);
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
+  pthread_create(&thread,NULL,&domainInit,NULL);  //allocate resources in RT 
+  pthread_join(thread,NULL);
   if (d) {
+    ORTEDomainStart(d,ORTE_TRUE,ORTE_TRUE,ORTE_TRUE); //application start
     if (pthread_create(&thread,NULL,&subscriberCreate,NULL)!=0)
       printf("pthread_create failed!\n");    
   } else

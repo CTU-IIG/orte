@@ -24,7 +24,7 @@
 #ifndef _WIN32
   #include <signal.h>
 #endif
-#include "orte_api.h"
+#include "orte.h"
 #ifdef HAVE_CONFIG_H
   #ifdef HAVE_GETOPT_H
     #include <getopt.h>

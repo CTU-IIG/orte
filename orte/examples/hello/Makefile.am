@@ -1,18 +1,18 @@
 if CONFIG_ORTE_RT
-  module_PROGRAMS = rt_HelloWorldSubscriber.ko rt_HelloWorldPublisher.ko
-#  rt_HelloWorldSubscriber_ko_CFLAGS = $(ORTE_CFLAGS) 
-  rt_HelloWorldSubscriber_ko_SOURCES = HelloWorldSubscriber.c  
-  rt_HelloWorldSubscriber_ko_LINK = $(top_builddir)/modtool --link -o $@
-#  rt_HelloWorldPublisher_ko_CFLAGS = $(ORTE_CFLAGS)
-  rt_HelloWorldPublisher_ko_SOURCES = HelloWorldPublisher.c  
-  rt_HelloWorldPublisher_ko_LINK = $(top_builddir)/modtool --link -o $@
+  module_PROGRAMS = HelloWorldSubscriber_rt.ko HelloWorldPublisher_rt.ko
+  HelloWorldSubscriber_rt_ko_SOURCES = HelloWorldSubscriber.c  
+  HelloWorldSubscriber_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
+  HelloWorldPublisher_rt_ko_SOURCES = HelloWorldPublisher.c  
+  HelloWorldPublisher_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
 else
   noinst_PROGRAMS = HelloWorldPublisher HelloWorldSubscriber
 if CONFIG_ORTE_MINGW
   win_libs= $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 endif
   HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
-  HelloWorldPublisher_LDADD   = ../../liborte/liborte.a $(win_libs)
+  HelloWorldPublisher_LDADD   = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+  HelloWorldPublisher_LDFLAGS = -static
   HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
-  HelloWorldSubscriber_LDADD   = ../../liborte/liborte.a $(win_libs)
+  HelloWorldSubscriber_LDADD   = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+  HelloWorldSubscriber_LDFLAGS = -static
 endif
