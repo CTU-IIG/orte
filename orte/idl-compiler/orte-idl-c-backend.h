@@ -1,5 +1,5 @@
-#ifndef ORBIT_IDL_C_BACKEND_H
-#define ORBIT_IDL_C_BACKEND_H
+#ifndef ORTE_IDL_C_BACKEND_H
+#define ORTE_IDL_C_BACKEND_H
 
 #include "orte-idl2.h"
 
@@ -15,7 +15,7 @@ typedef struct {
 	gboolean  do_impl_hack;
 } OIDL_C_Info;
 
-gboolean  orbit_idl_output_c       (IDL_tree       tree,
+gboolean  orte_idl_output_c       (IDL_tree       tree,
 			            OIDL_Run_Info *rinfo);
 void  orte_idl_output_c_headers   (IDL_tree       tree,
 				    OIDL_Run_Info *rinfo,
@@ -27,38 +27,38 @@ void  orte_idl_output_c_impls     (IDL_tree       tree,
 				    OIDL_Run_Info *rinfo,
 				    OIDL_C_Info   *ci);*/
 
-void orbit_output_typecode (OIDL_C_Info *ci, IDL_tree ts);
+void orte_output_typecode (OIDL_C_Info *ci, IDL_tree ts);
 
-char *orbit_idl_c_filename_for_pass (const char *input_filename, int pass);
+char *orte_idl_c_filename_for_pass (const char *input_filename, int pass);
 
 /* utils */
 char    *orte_cbe_get_typespec_str      (IDL_tree    tree);
 void     orte_cbe_write_typespec        (FILE       *of,
 					 IDL_tree    tree);
-void     orbit_cbe_write_param_typespec (FILE       *of,
+void     orte_cbe_write_param_typespec  (FILE       *of,
 					 IDL_tree    tree);
-void     orbit_cbe_op_write_proto       (FILE       *of,
+void     orte_cbe_op_write_proto        (FILE       *of,
 					 IDL_tree    op,
 					 const char *nom_prefix,
 					 gboolean    for_epv);
 IDL_tree orte_cbe_get_typespec          (IDL_tree    tree);
 void     orte_cbe_write_const           (FILE       *of,
 					 IDL_tree    tree);
-gboolean orbit_cbe_type_is_fixed_length (IDL_tree    ts);
+gboolean orte_cbe_type_is_fixed_length  (IDL_tree    ts);
 gboolean orte_cbe_type_is_builtin       (IDL_tree    tree);
 void     orte_cbe_id_define_hack        (FILE       *fh,
 					 const char *def_prefix,
 					 const char *def_name,
 					 const char *def_value);
-void     orbit_cbe_id_cond_hack         (FILE       *fh,
+void     orte_cbe_id_cond_hack          (FILE       *fh,
 					 const char *def_prefix,
 					 const char *def_name,
 					 const char *def_value);
 char    *orte_cbe_get_typecode_name     (IDL_tree    tree);
-void     orbit_cbe_flatten_args         (IDL_tree    tree,
+void     orte_cbe_flatten_args          (IDL_tree    tree,
 					 FILE       *of,
 					 const char *name);
-void     orbit_cbe_unflatten_args       (IDL_tree    tree,
+void     orte_cbe_unflatten_args        (IDL_tree    tree,
 					 FILE       *of,
 					 const char *name);
 #endif

@@ -1,6 +1,6 @@
 /**************************************************************************
 
-    orbit-idl-main.c (Driver program for the IDL parser & backend)
+    orte-idl-main.c (Driver program for the IDL parser & backend)
 
     Copyright (C) 1999 Elliot Lee
 
@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    $Id: orte-idl-main.c,v 1.1 2005/02/23 10:14:28 smolik Exp $
+    $Id: orte-idl-main.c,v 1.2 2005/03/11 16:46:22 smolik Exp $
 
 ***************************************************************************/
 
@@ -44,7 +44,7 @@ static char *cl_header_guard_prefix = "";
 static char *cl_deps_file = NULL;
 static gboolean cl_onlytop = FALSE;
 
-#define BASE_CPP_ARGS "-D__ORBIT_IDL__ "
+#define BASE_CPP_ARGS "-D__ORTE_IDL__ "
 static GString *cl_cpp_args;
 
 #define INDENT_COMMAND "cat"
@@ -127,7 +127,7 @@ int main(int argc, const char *argv[])
   OIDL_Run_Info rinfo;
 
   /* Argument parsing, etc. */
-  cl_cpp_args = g_string_new("-D__ORBIT_IDL__ ");
+  cl_cpp_args = g_string_new("-D__ORTE_IDL__ ");
 
   if(getenv("C_OUTPUT_FORMATTER"))
     c_output_formatter = getenv("C_OUTPUT_FORMATTER");
@@ -163,7 +163,6 @@ int main(int argc, const char *argv[])
   rinfo.header_guard_prefix = cl_header_guard_prefix;
   rinfo.onlytop = cl_onlytop;
   
-//  printf ("orbit-idl-2 " VERSION " compiling\n");
   printf (" %s mode, passes: %s%s\n\n",
 	  rinfo.is_pidl ? "pidl" : "",
 	  cl_disable_headers ? "" : "headers ",
@@ -172,7 +171,7 @@ int main(int argc, const char *argv[])
   /* Do it */
   while((arg=poptGetArg(pcon))!=NULL) {
     rinfo.input_filename = g_strdup (arg); /* g_path_get_basename(arg); - what !? */
-    if (!orbit_idl_to_backend(arg, &rinfo)) {
+    if (!orte_idl_to_backend(arg, &rinfo)) {
       g_warning("%s compilation failed", arg);
       retval = 1;
     }

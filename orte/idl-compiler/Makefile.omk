@@ -1,0 +1,26 @@
+default_CONFIG = CONFIG_OC_ETH_ORTE_IDL=n
+
+ifeq ($(CONFIG_OC_ETH_ORTE_IDL),y)
+
+IDL_CFLAGS   := $(shell pkg-config --cflags libIDL-2.0)
+IDL_LDFLAGS  := $(shell pkg-config --libs libIDL-2.0)
+
+CFLAGS += $(IDL_CFLAGS)
+LDFLAGS += $(IDL_LDFLAGS)
+
+INCLUDES += -I .
+
+lib_LOADLIBES = popt
+
+bin_PROGRAMS = orbit-idl
+
+orbit-idl_SOURCES =			\
+	orte-idl-main.c		        \
+	orte-idl-driver.c		\
+	orte-idl-utils.c		\
+	orte-idl-c-backend.c		\
+	orte-idl-c-headers.c		\
+	orte-idl-c-impls.c		\
+	orte-idl-c-utils.c
+
+endif #CONFIG_OC_ETH_ORTE_IDL

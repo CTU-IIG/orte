@@ -12,7 +12,7 @@ static FILE *out_for_pass(const char *input_filename, int pass,
 			  OIDL_Run_Info *rinfo);
 
 gboolean
-orbit_idl_output_c (IDL_tree       tree,
+orte_idl_output_c (IDL_tree       tree,
 		    OIDL_Run_Info *rinfo)
 {
   int i;
@@ -58,7 +58,7 @@ orbit_idl_output_c (IDL_tree       tree,
 }
 
 char *
-orbit_idl_c_filename_for_pass (const char *input_filename, 
+orte_idl_c_filename_for_pass (const char *input_filename, 
                                int pass)
 {
 	char *filename;
@@ -117,7 +117,7 @@ out_for_pass (const char    *input_filename,
 				   rinfo->deps_file, strerror (errno));
 		
 	} else {*/
-		output_filename = orbit_idl_c_filename_for_pass (input_filename, pass);
+		output_filename = orte_idl_c_filename_for_pass (input_filename, pass);
 
 		cmdline = g_alloca (strlen (rinfo->output_formatter) +
 				    strlen (output_filename) +

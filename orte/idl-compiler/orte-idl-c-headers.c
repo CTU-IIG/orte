@@ -448,7 +448,7 @@ ch_output_const_dcl(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
 	orte_cbe_write_const(ci->fh,
 			      IDL_CONST_DCL(tree).const_exp);
 
-	typespec = orbit_cbe_get_typespec (IDL_CONST_DCL(tree).const_type);
+	typespec = orte_cbe_get_typespec (IDL_CONST_DCL(tree).const_type);
 	if (IDL_NODE_TYPE (typespec) == IDLN_TYPE_INTEGER &&
 	    !IDL_TYPE_INTEGER (typespec).f_signed)
 		fprintf(ci->fh, "U");
@@ -482,7 +482,7 @@ ch_prep_sequence(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
   gboolean separate_defs, fake_if;
   IDL_tree fake_seq = NULL;
 
-  tts = orbit_cbe_get_typespec(IDL_TYPE_SEQUENCE(tree).simple_type_spec);
+  tts = orte_cbe_get_typespec(IDL_TYPE_SEQUENCE(tree).simple_type_spec);
   ctmp = orte_cbe_get_typespec_str(IDL_TYPE_SEQUENCE(tree).simple_type_spec);
   ctmp2 = orte_cbe_get_typespec_str(tts);
   fake_if = (IDL_NODE_TYPE(tts) == IDLN_INTERFACE);
@@ -512,7 +512,7 @@ ch_prep_sequence(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
      == IDLN_TYPE_SEQUENCE)
     ch_prep_sequence(IDL_TYPE_SEQUENCE(tree).simple_type_spec, rinfo, ci);
 
-  /* NOTE: ORBIT_DECL_%s protects redef of everything (struct,TC,externs)
+  /* NOTE: ORTE_DECL_%s protects redef of everything (struct,TC,externs)
    * while _%s_defined protects only the struct */
 
   fprintf(ci->fh, "#if !defined(ORTE_DECL_%s)\n#define ORTE_DECL_%s 1\n",
@@ -553,12 +553,12 @@ ch_prep_sequence(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
       fprintf(ci->fh, ";\n#endif\n");
 //      ch_type_alloc_and_tc(tree, rinfo, ci, TRUE);
 
-      tc = orte_cbe_get_typecode_name (orbit_cbe_get_typespec (tree));
+      tc = orte_cbe_get_typecode_name (orte_cbe_get_typespec (tree));
       member_type = orte_cbe_type_is_builtin (IDL_TYPE_SEQUENCE (tree).simple_type_spec) ?
 				ctmp + strlen ("CORBA_") : ctmp;
 
       fprintf (ci->fh, "#define CORBA_sequence_%s_allocbuf(l) "
-		       "((%s*)ORBit_small_allocbuf (%s, (l)))\n",
+		       "((%s*)ORTE_small_allocbuf (%s, (l)))\n",
 		       member_type, member_type, tc);
 
       g_free (tc);

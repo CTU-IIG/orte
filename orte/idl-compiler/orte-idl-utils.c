@@ -3,7 +3,7 @@
 #include <string.h>
 
 void
-orbit_idl_check_oneway_op (IDL_tree op)
+orte_idl_check_oneway_op (IDL_tree op)
 {
 	g_assert (IDL_NODE_TYPE(op) == IDLN_OP_DCL);
 
@@ -28,7 +28,7 @@ orbit_idl_check_oneway_op (IDL_tree op)
 }
 
 void
-orbit_idl_attr_fake_ops(IDL_tree attr, IDL_ns ns)
+orte_idl_attr_fake_ops(IDL_tree attr, IDL_ns ns)
 {
   IDL_tree attr_name, ident, curnode, op1, op2, intf;
   GString *attrname;
@@ -98,7 +98,7 @@ static const char * const nodenames[] = {
 };
 
 void
-orbit_idl_print_node(IDL_tree node, int indent_level)
+orte_idl_print_node(IDL_tree node, int indent_level)
 {
   IDL_tree curnode;
   char *s;
@@ -122,7 +122,7 @@ orbit_idl_print_node(IDL_tree node, int indent_level)
     g_print("LIST:\n");
     for(curnode = node; curnode;
 	curnode = IDL_LIST(curnode).next) {
-      orbit_idl_print_node(IDL_LIST(curnode).data, indent_level + INDENT_INCREMENT_1);
+      orte_idl_print_node(IDL_LIST(curnode).data, indent_level + INDENT_INCREMENT_1);
     }
     break;
 
@@ -171,45 +171,45 @@ orbit_idl_print_node(IDL_tree node, int indent_level)
 
   case IDLN_TYPE_DCL:
     g_print("TYPE DCL:\n");
-    orbit_idl_print_node(IDL_TYPE_DCL(node).type_spec, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_DCL(node).type_spec, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("decls:\n");
-    orbit_idl_print_node(IDL_TYPE_DCL(node).dcls, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_DCL(node).dcls, indent_level + INDENT_INCREMENT_2);
     break;
 
   case IDLN_CONST_DCL:
     g_print("CONST DCL:\n");
-    orbit_idl_print_node(IDL_CONST_DCL(node).const_type, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_CONST_DCL(node).const_type, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("ident:\n");
-    orbit_idl_print_node(IDL_CONST_DCL(node).ident, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_CONST_DCL(node).ident, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("const_exp:\n");
-    orbit_idl_print_node(IDL_CONST_DCL(node).const_exp, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_CONST_DCL(node).const_exp, indent_level + INDENT_INCREMENT_2);
     break;
 
   case IDLN_EXCEPT_DCL:
     g_print("EXCEPT DCL:\n");
-    orbit_idl_print_node(IDL_EXCEPT_DCL(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_EXCEPT_DCL(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("members:\n");
-    orbit_idl_print_node(IDL_EXCEPT_DCL(node).members, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_EXCEPT_DCL(node).members, indent_level + INDENT_INCREMENT_2);
     break;
 
   case IDLN_ATTR_DCL:
     g_print("ATTR_DCL (%s):\n", (IDL_ATTR_DCL(node).f_readonly)?"readonly":"rw");
-    orbit_idl_print_node(IDL_ATTR_DCL(node).param_type_spec, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_ATTR_DCL(node).param_type_spec, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("simple_declarations:\n");
-    orbit_idl_print_node(IDL_ATTR_DCL(node).simple_declarations, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_ATTR_DCL(node).simple_declarations, indent_level + INDENT_INCREMENT_2);
     break;
 
   case IDLN_OP_DCL:
     g_print("OP DCL (%s):\n", (IDL_OP_DCL(node).f_oneway)?"oneway":"normal");
-    orbit_idl_print_node(IDL_OP_DCL(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_OP_DCL(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("op_type_spec:\n");
-    orbit_idl_print_node(IDL_OP_DCL(node).op_type_spec, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_OP_DCL(node).op_type_spec, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("parameter_dcls:\n");
-    orbit_idl_print_node(IDL_OP_DCL(node).parameter_dcls, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_OP_DCL(node).parameter_dcls, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("raises_expr:\n");
-    orbit_idl_print_node(IDL_OP_DCL(node).raises_expr, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_OP_DCL(node).raises_expr, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("context_expr:\n");
-    orbit_idl_print_node(IDL_OP_DCL(node).context_expr, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_OP_DCL(node).context_expr, indent_level + INDENT_INCREMENT_2);
     break;
 
   case IDLN_PARAM_DCL:
@@ -219,27 +219,27 @@ orbit_idl_print_node(IDL_tree node, int indent_level)
     case IDL_PARAM_OUT: g_print("(out)\n"); break;
     case IDL_PARAM_INOUT: g_print("(inout)\n"); break;
     }
-    orbit_idl_print_node(IDL_PARAM_DCL(node).param_type_spec, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_PARAM_DCL(node).param_type_spec, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("simple_declarator:\n");
-    orbit_idl_print_node(IDL_PARAM_DCL(node).simple_declarator, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_PARAM_DCL(node).simple_declarator, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_FORWARD_DCL:
     g_print("FORWARD DCL:\n");
-    orbit_idl_print_node(IDL_FORWARD_DCL(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_FORWARD_DCL(node).ident, indent_level + INDENT_INCREMENT_1);
     break;
   case IDLN_INTERFACE:
     g_print("INTERFACE:\n");
-    orbit_idl_print_node(IDL_INTERFACE(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_INTERFACE(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("inheritance_spec:\n");
-    orbit_idl_print_node(IDL_INTERFACE(node).inheritance_spec, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_INTERFACE(node).inheritance_spec, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("body:\n");
-    orbit_idl_print_node(IDL_INTERFACE(node).body, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_INTERFACE(node).body, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_MODULE:
     g_print("MODULE:\n");
-    orbit_idl_print_node(IDL_MODULE(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_MODULE(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("definition_list:\n");
-    orbit_idl_print_node(IDL_MODULE(node).definition_list, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_MODULE(node).definition_list, indent_level + INDENT_INCREMENT_2);
     break;
 
   case IDLN_TYPE_INTEGER:
@@ -259,60 +259,60 @@ orbit_idl_print_node(IDL_tree node, int indent_level)
     break;
   case IDLN_TYPE_FIXED:
     g_print("TYPE fixed:\n");
-    orbit_idl_print_node(IDL_TYPE_FIXED(node).positive_int_const, indent_level + INDENT_INCREMENT_1);
-    orbit_idl_print_node(IDL_TYPE_FIXED(node).integer_lit, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_FIXED(node).positive_int_const, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_FIXED(node).integer_lit, indent_level + INDENT_INCREMENT_1);
     break;
   case IDLN_TYPE_STRING:
     g_print("TYPE string:\n");
-    orbit_idl_print_node(IDL_TYPE_STRING(node).positive_int_const, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_STRING(node).positive_int_const, indent_level + INDENT_INCREMENT_1);
     break;
   case IDLN_TYPE_WIDE_STRING:
     g_print("TYPE wide string:\n");
-    orbit_idl_print_node(IDL_TYPE_WIDE_STRING(node).positive_int_const, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_WIDE_STRING(node).positive_int_const, indent_level + INDENT_INCREMENT_1);
     break;
   case IDLN_TYPE_ENUM:
     g_print("TYPE enum:\n");
-    orbit_idl_print_node(IDL_TYPE_ENUM(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_ENUM(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("enumerator_list:\n");
-    orbit_idl_print_node(IDL_TYPE_ENUM(node).enumerator_list, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_ENUM(node).enumerator_list, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_TYPE_ARRAY:
     g_print("TYPE array:\n");
-    orbit_idl_print_node(IDL_TYPE_ARRAY(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_ARRAY(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("size_list:\n");
-    orbit_idl_print_node(IDL_TYPE_ARRAY(node).size_list, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_ARRAY(node).size_list, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_TYPE_SEQUENCE:
     g_print("TYPE sequence:\n");
-    orbit_idl_print_node(IDL_TYPE_SEQUENCE(node).simple_type_spec, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_SEQUENCE(node).simple_type_spec, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("positive_int_const:\n");
-    orbit_idl_print_node(IDL_TYPE_SEQUENCE(node).positive_int_const, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_SEQUENCE(node).positive_int_const, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_TYPE_STRUCT:
     g_print("TYPE struct:\n");
-    orbit_idl_print_node(IDL_TYPE_STRUCT(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_STRUCT(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("member_list:\n");
-    orbit_idl_print_node(IDL_TYPE_STRUCT(node).member_list, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_STRUCT(node).member_list, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_TYPE_UNION:
     g_print("TYPE union:\n");
-    orbit_idl_print_node(IDL_TYPE_UNION(node).ident, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_TYPE_UNION(node).ident, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("switch_type_spec:\n");
-    orbit_idl_print_node(IDL_TYPE_UNION(node).switch_type_spec, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_UNION(node).switch_type_spec, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("switch_body:\n");
-    orbit_idl_print_node(IDL_TYPE_UNION(node).switch_body, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_TYPE_UNION(node).switch_body, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_MEMBER:
     g_print("MEMBER:\n");
-    orbit_idl_print_node(IDL_MEMBER(node).type_spec, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_MEMBER(node).type_spec, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("dcls:\n");
-    orbit_idl_print_node(IDL_MEMBER(node).dcls, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_MEMBER(node).dcls, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_CASE_STMT:
     g_print("CASE_STMT:\n");
-    orbit_idl_print_node(IDL_CASE_STMT(node).labels, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_CASE_STMT(node).labels, indent_level + INDENT_INCREMENT_1);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("element_spec:\n");
-    orbit_idl_print_node(IDL_CASE_STMT(node).element_spec, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_CASE_STMT(node).element_spec, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_BINOP:
     g_print("BINOP ");
@@ -329,9 +329,9 @@ orbit_idl_print_node(IDL_tree node, int indent_level)
     case IDL_BINOP_MOD: g_print("mod:\n"); break;
     }
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("left:\n");
-    orbit_idl_print_node(IDL_BINOP(node).left, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_BINOP(node).left, indent_level + INDENT_INCREMENT_2);
     do_indent(indent_level + INDENT_INCREMENT_1); g_print("right:\n");
-    orbit_idl_print_node(IDL_BINOP(node).right, indent_level + INDENT_INCREMENT_2);
+    orte_idl_print_node(IDL_BINOP(node).right, indent_level + INDENT_INCREMENT_2);
     break;
   case IDLN_UNARYOP:
     g_print("UNARYOP ");
@@ -340,7 +340,7 @@ orbit_idl_print_node(IDL_tree node, int indent_level)
     case IDL_UNARYOP_MINUS: g_print("minus:\n"); break;
     case IDL_UNARYOP_COMPLEMENT: g_print("complement:\n"); break;
     }
-    orbit_idl_print_node(IDL_UNARYOP(node).operand, indent_level + INDENT_INCREMENT_1);
+    orte_idl_print_node(IDL_UNARYOP(node).operand, indent_level + INDENT_INCREMENT_1);
     break;
   case IDLN_TYPE_CHAR:
     g_print("TYPE char\n");
@@ -426,7 +426,7 @@ IDL_tree_traverse_parents (IDL_tree p,
 
 /* For use by below function */
 static const int * const
-orbit_cbe_get_typeoffsets_table (void)
+orte_cbe_get_typeoffsets_table (void)
 {
   static int typeoffsets[IDLN_LAST];
   static gboolean initialized = FALSE;
@@ -478,7 +478,7 @@ gint
 oidl_param_info(IDL_tree in_param, IDL_ParamRole role, gboolean *isSlice)
 {
 	IDL_tree param;
-	const int * const typeoffsets = orbit_cbe_get_typeoffsets_table ();
+	const int * const typeoffsets = orte_cbe_get_typeoffsets_table ();
 	const int nptrrefs_required[][4] = {
 		{0,1,1,0} /* float */,
 		{0,1,1,0} /* double */,
@@ -507,7 +507,7 @@ oidl_param_info(IDL_tree in_param, IDL_ParamRole role, gboolean *isSlice)
 		return 0; /* void */
 
 	/* Now, how do we use this table? :) */
-	param = orbit_cbe_get_typespec (in_param);
+	param = orte_cbe_get_typespec (in_param);
 
 	g_assert (param);
 
@@ -515,7 +515,7 @@ oidl_param_info(IDL_tree in_param, IDL_ParamRole role, gboolean *isSlice)
 	case IDLN_TYPE_STRUCT:
 	case IDLN_TYPE_UNION:
 		if (((role == DATA_RETURN) || (role == DATA_OUT)) &&
-		    !orbit_cbe_type_is_fixed_length(param))
+		    !orte_cbe_type_is_fixed_length(param))
 			retval++;
 		break;
 
@@ -525,7 +525,7 @@ oidl_param_info(IDL_tree in_param, IDL_ParamRole role, gboolean *isSlice)
 			retval = 1;
 
 		} else if (role == DATA_OUT &&
-			   !orbit_cbe_type_is_fixed_length (param)) {
+			   !orte_cbe_type_is_fixed_length (param)) {
 			*isSlice = TRUE;
 			retval = 2;
 		}
@@ -593,12 +593,12 @@ oidl_param_info(IDL_tree in_param, IDL_ParamRole role, gboolean *isSlice)
 **/
  
 gboolean
-orbit_cbe_type_is_fixed_length(IDL_tree ts)
+orte_cbe_type_is_fixed_length(IDL_tree ts)
 {
   gboolean is_fixed = TRUE;
   IDL_tree curitem;
 
-  ts = orbit_cbe_get_typespec(ts);
+  ts = orte_cbe_get_typespec(ts);
   switch(IDL_NODE_TYPE(ts)) {
   case IDLN_TYPE_FLOAT:
   case IDLN_TYPE_INTEGER:
@@ -623,7 +623,7 @@ orbit_cbe_type_is_fixed_length(IDL_tree ts)
   case IDLN_TYPE_UNION:
     for(curitem = IDL_TYPE_UNION(ts).switch_body; curitem;
 	curitem = IDL_LIST(curitem).next) {
-      is_fixed &= orbit_cbe_type_is_fixed_length(IDL_LIST(IDL_CASE_STMT(IDL_LIST(curitem).data).element_spec).data);
+      is_fixed &= orte_cbe_type_is_fixed_length(IDL_LIST(IDL_CASE_STMT(IDL_LIST(curitem).data).element_spec).data);
     }
     return is_fixed;
     break;
@@ -631,22 +631,22 @@ orbit_cbe_type_is_fixed_length(IDL_tree ts)
   case IDLN_TYPE_STRUCT:
     for(curitem = IDL_TYPE_STRUCT(ts).member_list; curitem;
 	curitem = IDL_LIST(curitem).next) {
-      is_fixed &= orbit_cbe_type_is_fixed_length(IDL_LIST(curitem).data);
+      is_fixed &= orte_cbe_type_is_fixed_length(IDL_LIST(curitem).data);
     }
     return is_fixed;
     break;
   case IDLN_TYPE_ARRAY:
-    return orbit_cbe_type_is_fixed_length(IDL_TYPE_DCL(IDL_get_parent_node(ts, IDLN_TYPE_DCL, NULL)).type_spec);
+    return orte_cbe_type_is_fixed_length(IDL_TYPE_DCL(IDL_get_parent_node(ts, IDLN_TYPE_DCL, NULL)).type_spec);
     break;
   case IDLN_TYPE_DCL:
-    return orbit_cbe_type_is_fixed_length(IDL_TYPE_DCL(ts).type_spec);
+    return orte_cbe_type_is_fixed_length(IDL_TYPE_DCL(ts).type_spec);
     break;
   case IDLN_IDENT:
   case IDLN_LIST:
-    return orbit_cbe_type_is_fixed_length(IDL_NODE_UP(ts));
+    return orte_cbe_type_is_fixed_length(IDL_NODE_UP(ts));
     break;
   case IDLN_MEMBER:
-    return orbit_cbe_type_is_fixed_length(IDL_MEMBER(ts).type_spec);
+    return orte_cbe_type_is_fixed_length(IDL_MEMBER(ts).type_spec);
     break;
   default:
     g_warning("I'm not sure if type %s is fixed-length", IDL_tree_type_names[IDL_NODE_TYPE(ts)]);
@@ -655,7 +655,7 @@ orbit_cbe_type_is_fixed_length(IDL_tree ts)
 }
 
 IDL_tree
-orbit_cbe_get_typespec(IDL_tree node)
+orte_cbe_get_typespec(IDL_tree node)
 {
   if(node == NULL)
     return NULL;
@@ -685,17 +685,17 @@ orbit_cbe_get_typespec(IDL_tree node)
     return node;
     break;
   case IDLN_TYPE_DCL:
-    return orbit_cbe_get_typespec(IDL_TYPE_DCL(node).type_spec);
+    return orte_cbe_get_typespec(IDL_TYPE_DCL(node).type_spec);
     break;
   case IDLN_PARAM_DCL:
-    return orbit_cbe_get_typespec(IDL_PARAM_DCL(node).param_type_spec);
+    return orte_cbe_get_typespec(IDL_PARAM_DCL(node).param_type_spec);
     break;
   case IDLN_MEMBER:
-    return orbit_cbe_get_typespec(IDL_MEMBER(node).type_spec);
+    return orte_cbe_get_typespec(IDL_MEMBER(node).type_spec);
     break;
   case IDLN_LIST:
   case IDLN_IDENT:
-    return orbit_cbe_get_typespec(IDL_get_parent_node(node, IDLN_ANY, NULL));
+    return orte_cbe_get_typespec(IDL_get_parent_node(node, IDLN_ANY, NULL));
     break;
   default:
     g_error("Unhandled node type %s!", IDL_tree_type_names[IDL_NODE_TYPE(node)]);

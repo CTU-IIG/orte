@@ -1,6 +1,6 @@
 /**************************************************************************
 
-    orbit-idl-driver.c (Dispatch parsed tree to various backends)
+    orte-idl-driver.c (Dispatch parsed tree to various backends)
 
     Copyright (C) 1999 Elliot Lee
 
@@ -18,20 +18,19 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    $Id: orte-idl-driver.c,v 1.1 2005/02/23 10:14:28 smolik Exp $
+    $Id: orte-idl-driver.c,v 1.2 2005/03/11 16:46:22 smolik Exp $
 
 ***************************************************************************/
 
 //#include "config.h"
 
 #include "orte-idl2.h"
-//#include "orte-idl-backend.h"
 #include "orte-idl-c-backend.h"
 
 #include <string.h>
 
 static void
-orbit_idl_tree_fake_ops (IDL_tree tree, IDL_ns ns)
+orte_idl_tree_fake_ops (IDL_tree tree, IDL_ns ns)
 {
 	IDL_tree node;
 
@@ -40,17 +39,17 @@ orbit_idl_tree_fake_ops (IDL_tree tree, IDL_ns ns)
 
 	switch(IDL_NODE_TYPE(tree)) {
 	case IDLN_MODULE:
-		orbit_idl_tree_fake_ops (IDL_MODULE (tree).definition_list, ns);
+		orte_idl_tree_fake_ops (IDL_MODULE (tree).definition_list, ns);
 		break;
 	case IDLN_INTERFACE:
-		orbit_idl_tree_fake_ops (IDL_INTERFACE (tree).body, ns);
+		orte_idl_tree_fake_ops (IDL_INTERFACE (tree).body, ns);
 		break;
 	case IDLN_LIST:
 		for (node = tree; node; node = IDL_LIST (node).next)
-			orbit_idl_tree_fake_ops (IDL_LIST (node).data, ns);
+			orte_idl_tree_fake_ops (IDL_LIST (node).data, ns);
 		break;
 	case IDLN_ATTR_DCL:
-		orbit_idl_attr_fake_ops (tree, ns);
+		orte_idl_attr_fake_ops (tree, ns);
 		break;
 	default:
 		break;
@@ -58,7 +57,7 @@ orbit_idl_tree_fake_ops (IDL_tree tree, IDL_ns ns)
 }
 
 gboolean
-orbit_idl_to_backend (const char    *filename,
+orte_idl_to_backend (const char    *filename,
 		      OIDL_Run_Info *rinfo)
 {
 	IDL_ns   ns;
@@ -80,7 +79,7 @@ orbit_idl_to_backend (const char    *filename,
 	rinfo->ns = ns;
 
 	if (rinfo->debug_level > 3)
-		orbit_idl_print_node (tree, 0);
+		orte_idl_print_node (tree, 0);
 
 	if (errcode != IDL_SUCCESS) {
 		if (errcode == -1)
@@ -89,12 +88,12 @@ orbit_idl_to_backend (const char    *filename,
 		return 0;
 	}
 
-	orbit_idl_tree_fake_ops (tree, ns);
+	orte_idl_tree_fake_ops (tree, ns);
 
 	if (!strcmp (rinfo->output_language, "c")) 
-		retval = orbit_idl_output_c (tree, rinfo);
+		retval = orte_idl_output_c (tree, rinfo);
 /*	else
-		retval = orbit_idl_backend_output (rinfo, tree);
+		retval = orte_idl_backend_output (rinfo, tree);
 */
 	return retval;
 }
