@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.cpp,v 1.3 2004/03/18 21:38:02 smolik Exp $
+** $Id: richtext.cpp,v 1.4 2004/04/03 11:33:16 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **

@@ -9,8 +9,14 @@
             <x>0</x>
             <y>0</y>
             <width>447</width>
-            <height>306</height>
+            <height>308</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>447</width>
+            <height>307</height>
+        </size>
     </property>
     <property name="caption">
         <string>ORTE demo application</string>
@@ -164,7 +170,7 @@
         </spacer>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout8</cstring>
+                <cstring>layout10</cstring>
             </property>
             <vbox>
                 <property name="name">
@@ -244,7 +250,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>40</height>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>
@@ -261,6 +267,84 @@
                 </widget>
                 <spacer>
                     <property name="name">
+                        <cstring>spacer13_3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout9</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer10_3</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>21</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>pixmapLabel1_2</cstring>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="pixmap">
+                                <pixmap>shapes.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer11_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>22</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+                <spacer>
+                    <property name="name">
                         <cstring>spacer13</cstring>
                     </property>
                     <property name="orientation">
@@ -272,7 +356,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>50</height>
+                            <height>20</height>
                         </size>
                     </property>
                 </spacer>
