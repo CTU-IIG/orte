@@ -27,7 +27,7 @@ GAVL_FLES_INT_DEC(ul_htim_queue, ul_htim_queue_t, ul_htim_node_t, ul_htim_time_t
 
 GAVL_FLES_INT_IMP(ul_htim_queue, ul_htim_queue_t, ul_htim_node_t, ul_htim_time_t,
       timers, node, expires, ul_htimer_cmp_fnc, GAVL_FAFTER, 
- root->first_changed=1,/**/,root->first_changed=1)
+ root->first_changed=1,;,root->first_changed=1)
 
 /*****************************************************************************/
 UL_HTIMER_IMP(htimerRoot, \

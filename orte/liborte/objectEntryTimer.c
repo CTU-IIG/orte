@@ -1,4 +1,4 @@
-    /*
+/*
  *  $Id: objectEntryTimer.c,v 0.0.0.1   2003/09/10
  *
  *  DEBUG:  section 12                  Timer function on object from eventEntry
@@ -131,7 +131,7 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   
   if (!robjectEntryOID) return;
   if (!gavl_cmp_guid(&robjectEntryOID->guid,&d->guid)) return;
-  debug(12,3) ("application removed\n");
+  debug(12,3) ("application removed - AID: 0%x\n",robjectEntryOID->guid.aid);
   
   guid=robjectEntryOID->guid;
   //publication, subsription and application
@@ -159,7 +159,10 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   removePublicationsOnLocalSubscriptions(d,robjectEntryOID);
   removeSubscriptionsOnLocalPublications(d,robjectEntryOID);
   //destroy all object - the object will be disconneced in objectEntryDelete
-  while((objectEntryOID=ObjectEntryOID_first(robjectEntryOID->objectEntryAID))) {
+  objectEntryOID=ObjectEntryOID_first(robjectEntryOID->objectEntryAID);
+  while (objectEntryOID) {
+    ObjectEntryOID *objectEntryOID_delete=objectEntryOID;
+    objectEntryOID=ObjectEntryOID_next(robjectEntryOID->objectEntryAID,objectEntryOID);
     switch (objectEntryOID->oid & 0x07) {
       case OID_PUBLICATION:
         pthread_rwlock_wrlock(&d->psEntry.publicationsLock);
@@ -172,8 +175,7 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
         pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
         break;
     }
-    if (objectEntryDelete(d,objectEntryOID)>1) //AID was deleted
-      break;
+    objectEntryDelete(d,objectEntryOID_delete);
   }
 }
 
@@ -197,15 +199,15 @@ removeManager(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
       break;  //yes
   }
   if (!objectEntryAID) {  //not exists 
-    gavl_cust_for_each(ObjectEntryAID,
-                       robjectEntryOID->objectEntryHID,objectEntryAID) {
+    objectEntryAID=ObjectEntryAID_first(robjectEntryOID->objectEntryHID);
+    while (objectEntryAID) {
+      ObjectEntryAID *objectEntryAID_delete=objectEntryAID;
+      objectEntryAID=ObjectEntryAID_next(robjectEntryOID->objectEntryHID,objectEntryAID);
       if ((objectEntryAID->aid & 0x03) == MANAGEDAPPLICATION) {
         ObjectEntryOID   *objectEntryOID;
         objectEntryOID=ObjectEntryOID_find(objectEntryAID,&guid.oid);
         if (gavl_cmp_guid(&objectEntryOID->guid,&d->guid)) { //!=
           removeApplication(d,objectEntryOID);
-          objectEntryAID=  //start
-            ObjectEntryAID_first(robjectEntryOID->objectEntryHID);
         }
       }
     }
