@@ -1138,6 +1138,7 @@ AC_DEFUN(DS_RTLINUX,
 		AC_MSG_CHECKING([RTLinux directory ${RTLINUX_DIR} for rtl.mk])
 		if [[ -d ${RTLINUX_DIR}/include ]] ; then
                         RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
+                        RTLINUX_CC=`sed -n -e 's/^CC *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
 		else
 			AC_MSG_ERROR([incorrect RTLinux directory?])
 		fi
@@ -1151,7 +1152,7 @@ AC_DEFUN(DS_RTLINUX,
 		      ! -e "${RTLINUXUDP_DIR}/include/nictab.h" ]] ; then 
 			AC_MSG_ERROR([incorrect RTLinux UDP directory!!!])
 		fi
-                RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
+                RT_GCCLIB_DIR=`${RTLINUX_CC} -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
 		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -I${RT_GCCLIB_DIR}/include -nostdinc"
 		AC_MSG_RESULT([found])
 		$1
@@ -1159,6 +1160,7 @@ AC_DEFUN(DS_RTLINUX,
 		$2
 	fi
 	AC_SUBST(RTLINUX_CFLAGS)
+	AC_SUBST(RTLINUX_CC)
 ])
 
 AC_DEFUN(DS_RT,

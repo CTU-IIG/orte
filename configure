@@ -273,7 +273,7 @@ PACKAGE_VERSION='0.2.0'
 PACKAGE_STRING='orte 0.2.0'
 PACKAGE_BUGREPORT='petr.smolik@wo.cz'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LINUX_DIR LINUX_ARCH LINUX_AFLAGS LINUX_LDFLAGS LINUX_ARFLAGS LINUX_CROSS_COMPILE LINUX_KERNELRELEASE LINUX_CFLAGS LINUX_CC LINUX_LD LINUX_AS LINUX_MODULE_EXT CONFIG_ORTE_KERNEL CONFIG_ORTE_KERNEL_TRUE CONFIG_ORTE_KERNEL_FALSE CONFIG_RTHAL_TRUE CONFIG_RTHAL_FALSE RTAI_CFLAGS CONFIG_RTLINUX_TRUE CONFIG_RTLINUX_FALSE RTLINUX_CFLAGS CONFIG_ORTE_RT USE_RTAI_TRUE USE_RTAI_FALSE USE_RTLINUX_TRUE USE_RTLINUX_FALSE CONFIG_ORTE_RT_TRUE CONFIG_ORTE_RT_FALSE ORTE_MAJOR_VERSION ORTE_MINOR_VERSION ORTE_MICRO_VERSION ORTE_VERSION CONFIG_ORTE_WIN_TRUE CONFIG_ORTE_WIN_FALSE CONFIG_ORTE_UNIX_TRUE CONFIG_ORTE_UNIX_FALSE moduledir modulePROGRAMS_INSTALL CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE RANLIB ac_ct_RANLIB CPP EGREP INCLUDES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LINUX_DIR LINUX_ARCH LINUX_AFLAGS LINUX_LDFLAGS LINUX_ARFLAGS LINUX_CROSS_COMPILE LINUX_KERNELRELEASE LINUX_CFLAGS LINUX_CC LINUX_LD LINUX_AS LINUX_MODULE_EXT CONFIG_ORTE_KERNEL CONFIG_ORTE_KERNEL_TRUE CONFIG_ORTE_KERNEL_FALSE CONFIG_RTHAL_TRUE CONFIG_RTHAL_FALSE RTAI_CFLAGS CONFIG_RTLINUX_TRUE CONFIG_RTLINUX_FALSE RTLINUX_CFLAGS RTLINUX_CC CONFIG_ORTE_RT USE_RTAI_TRUE USE_RTAI_FALSE USE_RTLINUX_TRUE USE_RTLINUX_FALSE CONFIG_ORTE_RT_TRUE CONFIG_ORTE_RT_FALSE ORTE_MAJOR_VERSION ORTE_MINOR_VERSION ORTE_MICRO_VERSION ORTE_VERSION CONFIG_ORTE_WIN_TRUE CONFIG_ORTE_WIN_FALSE CONFIG_ORTE_UNIX_TRUE CONFIG_ORTE_UNIX_FALSE moduledir modulePROGRAMS_INSTALL CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE RANLIB ac_ct_RANLIB CPP EGREP INCLUDES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2112,6 +2112,7 @@ fi
 echo $ECHO_N "checking RTLinux directory ${RTLINUX_DIR} for rtl.mk... $ECHO_C" >&6
 		if [ -d ${RTLINUX_DIR}/include ] ; then
                         RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
+                        RTLINUX_CC=`sed -n -e 's/^CC *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
 		else
 			{ { echo "$as_me:$LINENO: error: incorrect RTLinux directory?" >&5
 echo "$as_me: error: incorrect RTLinux directory?" >&2;}
@@ -2135,7 +2136,7 @@ echo $ECHO_N "checking RTLinux for UDP... $ECHO_C" >&6
 echo "$as_me: error: incorrect RTLinux UDP directory!!!" >&2;}
    { (exit 1); exit 1; }; }
 		fi
-                RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
+                RT_GCCLIB_DIR=`${RTLINUX_CC} -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
 		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -I${RT_GCCLIB_DIR}/include -nostdinc"
 		echo "$as_me:$LINENO: result: found" >&5
 echo "${ECHO_T}found" >&6
@@ -2143,6 +2144,7 @@ echo "${ECHO_T}found" >&6
 	else
 		USE_RTLINUX=no
 	fi
+
 
 
 	if test ${USE_RTAI} == "yes" -o ${USE_RTLINUX} == "yes" ; then
@@ -2253,6 +2255,22 @@ modulePROGRAMS_INSTALL="\$(top_builddir)/modtool --install"
 modulePROGRAMS_UNINSTALL="\$(top_builddir)/modtool --uninstall"
 
 
+
+###############################
+# CFLAGS
+CFLAGS="$CFLAGS -Wall"
+if test ${USE_RTLINUX} == 'yes' ; then
+  CFLAGS="$CFLAGS $RTLINUX_CFLAGS"
+  CC="$RTLINUX_CC"
+else
+  if test ${USE_RTAI} == 'yes' ; then
+    CFLAGS="$CFLAGS $RTAI_CFLAGS $LINUX_CFLAGS"
+  else
+    if test -n ${CONFIG_ORTE_KERNEL} ; then
+      CFLAGS="$CFLAGS $LINUX_CFLAGS"
+    fi
+  fi
+fi
 
 ###############################
 # Checks for programs.
@@ -3555,21 +3573,6 @@ fi
 # enable GNU source
 
 
-
-###############################
-# CFLAGS
-CFLAGS="$CFLAGS -Wall"
-if test ${USE_RTLINUX} == 'yes' ; then
-  CFLAGS="$CFLAGS $RTLINUX_CFLAGS"
-else
-  if test ${USE_RTAI} == 'yes' ; then
-    CFLAGS="$CFLAGS $RTAI_CFLAGS $LINUX_CFLAGS"
-  else
-    if test -n ${CONFIG_ORTE_KERNEL} ; then
-      CFLAGS="$CFLAGS $LINUX_CFLAGS"
-    fi
-  fi
-fi
 
 ###############################
 # Checks for header files.
@@ -5824,6 +5827,7 @@ s,@RTAI_CFLAGS@,$RTAI_CFLAGS,;t t
 s,@CONFIG_RTLINUX_TRUE@,$CONFIG_RTLINUX_TRUE,;t t
 s,@CONFIG_RTLINUX_FALSE@,$CONFIG_RTLINUX_FALSE,;t t
 s,@RTLINUX_CFLAGS@,$RTLINUX_CFLAGS,;t t
+s,@RTLINUX_CC@,$RTLINUX_CC,;t t
 s,@CONFIG_ORTE_RT@,$CONFIG_ORTE_RT,;t t
 s,@USE_RTAI_TRUE@,$USE_RTAI_TRUE,;t t
 s,@USE_RTAI_FALSE@,$USE_RTAI_FALSE,;t t

@@ -93,6 +93,7 @@ ORTE_VERSION = @ORTE_VERSION@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 RTAI_CFLAGS = @RTAI_CFLAGS@
+RTLINUX_CC = @RTLINUX_CC@
 RTLINUX_CFLAGS = @RTLINUX_CFLAGS@
 STRIP = @STRIP@
 VERSION = @VERSION@
@@ -127,8 +128,9 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = ./orte/include/config.h.in Makefile.am Makefile.in \
 	aclocal.m4 admin/compile admin/config.guess admin/config.sub \
-	admin/depcomp admin/install-sh admin/missing \
-	admin/mkinstalldirs configure configure.in modtool.in
+	admin/depcomp admin/install-sh admin/ltconfig admin/ltmain.sh \
+	admin/missing admin/mkinstalldirs configure configure.in \
+	modtool.in
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
