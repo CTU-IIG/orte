@@ -7,7 +7,6 @@ nobase_include_HEADERS = \
 orte.h \
 orte/cdr.h \
 orte/basic_types.h \
-orte/orte_config_omk_unix.h \
 orte/typedefs_defines_rtps.h \
 orte/defines_api.h \
 orte/typedefs_api.h \
@@ -20,11 +19,15 @@ endif #CONFIG_OC_ETH_ORTE
 
 ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
 
+ifeq ($(CONFIG_OC_ONETD),y)
+renamed_rtlinux_HEADERS = \
+orte/orte_config_omk_rtl_onetd.h->orte/orte_config.h
+endif #CONFIG_OC_ONETD
+
 nobase_rtlinux_HEADERS = \
 orte.h \
 orte/cdr.h \
 orte/basic_types.h \
-orte/orte_config_omk_rtl.h \
 orte/typedefs_defines_rtps.h \
 orte/defines_api.h \
 orte/typedefs_api.h \

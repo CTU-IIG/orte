@@ -25,7 +25,7 @@ inline void
 ORTESleepMs(unsigned int ms) {
   #if defined(CONFIG_ORTE_UNIX) && defined (HAVE_UNISTD_H)
     usleep(ms*1000);
-  #elif define CONFIG_ORTE_RTL 
+  #elif defined CONFIG_ORTE_RTL 
     usleep(ms*1000);
   #elif defined CONFIG_ORTE_WIN 
     Sleep(ms);

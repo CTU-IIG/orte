@@ -25,12 +25,8 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
+#if defined(HAVE_CONFIG_H) || defined(OMK_FOR_USER)  || defined(OMK_FOR_KERNEL)
   #include "orte/orte_config.h"
-#elif defined OMK_FOR_USER
-  #include "orte/orte_config_omk_unix.h"
-#elif defined OMK_FOR_KERNEL
-  #include "orte/orte_config_omk_rtl.h"
 #elif defined _MSC_VER
   #include "orte/ew_types.h"
 #else

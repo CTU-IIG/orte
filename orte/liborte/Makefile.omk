@@ -79,8 +79,7 @@ htimerNtp.c \
 objectEntry.c \
 objectEntryTimer.c \
 objectUtils.c \
-ORTEAppRecvMetatrafficThread.c \
-ORTEAppRecvUserdataThread.c \
+ORTEAppRecvThread.c \
 ORTEAppSendThread.c \
 ORTEDomainApp.c \
 ORTEPublication.c \

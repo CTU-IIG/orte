@@ -41,7 +41,7 @@ struct pthread_rwlockattr_t_ {
 };
 extern void ptw32_rwlock_cancelwrwait(void * arg);
 
-extern inline int
+extern int
 ptw32_rwlock_check_need_init(pthread_rwlock_t *rwlock);
 
 extern int pthread_rwlock_init(pthread_rwlock_t *lock,
