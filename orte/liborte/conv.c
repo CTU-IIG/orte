@@ -75,6 +75,32 @@ void conv_ntp(NtpTime *ntp,char ef) {
 }
 
 /**********************************************************************************/
+//get part of string, div. by semi.
+int
+getStringPart(char *string,char divChar,int iterator,char *buff) {
+  char *cp;
+  int len;
+  
+  if (!string || !buff) return -1;
+  len=strlen(string);
+  if (len<iterator) return -2;
+  cp=string+iterator;
+  while (cp[0]!=0) {  //till is length>0
+    char *dcp,tcp; 
+    dcp=strchr(cp,divChar);
+    if (!dcp) dcp=cp+strlen(cp);
+    tcp=*dcp;         //save ending value
+    *dcp=0;           //temporary end of string
+    strcpy(buff,cp);  
+    *dcp=tcp;         //restore value
+    if (dcp[0]!=0) iterator=dcp-cp+1;//next value
+    else iterator=dcp-cp;
+    return 1;
+  }
+  return 0;
+}
+
+/**********************************************************************************/
 char* 
 IPAddressToString(IPAddress ipAddress,char *buff) {
   struct in_addr addr;
@@ -87,7 +113,20 @@ IPAddressToString(IPAddress ipAddress,char *buff) {
 /**********************************************************************************/
 IPAddress 
 StringToIPAddress(const char *string) {
-  return ntohl(inet_addr(string));
+  IPAddress ipAddress=IPADDRESS_INVALID;
+  
+  ipAddress=ntohl(inet_addr(string));
+#if defined HAVE_GETHOSTBYNAME
+  {
+    struct hostent *hostname; 
+    if (ipAddress==0) {
+      if ((hostname=gethostbyname(string))) {
+        ipAddress=ntohl(*((long*)(hostname->h_addr_list[0])));
+      }
+    }
+  }
+#endif
+  return ipAddress;
 }
 
 /**********************************************************************************/

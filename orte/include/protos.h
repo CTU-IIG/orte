@@ -60,6 +60,8 @@ extern void
 conv_sn(SequenceNumber *sn,char ef);
 extern void 
 conv_ntp(NtpTime *ntp,char ef);
+extern int
+getStringPart(char *string,char divChar,int iterator,char *buff);
 
 ///////////////////////////////////////////////////////////////////////////////
 // htimerNtp.c
@@ -173,7 +175,8 @@ generateEvent(ORTEDomain *d,GUID_RTPS *guid,void *params,Boolean live);
 extern Boolean
 getTypeApp(ORTEDomain *d,AppParams *ap,IPAddress senderIPAddress);
 extern void 
-appSelfParamChanged(ORTEDomain *d,Boolean lock,Boolean unlock,Boolean forWM);
+appSelfParamChanged(ORTEDomain *d,Boolean lock,Boolean unlock,
+   Boolean forWM,Boolean alive);
 
 ///////////////////////////////////////////////////////////////////////////////
 // event.c

@@ -47,7 +47,7 @@ eventAdd(ORTEDomain *d,
          NtpTime *when) { 
   NtpTime whenExpire,actualTime;
 
-  debug(10,10) ("eventAdd: start %p %s\n",objectEntryAID,name);
+  debug(10,10) ("eventAdd: AID 0x%x %s\n",objectEntryAID->aid,name);
   actualTime=getActualNtpTime();
   if (when!=NULL) {
     NtpTimeAdd(whenExpire,actualTime,*when);
@@ -101,7 +101,7 @@ eventDetach(ORTEDomain *d,
             ObjectEntryAID *objectEntryAID,
             HTimFncUserNode  *fncNode,
             int where) {
-  debug(10,10) ("eventDetach: start %p\n",objectEntryAID);
+  debug(10,10) ("eventDetach: AID 0x%x\n",objectEntryAID->aid);
   switch (where) {
     case 0:
       htimerUnicastCommon_detach(objectEntryAID,fncNode);

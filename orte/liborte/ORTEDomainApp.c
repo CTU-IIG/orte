@@ -33,6 +33,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   CSTReaderParams   cstReaderParams;
   char              iflocal[MAX_INTERFACES*MAX_STRING_IPADDRESS_LENGTH];
   char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  char              sbuff[128];
   int               i;
   u_int16_t         port=0;
 
@@ -48,14 +49,12 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   d->taskRecvMetatraffic.sock.port=0;
   d->taskRecvUserdata.sock.port=0;
   d->taskSend.sock.port=0;
-  PublParamsInit(&d->publPropDefault);
-  SubsParamsInit(&d->subsPropDefault);
   //init structure objectEntry
   ObjectEntryHID_init_root_field(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.objRootLock,NULL);
   htimerRoot_init_queue(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.htimRootLock,NULL);
-  pthread_mutex_init(&d->objectEntry.htimSendMutex, NULL);
+  sem_init(&d->objectEntry.htimSendSem, 0, 0);
   //publication,subscriptions
   d->publications.counter=d->subscriptions.counter=0;
   CSTWriter_init_root_field(&d->publications);
@@ -217,10 +216,18 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
     }
   }
   //ApplicatonKeyList
-  appParams->managerKeyList[0]=StringToIPAddress("127.0.0.1");
-  for(i=0;i<d->domainProp.IFCount;i++)
-    appParams->managerKeyList[i+1]=d->domainProp.IFProp[i].ipAddress;
-  appParams->managerKeyCount=d->domainProp.IFCount+1;
+  if (!d->domainProp.keys) {
+    appParams->managerKeyList[0]=StringToIPAddress("127.0.0.1");
+    for(i=0;i<d->domainProp.IFCount;i++)
+      appParams->managerKeyList[i+1]=d->domainProp.IFProp[i].ipAddress;
+    appParams->managerKeyCount=d->domainProp.IFCount+1;
+  } else {
+    appParams->managerKeyCount=i=0;
+    while (getStringPart(d->domainProp.keys,':',i,sbuff)) {
+      appParams->managerKeyList[appParams->managerKeyCount++]=
+          StringToIPAddress(sbuff);
+    }
+  }
   d->appParams=appParams;
   //insert object, doesn't need to be locked
   d->objectEntryOID=objectEntryAdd(d,&d->guid,(void*)appParams);
@@ -310,7 +317,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
       OID_READ_SUBS,&cstReaderParams,NULL);
   
   //add csChange for WAS
-  appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE);
+  appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
   
   //Start threads
   if (!suspended) {
@@ -328,6 +335,11 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
 
   debug(21,10) ("ORTEDomainAppDestroy: start\n");
   if (!d) return ORTE_FALSE;
+  pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
+  pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
+  appSelfParamChanged(d,ORTE_TRUE,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE);    
+  pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
+  pthread_rwlock_unlock(&d->objectEntry.objRootLock);
   //Stoping threads
   if (!d->taskRecvMetatraffic.terminate) {
     d->taskRecvMetatraffic.terminate=ORTE_TRUE;
@@ -353,8 +365,8 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
   sock_cleanup(&d->taskRecvUserdata.sock);
   sock_cleanup(&d->taskSend.sock);
 
-  //Mutex(es)
-  pthread_mutex_destroy(&d->objectEntry.htimSendMutex); 
+  //Semas
+  sem_destroy(&d->objectEntry.htimSendSem);
 
   //rwLocks
   pthread_rwlock_destroy(&d->objectEntry.objRootLock);

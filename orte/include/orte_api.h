@@ -26,23 +26,27 @@ extern "C" {
 #endif
 
 #ifdef HAVE_CONFIG_H
-  #include <orte_config.h>
+  #include "orte_config.h"
+#elif defined ORTE_OMK_UNIX
+  #include "orte_config_omk_unix.h"
+#elif defined ORTE_OMK_RTL
+  #include "orte_config_omk_rtl.h"
 #endif
-#ifdef _OMK_UNIX
-  #define HAVE_SYS_TYPES_H
-#endif
-#if defined HAVE_SYS_TYPES_H && !defined CONFIG_ORTE_RT
+
+
+#ifdef HAVE_SYS_TYPES_H
   #include <sys/types.h>
 #endif
-#ifdef _WIN32
-  #include <ew_types.h>
-#elif defined __RTL__
-  #include <rtl.h>
+#ifdef HAVE_LINUX_TYPES_H
+  #include <linux/types.h>
 #endif
-#include "typedefs_defines_rtps.h"
-#include "defines_api.h"
-#include "typedefs_api.h"
-#include "protos_api.h"
+#if defined _WIN32 || defined CONFIG_ORTE_WIN
+  #include <ew_types.h>
+#endif
+#include <typedefs_defines_rtps.h>
+#include <defines_api.h>
+#include <typedefs_api.h>
+#include <protos_api.h>
 
 #ifdef __cplusplus
 } /* extern "C"*/

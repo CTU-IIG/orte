@@ -60,9 +60,9 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
   sock_get_local_interfaces(&sock,prop->IFProp,&prop->IFCount);
   sock_cleanup(&sock); 
 
-  prop->mgrs=NULL;
+  prop->mgrs=NULL; //only from localhost
   prop->appLocalManager=StringToIPAddress("127.0.0.1");
-  prop->mgrAddKey=0;
+  prop->keys=NULL; //are assign be orte
   sprintf(prop->version,ORTE_PACKAGE_STRING\
                         ", compiled: "\
                         __DATE__\
@@ -71,8 +71,8 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
                         
   prop->recvBuffSize=0x4000;
   prop->sendBuffSize=0x4000; 
-  prop->wireProp.metaBytesPerPacket=0x2000;
-  prop->wireProp.metaBytesPerFastPacket=0x1000;
+  prop->wireProp.metaBytesPerPacket=1500;
+  prop->wireProp.metaBytesPerFastPacket=1000;
   prop->wireProp.metabitsPerACKBitmap=32;
   prop->wireProp.userMaxSerDeserSize=0x4000;
   
@@ -88,6 +88,9 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
   prop->baseProp.ACKMaxRetries=10;
   prop->baseProp.HBMaxRetries=10;
   
+  PublParamsInit(&prop->publPropDefault);
+  SubsParamsInit(&prop->subsPropDefault);
+  
   return ORTE_TRUE;
 }
 
@@ -95,29 +98,5 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
 Boolean
 ORTEDomainInitEvents(ORTEDomainAppEvents *events) {
   memset(events,0,sizeof(ORTEDomainAppEvents));
-  return ORTE_TRUE;
-}
-
-/*****************************************************************************/
-Boolean
-ORTEPublPropDefaultGet(ORTEDomain *d,ORTEPublProp *pp) {
-  return ORTE_TRUE;
-}
-
-/*****************************************************************************/
-Boolean
-ORTEPublPropDefaultSet(ORTEDomain *d,ORTEPublProp *pp) {
-  return ORTE_TRUE;
-}
-
-/*****************************************************************************/
-Boolean
-ORTESubsPropDefaultGet(ORTEDomain *d,ORTESubsProp *sp) {
-  return ORTE_TRUE;
-}
-
-/*****************************************************************************/
-Boolean
-ORTESubsPropDefaultSet(ORTEDomain *d,ORTESubsProp *sp) {
   return ORTE_TRUE;
 }

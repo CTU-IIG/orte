@@ -20,8 +20,8 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>orte/examples/ORTESpy/ORTESpy</mainprogram>
-      <directoryradio>build</directoryradio>
+      <mainprogram>/orte/debug/orte/manager/ortemanager</mainprogram>
+      <directoryradio>custom</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
       <terminal>false</terminal>

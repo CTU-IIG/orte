@@ -70,7 +70,7 @@ objectEntryPurgeTimer(ORTEDomain *d,void *vobjectEntryOID) {
 
 /*****************************************************************************/
 void
-removePublications(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
+removeSubscriptionsOnLocalPublications(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   CSTWriter       *cstWriter;
   CSTRemoteReader *cstRemoteReader;
   ObjectEntryOID  *objectEntryOID;
@@ -93,7 +93,7 @@ removePublications(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
 
 /*****************************************************************************/
 void
-removeSubscriptions(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
+removePublicationsOnLocalSubscriptions(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   CSTReader       *cstReader;
   CSTRemoteWriter *cstRemoteWriter;
   ObjectEntryOID  *objectEntryOID;
@@ -156,8 +156,8 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
   pthread_rwlock_unlock(&d->readerSubscriptions.lock);
   //destroy all services
-  removePublications(d,robjectEntryOID);
-  removeSubscriptions(d,robjectEntryOID);
+  removePublicationsOnLocalSubscriptions(d,robjectEntryOID);
+  removeSubscriptionsOnLocalPublications(d,robjectEntryOID);
   //destroy all object - the object will be disconneced in objectEntryDelete
   while((objectEntryOID=ObjectEntryOID_first(robjectEntryOID->objectEntryAID))) {
     switch (objectEntryOID->oid & 0x07) {
@@ -331,7 +331,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         //increment vargAppsSequenceNumber and make csChange
         SeqNumberInc(d->appParams->vargAppsSequenceNumber,
                      d->appParams->vargAppsSequenceNumber);
-        appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
+        appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE,ORTE_TRUE);
      } else {
        objectEntryDelete(d,objectEntryOID);
        objectEntryOID=NULL;  
@@ -357,6 +357,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
       case OID_PUBLICATION:
         pthread_rwlock_wrlock(&d->subscriptions.lock);
         gavl_cust_for_each(CSTReader,&d->subscriptions,cstReader) {
+          pthread_rwlock_wrlock(&cstReader->lock);
           cstRemoteWriter=CSTRemoteWriter_find(cstReader,&guid);
           if (cstRemoteWriter) {
             CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
@@ -366,6 +367,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
               ORTESubscriptionDestroyLocked(cstReader);
             }
           }
+          pthread_rwlock_unlock(&cstReader->lock);
         }
         pthread_rwlock_unlock(&d->subscriptions.lock);
         pthread_rwlock_wrlock(&d->publications.lock);
@@ -423,9 +425,10 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
             NULL,
             objectEntryOID,
             &d->domainProp.baseProp.purgeTime);
-    debug(12,3) ("expired: 0x%x-0x%x marked for remove\n",
+    debug(12,3) ("expired: 0x%x-0x%x-0x%x marked for remove\n",
                  objectEntryOID->objectEntryHID->hid,
-                 objectEntryOID->objectEntryAID->aid);
+                 objectEntryOID->objectEntryAID->aid,
+		 objectEntryOID->oid);
   }
   objectEntryDump(&d->objectEntry);
   if (!objectEntryOID) return 2;

@@ -188,11 +188,11 @@ struct ObjectEntryHID{
   gavl_cust_root_field_t aidRoot;
 };
 struct ObjectEntry{
-  gavl_cust_root_field_t objRoot;     //root of tree objects
+  gavl_cust_root_field_t objRoot;      //root of tree objects
   pthread_rwlock_t       objRootLock;
   ul_htim_queue_t        htimRoot;     //root of tree htimers
   pthread_rwlock_t       htimRootLock;
-  pthread_mutex_t        htimSendMutex; //for wake up
+  sem_t                  htimSendSem;  //for wake up
   Boolean                htimNeedWakeUp;
 };
 
@@ -222,8 +222,8 @@ typedef struct CSChange {
   ORTECDRStream          cdrStream; //for issue
   //how many times was a cstRemoteWriter acknowledged
   int                    remoteReaderCount;
-  int                    remoteReaderProcBest;
-  int                    remoteReaderProcStrict;
+  int                    remoteReaderBest;
+  int                    remoteReaderStrict;
   //receiving informations
   NtpTime                remoteTimePublished;
   NtpTime                localTimeReceived;
@@ -305,7 +305,7 @@ struct CSTWriter {
   //only for CSTPublications
   unsigned int           strictReliableCounter;
   unsigned int           bestEffortsCounter;
-  pthread_mutex_t        mutexCSChangeDestroyed;
+  sem_t                  semCSChangeDestroyed;
 };
 
 /**
@@ -446,12 +446,7 @@ struct ORTEDomain {
   ORTEAppInfo            appInfo;
   ORTEPubInfo            pubInfo;
   ORTESubInfo            subInfo;
-  
-  ////////////////////////////////////////////////////
-  //default properties for a Publication and Subscription
-  ORTEPublProp           publPropDefault;
-  ORTESubsProp           subsPropDefault;
-  
+    
   ////////////////////////////////////////////////////
   //communication objects 
   CSTWriter              writerApplicationSelf;  //Manager,App

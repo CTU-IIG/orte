@@ -1,6 +1,7 @@
 /*
- *  $Id: config.h,v 0.0.0.1             2003/08/21 
+ *  $Id: ORTEMisc.c,v 0.0.0.1           2004/01/27 
  *
+ *  DEBUG:  section 34                  miscellaneous functions
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
  *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/
@@ -17,11 +18,21 @@
  *  GNU General Public License for more details.
  *  
  */ 
+ 
+#include "orte.h"
 
-#ifndef _ORTE_CONFIG_H
-#define _ORTE_CONFIG_H
-
-/* Define to the full name and version of this package. */
-#define ORTE_PACKAGE_STRING "ORTE 0.2.0" 
-
-#endif /* _ORTE_CONFIG_H */
+void 
+ORTESleepMs(unsigned int ms) {
+  #if defined(CONFIG_ORTE_UNIX) && defined (HAVE_UNISTD_H)
+    usleep(ms*1000);
+  #endif
+  #ifdef CONFIG_ORTE_RTL
+    usleep(ms*1000);
+  #endif
+  #ifdef CONFIG_ORTE_WIN
+    Sleep(ms);
+  #endif
+  #ifdef CONFIG_ORTE_RTAI
+    rt_sleep(nano2count(ms*1000000));
+  #endif
+}

@@ -68,6 +68,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
@@ -100,40 +101,40 @@ am__quote = @am__quote@
 install_sh = @install_sh@
 modulePROGRAMS_INSTALL = @modulePROGRAMS_INSTALL@
 moduledir = @moduledir@
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_ORTEManager.ko 
-@CONFIG_ORTE_RT_TRUE@rt_ORTEManager_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-@CONFIG_ORTE_RT_TRUE@rt_ORTEManager_ko_SOURCES = ORTEManager.c  
-@CONFIG_ORTE_RT_TRUE@rt_ORTEManager_ko_LINK = $(top_builddir)/modtool --link -o $@
-@CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ORTEManager
-@CONFIG_ORTE_RT_FALSE@ORTEManager_SOURCES = ORTEManager.c
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_ortemanager.ko 
+@CONFIG_ORTE_RT_TRUE@rt_ortemanager_ko_CFLAGS = $(ORTE_CFLAGS) 
+@CONFIG_ORTE_RT_TRUE@rt_ortemanager_ko_SOURCES = ortemanager.c  
+@CONFIG_ORTE_RT_TRUE@rt_ortemanager_ko_LINK = $(top_builddir)/modtool --link -o $@
+@CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ortemanager
+@CONFIG_ORTE_RT_FALSE@ortemanager_SOURCES = ortemanager.c
 @CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
-@CONFIG_ORTE_RT_FALSE@ORTEManager_LDADD = ../liborte/liborte.a $(win_libs)
+@CONFIG_ORTE_RT_FALSE@ortemanager_LDADD = ../liborte/liborte.a $(win_libs)
 subdir = orte/manager
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/orte/include/config.h
 CONFIG_CLEAN_FILES =
 @CONFIG_ORTE_RT_TRUE@bin_PROGRAMS =
-@CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ORTEManager$(EXEEXT)
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_ORTEManager.ko$(EXEEXT)
+@CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ortemanager$(EXEEXT)
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_ortemanager.ko$(EXEEXT)
 @CONFIG_ORTE_RT_FALSE@module_PROGRAMS =
 PROGRAMS = $(bin_PROGRAMS) $(module_PROGRAMS)
 
-@CONFIG_ORTE_RT_FALSE@am_ORTEManager_OBJECTS = ORTEManager.$(OBJEXT)
-ORTEManager_OBJECTS = $(am_ORTEManager_OBJECTS)
-@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@ORTEManager_DEPENDENCIES = \
+@CONFIG_ORTE_RT_FALSE@am_ortemanager_OBJECTS = ortemanager.$(OBJEXT)
+ortemanager_OBJECTS = $(am_ortemanager_OBJECTS)
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@ortemanager_DEPENDENCIES = \
 @CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@	../liborte/liborte.a \
 @CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_FALSE@ORTEManager_DEPENDENCIES = \
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_FALSE@ortemanager_DEPENDENCIES = \
 @CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_FALSE@	../liborte/liborte.a
-@CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_TRUE@ORTEManager_DEPENDENCIES =
-@CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_FALSE@ORTEManager_DEPENDENCIES =
-ORTEManager_LDFLAGS =
-@CONFIG_ORTE_RT_TRUE@am_rt_ORTEManager_ko_OBJECTS = \
-@CONFIG_ORTE_RT_TRUE@	rt_ORTEManager_ko-ORTEManager.$(OBJEXT)
-rt_ORTEManager_ko_OBJECTS = $(am_rt_ORTEManager_ko_OBJECTS)
-rt_ORTEManager_ko_LDADD = $(LDADD)
-rt_ORTEManager_ko_DEPENDENCIES =
-rt_ORTEManager_ko_LDFLAGS =
+@CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_TRUE@ortemanager_DEPENDENCIES =
+@CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_FALSE@ortemanager_DEPENDENCIES =
+ortemanager_LDFLAGS =
+@CONFIG_ORTE_RT_TRUE@am_rt_ortemanager_ko_OBJECTS = \
+@CONFIG_ORTE_RT_TRUE@	rt_ortemanager_ko-ortemanager.$(OBJEXT)
+rt_ortemanager_ko_OBJECTS = $(am_rt_ortemanager_ko_OBJECTS)
+rt_ortemanager_ko_LDADD = $(LDADD)
+rt_ortemanager_ko_DEPENDENCIES =
+rt_ortemanager_ko_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/orte/include
@@ -142,16 +143,16 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ORTEManager.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ortemanager.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(ORTEManager_SOURCES) $(rt_ORTEManager_ko_SOURCES)
+DIST_SOURCES = $(ortemanager_SOURCES) $(rt_ortemanager_ko_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(ORTEManager_SOURCES) $(rt_ORTEManager_ko_SOURCES)
+SOURCES = $(ortemanager_SOURCES) $(rt_ortemanager_ko_SOURCES)
 
 all: all-am
 
@@ -209,13 +210,13 @@ uninstall-modulePROGRAMS:
 
 clean-modulePROGRAMS:
 	-test -z "$(module_PROGRAMS)" || rm -f $(module_PROGRAMS)
-ORTEManager$(EXEEXT): $(ORTEManager_OBJECTS) $(ORTEManager_DEPENDENCIES) 
-	@rm -f ORTEManager$(EXEEXT)
-	$(LINK) $(ORTEManager_LDFLAGS) $(ORTEManager_OBJECTS) $(ORTEManager_LDADD) $(LIBS)
-rt_ORTEManager_ko-ORTEManager.$(OBJEXT): ORTEManager.c
-rt_ORTEManager.ko$(EXEEXT): $(rt_ORTEManager_ko_OBJECTS) $(rt_ORTEManager_ko_DEPENDENCIES) 
-	@rm -f rt_ORTEManager.ko$(EXEEXT)
-	$(rt_ORTEManager_ko_LINK) $(rt_ORTEManager_ko_LDFLAGS) $(rt_ORTEManager_ko_OBJECTS) $(rt_ORTEManager_ko_LDADD) $(LIBS)
+ortemanager$(EXEEXT): $(ortemanager_OBJECTS) $(ortemanager_DEPENDENCIES) 
+	@rm -f ortemanager$(EXEEXT)
+	$(LINK) $(ortemanager_LDFLAGS) $(ortemanager_OBJECTS) $(ortemanager_LDADD) $(LIBS)
+rt_ortemanager_ko-ortemanager.$(OBJEXT): ortemanager.c
+rt_ortemanager.ko$(EXEEXT): $(rt_ortemanager_ko_OBJECTS) $(rt_ortemanager_ko_DEPENDENCIES) 
+	@rm -f rt_ortemanager.ko$(EXEEXT)
+	$(rt_ortemanager_ko_LINK) $(rt_ortemanager_ko_LDFLAGS) $(rt_ortemanager_ko_OBJECTS) $(rt_ortemanager_ko_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -223,8 +224,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEManager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ortemanager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -241,17 +242,17 @@ distclean-depend:
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c `cygpath -w $<`
 
-rt_ORTEManager_ko-ORTEManager.o: ORTEManager.c
-@AMDEP_TRUE@	source='ORTEManager.c' object='rt_ORTEManager_ko-ORTEManager.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po' tmpdepfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.TPo' @AMDEPBACKSLASH@
+rt_ortemanager_ko-ortemanager.o: ortemanager.c
+@AMDEP_TRUE@	source='ortemanager.c' object='rt_ortemanager_ko-ortemanager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po' tmpdepfile='$(DEPDIR)/rt_ortemanager_ko-ortemanager.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_ORTEManager_ko_CFLAGS) $(CFLAGS) -c -o rt_ORTEManager_ko-ORTEManager.o `test -f 'ORTEManager.c' || echo '$(srcdir)/'`ORTEManager.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_ortemanager_ko_CFLAGS) $(CFLAGS) -c -o rt_ortemanager_ko-ortemanager.o `test -f 'ortemanager.c' || echo '$(srcdir)/'`ortemanager.c
 
-rt_ORTEManager_ko-ORTEManager.obj: ORTEManager.c
-@AMDEP_TRUE@	source='ORTEManager.c' object='rt_ORTEManager_ko-ORTEManager.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po' tmpdepfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.TPo' @AMDEPBACKSLASH@
+rt_ortemanager_ko-ortemanager.obj: ortemanager.c
+@AMDEP_TRUE@	source='ortemanager.c' object='rt_ortemanager_ko-ortemanager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_ortemanager_ko-ortemanager.Po' tmpdepfile='$(DEPDIR)/rt_ortemanager_ko-ortemanager.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_ORTEManager_ko_CFLAGS) $(CFLAGS) -c -o rt_ORTEManager_ko-ORTEManager.obj `cygpath -w ORTEManager.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_ortemanager_ko_CFLAGS) $(CFLAGS) -c -o rt_ortemanager_ko-ortemanager.obj `cygpath -w ortemanager.c`
 CCDEPMODE = @CCDEPMODE@
 uninstall-info-am:
 

@@ -26,30 +26,16 @@ extern "C" {
 #endif
 
 #define MAX_INTERFACES            5
-
 #define ORTE_DEFAULT_DOMAIN       0
-
 #define MAX_STRING_IPADDRESS_LENGTH 4*3+3+1
+#define MAX_STRING_NTPTIME_LENGTH 30    //need fix
 
-#define MAX_STRING_NTPTIME_LENGTH   30    //need fix
-
-
-/*  Sleep for Windows is a stupid loop with I/O :))) */
-#ifdef _WIN32
-/**
- * ORTESleepMs - suspends calling thread for given time
- * @x: time in miliseconds
- */
-  #include <windows.h>
-  #define ORTESleepMs(x)  Sleep(x)
-#else
-  #if defined(_OMK_UNIX) || defined(HAVE_UNISTD_H)
-    #ifndef CONFIG_ORTE_RT
-      #include <unistd.h>
-    #endif
-  #endif
-  #define ORTESleepMs(x)  usleep(x*1000)
-#endif
+////////////////////////////////////////////////////////////////////////////////
+//Return values
+#define ORTE_OK			  0
+#define ORTE_BAD_HANDLE		  -1
+#define ORTE_TIMEOUT		  -2
+#define ORTE_QUEUE_FULL		  -3
 
 /*****************************************************************/
 // Cmp two sequence numbers

@@ -68,6 +68,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
@@ -100,50 +101,48 @@ am__quote = @am__quote@
 install_sh = @install_sh@
 modulePROGRAMS_INSTALL = @modulePROGRAMS_INSTALL@
 moduledir = @moduledir@
-noinst_PROGRAMS = ReliablePublisher ReliableSubscriber BestEffortSubscriber
+noinst_PROGRAMS = publisher subscriberreliable subscriberbesteffort
 
 @CONFIG_ORTE_WIN_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 
-ReliablePublisher_SOURCES = ReliablePublisher.c
-ReliablePublisher_LDADD = ../../liborte/liborte.a $(win_libs)
+publisher_SOURCES = publisher.c
+publisher_LDADD = ../../liborte/liborte.a $(win_libs)
 
-ReliableSubscriber_SOURCES = ReliableSubscriber.c
-ReliableSubscriber_LDADD = ../../liborte/liborte.a $(win_libs)
+subscriberreliable_SOURCES = subscriberreliable.c
+subscriberreliable_LDADD = ../../liborte/liborte.a $(win_libs)
 
-BestEffortSubscriber_SOURCES = BestEffortSubscriber.c
-BestEffortSubscriber_LDADD = ../../liborte/liborte.a $(win_libs)
+subscriberbesteffort_SOURCES = subscriberbesteffort.c
+subscriberbesteffort_LDADD = ../../liborte/liborte.a $(win_libs)
 subdir = orte/examples/reliable
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/orte/include/config.h
 CONFIG_CLEAN_FILES =
-noinst_PROGRAMS = ReliablePublisher$(EXEEXT) ReliableSubscriber$(EXEEXT) \
-	BestEffortSubscriber$(EXEEXT)
+noinst_PROGRAMS = publisher$(EXEEXT) subscriberreliable$(EXEEXT) \
+	subscriberbesteffort$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 
-am_BestEffortSubscriber_OBJECTS = BestEffortSubscriber.$(OBJEXT)
-BestEffortSubscriber_OBJECTS = $(am_BestEffortSubscriber_OBJECTS)
-@CONFIG_ORTE_WIN_TRUE@BestEffortSubscriber_DEPENDENCIES = \
+am_publisher_OBJECTS = publisher.$(OBJEXT)
+publisher_OBJECTS = $(am_publisher_OBJECTS)
+@CONFIG_ORTE_WIN_TRUE@publisher_DEPENDENCIES = ../../liborte/liborte.a \
+@CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
+@CONFIG_ORTE_WIN_FALSE@publisher_DEPENDENCIES = ../../liborte/liborte.a
+publisher_LDFLAGS =
+am_subscriberbesteffort_OBJECTS = subscriberbesteffort.$(OBJEXT)
+subscriberbesteffort_OBJECTS = $(am_subscriberbesteffort_OBJECTS)
+@CONFIG_ORTE_WIN_TRUE@subscriberbesteffort_DEPENDENCIES = \
 @CONFIG_ORTE_WIN_TRUE@	../../liborte/liborte.a \
 @CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-@CONFIG_ORTE_WIN_FALSE@BestEffortSubscriber_DEPENDENCIES = \
+@CONFIG_ORTE_WIN_FALSE@subscriberbesteffort_DEPENDENCIES = \
 @CONFIG_ORTE_WIN_FALSE@	../../liborte/liborte.a
-BestEffortSubscriber_LDFLAGS =
-am_ReliablePublisher_OBJECTS = ReliablePublisher.$(OBJEXT)
-ReliablePublisher_OBJECTS = $(am_ReliablePublisher_OBJECTS)
-@CONFIG_ORTE_WIN_TRUE@ReliablePublisher_DEPENDENCIES = \
+subscriberbesteffort_LDFLAGS =
+am_subscriberreliable_OBJECTS = subscriberreliable.$(OBJEXT)
+subscriberreliable_OBJECTS = $(am_subscriberreliable_OBJECTS)
+@CONFIG_ORTE_WIN_TRUE@subscriberreliable_DEPENDENCIES = \
 @CONFIG_ORTE_WIN_TRUE@	../../liborte/liborte.a \
 @CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-@CONFIG_ORTE_WIN_FALSE@ReliablePublisher_DEPENDENCIES = \
+@CONFIG_ORTE_WIN_FALSE@subscriberreliable_DEPENDENCIES = \
 @CONFIG_ORTE_WIN_FALSE@	../../liborte/liborte.a
-ReliablePublisher_LDFLAGS =
-am_ReliableSubscriber_OBJECTS = ReliableSubscriber.$(OBJEXT)
-ReliableSubscriber_OBJECTS = $(am_ReliableSubscriber_OBJECTS)
-@CONFIG_ORTE_WIN_TRUE@ReliableSubscriber_DEPENDENCIES = \
-@CONFIG_ORTE_WIN_TRUE@	../../liborte/liborte.a \
-@CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-@CONFIG_ORTE_WIN_FALSE@ReliableSubscriber_DEPENDENCIES = \
-@CONFIG_ORTE_WIN_FALSE@	../../liborte/liborte.a
-ReliableSubscriber_LDFLAGS =
+subscriberreliable_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/orte/include
@@ -152,18 +151,18 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/BestEffortSubscriber.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ReliablePublisher.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ReliableSubscriber.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/publisher.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/subscriberbesteffort.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/subscriberreliable.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(BestEffortSubscriber_SOURCES) \
-	$(ReliablePublisher_SOURCES) $(ReliableSubscriber_SOURCES)
+DIST_SOURCES = $(publisher_SOURCES) $(subscriberbesteffort_SOURCES) \
+	$(subscriberreliable_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(BestEffortSubscriber_SOURCES) $(ReliablePublisher_SOURCES) $(ReliableSubscriber_SOURCES)
+SOURCES = $(publisher_SOURCES) $(subscriberbesteffort_SOURCES) $(subscriberreliable_SOURCES)
 
 all: all-am
 
@@ -177,15 +176,15 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
-BestEffortSubscriber$(EXEEXT): $(BestEffortSubscriber_OBJECTS) $(BestEffortSubscriber_DEPENDENCIES) 
-	@rm -f BestEffortSubscriber$(EXEEXT)
-	$(LINK) $(BestEffortSubscriber_LDFLAGS) $(BestEffortSubscriber_OBJECTS) $(BestEffortSubscriber_LDADD) $(LIBS)
-ReliablePublisher$(EXEEXT): $(ReliablePublisher_OBJECTS) $(ReliablePublisher_DEPENDENCIES) 
-	@rm -f ReliablePublisher$(EXEEXT)
-	$(LINK) $(ReliablePublisher_LDFLAGS) $(ReliablePublisher_OBJECTS) $(ReliablePublisher_LDADD) $(LIBS)
-ReliableSubscriber$(EXEEXT): $(ReliableSubscriber_OBJECTS) $(ReliableSubscriber_DEPENDENCIES) 
-	@rm -f ReliableSubscriber$(EXEEXT)
-	$(LINK) $(ReliableSubscriber_LDFLAGS) $(ReliableSubscriber_OBJECTS) $(ReliableSubscriber_LDADD) $(LIBS)
+publisher$(EXEEXT): $(publisher_OBJECTS) $(publisher_DEPENDENCIES) 
+	@rm -f publisher$(EXEEXT)
+	$(LINK) $(publisher_LDFLAGS) $(publisher_OBJECTS) $(publisher_LDADD) $(LIBS)
+subscriberbesteffort$(EXEEXT): $(subscriberbesteffort_OBJECTS) $(subscriberbesteffort_DEPENDENCIES) 
+	@rm -f subscriberbesteffort$(EXEEXT)
+	$(LINK) $(subscriberbesteffort_LDFLAGS) $(subscriberbesteffort_OBJECTS) $(subscriberbesteffort_LDADD) $(LIBS)
+subscriberreliable$(EXEEXT): $(subscriberreliable_OBJECTS) $(subscriberreliable_DEPENDENCIES) 
+	@rm -f subscriberreliable$(EXEEXT)
+	$(LINK) $(subscriberreliable_LDFLAGS) $(subscriberreliable_OBJECTS) $(subscriberreliable_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -193,9 +192,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BestEffortSubscriber.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReliablePublisher.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReliableSubscriber.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/publisher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subscriberbesteffort.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subscriberreliable.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)

@@ -1,5 +1,8 @@
 /* orte/include/config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define if linux kernel is found */
+#undef CONFIG_ORTE_KERNEL
+
 /* Define to enable ORTE's RT support */
 #undef CONFIG_ORTE_RT
 
@@ -18,23 +21,23 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
+/* Define to 1 if you have the <asm/byteorder.h> header file. */
+#undef HAVE_ASM_BYTEORDER_H
+
 /* Define to 1 if you have the <byteswap.h> header file. */
 #undef HAVE_BYTESWAP_H
 
 /* Define to 1 if you have the <ctype.h> header file. */
 #undef HAVE_CTYPE_H
 
-/* Define to 1 if you have the <errno.h> header file. */
-#undef HAVE_ERRNO_H
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Define to 1 if you have the `gethostbyname' function. */
+#undef HAVE_GETHOSTBYNAME
+
 /* Define to 1 if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
-
-/* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #undef HAVE_LIBPTHREAD
@@ -42,8 +45,29 @@
 /* Define to 1 if you have the `ws2_32' library (-lws2_32). */
 #undef HAVE_LIBWS2_32
 
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
+/* Define to 1 if you have the <linux/ctype.h> header file. */
+#undef HAVE_LINUX_CTYPE_H
+
+/* Define to 1 if you have the <linux/if.h> header file. */
+#undef HAVE_LINUX_IF_H
+
+/* Define to 1 if you have the <linux/in.h> header file. */
+#undef HAVE_LINUX_IN_H
+
+/* Define to 1 if you have the <linux/module.h> header file. */
+#undef HAVE_LINUX_MODULE_H
+
+/* Define to 1 if you have the <linux/socket.h> header file. */
+#undef HAVE_LINUX_SOCKET_H
+
+/* Define to 1 if you have the <linux/string.h> header file. */
+#undef HAVE_LINUX_STRING_H
+
+/* Define to 1 if you have the <linux/time.h> header file. */
+#undef HAVE_LINUX_TIME_H
+
+/* Define to 1 if you have the <linux/types.h> header file. */
+#undef HAVE_LINUX_TYPES_H
 
 /* Define to 1 if you have the <netdb.h> header file. */
 #undef HAVE_NETDB_H
@@ -54,17 +78,32 @@
 /* Define to 1 if you have the <net/if.h> header file. */
 #undef HAVE_NET_IF_H
 
+/* Define to 1 if you have the <nictab.h> header file. */
+#undef HAVE_NICTAB_H
+
+/* Define to 1 if you have the <nic.h> header file. */
+#undef HAVE_NIC_H
+
 /* Define to 1 if you have the <pthread.h> header file. */
 #undef HAVE_PTHREAD_H
+
+/* Define to 1 if you have the <rtl.h> header file. */
+#undef HAVE_RTL_H
+
+/* Define to 1 if you have the <rtl_malloc.h> header file. */
+#undef HAVE_RTL_MALLOC_H
+
+/* Define to 1 if you have the <rtnet.h> header file. */
+#undef HAVE_RTNET_H
+
+/* Define to 1 if you have the <semaphore.h> header file. */
+#undef HAVE_SEMAPHORE_H
 
 /* Define to 1 if you have the <signal.h> header file. */
 #undef HAVE_SIGNAL_H
 
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
-
-/* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
 
 /* Define to 1 if you have the <stdio.h> header file. */
 #undef HAVE_STDIO_H
@@ -75,9 +114,6 @@
 /* Define to 1 if you have the `strdup' function. */
 #undef HAVE_STRDUP
 
-/* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
-
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
@@ -87,17 +123,23 @@
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #undef HAVE_SYS_SOCKET_H
 
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#undef HAVE_SYS_STAT_H
-
 /* Define to 1 if you have the <sys/time.h> header file. */
 #undef HAVE_SYS_TIME_H
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define to 1 if you have the <time.h> header file. */
+#undef HAVE_TIME_H
+
+/* Define to 1 if you have the <udp.h> header file. */
+#undef HAVE_UDP_H
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the <windows.h> header file. */
+#undef HAVE_WINDOWS_H
 
 /* Define to 1 if you have the <winsock2.h> header file. */
 #undef HAVE_WINSOCK2_H
@@ -133,15 +175,17 @@
    first (like Motorola and SPARC, unlike Intel and VAX). */
 #undef WORDS_BIGENDIAN
 
+
+#ifndef _GNU_SOURCE
+  #define _GNU_SOURCE
+#endif
+
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-/* Define as `__inline' if that's what the C compiler calls it, or to nothing
-   if it is not supported. */
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
 #undef inline
-
-/* Define to `int' if <sys/types.h> does not define. */
-#undef pid_t
-
-/* Define to `unsigned' if <sys/types.h> does not define. */
-#undef size_t
+#endif

@@ -1,2 +1,1 @@
-#SUBDIRS += RTL_UDP
-SUBDIRS += orte
+SUBDIRS = orte

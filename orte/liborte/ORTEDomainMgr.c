@@ -32,6 +32,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   CSTReaderParams   cstReaderParams;
   char              iflocal[MAX_INTERFACES*MAX_STRING_IPADDRESS_LENGTH];
   char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  char              sbuff[128];
   int               i;
   u_int16_t         port=0;
 
@@ -50,7 +51,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   pthread_rwlock_init(&d->objectEntry.objRootLock,NULL);
   htimerRoot_init_queue(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.htimRootLock,NULL);
-  pthread_mutex_init(&d->objectEntry.htimSendMutex, NULL);
+  sem_init(&d->objectEntry.htimSendSem, 0, 0);
   
   //create domainProp 
   if (prop!=NULL) {
@@ -182,16 +183,17 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
     }
   }
   //managerKeyList
-  appParams->managerKeyList[0]=StringToIPAddress("127.0.0.1");
-  for(i=0;i<d->domainProp.IFCount;i++)
-    appParams->managerKeyList[i+1]=d->domainProp.IFProp[i].ipAddress;
-  appParams->managerKeyCount=d->domainProp.IFCount+1;
-  if (d->domainProp.mgrAddKey!=0) {
-    appParams->managerKeyList[appParams->managerKeyCount]=d->domainProp.mgrAddKey;
-    appParams->managerKeyCount++;
-    debug(29,4) ("ORTEDomainMgrCreate: additional manager key accepted (%s)\n",
-                  IPAddressToString(d->domainProp.mgrAddKey,sIPAddress));
-
+  if (!d->domainProp.keys) {
+    appParams->managerKeyList[0]=StringToIPAddress("127.0.0.1");
+    for(i=0;i<d->domainProp.IFCount;i++)
+      appParams->managerKeyList[i+1]=d->domainProp.IFProp[i].ipAddress;
+    appParams->managerKeyCount=d->domainProp.IFCount+1;
+  } else {
+    appParams->managerKeyCount=i=0;
+    while (getStringPart(d->domainProp.keys,':',i,sbuff)) {
+      appParams->managerKeyList[appParams->managerKeyCount++]=
+          StringToIPAddress(sbuff);
+    }
   }
   d->appParams=appParams;
   //insert object, doesn't need to be locked
@@ -209,48 +211,27 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   CSTWriterInit(d,&d->writerApplicationSelf,d->objectEntryOID,
       OID_WRITE_APPSELF,&cstWriterParams,NULL);
   //  add to WAS remote writer(s)
-  if (d->domainProp.mgrs) {
-    int8_t *cp=d->domainProp.mgrs;
-    while (cp[0]!=0) {  //till is length>0
-#ifndef CONFIG_ORTE_RT
-      struct hostent *hostname; 
-#endif
-      int8_t         *dcp,tcp; 
-      dcp=strchr(cp,':');
-      if (!dcp) dcp=cp+strlen(cp);
-      tcp=*dcp;  //save ending value
-      *dcp=0;    //temporary end of string
-#ifdef CONFIG_ORTE_RT
-      if (1) {
-        GUID_RTPS guid;
-        IPAddress ipAddress=StringToIPAddress(cp);
-#else
-      if ((hostname=gethostbyname(cp))) {
-        GUID_RTPS guid;
-        IPAddress ipAddress=ntohl(*((long*)(hostname->h_addr_list[0])));
-#endif
-        guid.hid=ipAddress;
-        guid.aid=AID_UNKNOWN;
-        guid.oid=OID_APP;
-        if (!objectEntryFind(d,&guid)) {
-          appParams=(AppParams*)MALLOC(sizeof(AppParams));
-          AppParamsInit(appParams);
-          appParams->hostId=guid.hid;
-          appParams->appId=guid.aid;
-          appParams->metatrafficUnicastPort=d->appParams->metatrafficUnicastPort;
-          appParams->userdataUnicastPort=0;  //Manager support only metatraffic
-          appParams->unicastIPAddressList[0]=ipAddress;
-          appParams->unicastIPAddressCount=1;
-          objectEntryOID=objectEntryAdd(d,&guid,(void*)appParams);
-          CSTWriterAddRemoteReader(d,&d->writerApplicationSelf,objectEntryOID,
-              OID_READ_MGR);
-          debug(29,2) ("ORTEDomainAppCreate: add fellow manager (%s)\n",
-                      IPAddressToString(ipAddress,sIPAddress));
-        }
-      }
-      *dcp=tcp;                   //restore value
-      if (dcp[0]!=0) cp=dcp+1;    //next value
-      else cp=dcp;
+  i=0;
+  while (getStringPart(d->domainProp.mgrs,':',i,sbuff)>0) {
+    GUID_RTPS guid;
+    IPAddress ipAddress=StringToIPAddress(sbuff);
+    guid.hid=ipAddress;
+    guid.aid=AID_UNKNOWN;
+    guid.oid=OID_APP;
+    if (!objectEntryFind(d,&guid)) {
+      appParams=(AppParams*)MALLOC(sizeof(AppParams));
+      AppParamsInit(appParams);
+      appParams->hostId=guid.hid;
+      appParams->appId=guid.aid;
+      appParams->metatrafficUnicastPort=d->appParams->metatrafficUnicastPort;
+      appParams->userdataUnicastPort=0;  //Manager support only metatraffic
+      appParams->unicastIPAddressList[0]=ipAddress;
+      appParams->unicastIPAddressCount=1;
+      objectEntryOID=objectEntryAdd(d,&guid,(void*)appParams);
+      CSTWriterAddRemoteReader(d,&d->writerApplicationSelf,objectEntryOID,
+          OID_READ_MGR);
+      debug(29,2) ("ORTEDomainAppCreate: add fellow manager (%s)\n",
+                  IPAddressToString(ipAddress,sIPAddress));
     }
   }
   //  readerManagers
@@ -289,7 +270,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
       OID_WRITE_MGR,&cstWriterParams,NULL);
   
   //add csChange for WAS
-  appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE);
+  appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
   
   //Start threads
   if (!suspended) {
@@ -305,6 +286,11 @@ Boolean
 ORTEDomainMgrDestroy(ORTEDomain *d) {
 
   debug(29,10) ("ORTEDomainMgrDestroy: start\n");
+  pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
+  pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
+  appSelfParamChanged(d,ORTE_TRUE,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE);    
+  pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
+  pthread_rwlock_unlock(&d->objectEntry.objRootLock);
   //Stoping threads
   if(!d->taskRecvMetatraffic.terminate) {
     d->taskRecvMetatraffic.terminate=ORTE_TRUE;
@@ -325,8 +311,8 @@ ORTEDomainMgrDestroy(ORTEDomain *d) {
   sock_cleanup(&d->taskRecvMetatraffic.sock);
   sock_cleanup(&d->taskSend.sock);
 
-  //Mutex(es)
-  pthread_mutex_destroy(&d->objectEntry.htimSendMutex); 
+  //Semas
+  sem_destroy(&d->objectEntry.htimSendSem);
   
   //rwLocks
   pthread_rwlock_destroy(&d->objectEntry.objRootLock);

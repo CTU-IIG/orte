@@ -1,13 +1,13 @@
 if CONFIG_ORTE_RT
-  module_PROGRAMS = rt_ORTEManager.ko 
-  rt_ORTEManager_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-  rt_ORTEManager_ko_SOURCES = ORTEManager.c  
-  rt_ORTEManager_ko_LINK = $(top_builddir)/modtool --link -o $@
+  module_PROGRAMS = rt_ortemanager.ko 
+  rt_ortemanager_ko_CFLAGS = $(ORTE_CFLAGS) 
+  rt_ortemanager_ko_SOURCES = ortemanager.c  
+  rt_ortemanager_ko_LINK = $(top_builddir)/modtool --link -o $@
 else
-bin_PROGRAMS = ORTEManager
-ORTEManager_SOURCES = ORTEManager.c
+bin_PROGRAMS = ortemanager
+ortemanager_SOURCES = ortemanager.c
 if CONFIG_ORTE_WIN
   win_libs= $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
 endif
-ORTEManager_LDADD   = ../liborte/liborte.a $(win_libs)
+ortemanager_LDADD   = ../liborte/liborte.a $(win_libs)
 endif

@@ -1,1 +1,1 @@
-SUBDIRS = ORTEPing ORTESpy hello reliable
+SUBDIRS = ping spy hello reliable

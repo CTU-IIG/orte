@@ -872,7 +872,6 @@ AC_DEFUN([AM_MAINTAINER_MODE],
 )
 
 
-
 AC_DEFUN(DS_LINUX_DIR,
 [
 	AC_ARG_WITH([linuxdir],
@@ -881,50 +880,18 @@ AC_DEFUN(DS_LINUX_DIR,
 		[LINUX_DIR="${withval}"],
 		[LINUX_DIR=default])
 
-	if test "${LINUX_DIR}" != "default" ; then
-		DS_TRY_LINUX_DIR([${LINUX_DIR}], , AC_MSG_ERROR([Linux dir not found]) )
-	fi
-
-	if test "${LINUX_DIR}" = "default" ; then
-		dir="/lib/modules/`uname -r`/build";
-		DS_TRY_LINUX_DIR([${dir}], [LINUX_DIR=${dir}], )
-	fi
-	if test "${LINUX_DIR}" = "default" ; then
-		dir="../linux";
-		DS_TRY_LINUX_DIR([${dir}], [LINUX_DIR=${dir}], )
-	fi
-	if test "${LINUX_DIR}" = "default" ; then
-		dir="/usr/src/linux";
-		DS_TRY_LINUX_DIR([${dir}], [LINUX_DIR=${dir}], )
-	fi
-
-#	if test "${LINUX_DIR}" = "default" ; then
-#		AC_MSG_ERROR([Linux source directory not found])
-#	fi
 
 	AC_SUBST(LINUX_DIR)
 ])
 
-AC_DEFUN(DS_TRY_LINUX_DIR,
-	[AC_MSG_CHECKING(for Linux in $1)
-
-	if test -f "$1/Makefile" ; then
-		result=yes
-		$2
-	else
-		result="not found"
-		$3
-	fi
-
-	AC_MSG_RESULT($result)
-])
 
 AC_DEFUN(DS_LINUX,
 [
+
 	DS_LINUX_DIR()
 	
         AC_MSG_CHECKING([Linux version])
-	
+      	
 	if test "${LINUX_DIR}" != "default" ; then
 
           if [[ ! -f "${LINUX_DIR}/.config" ]];then
@@ -958,11 +925,21 @@ AC_DEFUN(DS_LINUX,
         	AC_MSG_ERROR([Unknown Linux major.minor $LINUX_VERSION_MAJOR.$LINUX_VERSION_MINOR])
         	;;
     	  esac
+
+	  CONFIG_ORTE_KERNEL=yes
+          AC_DEFINE([CONFIG_ORTE_KERNEL],[1],[Define if linux kernel is found])	  
+
 	else
           AC_MSG_RESULT(["none"])	
+  	  
+	  CONFIG_ORTE_KERNEL=no
+	  	  
 	fi
   
-  DS_RT()
+        AC_SUBST(CONFIG_ORTE_KERNEL)	
+	AM_CONDITIONAL([CONFIG_ORTE_KERNEL],[test ${CONFIG_ORTE_KERNEL} == "yes"])
+    
+        DS_RT()
 ])
 
 AC_DEFUN(DS_LINUX_2_6,
@@ -1130,6 +1107,8 @@ AC_DEFUN(DS_RTAI,
 			fi
 		fi
 		$1
+                RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
+		RTAI_CFLAGS="${RTAI_CFLAGS} -I${RT_GCCLIB_DIR}/include -nostdinc"
 		AC_MSG_RESULT([found])
 		AC_DEFINE([CONFIG_ORTE_RTAI],[1],[Define if kernel is RTAI patched])
 	else
@@ -1144,20 +1123,37 @@ AC_DEFUN(DS_RTLINUX,
 	AC_ARG_WITH([rtlinuxdir],
 		[AC_HELP_STRING([--with-rtlinuxdir=DIR],
 			[specify path to RTLinux source directory])],
-		[RTL_DIR="${withval}"],
-		[RTL_DIR=/usr/src/rtlinux])
+		[RTLINUX_DIR="${withval}"],
+		[RTLINUX_DIR=/usr/src/rtlinux])
+		
+	AC_ARG_WITH([rtlinuxudpdir],
+		[AC_HELP_STRING([--with-rtlinuxudpdir=DIR],
+			[specify path to RTLinux UDP source directory])],
+		[RTLINUXUDP_DIR="${withval}"],
+		[RTLINUXUDP_DIR="${RTLINUX_DIR}"])
 
 	DS_LINUX_CONFIG_OPTION_MODULE([CONFIG_RTLINUX])
 
 	if test "${CONFIG_RTLINUX}" != "no" ; then
-		AC_MSG_CHECKING([RTLinux directory ${RTL_DIR} for rtl.mk])
-		if [[ -d ${RTL_DIR}/include ]] ; then
-                        RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTL_DIR}/rtl.mk`
+		AC_MSG_CHECKING([RTLinux directory ${RTLINUX_DIR} for rtl.mk])
+		if [[ -d ${RTLINUX_DIR}/include ]] ; then
+                        RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
 		else
 			AC_MSG_ERROR([incorrect RTLinux directory?])
 		fi
 		AC_MSG_RESULT([found])
 		AC_DEFINE([CONFIG_ORTE_RTL],[1],[Define if kernel is RTLinux patched])
+		AC_MSG_CHECKING([RTLinux for UDP])
+                if [[ ! -e "${RTLINUXUDP_DIR}/include/udp.h" -o \
+		      ! -e "${RTLINUXUDP_DIR}/include/nic.h" -o \ 
+		      ! -e "${RTLINUXUDP_DIR}/include/ip.h" -o \ 
+		      ! -e "${RTLINUXUDP_DIR}/include/ethernet.h" -o \ 
+		      ! -e "${RTLINUXUDP_DIR}/include/nictab.h" ]] ; then 
+			AC_MSG_ERROR([incorrect RTLinux UDP directory!!!])
+		fi
+                RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
+		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -I${RT_GCCLIB_DIR}/include -nostdinc"
+		AC_MSG_RESULT([found])
 		$1
 	else
 		$2

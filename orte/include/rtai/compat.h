@@ -18,13 +18,24 @@
  *
  */
 
-#include "defines.h"  //macro MALLOC
+#ifndef _COMPAT_H
+#define _COMPAT_H
+
+#include <linux/if.h>
+#include <linux/in.h>
+#include <rtnet.h>
+#include "rtai_posix.h.patched"
+#include <defines.h>  //macro MALLOC
+
+
 
 /* This should become a bit more generic for all platforms... */
 #define rtl_printf  rt_printk
 #define printf      rt_printk /* catch some probably forgotten printf's */
 #define malloc      rt_malloc
 #define free        rt_free
+#define bswap_16    swab16
+#define bswap_32    swab32
 
 typedef __u32 in_addr_t;
 
@@ -74,6 +85,13 @@ static inline char *strdup(const char *s)
     return new_s;
 }
 
+
+#define sem_init                    sem_init_rt
+#define sem_destroy                 sem_destroy_rt
+#define sem_timedwait               sem_timedwait_rt
+#define sem_post                    sem_post_rt
+#define sem_getvalue                sem_getvalue_rt
+
 #define pthread_rwlock_init         pthread_rwlock_init_rt
 #define pthread_rwlock_rdlock       pthread_rwlock_rdlock_rt
 #define pthread_rwlock_wrlock       pthread_rwlock_wrlock_rt
@@ -100,3 +118,5 @@ static inline char *strdup(const char *s)
 #define getsockname                 rt_socket_getsockname
 #define recvfrom                    rt_socket_recvfrom
 #define sendto                      rt_socket_sendto
+
+#endif /* _COMPAT_H */

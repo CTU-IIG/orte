@@ -14,7 +14,8 @@
   and only GNU license will apply.
  *******************************************************************/
 
-#include <string.h>
+//#include <string.h>
+#include <orte.h>
 #include "ul_gavl.h"
 
 int 

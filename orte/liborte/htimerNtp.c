@@ -40,9 +40,12 @@ htimerRoot_run_expired(ORTEDomain *d,
       ul_htim_time_t *pact_time) {
   HTimFncRootNode *timer;
   
+  debug(2,10) ("htimerRoot: start\n");               
   while((timer=htimerRoot_cut_expired(&d->objectEntry, pact_time))){
+    debug(2,10) ("htimerRoot: AID-0x%x\n",timer->objectEntryAID->aid);               
     timer->func(d,timer->objectEntryAID,pact_time);
   }
+  debug(2,10) ("htimerRoot: finished\n");               
 } 
 
 /*****************************************************************************/

@@ -50,8 +50,12 @@ ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,u_int16_t port) {
 /*****************************************************************************/
 void
 ORTEDomainWakeUpSendingThread(ObjectEntry *objectEntry) {
-  if (objectEntry->htimNeedWakeUp)
-    pthread_mutex_unlock(&objectEntry->htimSendMutex);
+  if (objectEntry->htimNeedWakeUp) {
+    int value;
+    sem_getvalue(&objectEntry->htimSendSem,&value);
+    if (!value)
+      sem_post(&objectEntry->htimSendSem);
+  }
 }
 
 

@@ -220,11 +220,12 @@ getTypeApp(ORTEDomain *d,AppParams *ap,IPAddress senderIPAddress) {
  * @d: pointer to an domain
  * @lock: lock CSTWriters at the start of function
  * @unlock: unlock CSTWriters at the end of function
+ * @alive:
  *
  */
 void 
 appSelfParamChanged(ORTEDomain *d,
-    Boolean lock,Boolean unlock,Boolean forWM) {
+    Boolean lock,Boolean unlock,Boolean forWM,Boolean alive) {
   CSChange     *csChange;
      
   if (lock) {
@@ -234,14 +235,14 @@ appSelfParamChanged(ORTEDomain *d,
   csChange=(CSChange*)MALLOC(sizeof(CSChange));
   parameterUpdateCSChange(csChange,d->appParams,ORTE_TRUE);
   csChange->guid=d->guid;
-  csChange->alive=ORTE_TRUE;
+  csChange->alive=alive;
   csChange->cdrStream.buffer=NULL;
   CSTWriterAddCSChange(d,&d->writerApplicationSelf,csChange);
   if (forWM) {
     csChange=(CSChange*)MALLOC(sizeof(CSChange));
     parameterUpdateCSChange(csChange,d->appParams,ORTE_TRUE);
     csChange->guid=d->guid;
-    csChange->alive=ORTE_TRUE;
+    csChange->alive=alive;
     csChange->cdrStream.buffer=NULL;
     CSTWriterAddCSChange(d,&d->writerManagers,csChange);
   }

@@ -1,6 +1,7 @@
 #include "Publisher.h"
-#include <orte.h>
+#include <orte_api.h>
 #include <qtimer.h>
+#include <unistd.h>
 #include "ViewFrm.h"
 
 Publisher::Publisher( QWidget *parent, const char *name )
@@ -17,72 +18,61 @@ Publisher::Publisher( QWidget *parent, const char *name )
 	m_shapeRect.setRect(0,0,25,45);
 }
 
-void Publisher::Create(QString name, char shape, char color, long strength)
+void Publisher::Create(QString name, int shape, int color, long strength)
 {
-  NtpTime	timePersistence;
+  NtpTime	persistence;
 	//init main frame
 	m_mainFrm = new MainForm;
 	Text = new QLabel( m_mainFrm, "Text" );
-    Text->setGeometry( QRect(10 , 0, 60, 15 ) );
-    Text->setText( trUtf8( "Strength : " ) );
+        Text->setGeometry( QRect(10 , 0, 60, 15 ) );
+        Text->setText( trUtf8( "Strength : " ) );
 	str = new QSlider(m_mainFrm, "str" );
-    str->setGeometry( QRect( 70, 0, 130, 15 ) );
+        str->setGeometry( QRect( 70, 0, 130, 15 ) );
 	str->setMaxValue( 10 );
-    str->setOrientation( QSlider::Horizontal );
+        str->setOrientation( QSlider::Horizontal );
 	connect( str, SIGNAL( valueChanged(int) ), this, SLOT(changeStrenght() ) );
 	m_mainFrm->show();
-	m_mainFrm->SetProperties(shape,color);
+	m_mainFrm->SetActiveObject(0);
 	m_shapeRect.moveBy(rand()%m_mainFrm->MaxX(),rand()%m_mainFrm->MaxY());
 
 
 	//init caption
+        QString topic;
+	boxType.shape=shape;
+	boxType.color=color;
 
- QString topic;
-	QString type;
-	top=shape;
-	typ=color;
 	strTitle="Publisher : "+name+" (Topic=";
-
-	switch(shape)
-	{
-	case RECTANGLE:
-		strTitle+="RECTANGLE, Type=";
-		topic="Rectangle";
-		break;
-	case ELLIPSE:
-		strTitle+="ELLIPSE, Type=";
-		topic="Ellipse";
-		break;
-	case TRIANGLE:
-		strTitle+="TRIANGLE, Type=";
-		topic="Triangle";
-		break;
-	}
-
 	switch(color)
 	{
 	case BLUE:
-		strTitle+="BLUE";
-		type="Blue";
+		topic="Blue";
 		break;
 	case GREEN:
-		strTitle+="GREEN";
-		type="Green";
+		topic="Green";
 		break;
 	case RED:
-		strTitle+="RED";
-		type="Red";
+		topic="Red";
 		break;
 	case BLACK:
-		strTitle+="BLACK";
-		type="Black";
+		topic="Black";
 		break;
 	}
+	strTitle+=topic;
 
-	ORTEAppCreate(&app1);
-  NtpTimeAssembFromMs(timePersistence, 5, 0);
-  h_pub=ORTEAppPublAdd(app1,topic,type,
-                       &timePersistence,strength);
+        ORTEInit(); 
+	domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+	ORTETypeRegisterBoxType(domain);
+        NtpTimeAssembFromMs(persistence, 5, 0);
+        publisher=ORTEPublicationCreate(
+	             domain,
+                     topic,
+	             "BoxType",
+	             &boxType,
+		     &persistence,
+		     strength,
+		     NULL,
+		     NULL,
+		     NULL);
 
 	strTitle+=", Strength="+QString::number(strength)+" )";
 	m_mainFrm->setCaption(strTitle);
@@ -93,14 +83,21 @@ void Publisher::Create(QString name, char shape, char color, long strength)
     	timer->start( 50, FALSE );
 }
 
+void Publisher::Destroy()
+{	
+	m_mainFrm->WantClose();
+	m_mainFrm->close();
+	ORTEDomainAppDestroy(domain);
+}
+
 void Publisher::Timer()
 {
-	char		msg[128];
-	memset(msg,0,sizeof(msg));
-	MoveShape();
-	sprintf(msg,"%i %i %i %i",m_shapeRect.left(),m_shapeRect.top(),m_shapeRect.right(),m_shapeRect.bottom());
-	//Don't forget add to length last zero char !!!
-    ORTEAppPublSend(app1,h_pub,msg,strlen(msg)+1);
+        MoveShape();
+        boxType.rectangle.top_left_x=m_shapeRect.left();
+        boxType.rectangle.top_left_y=m_shapeRect.top();
+        boxType.rectangle.bottom_right_x=m_shapeRect.right();
+        boxType.rectangle.bottom_right_y=m_shapeRect.bottom();
+        ORTEPublicationSend(publisher);
 }
 
 void Publisher::MoveShape()
@@ -122,21 +119,16 @@ void Publisher::MoveShape()
 		m_shapeRect.moveBy(m_incx,m_incy);
 	}
 
-	m_mainFrm->SetShapeRect(m_shapeRect);
+	m_mainFrm->ShapeColorRect(0,boxType.shape,boxType.color,m_shapeRect);
 }
 
-void Publisher::Destroy()
-{	
-	m_mainFrm->WantClose();
-	m_mainFrm->close();
-	ORTEAppDestroy(app1);
-}
 void Publisher::changeStrenght()
 {
-	ORTEPublProp  publ_prop;
-	ORTEAppPublPropGet(this->app1,this->h_pub,&publ_prop);
-	publ_prop.strength=str->value();
-	ORTEAppPublPropSet(this->app1,this->h_pub,&publ_prop);
+	ORTEPublProp  pp;
+
+        ORTEPublicationPropertiesGet(publisher,&pp);
+	pp.strength=str->value();
+        ORTEPublicationPropertiesSet(publisher,&pp);
 	QString name=QString::number(str->value());
 	if((str->value())<10) name+=" ";
 	(this->strTitle).replace((this->strTitle).length()-3,2,name);

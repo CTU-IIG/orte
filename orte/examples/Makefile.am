@@ -8,5 +8,5 @@
 if CONFIG_ORTE_RT
 SUBDIRS = hello 
 else
-SUBDIRS	= hello reliable ORTEPing ORTESpy
+SUBDIRS	= hello reliable ping spy
 endif

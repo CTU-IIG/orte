@@ -23,7 +23,7 @@ pthread_rwlock_trywrlock.c
 
 if USE_RTLINUX
 module_PROGRAMS = rtl_pthread_rwlock.ko
-rtl_pthread_rwlock_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+#rtl_pthread_rwlock_ko_CFLAGS = $(ORTE_CFLAGS) 
 rtl_pthread_rwlock_ko_SOURCES = $(PTHREAD_RWLOCK_SOURCES)
 rtl_pthread_rwlock_ko_LINK = $(top_builddir)/modtool --link -o $@
 endif

@@ -1,7 +1,7 @@
 /*
- *  $Id: ReliableSubscriber.c,v 0.0.0.1 2003/12/27 
+ *  $Id: subscriberbesteffort.c,v 0.0.0.1 2003/12/27 
  *
- *  DEBUG:  section                     ReliableSubscriber
+ *  DEBUG:  section                     Subscriber BestEffort
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
  *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/
@@ -57,7 +57,7 @@ main(int argc, char *args[]) {
   s=ORTESubscriptionCreate(
        d,
        IMMEDIATE,
-       STRICT_RELIABLE,
+       BEST_EFFORTS,
        "Reliable HelloMsg",
        "HelloMsg",
        &instance2Recv,
@@ -65,14 +65,14 @@ main(int argc, char *args[]) {
        &minimumSeparation,
        recvCallBack,
        NULL);
-  #ifndef __RTL__
+  #ifndef CONFIG_ORTE_RT
   while (1) 
     ORTESleepMs(1000);
   #endif
   return 0;
 }
 
-#ifdef __RTL__
+#ifdef CONFIG_ORTE_RT
 void 
 hello_init(void) {
   main(0,NULL);

@@ -1,7 +1,7 @@
 /*
- *  $Id: BestEffortSubscriber.c,v 0.0.0.1 2003/12/27 
+ *  $Id: publisher.c,v 0.0.0.1          2003/12/27 
  *
- *  DEBUG:  section                     ReliableSubscriber
+ *  DEBUG:  section                     publisher
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
  *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/
@@ -26,18 +26,19 @@
 #include "orte_api.h"
 
 ORTEDomain        *d;
-char              instance2Recv[64];
+char              instance2Send[64];
+int               counter=0;
 
 void
-recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
+sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
   char *instance=(char*)vinstance;
-  
+
   switch (info->status) {
-    case NEW_DATA:
-      printf("%s\n",instance);
+    case NEED_DATA:
+      printf("Sampling publication, count %d\n", counter);
+      sprintf(instance,"Hello Universe! (%d)",counter++);
       break;
-    case DEADLINE:
-      printf("deadline occured\n");
+    case CQL:  //criticalQueueLevel
       break;
   }
 }
@@ -45,34 +46,33 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 
 int 
 main(int argc, char *args[]) {
-  ORTESubscription *s;
-  NtpTime         deadline,minimumSeparation;
+  ORTEPublication *p;
+  NtpTime         persistence,repeating;
 
   ORTEInit();
-  //ORTEVerbositySetOptions("ALL,10");
   d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
   ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,64);
-  NTPTIME_BUILD(deadline,3); 
-  NTPTIME_BUILD(minimumSeparation,0); 
-  s=ORTESubscriptionCreate(
+  NTPTIME_BUILD(persistence,3); 
+  NTPTIME_BUILD(repeating,1); 
+  p=ORTEPublicationCreate(
        d,
-       IMMEDIATE,
-       BEST_EFFORTS,
-       "Reliable HelloMsg",
-       "HelloMsg",
-       &instance2Recv,
-       &deadline,
-       &minimumSeparation,
-       recvCallBack,
-       NULL);
-  #ifndef __RTL__
-  while (1) 
+      "Reliable HelloMsg",
+      "HelloMsg",
+      &instance2Send,
+      &persistence,
+      1,
+      sendCallBack,
+      NULL,
+      &repeating);
+  #ifndef CONFIG_ORTE_RT
+  while(1) {
     ORTESleepMs(1000);
+  }
   #endif
   return 0;
 }
 
-#ifdef __RTL__
+#ifdef CONFIG_ORTE_RT
 void 
 hello_init(void) {
   main(0,NULL);

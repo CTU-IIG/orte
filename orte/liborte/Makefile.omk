@@ -1,6 +1,6 @@
 lib_LIBRARIES = orte
 
-INCLUDES = -I $(srcdir)/../include -D_OMK_UNIX
+INCLUDES = -I $(srcdir)/../include -DORTE_OMK_UNIX
 
 include_HEADERS = \
 ../include/orte_api.h \
@@ -32,6 +32,7 @@ ORTEThreadUtils.c \
 ORTETypeRegister.c \
 ORTEVerbosity.c \
 ORTEPattern.c \
+ORTEMisc.c \
 parameter.c \
 RTPSAck.c \
 RTPSCSTReader.c \
@@ -59,7 +60,7 @@ ul_gavlprim.c
 
 rtlinux_LIBRARIES = orte_rt
 
-rtlinux_INCLUDES = -I $(srcdir)/../include 
+rtlinux_INCLUDES = -I $(srcdir)/../include -DORTE_OMK_RTL
 
 rtlinux_HEADERS = \
 ../include/orte_api.h \
@@ -91,6 +92,7 @@ ORTEThreadUtils.c \
 ORTETypeRegister.c \
 ORTEVerbosity.c \
 ORTEPattern.c \
+ORTEMisc.c \
 parameter.c \
 RTPSAck.c \
 RTPSCSTReader.c \

@@ -1,0 +1,8 @@
+bin_PROGRAMS = orteping
+
+INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_UNIX
+
+orteping_SOURCES = orteping.c
+
+lib_LOADLIBES =  orte pthread
+

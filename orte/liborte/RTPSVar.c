@@ -118,8 +118,9 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
             //all applications from manager node set expiration timer
             gavl_cust_for_each(ObjectEntryAID,
                                objectEntryOID->objectEntryHID,objectEntryAID) {
-              objectEntryOID=ObjectEntryOID_find(objectEntryAID,&objectGUID.oid);
-              objectEntryRefreshApp(d,objectEntryOID);
+              ObjectEntryOID *objectEntryOID1;
+              objectEntryOID1=ObjectEntryOID_find(objectEntryAID,&objectGUID.oid);
+              objectEntryRefreshApp(d,objectEntryOID1);
             }
           } else {
             FREE(ap);
@@ -156,7 +157,7 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
             SeqNumberInc(d->appParams->vargAppsSequenceNumber,
                          d->appParams->vargAppsSequenceNumber);
             //WAS & WM is locked inside next function
-            appSelfParamChanged(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE);
+            appSelfParamChanged(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE,ORTE_TRUE);
             CSTReaderAddRemoteWriter(d,cstReader,
                 objectEntryOID,writerGUID.oid);
             CSTWriterAddRemoteReader(d,&d->writerManagers,
@@ -214,8 +215,9 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
             //all applications from manager node set expiration timer
             gavl_cust_for_each(ObjectEntryAID,
                                objectEntryOID->objectEntryHID,objectEntryAID) {
-              objectEntryOID=ObjectEntryOID_find(objectEntryAID,&objectGUID.oid);
-              objectEntryRefreshApp(d,objectEntryOID);
+              ObjectEntryOID *objectEntryOID1;
+              objectEntryOID1=ObjectEntryOID_find(objectEntryAID,&objectGUID.oid);
+              objectEntryRefreshApp(d,objectEntryOID1);
             }
           } else {
             FREE(ap);
@@ -329,7 +331,8 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
             } else
               FREE(pp);
           } else {
-            if (!PublicationList_find(&d->psEntry,&objectGUID)) {
+            if ((!PublicationList_find(&d->psEntry,&objectGUID)) &&
+	         csChange->alive) {
               pthread_rwlock_wrlock(&d->psEntry.publicationsLock);
               PublicationList_insert(&d->psEntry,objectEntryOID);
               pthread_rwlock_unlock(&d->psEntry.publicationsLock);
@@ -361,7 +364,8 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
             } else
               FREE(sp);
           } else {
-            if (!SubscriptionList_find(&d->psEntry,&objectGUID)) {
+            if ((!SubscriptionList_find(&d->psEntry,&objectGUID)) && 
+	         csChange->alive) {
               pthread_rwlock_wrlock(&d->psEntry.subscriptionsLock);
               SubscriptionList_insert(&d->psEntry,objectEntryOID);
               pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
@@ -423,7 +427,6 @@ NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
           (fnmatch(pnode->type,pp->typeName,0)==0)) {
         //pattern matched
         // free resources
-        pthread_rwlock_unlock(&d->patternEntry.lock);        
         pthread_rwlock_unlock(&d->readerPublications.lock);        
         pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
         pthread_rwlock_unlock(&d->objectEntry.objRootLock);    
@@ -438,7 +441,6 @@ NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
         pthread_rwlock_wrlock(&d->objectEntry.objRootLock);    
         pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
         pthread_rwlock_wrlock(&d->readerPublications.lock);        
-        pthread_rwlock_rdlock(&d->patternEntry.lock);
       }  
     }
   }

@@ -1,6 +1,24 @@
+                   *****************************************
+                                    AUTHORS
+                   *****************************************
+___________________
+The ORTE project
+~~~~~~~~~~~~~~~~~~~
+		   
+Thanks all of you for help with creation of the project ORTE.
+
+
 Petr Smolik <petr.smolik@wo.cz>
-  originator
+    * originator
+    
 Pavel Pisa <pisa@cmp.felk.cvut.cz> 
-  gavl, htree implementations, help with architecture
+    * gavl implentations
+    * htree implementations
+    * help with architecture
+    
 Michal Sojka <sojka1@fel.cvut.cz> 
-  porting to the RTLinux
+    * RTLinux proting
+
+Jan Kiszka <Jan.Kiszka@web.de>
+    * RTAI porting
+

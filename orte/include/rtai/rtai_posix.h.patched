@@ -32,6 +32,8 @@
 #define STACK_SIZE     8192
 #define RR_QUANTUM_NS  1000000
 
+
+
 typedef struct rt_semaphore sem_t;
 
 typedef struct rt_semaphore pthread_mutex_t;
@@ -328,7 +330,16 @@ static inline void pthread_exit_rt(void *retval)
 static inline int pthread_join_rt(pthread_t thread, void **thread_return)
 {
 	int retval1, retval2;
-	retval1 = rt_sem_wait((SEM *)(thread + 1));
+	if (rt_whoami()->priority != RT_SCHED_LINUX_PRIORITY)
+		retval1 = rt_sem_wait((SEM *)(thread + 1));
+	else {
+		while ((retval1 = rt_sem_wait_if((SEM *)(thread + 1))) <= 0) {
+			set_current_state(TASK_INTERRUPTIBLE);
+			schedule_timeout(HZ/10);
+		}
+	}
+	if (retval1 != 0xFFFF)
+		retval1 = 0;
 	retval2 = rt_task_delete(thread);
 	rt_free(thread);
 	return (retval1) ? retval1 : retval2;

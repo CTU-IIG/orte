@@ -27,6 +27,7 @@ ORTEThreadUtils.c \
 ORTETypeRegister.c \
 ORTEVerbosity.c \
 ORTEPattern.c \
+ORTEMisc.c \
 parameter.c \
 RTPSAck.c \
 RTPSCSTReader.c \
@@ -51,7 +52,7 @@ ul_gavlprim.c
 
 if CONFIG_ORTE_RT
 module_PROGRAMS = rt_orte.ko
-rt_orte_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+#rt_orte_ko_CFLAGS = $(ORTE_CFLAGS) 
 rt_orte_ko_SOURCES = $(LIBORTE_SOURCES)
 rt_orte_ko_LINK = $(top_builddir)/modtool --link -o $@
 

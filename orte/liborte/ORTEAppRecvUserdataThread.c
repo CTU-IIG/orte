@@ -51,7 +51,7 @@ void ORTEAppRecvUserdataThread(ORTEDomain *d) {
         // check if length of submessage header is OK 
         if ((d->mbRecvUserdata.cdrStream.bufferPtr-
              d->mbRecvUserdata.cdrStream.buffer+3)<=d->mbRecvUserdata.cdrStream.length) {
-          int8_t e_bit=d->mbRecvUserdata.cdrStream.bufferPtr[1] & 1;
+          char e_bit=d->mbRecvUserdata.cdrStream.bufferPtr[1] & 1;
           submsg_len=(u_int16_t)d->mbRecvUserdata.cdrStream.bufferPtr[2];
           conv_u16(&submsg_len,e_bit);
           // check if length of submessage OK 
@@ -61,16 +61,16 @@ void ORTEAppRecvUserdataThread(ORTEDomain *d) {
             pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
             switch ((SubmessageId)d->mbRecvUserdata.cdrStream.bufferPtr[0]) {
               case VAR:
-//                RTPSVar(d,d->taskRecvUserdata.bufferStart+msg_ptr,&mi,ntohl(des.sin_addr.s_addr));
+                //can't be
               break;
               case ACK:
-//                RTPSAck(d,d->taskRecvUserdata.bufferStart+msg_ptr,&mi,ntohl(des.sin_addr.s_addr));
+                RTPSAck(d,d->mbRecvUserdata.cdrStream.bufferPtr,&mi,ntohl(des.sin_addr.s_addr));
               break;
               case HEARTBEAT:
-//                RTPSHeardBeat(d,d->taskRecvUserdata.bufferStart+msg_ptr,&mi);
+                RTPSHeardBeat(d,d->mbRecvUserdata.cdrStream.bufferPtr,&mi);
               break;
               case GAP:
-//                RTPSGap(d,d->taskRecvUserdata.bufferStart+msg_ptr,&mi,ntohl(des.sin_addr.s_addr));
+                //can't be
               break;
               case INFO_TS:
                 RTPSInfoTS(d->mbRecvUserdata.cdrStream.bufferPtr,&mi);

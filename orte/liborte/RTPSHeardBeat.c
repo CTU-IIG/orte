@@ -42,13 +42,61 @@ RTPSHeardBeatCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,
 
 /**********************************************************************************/
 void 
+HeardBeatProc(CSTReader *cstReader,GUID_RTPS *writerGUID,
+    SequenceNumber *fsn,SequenceNumber *lsn,char f_bit) {
+  CSTRemoteWriter    *cstRemoteWriter;
+  
+  if (!cstReader) return;
+  cstRemoteWriter=CSTRemoteWriter_find(cstReader,writerGUID);
+  if (!cstRemoteWriter) return;
+  cstRemoteWriter->firstSN=*fsn;
+  cstRemoteWriter->lastSN=*lsn;
+  cstRemoteWriter->ACKRetriesCounter=0;
+  if (SeqNumberCmp(cstRemoteWriter->sn,*lsn)>0)
+    cstRemoteWriter->sn=*lsn;
+  if (SeqNumberCmp(cstRemoteWriter->sn,*fsn)<0) {
+    if (SeqNumberCmp(*fsn,noneSN)!=0) {
+      SeqNumberDec(cstRemoteWriter->sn,*fsn);
+    }
+  }
+  if ((writerGUID->oid & 0x07) == OID_PUBLICATION) {
+    CSTReaderProcCSChangesIssue(cstRemoteWriter,ORTE_FALSE);
+  } else {
+    CSTReaderProcCSChanges(cstReader->domain,cstRemoteWriter);
+  }
+  if ((!f_bit) && (cstRemoteWriter->commStateACK==WAITING)) {
+    char queue=1;
+    cstRemoteWriter->commStateACK=ACKPENDING;
+    if ((cstRemoteWriter->guid.oid & 0x07) == OID_PUBLICATION) 
+      queue=2;
+    eventDetach(cstReader->domain,
+        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        &cstRemoteWriter->repeatActiveQueryTimer,
+        queue); 
+    eventDetach(cstReader->domain,
+        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        &cstRemoteWriter->delayResponceTimer,
+        queue);   //metatraffic timer
+    eventAdd(cstReader->domain,
+        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        &cstRemoteWriter->delayResponceTimer,
+        queue,    //metatraffic timer
+        "CSTReaderResponceTimer",
+        CSTReaderResponceTimer,
+        &cstRemoteWriter->cstReader->lock,
+        cstRemoteWriter,
+        &cstRemoteWriter->cstReader->params.delayResponceTimeMin);
+  }
+}
+
+/**********************************************************************************/
+void 
 RTPSHeardBeat(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi) {
   GUID_RTPS          writerGUID;
   ObjectId	         roid,woid;
   SequenceNumber     fsn,lsn;
-  int8_t             e_bit,f_bit;
+  char               e_bit,f_bit;
   CSTReader          *cstReader=NULL;
-  CSTRemoteWriter    *cstRemoteWriter=NULL;
 
   e_bit=rtps_msg[1] & 0x01;
   f_bit=(rtps_msg[1] & 0x02)>>1;
@@ -101,43 +149,18 @@ RTPSHeardBeat(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi) {
         cstReader=&d->readerSubscriptions;
         break;
     }
-  }  
-  if (!cstReader) return;
-  cstRemoteWriter=CSTRemoteWriter_find(cstReader,&writerGUID);
-  if (!cstRemoteWriter) {
-    pthread_rwlock_unlock(&cstReader->lock);
-    return;
-  }
-  cstRemoteWriter->firstSN=fsn;
-  cstRemoteWriter->lastSN=lsn;
-  cstRemoteWriter->ACKRetriesCounter=0;
-  if (SeqNumberCmp(cstRemoteWriter->sn,lsn)>0)
-    cstRemoteWriter->sn=lsn;
-  if (SeqNumberCmp(cstRemoteWriter->sn,fsn)<0) {
-    if (SeqNumberCmp(fsn,noneSN)!=0) {
-      SeqNumberDec(cstRemoteWriter->sn,fsn);
+    if ((writerGUID.oid & 0x07) == OID_PUBLICATION) {
+      pthread_rwlock_rdlock(&d->subscriptions.lock);
+      gavl_cust_for_each(CSTReader,&d->subscriptions,cstReader) {
+        pthread_rwlock_wrlock(&cstReader->lock);
+        HeardBeatProc(cstReader,&writerGUID,&fsn,&lsn,f_bit);
+        pthread_rwlock_unlock(&cstReader->lock);    
+      }
+      pthread_rwlock_unlock(&d->subscriptions.lock);
+      cstReader=NULL;
     }
-  }
-  CSTReaderProcCSChanges(d,cstRemoteWriter);
-  if ((!f_bit) && (cstRemoteWriter->commStateACK==WAITING)) {
-    cstRemoteWriter->commStateACK=ACKPENDING;
-    eventDetach(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
-        &cstRemoteWriter->repeatActiveQueryTimer,
-        1); 
-    eventDetach(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
-        &cstRemoteWriter->delayResponceTimer,
-        1);   //metatraffic timer
-    eventAdd(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
-        &cstRemoteWriter->delayResponceTimer,
-        1,   //metatraffic timer
-        "CSTReaderResponceTimer",
-        CSTReaderResponceTimer,
-        &cstRemoteWriter->cstReader->lock,
-        cstRemoteWriter,
-        &cstRemoteWriter->cstReader->params.delayResponceTimeMin);
-  }
-  pthread_rwlock_unlock(&cstReader->lock);
+  }  
+  HeardBeatProc(cstReader,&writerGUID,&fsn,&lsn,f_bit);
+  if (cstReader)
+    pthread_rwlock_unlock(&cstReader->lock);
 } 

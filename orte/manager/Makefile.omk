@@ -1,7 +1,18 @@
-INCLUDES = -D_OMK_UNIX
+bin_PROGRAMS = ortemanager
 
-bin_PROGRAMS = ORTEManager
+INCLUDES = -I $(srcdir)/../include -DORTE_OMK_UNIX
 
-ORTEManager_SOURCES = ORTEManager.c
+ortemanager_SOURCES = ortemanager.c
 
 lib_LOADLIBES =  orte pthread
+
+#############################################################################
+# RT-Linux version of build
+
+rtlinux_MODULES = rt_ortemanager
+               
+rtlinux_INCLUDES = -I $(srcdir)/../include -DORTE_OMK_RTL
+
+rt_ortemanager_SOURCES = ortemanager.c
+
+rtlinux_LOADLIBES =  orte_rt pthread_rwlock

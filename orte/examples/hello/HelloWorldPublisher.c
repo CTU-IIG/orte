@@ -22,29 +22,22 @@
 #ifdef HAVE_CONFIG_H
   #include <orte_config.h>
 #endif
-#if defined(CONFIG_ORTE_RTL)
-  #include <stdio.h>
+#include "orte_api.h"
+#ifdef CONFIG_ORTE_RTL
+  #include <linux/module.h>
   #include <posix/pthread.h>
   #define printf rtl_printf
-#elif defined(CONFIG_ORTE_RTAI)
+#elif defined CONFIG_ORTE_RTAI
   #include <linux/module.h>
-  #include <rtai.h>
-  #include <rtai_sched.h>
-  #include <rtai_sem.h>
+  #include <rtai/compat.h>  
   #define printf rt_printk
 #else
   #include <stdio.h>
 #endif
-#include "orte_api.h"
 
-ORTEDomain        *d;
+ORTEDomain        *d=NULL;
 char              instance2Send[64];
-char              terminate=0;
 int               counter=0;
-#ifdef CONFIG_ORTE_RTAI
-int               terminated = 0;
-SEM               term_sem;
-#endif
 
 void
 sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
@@ -61,25 +54,13 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) 
 }
 
 void *
-publisher(void *arg) {
+publisherCreate(void *arg) {
   ORTEPublication     *p;
-  ORTEDomainProp      dp;
   NtpTime             persistence, delay;
 
-  ORTEInit();
-//  ORTEVerbositySetOptions("ALL,5");
-  ORTEDomainPropDefaultGet(&dp);
-  #ifdef CONFIG_ORTE_RTL
-  dp.appLocalManager=StringToIPAddress("192.168.4.1");
-  #endif
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
-  if (!d) {
-    printf("ORTEDomainAppCreate failed!\n");
-    return 0;
-  }
   ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,64);
   NTPTIME_BUILD(persistence,3);
-  NTPTIME_BUILD(delay,10); //10s
+  NTPTIME_BUILD(delay,1); 
   p=ORTEPublicationCreate(
        d,
       "Example HelloMsg",
@@ -90,27 +71,64 @@ publisher(void *arg) {
       sendCallBack,
       NULL,
       &delay);
+  return arg;
+}
+
+
+#ifndef CONFIG_ORTE_RT
+
+int
+main(int argc, char *args[]) {
+  ORTEInit();
+  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+  if (!d) {
+    printf("ORTEDomainAppCreate failed!\n");
+    return 0;
+  }
+  publisherCreate((void*)d);
+  while(1) 
+    ORTESleepMs(1000);
   return 0;
 }
 
-#ifndef CONFIG_ORTE_RT
-int
-main(int argc, char *args[]) {
-  publisher(NULL);
-  while(1) {
-    ORTESleepMs(1000);
-  }
-  return 0;
-}
 #else
+
+char *manager="127.0.0.1";
+MODULE_PARM(manager,"1s");
+MODULE_PARM_DESC(manager,"IP address of local manager");
 MODULE_LICENSE("GPL");
+pthread_t thread;
+
+void *
+domainDestroy(void *arg) {
+  if (!d) return NULL;
+  ORTEDomainAppDestroy(d);
+  return arg;
+}
+
 int
 init_module(void) {
-  publisher(NULL);
+  ORTEDomainProp      dp;
+
+  ORTEDomainPropDefaultGet(&dp);
+  dp.appLocalManager=StringToIPAddress(manager);
+  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
+  if (d) 
+    pthread_create(&thread,NULL,&publisherCreate,NULL);
+  else
+    printf("ORTEDomainAppCreate failed!\n");
   return 0;
 }
+
+
 void
 cleanup_module(void) {
-  ORTEDomainAppDestroy(d);
+  if (!d) return;
+  pthread_join(thread,NULL);
+  pthread_create(&thread,NULL,&domainDestroy,NULL);
+  pthread_join(thread,NULL);
 }
+
 #endif
+
+

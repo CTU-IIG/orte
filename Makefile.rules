@@ -61,7 +61,7 @@ USER_UTILS_DIR   := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/utils
 USER_BIN_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/bin
 USER_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/user/orte
 LINUX_DIR        := $(OCERA_DIR)/kernel/linux
-#RTL_DIR      := $(OCERA_DIR)/kernel/rtlinux
+#RTL_DIR         := $(OCERA_DIR)/kernel/rtlinux
 CONFIG_FILE      := $(OCERA_DIR)/emdebsys/.config 
 else 
 KERN_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include-kern
@@ -83,7 +83,11 @@ endif
 
 export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
 
-CFLAGS = -O2 -ggdb
+CFLAGS += -ggdb
+CFLAGS += -O2 
+CFLAGS += -Wall
+CXXFLAGS += -Wall
+
 
 CPPFLAGS  += -I $(USER_INCLUDE_DIR)
 
@@ -240,9 +244,9 @@ ifdef RTL_DIR
 include $(RTL_DIR)/rtl.mk
 
 KERN_CC = $(CC)
-INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
+kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
 #-DEXPORT_NO_SYMBOLS
-c_o_kern_COMPILE = $(KERN_CC) $(INCLUDES) $(CFLAGS) -DEXPORT_SYMTAB 
+c_o_kern_COMPILE = $(KERN_CC) $(INCLUDES) -I$(kern_GCCLIB_DIR)/include $(CFLAGS) -DEXPORT_SYMTAB  -nostdinc
 cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
@@ -254,10 +258,11 @@ include $(KERN_MODULES_DIR)/kernel.mk
 
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
+kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
 else
 KERN_CC = echo KERN_CC not defined - compilation skipped
 endif
-c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) $(LINUX_CFLAGS) -DEXPORT_SYMTAB 
+c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -I$(kern_GCCLIB_DIR)/include $(LINUX_CFLAGS) -DEXPORT_SYMTAB -nostdinc
 cc_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) $(LINUX_CFLAGS) -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := $(LINUX_MODULE_EXT)
 KERN_LDFLAGS = $(LINUX_LDFLAGS)

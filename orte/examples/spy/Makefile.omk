@@ -1,0 +1,8 @@
+bin_PROGRAMS = ortespy
+
+INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_UNIX
+
+ortespy_SOURCES = ortespy.c
+
+lib_LOADLIBES =  orte pthread
+

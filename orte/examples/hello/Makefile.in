@@ -68,6 +68,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
@@ -101,10 +102,10 @@ install_sh = @install_sh@
 modulePROGRAMS_INSTALL = @modulePROGRAMS_INSTALL@
 moduledir = @moduledir@
 @CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_HelloWorldSubscriber.ko rt_HelloWorldPublisher.ko
-@CONFIG_ORTE_RT_TRUE@rt_HelloWorldSubscriber_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+#  rt_HelloWorldSubscriber_ko_CFLAGS = $(ORTE_CFLAGS) 
 @CONFIG_ORTE_RT_TRUE@rt_HelloWorldSubscriber_ko_SOURCES = HelloWorldSubscriber.c  
 @CONFIG_ORTE_RT_TRUE@rt_HelloWorldSubscriber_ko_LINK = $(top_builddir)/modtool --link -o $@
-@CONFIG_ORTE_RT_TRUE@rt_HelloWorldPublisher_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+#  rt_HelloWorldPublisher_ko_CFLAGS = $(ORTE_CFLAGS)
 @CONFIG_ORTE_RT_TRUE@rt_HelloWorldPublisher_ko_SOURCES = HelloWorldPublisher.c  
 @CONFIG_ORTE_RT_TRUE@rt_HelloWorldPublisher_ko_LINK = $(top_builddir)/modtool --link -o $@
 @CONFIG_ORTE_RT_FALSE@noinst_PROGRAMS = HelloWorldPublisher HelloWorldSubscriber
@@ -149,14 +150,14 @@ HelloWorldSubscriber_OBJECTS = $(am_HelloWorldSubscriber_OBJECTS)
 @CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_FALSE@HelloWorldSubscriber_DEPENDENCIES =
 HelloWorldSubscriber_LDFLAGS =
 @CONFIG_ORTE_RT_TRUE@am_rt_HelloWorldPublisher_ko_OBJECTS = \
-@CONFIG_ORTE_RT_TRUE@	rt_HelloWorldPublisher_ko-HelloWorldPublisher.$(OBJEXT)
+@CONFIG_ORTE_RT_TRUE@	HelloWorldPublisher.$(OBJEXT)
 rt_HelloWorldPublisher_ko_OBJECTS = \
 	$(am_rt_HelloWorldPublisher_ko_OBJECTS)
 rt_HelloWorldPublisher_ko_LDADD = $(LDADD)
 rt_HelloWorldPublisher_ko_DEPENDENCIES =
 rt_HelloWorldPublisher_ko_LDFLAGS =
 @CONFIG_ORTE_RT_TRUE@am_rt_HelloWorldSubscriber_ko_OBJECTS = \
-@CONFIG_ORTE_RT_TRUE@	rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.$(OBJEXT)
+@CONFIG_ORTE_RT_TRUE@	HelloWorldSubscriber.$(OBJEXT)
 rt_HelloWorldSubscriber_ko_OBJECTS = \
 	$(am_rt_HelloWorldSubscriber_ko_OBJECTS)
 rt_HelloWorldSubscriber_ko_LDADD = $(LDADD)
@@ -171,9 +172,7 @@ LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/HelloWorldPublisher.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/HelloWorldSubscriber.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/rt_HelloWorldPublisher_ko-HelloWorldPublisher.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.Po
+@AMDEP_TRUE@	./$(DEPDIR)/HelloWorldSubscriber.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -227,13 +226,9 @@ HelloWorldPublisher$(EXEEXT): $(HelloWorldPublisher_OBJECTS) $(HelloWorldPublish
 HelloWorldSubscriber$(EXEEXT): $(HelloWorldSubscriber_OBJECTS) $(HelloWorldSubscriber_DEPENDENCIES) 
 	@rm -f HelloWorldSubscriber$(EXEEXT)
 	$(LINK) $(HelloWorldSubscriber_LDFLAGS) $(HelloWorldSubscriber_OBJECTS) $(HelloWorldSubscriber_LDADD) $(LIBS)
-rt_HelloWorldPublisher_ko-HelloWorldPublisher.$(OBJEXT): \
-	HelloWorldPublisher.c
 rt_HelloWorldPublisher.ko$(EXEEXT): $(rt_HelloWorldPublisher_ko_OBJECTS) $(rt_HelloWorldPublisher_ko_DEPENDENCIES) 
 	@rm -f rt_HelloWorldPublisher.ko$(EXEEXT)
 	$(rt_HelloWorldPublisher_ko_LINK) $(rt_HelloWorldPublisher_ko_LDFLAGS) $(rt_HelloWorldPublisher_ko_OBJECTS) $(rt_HelloWorldPublisher_ko_LDADD) $(LIBS)
-rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.$(OBJEXT): \
-	HelloWorldSubscriber.c
 rt_HelloWorldSubscriber.ko$(EXEEXT): $(rt_HelloWorldSubscriber_ko_OBJECTS) $(rt_HelloWorldSubscriber_ko_DEPENDENCIES) 
 	@rm -f rt_HelloWorldSubscriber.ko$(EXEEXT)
 	$(rt_HelloWorldSubscriber_ko_LINK) $(rt_HelloWorldSubscriber_ko_LDFLAGS) $(rt_HelloWorldSubscriber_ko_OBJECTS) $(rt_HelloWorldSubscriber_ko_LDADD) $(LIBS)
@@ -246,8 +241,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HelloWorldPublisher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HelloWorldSubscriber.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_HelloWorldPublisher_ko-HelloWorldPublisher.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -263,30 +256,6 @@ distclean-depend:
 @AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c `cygpath -w $<`
-
-rt_HelloWorldPublisher_ko-HelloWorldPublisher.o: HelloWorldPublisher.c
-@AMDEP_TRUE@	source='HelloWorldPublisher.c' object='rt_HelloWorldPublisher_ko-HelloWorldPublisher.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_HelloWorldPublisher_ko-HelloWorldPublisher.Po' tmpdepfile='$(DEPDIR)/rt_HelloWorldPublisher_ko-HelloWorldPublisher.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_HelloWorldPublisher_ko_CFLAGS) $(CFLAGS) -c -o rt_HelloWorldPublisher_ko-HelloWorldPublisher.o `test -f 'HelloWorldPublisher.c' || echo '$(srcdir)/'`HelloWorldPublisher.c
-
-rt_HelloWorldPublisher_ko-HelloWorldPublisher.obj: HelloWorldPublisher.c
-@AMDEP_TRUE@	source='HelloWorldPublisher.c' object='rt_HelloWorldPublisher_ko-HelloWorldPublisher.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_HelloWorldPublisher_ko-HelloWorldPublisher.Po' tmpdepfile='$(DEPDIR)/rt_HelloWorldPublisher_ko-HelloWorldPublisher.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_HelloWorldPublisher_ko_CFLAGS) $(CFLAGS) -c -o rt_HelloWorldPublisher_ko-HelloWorldPublisher.obj `cygpath -w HelloWorldPublisher.c`
-
-rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.o: HelloWorldSubscriber.c
-@AMDEP_TRUE@	source='HelloWorldSubscriber.c' object='rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.Po' tmpdepfile='$(DEPDIR)/rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_HelloWorldSubscriber_ko_CFLAGS) $(CFLAGS) -c -o rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.o `test -f 'HelloWorldSubscriber.c' || echo '$(srcdir)/'`HelloWorldSubscriber.c
-
-rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.obj: HelloWorldSubscriber.c
-@AMDEP_TRUE@	source='HelloWorldSubscriber.c' object='rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.Po' tmpdepfile='$(DEPDIR)/rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_HelloWorldSubscriber_ko_CFLAGS) $(CFLAGS) -c -o rt_HelloWorldSubscriber_ko-HelloWorldSubscriber.obj `cygpath -w HelloWorldSubscriber.c`
 CCDEPMODE = @CCDEPMODE@
 uninstall-info-am:
 

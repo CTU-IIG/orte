@@ -46,14 +46,7 @@ extern Boolean
 ORTEDomainPropDefaultGet(ORTEDomainProp *prop);
 extern Boolean
 ORTEDomainInitEvents(ORTEDomainAppEvents *events);
-extern Boolean
-ORTEPublPropDefaultGet(ORTEDomain *d,ORTEPublProp *pp);
-extern Boolean
-ORTEPublPropDefaultSet(ORTEDomain *d,ORTEPublProp *pp);
-extern Boolean
-ORTESubsPropDefaultGet(ORTEDomain *d,ORTESubsProp *sp);
-extern Boolean
-ORTESubsPropDefaultSet(ORTEDomain *d,ORTESubsProp *sp);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEDomainApp.c
@@ -97,7 +90,7 @@ extern int
 ORTEPublicationPropertiesSet(ORTEPublication *cstWriter,ORTEPublProp *pp);
 extern int
 ORTEPublicationWaitForSubscriptions(ORTEPublication *cstWriter,NtpTime wait,
-    unsigned int retries,u_int32_t noSubscriptions);
+    unsigned int retries,unsigned int noSubscriptions);
 extern int
 ORTEPublicationGetStatus(ORTEPublication *cstWriter,ORTEPublStatus *status);
 extern int 
@@ -149,6 +142,11 @@ ORTEInit(void);
 // ORTEAppSendThread.c
 extern void 
 ORTEAppSendThread(ORTEDomain *d);
+
+///////////////////////////////////////////////////////////////////////////////
+// ORTEMisc.c
+extern void
+ORTESleepMs(unsigned int ms);
 
 #ifdef __cplusplus
 } /* extern "C"*/

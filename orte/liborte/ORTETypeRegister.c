@@ -44,7 +44,7 @@ ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
                     ORTETypeDeserialize ds,unsigned int gms) {
   TypeNode           *tn;
   
-  if (!d) return -1;       //bat handle
+  if (!d) return ORTE_BAD_HANDLE;       //bat handle
   if (gms>d->domainProp.wireProp.userMaxSerDeserSize) return -2;
   pthread_rwlock_wrlock(&d->typeEntry.lock);    
   tn=ORTEType_find(&d->typeEntry,&typeName);
@@ -59,7 +59,7 @@ ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
   tn->typeRegister.getMaxSize=gms;
   pthread_rwlock_unlock(&d->typeEntry.lock);    
   debug(26,3) ("ORTETypeRegisterAdd: registered type:%s\n",typeName);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -67,14 +67,14 @@ int
 ORTETypeRegisterDestroyAll(ORTEDomain *d) {
   TypeNode           *tn;
   
-  if (!d) return -1;       //bat handle
+  if (!d) return ORTE_BAD_HANDLE;  //bat handle
   pthread_rwlock_wrlock(&d->typeEntry.lock);    
   while((tn=ORTEType_cut_first(&d->typeEntry))) {
     free((char*)tn->typeRegister.typeName);
     FREE(tn);
   }
   pthread_rwlock_unlock(&d->typeEntry.lock);    
-  return 0;
+  return ORTE_OK;
 }
 
 

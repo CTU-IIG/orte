@@ -10,7 +10,7 @@
 #include <qwidget.h>
 #include <qrect.h>
 #include <qcolor.h>
-#include "define.h"
+#include "ortedemo_types.h"
 
 class View_Frame : public QWidget
 {
@@ -19,28 +19,28 @@ public:
     View_Frame( QWidget *parent=0, const char *name=0 );
     
 protected:
-	void mouseMoveEvent(QMouseEvent *e);
-	void mousePressEvent(QMouseEvent *e);
-	void mouseReleaseEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 
 
 public:
-    void SetShape(char shape);
-    void SetShapeColor(char color);
+    void SetActiveObject(char object);
+    void ShapeColorRect(char object,char shape,char color,QRect rect);
     void paintEvent(QPaintEvent*);
-    void SetShapeRect(QRect rect);
 
 protected:
-    QRect m_shapeRect;
-    QColor m_shapeColor;
+    int active_object[5];
+    QRect m_shapeRect[5];
+    QColor m_shapeColor[5];
 
 private:
-    char m_shape;
+    char m_shape[5];
 
 public:
-	char m_mousePressed;
-	int m_mouseX;
-	int m_mouseY;
+    char m_mousePressed;
+    int m_mouseX;
+    int m_mouseY;
 
 };
 

@@ -84,7 +84,7 @@ CSTReaderProcCSChangesApp(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter,
   ObjectEntryOID     *objectEntryOID;
     
   csChange=csChangeFromWriter->csChange;
-  objectEntryOID=objectEntryFind(d,&csChangeFromWriter->csChange->guid);
+  objectEntryOID=objectEntryFind(d,&csChange->guid);
   if (!objectEntryOID) return;
   if (!csChange->alive) {
     eventDetach(d,
@@ -102,12 +102,16 @@ CSTReaderProcCSChangesApp(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter,
             NULL);
     return;
   }
-  switch (csChangeFromWriter->csChange->guid.oid & 0x07) {
+  switch (csChange->guid.oid & 0x07) {
     case OID_APPLICATION:
       break;
     case OID_PUBLICATION:      
+      parameterUpdatePublication(csChange,
+          (ORTEPublProp*)objectEntryOID->attributes);
       break;
     case OID_SUBSCRIPTION: 
+      parameterUpdateSubscription(csChange,
+          (ORTESubsProp*)objectEntryOID->attributes);
       break;
   }
 }
@@ -158,17 +162,114 @@ CSTReaderProcCSChanges(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter) {
 }
 
 /*****************************************************************************/
+void
+CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
+    CSChangeFromWriter *csChangeFromWriter) {
+  ORTERecvInfo         info;  
+  ORTESubsProp         *sp;
+  ObjectEntryOID       *objectEntryOID;
+        
+  if (cstRemoteWriter==NULL) return;
+  objectEntryOID=cstRemoteWriter->cstReader->objectEntryOID;
+  sp=(ORTESubsProp*)cstRemoteWriter->cstReader->objectEntryOID->attributes;
+  if (objectEntryOID->recvCallBack) {
+    //deserialization routine
+    if (cstRemoteWriter->cstReader->typeRegister->deserialize) {
+      cstRemoteWriter->cstReader->typeRegister->deserialize(
+          &csChangeFromWriter->csChange->cdrStream,
+          objectEntryOID->instance);
+    } else {
+      int length=csChangeFromWriter->csChange->cdrStream.length;
+      if (cstRemoteWriter->cstReader->typeRegister->getMaxSize<length)
+        length=cstRemoteWriter->cstReader->typeRegister->getMaxSize;
+      //no deserialization -> memcpy
+      memcpy(objectEntryOID->instance,
+            csChangeFromWriter->csChange->cdrStream.buffer,
+            length);
+    }
+    info.status=NEW_DATA;
+    info.topic=sp->topic;
+    info.type=sp->typeName;
+    info.senderGUID=csChangeFromWriter->csChange->guid;
+    info.localTimeReceived=csChangeFromWriter->csChange->localTimeReceived;
+    info.remoteTimePublished=csChangeFromWriter->csChange->remoteTimePublished;
+    info.sn=csChangeFromWriter->csChange->sn;
+    objectEntryOID->recvCallBack(&info,
+                            objectEntryOID->instance,
+                            objectEntryOID->callBackParam);
+    if (sp->mode==IMMEDIATE) {
+      //setup new time for deadline timer
+      eventDetach(cstRemoteWriter->cstReader->domain,
+          cstRemoteWriter->cstReader->objectEntryOID->objectEntryAID,
+          &cstRemoteWriter->cstReader->deadlineTimer,
+          0);
+      eventAdd(cstRemoteWriter->cstReader->domain,
+          cstRemoteWriter->cstReader->objectEntryOID->objectEntryAID,
+          &cstRemoteWriter->cstReader->deadlineTimer,
+          0,   //common timer
+          "CSTReaderDeadlineTimer",
+          CSTReaderDeadlineTimer,
+          &cstRemoteWriter->cstReader->lock,
+          cstRemoteWriter->cstReader,
+          &sp->deadline);
+    }
+    if (sp->mode==PULLED) {
+      NtpTime timeNext;
+      NtpTimeAdd(timeNext,
+                (getActualNtpTime()),
+                sp->deadline);
+      htimerUnicastCommon_set_expire(&cstRemoteWriter->
+                cstReader->deadlineTimer,timeNext);
+    }
+  }
+}
+
+/*****************************************************************************/
 void 
 CSTReaderProcCSChangesIssue(CSTRemoteWriter *cstRemoteWriter,Boolean pullCalled) {
   ORTESubsProp         *sp;
   CSChangeFromWriter   *csChangeFromWriter;
-  ORTERecvInfo         info;  
+  SequenceNumber       snNext;
  
   debug(54,10) ("CSTReaderProcIssue: start\n");
   if (cstRemoteWriter==NULL) return;
   sp=(ORTESubsProp*)cstRemoteWriter->cstReader->objectEntryOID->attributes;
-  //Strict
   if ((sp->reliabilityRequested & PID_VALUE_RELIABILITY_STRICT)!=0) {
+    //Strict
+    if ((sp->mode==PULLED) && (pullCalled==ORTE_FALSE)) return;
+    while (1) {
+      csChangeFromWriter=CSChangeFromWriter_first(cstRemoteWriter);
+      if (!csChangeFromWriter) break;
+      if (SeqNumberCmp(csChangeFromWriter->csChange->sn,
+                      cstRemoteWriter->firstSN)>=0) {
+        SeqNumberInc(snNext,cstRemoteWriter->sn);
+        debug(54,10) ("CSTReaderProcChangesIssue: processing sn:%u,Change sn:%u\n",snNext.low,
+                                              csChangeFromWriter->csChange->sn.low);
+        if ((SeqNumberCmp(csChangeFromWriter->csChange->sn,snNext)==0) &&
+            (csChangeFromWriter->commStateChFWriter==RECEIVED)) {
+          if (SeqNumberCmp(csChangeFromWriter->csChange->gapSN,noneSN)==0) {
+            if ((cstRemoteWriter==
+                 cstRemoteWriter->cstReader->cstRemoteWriterSubscribed) &&
+                (cstRemoteWriter->cstReader->cstRemoteWriterSubscribed!=NULL)) {
+              //NewData                
+              CSTReaderNewData(cstRemoteWriter,csChangeFromWriter);
+            } 
+            SeqNumberInc(cstRemoteWriter->sn,cstRemoteWriter->sn);
+          } else {
+            //GAP
+            SeqNumberAdd(cstRemoteWriter->sn,
+                        cstRemoteWriter->sn,
+                        csChangeFromWriter->csChange->gapSN);
+          }
+          CSTReaderDestroyCSChange(cstRemoteWriter,
+              &snNext,ORTE_FALSE);
+        } else
+          break;
+      } else {
+        CSTReaderDestroyCSChangeFromWriter(cstRemoteWriter,
+            csChangeFromWriter,ORTE_FALSE);
+      }
+    }
   } else {
     //Best Effort
     if ((sp->reliabilityRequested & PID_VALUE_RELIABILITY_BEST_EFFORTS)!=0) {
@@ -178,58 +279,8 @@ CSTReaderProcCSChangesIssue(CSTRemoteWriter *cstRemoteWriter,Boolean pullCalled)
         return;
       if ((sp->mode==PULLED) && (pullCalled==ORTE_FALSE)) return;
       while((csChangeFromWriter=CSChangeFromWriter_first(cstRemoteWriter))) {
-        ObjectEntryOID *objectEntryOID;
-        objectEntryOID=cstRemoteWriter->cstReader->objectEntryOID;
-        if (objectEntryOID->recvCallBack) {
-          //deserialization routine
-          if (cstRemoteWriter->cstReader->typeRegister->deserialize) {
-            cstRemoteWriter->cstReader->typeRegister->deserialize(
-                &csChangeFromWriter->csChange->cdrStream,
-                objectEntryOID->instance);
-          } else {
-            int length=csChangeFromWriter->csChange->cdrStream.length;
-            if (cstRemoteWriter->cstReader->typeRegister->getMaxSize<length)
-              length=cstRemoteWriter->cstReader->typeRegister->getMaxSize;
-            //no deserialization -> memcpy
-            memcpy(objectEntryOID->instance,
-                   csChangeFromWriter->csChange->cdrStream.buffer,
-                   length);
-          }
-          info.status=NEW_DATA;
-          info.topic=sp->topic;
-          info.type=sp->typeName;
-          info.senderGUID=csChangeFromWriter->csChange->guid;
-          info.localTimeReceived=csChangeFromWriter->csChange->localTimeReceived;
-          info.remoteTimePublished=csChangeFromWriter->csChange->remoteTimePublished;
-          info.sn=csChangeFromWriter->csChange->sn;
-          objectEntryOID->recvCallBack(&info,
-                                   objectEntryOID->instance,
-                                   objectEntryOID->callBackParam);
-          if (sp->mode==IMMEDIATE) {
-            //setup new time for deadline timer
-            eventDetach(cstRemoteWriter->cstReader->domain,
-                cstRemoteWriter->cstReader->objectEntryOID->objectEntryAID,
-                &cstRemoteWriter->cstReader->deadlineTimer,
-                0);
-            eventAdd(cstRemoteWriter->cstReader->domain,
-                cstRemoteWriter->cstReader->objectEntryOID->objectEntryAID,
-                &cstRemoteWriter->cstReader->deadlineTimer,
-                0,   //common timer
-                "CSTReaderDeadlineTimer",
-                CSTReaderDeadlineTimer,
-                &cstRemoteWriter->cstReader->lock,
-                cstRemoteWriter->cstReader,
-                &sp->deadline);
-          }
-          if (sp->mode==PULLED) {
-            NtpTime timeNext;
-            NtpTimeAdd(timeNext,
-                      (getActualNtpTime()),
-                      sp->deadline);
-            htimerUnicastCommon_set_expire(&cstRemoteWriter->
-                      cstReader->deadlineTimer,timeNext);
-          }
-        }
+        //NewData                
+        CSTReaderNewData(cstRemoteWriter,csChangeFromWriter);
         CSTReaderDestroyCSChangeFromWriter(
             cstRemoteWriter,
             csChangeFromWriter,

@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 ** ui.h extension file, included from the uic-generated form implementation.
 **
 ** If you wish to add, delete or rename slots use Qt Designer which will
@@ -20,17 +20,16 @@ void MainForm::resizeEvent( QResizeEvent *)
     	View->setGeometry(0,15,size().width(),size().height()-15);
 }
 
-void MainForm::SetShapeRect(QRect rect)
+void MainForm::SetActiveObject(int object)
 {
-	m_shapeRect=rect;
-	View->SetShapeRect(m_shapeRect);
+	View->SetActiveObject(object);
 }
 
-void MainForm::SetProperties(char shape, char color)
+void MainForm::ShapeColorRect(char object,int shape, int color,QRect rect)
 {
-	View->SetShape(shape);
-	View->SetShapeColor(color);
+	View->ShapeColorRect(object,shape,color,rect);
 }
+
 
 int MainForm::MaxX()
 {
@@ -62,3 +61,8 @@ int MainForm::getClose()
 {
  return m_close;
 }
+
+
+
+
+

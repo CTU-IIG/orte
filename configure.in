@@ -1,9 +1,10 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.2 2004/01/17 18:16:35 ppisa Exp $
+# $Id: configure.in,v 1.3 2004/02/11 00:38:24 ppisa Exp $
 
 # autoconf requirement
-AC_PREREQ([2.57])
+
+AC_PREREQ([2.56])
 
 AC_INIT([orte],[0.2.0],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
@@ -31,6 +32,27 @@ AC_SUBST(ORTE_VERSION)
 
 
 ###############################
+# target
+WIN='no'
+UNIX='no'
+case "$target" in
+  *-cygwin* | *-mingw*)
+    CFLAGS="$CFLAGS"
+    WIN='yes'
+    AC_DEFINE([CONFIG_ORTE_WIN],[1],[Define if is target windows])
+    ;;
+  *)
+    # Assume Unix.
+    if test -z ${CONFIG_ORTE_RT} -a ${CONFIG_ORTE_KERNEL} ; then
+      UNIX='yes'
+      AC_DEFINE([CONFIG_ORTE_UNIX],[1],[Define if is target a unix system])
+    fi
+    ;;
+esac
+AM_CONDITIONAL(CONFIG_ORTE_WIN, test x$WIN = xyes)
+AM_CONDITIONAL(CONFIG_ORTE_UNIX, test x$UNIX = xyes)
+
+###############################
 # modules
 moduledir="\$(libdir)/modules/\$(LINUX_KERNELRELEASE)/orte"
 modulePROGRAMS_INSTALL="\$(top_builddir)/modtool --install"
@@ -44,63 +66,100 @@ AC_PROG_CC
 AC_PROG_RANLIB
 
 ###############################
-# Checks for libraries (no for RT)
+# Checks for libraries (not for RT)
 if test -z ${CONFIG_ORTE_RT} ; then
 AC_CHECK_LIB([ws2_32], [main])
 AC_CHECK_LIB([pthread], [main])
 fi
 
 ###############################
-# Checks for header files.
-if test -z ${CONFIG_ORTE_RT} ; then
-AC_HEADER_STDC
-AC_CHECK_HEADERS(
-[arpa/inet.h fcntl.h stdio.h netdb.h netinet/in.h stdlib.h \
-string.h sys/ioctl.h sys/socket.h sys/time.h unistd.h pthread.h \
-stdarg.h getopt.h sys/types.h net/if.h byteswap.h signal.h errno.h \
-ctype.h sys/stat.h winsock2.h ws2tcpip.h])
+# enable GNU source
+AH_VERBATIM([_GNU_SOURCE],[
+#ifndef _GNU_SOURCE
+  #define _GNU_SOURCE
+#endif
+]) 
+
+###############################
+# CFLAGS
+CFLAGS="$CFLAGS -Wall"
+if test ${USE_RTLINUX} == 'yes' ; then
+  CFLAGS="$CFLAGS $RTLINUX_CFLAGS"
+else
+  if test ${USE_RTAI} == 'yes' ; then
+    CFLAGS="$CFLAGS $RTAI_CFLAGS $LINUX_CFLAGS"
+  else
+    if test -n ${CONFIG_ORTE_KERNEL} ; then
+      CFLAGS="$CFLAGS $LINUX_CFLAGS"
+    fi
+  fi
 fi
+
+###############################
+# Checks for header files.
+# user space
+if test ${UNIX} == 'yes' -o ${WIN} == 'yes' ; then
+    AC_HEADER_STDC
+    AC_CHECK_HEADERS([\
+    arpa/inet.h fcntl.h stdio.h netdb.h netinet/in.h stdlib.h \
+    string.h sys/ioctl.h sys/socket.h sys/time.h unistd.h pthread.h \
+    stdarg.h sys/types.h net/if.h byteswap.h getopt.h \
+    ctype.h semaphore.h signal.h],,,[[]])
+fi
+# win32
+if test ${WIN} == 'yes' ; then
+    AC_CHECK_HEADERS([\
+    winsock2.h ws2tcpip.h windows.h],,,[[]])
+fi
+# kernel
+if test ${CONFIG_ORTE_KERNEL} == 'yes' ; then
+    AC_CHECK_HEADERS([\
+    asm/byteorder.h linux/ctype.h linux/string.h \
+    linux/module.h linux/if.h linux/socket.h \
+    linux/time.h linux/types.h],,,[[]])
+    AC_CHECK_HEADERS([linux/in.h],,,[
+    #ifdef HAVE_LINUX_SOCKET_H
+      #include <linux/socket.h>
+    #endif
+    ])
+fi
+# RTLinux
+if test ${USE_RTLINUX} == 'yes' ; then
+    AC_CHECK_HEADERS([\
+    string.h pthread.h semaphore.h \
+    rtl.h rtl_malloc.h udp.h nic.h time.h],,,[[]])
+    AC_CHECK_HEADERS([nictab.h],,,[
+    #ifdef HAVE_UDP_H
+      #include <udp.h>
+    #endif
+    #ifdef HAVE_NIC_H
+      #include <nic.h>
+    #endif
+    ])
+fi
+# RTAI
+if test ${USE_RTAI} == 'yes' ; then
+    AC_CHECK_HEADERS([\
+    rtnet.h],,,[[]])
+fi
+
 ###############################
 # includes
-case "$target" in
-  *-cygwin* | *-mingw*)
-    INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/win32'
-    WIN='yes'
-    AC_DEFINE([CONFIG_ORTE_WIN],[1],[Define if is target windows])
-    ;;
-  *)
-    # Assume Unix.
-    if test ${USE_RTLINUX} == "yes" ; then
-      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtl -I$(top_srcdir)/orte/contrib/RTL_UDP/include'
-    elif test ${USE_RTAI} == "yes" ; then
-      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtai'
-    else
-      INCLUDES='-I$(top_srcdir)/orte/include'
-      UNIX='yes'
-      AC_DEFINE([CONFIG_ORTE_UNIX],[1],[Define if is target a unix system])
-    fi
-    ;;
-esac
+INCLUDES='-I$(top_srcdir)/orte/include'
 AC_SUBST(INCLUDES)
-AM_CONDITIONAL(CONFIG_ORTE_WIN, test x$WIN = xyes)
-AM_CONDITIONAL(CONFIG_ORTE_UNIX, test x$UNIX = xyes)
 
 ###############################
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
 AC_C_CONST
 AC_C_INLINE
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
 
 ###############################
 # Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
-AC_CHECK_FUNCS([strdup])
-
-###############################
-# Add obsolute directory for header files
-CFLAGS="$CFLAGS -Wall"
+if test -z ${CONFIG_ORTE_RT} ; then
+AC_CHECK_FUNCS([strdup gethostbyname])
+fi
 
 AC_CONFIG_FILES([Makefile
                  orte/Makefile
@@ -109,10 +168,9 @@ AC_CONFIG_FILES([Makefile
 		 orte/examples/Makefile
 		 orte/examples/hello/Makefile
 		 orte/examples/reliable/Makefile
-		 orte/examples/ORTEPing/Makefile
-		 orte/examples/ORTESpy/Makefile
+		 orte/examples/ping/Makefile
+		 orte/examples/spy/Makefile
                  orte/manager/Makefile])
-
 
 
 AC_OUTPUT([

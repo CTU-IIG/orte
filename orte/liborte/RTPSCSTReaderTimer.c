@@ -25,14 +25,25 @@
 int 
 CSTReaderResponceTimer(ORTEDomain *d,void *vcstRemoteWriter) {
   CSTRemoteWriter *cstRemoteWriter=(CSTRemoteWriter*)vcstRemoteWriter;
-  int32_t         len;
+  int             len;
+  char            queue=1;
   
+  if ((cstRemoteWriter->guid.oid & 0x07) == OID_PUBLICATION) 
+    queue=2;
   if (!d->mbSend.containsInfoReply) { 
-    len=RTPSInfoREPLYCreate(
-        d->mbSend.cdrStream.bufferPtr,
-        getMaxMessageLength(d),
-        IPADDRESS_INVALID,
-        ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->metatrafficUnicastPort);
+    if (queue==1) {
+      len=RTPSInfoREPLYCreate(
+          d->mbSend.cdrStream.bufferPtr,
+          getMaxMessageLength(d),
+          IPADDRESS_INVALID,
+          ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->metatrafficUnicastPort);
+    } else {
+      len=RTPSInfoREPLYCreate(
+          d->mbSend.cdrStream.bufferPtr,
+          getMaxMessageLength(d),
+          IPADDRESS_INVALID,
+          ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->userdataUnicastPort);
+    }
     if (len<0) {
       d->mbSend.needSend=ORTE_TRUE;
       return 1;
@@ -67,14 +78,14 @@ CSTReaderResponceTimer(ORTEDomain *d,void *vcstRemoteWriter) {
     eventDetach(d,
         cstRemoteWriter->objectEntryOID->objectEntryAID,
         &cstRemoteWriter->delayResponceTimer,
-        1);  //metatraffic timer
+        queue); 
     if (cstRemoteWriter->ACKRetriesCounter<
         cstRemoteWriter->cstReader->params.ACKMaxRetries) {
       cstRemoteWriter->ACKRetriesCounter++;
       eventAdd(d,
           cstRemoteWriter->objectEntryOID->objectEntryAID,
           &cstRemoteWriter->delayResponceTimer,
-          1,   //metatraffic timer
+          queue,
           "CSTReaderResponceTimer",
           CSTReaderResponceTimer,
           &cstRemoteWriter->cstReader->lock,
@@ -90,13 +101,13 @@ CSTReaderResponceTimer(ORTEDomain *d,void *vcstRemoteWriter) {
     eventDetach(d,
         cstRemoteWriter->objectEntryOID->objectEntryAID,
         &cstRemoteWriter->repeatActiveQueryTimer,
-        1);   //metatraffic timer
+        queue); 
     if (NtpTimeCmp(cstRemoteWriter->cstReader->
                    params.repeatActiveQueryTime,iNtpTime)!=0) {
       eventAdd(d,
           cstRemoteWriter->objectEntryOID->objectEntryAID,
           &cstRemoteWriter->repeatActiveQueryTimer,
-          1,   //metatraffic timer
+          queue,
           "CSTReaderQueryTimer",
           CSTReaderQueryTimer,
           &cstRemoteWriter->cstReader->lock,
@@ -111,14 +122,25 @@ CSTReaderResponceTimer(ORTEDomain *d,void *vcstRemoteWriter) {
 int
 CSTReaderQueryTimer(ORTEDomain *d,void *vcstRemoteWriter) {
   CSTRemoteWriter *cstRemoteWriter=(CSTRemoteWriter*)vcstRemoteWriter;
-  int32_t         len;
+  int             len;
+  char            queue=1;
   
+  if ((cstRemoteWriter->guid.oid & 0x07) == OID_PUBLICATION) 
+    queue=2;  
   if (!d->mbSend.containsInfoReply) { 
-    len=RTPSInfoREPLYCreate(
-        d->mbSend.cdrStream.bufferPtr,
-        getMaxMessageLength(d),
-        IPADDRESS_INVALID,
-        ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->metatrafficUnicastPort);
+    if (queue==1) {
+      len=RTPSInfoREPLYCreate(
+          d->mbSend.cdrStream.bufferPtr,
+          getMaxMessageLength(d),
+          IPADDRESS_INVALID,
+          ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->metatrafficUnicastPort);
+    } else {
+      len=RTPSInfoREPLYCreate(
+          d->mbSend.cdrStream.bufferPtr,
+          getMaxMessageLength(d),
+          IPADDRESS_INVALID,
+          ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->userdataUnicastPort);
+    }
     if (len<0) {
       d->mbSend.needSend=ORTE_TRUE;
       return 1;
@@ -139,7 +161,6 @@ CSTReaderQueryTimer(ORTEDomain *d,void *vcstRemoteWriter) {
       cstRemoteWriter->guid.oid,
       ORTE_FALSE);
   if (len<0) {
-    //not enought space in sending buffer
     d->mbSend.needSend=ORTE_TRUE;
     return 1;
   }
@@ -152,16 +173,19 @@ CSTReaderQueryTimer(ORTEDomain *d,void *vcstRemoteWriter) {
   eventDetach(d,
       cstRemoteWriter->objectEntryOID->objectEntryAID,
       &cstRemoteWriter->repeatActiveQueryTimer,
-      1);   //metatraffic timer
-  eventAdd(d,
-      cstRemoteWriter->objectEntryOID->objectEntryAID,
-      &cstRemoteWriter->repeatActiveQueryTimer,
-      1,   //metatraffic timer
-      "CSTReaderQueryTimer",
-      CSTReaderQueryTimer,
-      &cstRemoteWriter->cstReader->lock,
-      cstRemoteWriter,
-      &cstRemoteWriter->cstReader->params.repeatActiveQueryTime);
+      queue);   
+  if (NtpTimeCmp(cstRemoteWriter->cstReader->
+                 params.repeatActiveQueryTime,iNtpTime)!=0) {
+    eventAdd(d,
+        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        &cstRemoteWriter->repeatActiveQueryTimer,
+        queue,
+        "CSTReaderQueryTimer",
+        CSTReaderQueryTimer,
+        &cstRemoteWriter->cstReader->lock,
+        cstRemoteWriter,
+        &cstRemoteWriter->cstReader->params.repeatActiveQueryTime);
+  }
   return 0; 
 }
 

@@ -20,7 +20,9 @@
  */ 
 
 #include "orte.h"
-
+#ifdef __RTL__
+#include <rtl.h>
+#endif
 #ifdef CONFIG_ORTE_RT
 MODULE_LICENSE("GPL");
 #endif

@@ -196,7 +196,6 @@ typedef struct ORTEPublStatus {
  * @unReliable: count of unreliable publications (strict) connected to responsible subscription
  * @issues: number of messages in receiving queue
  *
- * Current implementation has always issues=0. It means, that all messages were sent to user application
  */
 typedef struct ORTESubsStatus {
   unsigned int           strict;
@@ -322,8 +321,10 @@ typedef struct ORTEDomainProp {
   ORTEDomainBaseProp     baseProp;
   ORTEDomainWireProp     wireProp;
   ORTEMulticastProp      multicast;               //multicast properies
+  ORTEPublProp           publPropDefault;         //default properties for a Publ/Sub
+  ORTESubsProp           subsPropDefault;
   char                   *mgrs;                   //managers
-  IPAddress              mgrAddKey;               //keys
+  char                   *keys;                   //keys
   IPAddress              appLocalManager;         //applications
   char                   version[60];             //string product version
   int                    recvBuffSize;

@@ -15,33 +15,33 @@ View_Frame::View_Frame( QWidget *parent, const char *name )
 	m_mousePressed=0;
 }
 
-void View_Frame::SetShape(char shape)
+void View_Frame::SetActiveObject(char object)
 {
-    	m_shape=shape;
+  active_object[object]=1;
 }
 
-void View_Frame::SetShapeColor(char color)
+
+void View_Frame::ShapeColorRect(char object,char shape,char color,QRect rect)
 {
+    	m_shape[object]=shape;
+
 	switch(color)
 	{
 	case BLUE:
-		m_shapeColor=QColor(0,0,255);
+		m_shapeColor[object]=QColor(0,0,255);
 		break;
 	case GREEN:
-		m_shapeColor=QColor(0,255,0);
+		m_shapeColor[object]=QColor(0,255,0);
 		break;
 	case RED:
-		m_shapeColor=QColor(255,0,0);
+		m_shapeColor[object]=QColor(255,0,0);
 		break;
 	case BLACK:
-		m_shapeColor=QColor(0,0,0);
+		m_shapeColor[object]=QColor(0,0,0);
 		break;
 	}
-}
 
-void View_Frame::SetShapeRect(QRect rect)
-{
-	m_shapeRect=rect;
+	m_shapeRect[object]=rect;
 	repaint();
 }
 
@@ -49,30 +49,32 @@ void View_Frame::paintEvent(QPaintEvent*)
 {
 	QPainter p(this);
 	
-	p.setBrush(m_shapeColor);
-	p.setPen(NoPen);
-
-
-	switch(m_shape)
-	{
-	case RECTANGLE:
-		p.drawRect(m_shapeRect);
+        for(int i=0;i<5;i++) {
+	    if (!active_object[i]) continue;
+	    p.setBrush(m_shapeColor[i]);
+	    p.setPen(NoPen);
+  	    switch(m_shape[i])
+	    {
+	    case RECTANGLE:
+		p.drawRect(m_shapeRect[i]);
 		break;
-	case ELLIPSE:
-		p.drawEllipse(m_shapeRect);
+	    case ELLIPSE:
+		p.drawEllipse(m_shapeRect[i]);
 		break;
-	case TRIANGLE:
+	    case TRIANGLE:
 		QPointArray pt(3);
-		pt.putPoints(0,3, m_shapeRect.center().x(),m_shapeRect.top(), m_shapeRect.right(),m_shapeRect.bottom(), m_shapeRect.left(),m_shapeRect.bottom());
+		pt.putPoints(0,3, m_shapeRect[i].center().x(),m_shapeRect[i].top(), 
+		                  m_shapeRect[i].right(),m_shapeRect[i].bottom(), 
+				  m_shapeRect[i].left(),m_shapeRect[i].bottom());
 		p.drawPolygon(pt);
 		break;
+	    }
+	    QString strPos;
+	    strPos="X:" + QString::number(m_shapeRect[i].center().x())+
+	           "  Y:"+QString::number(m_shapeRect[i].center().y());
+	    p.drawText(m_shapeRect[i].left()-(70-m_shapeRect[i].width())/2,m_shapeRect[i].top()-1,strPos);
 	}
 
-	QString strPos;
-	
-	strPos="X:" + QString::number(m_shapeRect.center().x())+"  Y:"+QString::number(m_shapeRect.center().y());
-	
-	p.drawText(m_shapeRect.left()-(70-m_shapeRect.width())/2,m_shapeRect.top()-1,strPos);
 }
 
 void View_Frame::mouseMoveEvent(QMouseEvent *e)

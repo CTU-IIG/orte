@@ -41,22 +41,24 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
   
   cstReader=(CSTReader*)MALLOC(sizeof(CSTReader));
   if (!cstReader) return NULL;
+  pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
+  pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
   pthread_rwlock_rdlock(&d->typeEntry.lock);    
   if (!(typeNode=ORTEType_find(&d->typeEntry,&typeName))) {
     pthread_rwlock_unlock(&d->typeEntry.lock);    
+    pthread_rwlock_unlock(&d->objectEntry.objRootLock);
+    pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
     printf("before call ORTESubscriptionCreateBestEffort is necessary to register \n\
             ser./deser. function for a given typeName!!!\n");
     return NULL;
   }  
-  pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
-  pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
   pthread_rwlock_wrlock(&d->subscriptions.lock);
   //generate new guid of publisher
   d->subscriptions.counter++;
   guid.hid=d->guid.hid;guid.aid=d->guid.aid;
   guid.oid=(d->subscriptions.counter<<8)|OID_SUBSCRIPTION;
   sp=(ORTESubsProp*)MALLOC(sizeof(ORTESubsProp));
-  memcpy(sp,&d->subsPropDefault,sizeof(ORTESubsProp));
+  memcpy(sp,&d->domainProp.subsPropDefault,sizeof(ORTESubsProp));
   strcpy(sp->topic,topic);
   strcpy(sp->typeName,typeName);
   sp->deadline=*deadline;
@@ -107,6 +109,7 @@ int
 ORTESubscriptionDestroyLocked(ORTESubscription *cstReader) {
   CSChange              *csChange;
   
+  if (!cstReader) return ORTE_BAD_HANDLE;
   pthread_rwlock_wrlock(&cstReader->domain->writerSubscriptions.lock);
   csChange=(CSChange*)MALLOC(sizeof(CSChange));
   CSChangeAttributes_init_head(csChange);
@@ -117,18 +120,20 @@ ORTESubscriptionDestroyLocked(ORTESubscription *cstReader) {
                        &cstReader->domain->writerSubscriptions,
                        csChange);
   pthread_rwlock_unlock(&cstReader->domain->writerSubscriptions.lock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
 int
 ORTESubscriptionDestroy(ORTESubscription *cstReader) {
   int r;
-  if (!cstReader) return -1;
+  if (!cstReader) return ORTE_BAD_HANDLE;
   //generate csChange for writerSubscriptions
   pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
   pthread_rwlock_wrlock(&cstReader->domain->objectEntry.htimRootLock);
+  pthread_rwlock_wrlock(&cstReader->lock);
   r=ORTESubscriptionDestroyLocked(cstReader);
+  pthread_rwlock_unlock(&cstReader->lock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
   return r;
@@ -138,12 +143,13 @@ ORTESubscriptionDestroy(ORTESubscription *cstReader) {
 /*****************************************************************************/
 int
 ORTESubscriptionPropertiesGet(ORTESubscription *cstReader,ORTESubsProp *sp) {
+  if (!cstReader) return ORTE_BAD_HANDLE;
   pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
   pthread_rwlock_rdlock(&cstReader->lock);
   *sp=*(ORTESubsProp*)cstReader->objectEntryOID->attributes;
   pthread_rwlock_unlock(&cstReader->lock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -151,6 +157,7 @@ int
 ORTESubscriptionPropertiesSet(ORTESubscription *cstReader,ORTESubsProp *sp) {
   CSChange              *csChange;
 
+  if (!cstReader) return ORTE_BAD_HANDLE;
   pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
   pthread_rwlock_wrlock(&cstReader->domain->objectEntry.htimRootLock);
   pthread_rwlock_wrlock(&cstReader->domain->writerSubscriptions.lock);
@@ -163,23 +170,50 @@ ORTESubscriptionPropertiesSet(ORTESubscription *cstReader,ORTESubsProp *sp) {
   CSTWriterAddCSChange(cstReader->domain,
       &cstReader->domain->writerSubscriptions,csChange);
   pthread_rwlock_unlock(&cstReader->lock);
-  pthread_rwlock_unlock(&cstReader->domain->subscriptions.lock);
+  pthread_rwlock_unlock(&cstReader->domain->writerSubscriptions.lock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
 int
 ORTESubscriptionWaitForPublications(ORTESubscription *cstReader,NtpTime wait,
-    u_int32_t retries,u_int32_t noPublications) {
-  return 0;
+    unsigned int retries,unsigned int noPublications) {
+  int wPublications;
+  u_int32_t sec,ms;
+
+  if (!cstReader) return ORTE_BAD_HANDLE;
+  NtpTimeDisAssembToMs(sec,ms,wait);
+  do {
+    pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
+    pthread_rwlock_rdlock(&cstReader->lock);
+    wPublications=cstReader->cstRemoteWriterCounter;
+    pthread_rwlock_unlock(&cstReader->lock);
+    pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
+    if (wPublications>=noPublications)
+      return ORTE_OK;
+    ORTESleepMs(sec*1000+ms);
+  } while (retries--);
+  return ORTE_TIMEOUT;  
 }
 
 /*****************************************************************************/
 int
 ORTESubscriptionGetStatus(ORTESubscription *cstReader,ORTESubsStatus *status) {
-  return 0;
+  CSChange *csChange;
+
+  if (!cstReader) return ORTE_BAD_HANDLE;
+  pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
+  pthread_rwlock_rdlock(&cstReader->lock);
+  status->strict=cstReader->strictReliableCounter;
+  status->bestEffort=cstReader->bestEffortsCounter;
+  status->issues=0;
+  ul_list_for_each(CSTReaderCSChange,cstReader,csChange)
+    status->issues++;
+  pthread_rwlock_unlock(&cstReader->lock);
+  pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -189,7 +223,7 @@ ORTESubscriptionPull(ORTESubscription *cstReader) {
   ORTERecvInfo         info;
   NtpTime              timeNext;
   
-  if (!cstReader) return -1;
+  if (!cstReader) return ORTE_BAD_HANDLE;
   pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
   pthread_rwlock_wrlock(&cstReader->domain->objectEntry.htimRootLock);
   pthread_rwlock_rdlock(&cstReader->domain->writerSubscriptions.lock);
@@ -217,5 +251,5 @@ ORTESubscriptionPull(ORTESubscription *cstReader) {
   pthread_rwlock_unlock(&cstReader->domain->writerSubscriptions.lock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
-  return 0;
+  return ORTE_OK;
 }

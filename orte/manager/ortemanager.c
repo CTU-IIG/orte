@@ -18,33 +18,8 @@
  *  GNU General Public License for more details.
  *
  */
-#ifdef HAVE_CONFIG_H
-  #include <orte_config.h>
-#endif
-
-#ifdef CONFIG_ORTE_RTAI
-  #include <linux/module.h>
-  #include <rtai.h>
-  #include <rtai_sched.h>
-  #include <rtai_sem.h>
-#else
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <string.h>
-  #ifdef _WIN32
-    #include <getopt.h>
-  #elif defined __RTL__
-  #else
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <pthread.h>
-    #include <getopt.h>
-    #include <signal.h>
-    #define _UNIX
-  #endif
-#endif
-
-#include "orte_api.h"
+ 
+#include "orte.h"
 
 #ifndef CONFIG_ORTE_RT
 Boolean
@@ -62,7 +37,7 @@ onMgrAppDelete(const struct ORTEAppInfo *appInfo, void *param) {
          appInfo->hostId,appInfo->appId);
 }
 
-#ifdef _UNIX
+#ifdef CONFIG_ORTE_UNIX
 pthread_mutex_t     mutex;
 void sig_usr(int signo) {
   if ((signo==SIGTERM) || (signo==SIGINT)) {
@@ -98,14 +73,14 @@ static int daemon_init(void) {
 static void usage(void) {
   printf("usage: ORTEManager <parameters> \n");
   printf("  -p, --peer <IPAdd:IPAdd:...>  possible locations of fellow managers\n");
-  printf("  -k, --key  <IPAdd>            manager's additional key\n");
+  printf("  -k, --key  <IPAdd:IPAdd:...>  manualy assigned manager's keys\n");
   printf("  -d, --domain <domain>         working manager domain\n");
   printf("  -v, --verbosity <level>       set verbosity level SECTION, up to LEVEL:...\n");
   printf("      examples: ORTEManager -v 51,7:32,5 sections 51 and 32\n");
   printf("                ORTEManager -v ALL,7     all sections up to level 7\n");
   printf("  -R, --refresh <s>             refresh period in second(s)\n");
   printf("  -P, --purge <s>               purge time in second(s)\n");
-#ifdef _UNIX
+#ifdef CONFIG_ORTE_UNIX
   printf("  -D, --daemon                  start program like daemon\n");
 #endif
   printf("  -E, --expiration <s>          expiration time of manager in second(s)\n");
@@ -123,7 +98,7 @@ int main(int argc,char *argv[]) {
     { "verbosity",1,0, 'v' },
     { "refresh",1,0, 'R' },
     { "purge",1,0, 'P' },
-#ifdef _UNIX
+#ifdef CONFIG_ORTE_UNIX
     { "daemon",1,0, 'D' },
 #endif
     { "expiration",1,0, 'E' },
@@ -133,15 +108,11 @@ int main(int argc,char *argv[]) {
     { "help",  0, 0, 'h' },
     { 0, 0, 0, 0}
   };
-  ORTEDomain		      *d;
-  ORTEDomainProp	    dp;
+  ORTEDomain	      *d;
+  ORTEDomainProp      dp;
   int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
-  Boolean		          daemon=ORTE_FALSE,start_sending_thread=ORTE_FALSE;
+  Boolean	      daemon=ORTE_FALSE;
   ORTEDomainAppEvents *events=NULL;
-
-  #ifdef _UNIX
-  start_sending_thread=ORTE_TRUE;
-  #endif
 
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
@@ -152,7 +123,7 @@ int main(int argc,char *argv[]) {
         dp.mgrs=strdup(optarg);
         break;
       case 'k':
-        dp.mgrAddKey=StringToIPAddress(strdup(optarg));
+        dp.keys=strdup(optarg);
         break;
       case 'd':
         domain=strtol(optarg,NULL,0);
@@ -198,45 +169,65 @@ int main(int argc,char *argv[]) {
   if (!d)
     exit(1);
 
-  #ifdef _UNIX
+  #ifdef CONFIG_ORTE_UNIX
   if (daemon)
     daemon_init();
   #endif
 
   ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE);
-  if (!start_sending_thread) {
+  #ifndef CONFIG_ORTE_UNIX
+    d->taskSend.terminate=ORTE_FALSE;
     ORTEAppSendThread(d);
-  }
+  #endif
   ORTEDomainStart(d,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
 
-  #ifdef _UNIX
+  #ifdef CONFIG_ORTE_UNIX
   waitForEndingCommand();
   ORTEDomainMgrDestroy(d);
-  if (events)
+  if (dp.mgrs) 
+    free(dp.mgrs);
+  if (dp.keys) 
+    free(dp.keys);
+  if (events) 
     free(events);
   #endif
 
   exit(0);
 }
 #else
+char *verbosity="";
+MODULE_PARM(verbosity,"1s");
+MODULE_PARM_DESC(verbosity,"set verbosity level SECTION, up to LEVEL:...");
+char *peer="";
+MODULE_PARM(peer,"1s");
+MODULE_PARM_DESC(peer,"possible locations of fellow managers");
 MODULE_LICENSE("GPL");
-ORTEDomain          *d;
+ORTEDomain *d=NULL;
+pthread_t  thread;
 
-void
-createManager(void) {
-  ORTEInit();
-  ORTEVerbositySetOptions("ALL,2");
-  d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+void *
+domainDestroy(void *arg) {
+  if (!d) return NULL;
+  ORTEDomainMgrDestroy(d);
+  return arg;
 }
+
 
 int
 init_module(void) {
-  createManager();
+  ORTEDomainProp      dp;
+
+  ORTEInit();
+  ORTEDomainPropDefaultGet(&dp);
+  ORTEVerbositySetOptions(verbosity);
+  dp.mgrs=peer;
+  d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
   return 0;
 }
 void
 cleanup_module(void) {
-  if (d)
-    ORTEDomainMgrDestroy(d);
+  if (!d) return;
+  pthread_create(&thread,NULL,&domainDestroy,NULL);
+  pthread_join(thread,NULL);
 }
 #endif

@@ -1,14 +1,14 @@
-noinst_PROGRAMS = ReliablePublisher ReliableSubscriber BestEffortSubscriber
+noinst_PROGRAMS = publisher subscriberreliable subscriberbesteffort
 
 if CONFIG_ORTE_WIN
   win_libs= $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 endif
 
-ReliablePublisher_SOURCES = ReliablePublisher.c
-ReliablePublisher_LDADD   = ../../liborte/liborte.a $(win_libs)
+publisher_SOURCES = publisher.c
+publisher_LDADD   = ../../liborte/liborte.a $(win_libs)
 
-ReliableSubscriber_SOURCES = ReliableSubscriber.c
-ReliableSubscriber_LDADD   = ../../liborte/liborte.a $(win_libs)
+subscriberreliable_SOURCES = subscriberreliable.c
+subscriberreliable_LDADD   = ../../liborte/liborte.a $(win_libs)
 
-BestEffortSubscriber_SOURCES = BestEffortSubscriber.c
-BestEffortSubscriber_LDADD   = ../../liborte/liborte.a $(win_libs)
+subscriberbesteffort_SOURCES = subscriberbesteffort.c
+subscriberbesteffort_LDADD   = ../../liborte/liborte.a $(win_libs)

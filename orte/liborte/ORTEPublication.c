@@ -58,7 +58,7 @@ ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
   guid.hid=d->guid.hid;guid.aid=d->guid.aid;
   guid.oid=(d->publications.counter<<8)|OID_PUBLICATION;
   pp=(ORTEPublProp*)MALLOC(sizeof(ORTEPublProp));
-  memcpy(pp,&d->publPropDefault,sizeof(ORTEPublProp));
+  memcpy(pp,&d->domainProp.publPropDefault,sizeof(ORTEPublProp));
   strcpy(pp->topic,topic);
   strcpy(pp->typeName,typeName);
   pp->persistence=*persistence;
@@ -117,7 +117,7 @@ int
 ORTEPublicationDestroy(ORTEPublication *cstWriter) {
   CSChange              *csChange;
 
-  if (!cstWriter) return -1;
+  if (!cstWriter) return ORTE_BAD_HANDLE;
   //generate csChange for writerPublisher
   pthread_rwlock_wrlock(&cstWriter->domain->objectEntry.objRootLock);
   pthread_rwlock_wrlock(&cstWriter->domain->objectEntry.htimRootLock);
@@ -139,19 +139,20 @@ ORTEPublicationDestroy(ORTEPublication *cstWriter) {
   pthread_rwlock_unlock(&cstWriter->domain->writerPublications.lock);
   pthread_rwlock_unlock(&cstWriter->domain->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&cstWriter->domain->objectEntry.objRootLock);
-  return 0;
+  return ORTE_OK;
 }
 
 
 /*****************************************************************************/
 int
 ORTEPublicationPropertiesGet(ORTEPublication *cstWriter,ORTEPublProp *pp) {
+  if (!cstWriter) return ORTE_BAD_HANDLE;
   pthread_rwlock_rdlock(&cstWriter->domain->objectEntry.objRootLock);
   pthread_rwlock_rdlock(&cstWriter->lock);
   *pp=*(ORTEPublProp*)cstWriter->objectEntryOID->attributes;
   pthread_rwlock_unlock(&cstWriter->lock);
   pthread_rwlock_unlock(&cstWriter->domain->objectEntry.objRootLock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -159,6 +160,7 @@ int
 ORTEPublicationPropertiesSet(ORTEPublication *cstWriter,ORTEPublProp *pp) {
   CSChange              *csChange;
 
+  if (!cstWriter) return ORTE_BAD_HANDLE;
   pthread_rwlock_wrlock(&cstWriter->domain->objectEntry.objRootLock);
   pthread_rwlock_wrlock(&cstWriter->domain->objectEntry.htimRootLock);
   pthread_rwlock_wrlock(&cstWriter->domain->writerPublications.lock);
@@ -171,23 +173,50 @@ ORTEPublicationPropertiesSet(ORTEPublication *cstWriter,ORTEPublProp *pp) {
   CSTWriterAddCSChange(cstWriter->domain,
       &cstWriter->domain->writerPublications,csChange);
   pthread_rwlock_unlock(&cstWriter->lock);
-  pthread_rwlock_unlock(&cstWriter->domain->publications.lock);
+  pthread_rwlock_unlock(&cstWriter->domain->writerPublications.lock);
   pthread_rwlock_unlock(&cstWriter->domain->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&cstWriter->domain->objectEntry.objRootLock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
 int
 ORTEPublicationWaitForSubscriptions(ORTEPublication *cstWriter,NtpTime wait,
     unsigned int retries,unsigned int noSubscriptions) {
-  return 0;
+  int rSubscriptions;
+  u_int32_t sec,ms;
+
+  if (!cstWriter) return ORTE_BAD_HANDLE;
+  NtpTimeDisAssembToMs(sec,ms,wait);
+  do {
+    pthread_rwlock_rdlock(&cstWriter->domain->objectEntry.objRootLock);
+    pthread_rwlock_rdlock(&cstWriter->lock);
+    rSubscriptions=cstWriter->cstRemoteReaderCounter;
+    pthread_rwlock_unlock(&cstWriter->lock);
+    pthread_rwlock_unlock(&cstWriter->domain->objectEntry.objRootLock);
+    if (rSubscriptions>=noSubscriptions)
+      return ORTE_OK;
+    ORTESleepMs(sec*1000+ms);
+  } while (retries--);
+  return ORTE_TIMEOUT;  
 }
 
 /*****************************************************************************/
 int
 ORTEPublicationGetStatus(ORTEPublication *cstWriter,ORTEPublStatus *status) {
-  return 0;
+  CSChange *csChange;
+
+  if (!cstWriter) return ORTE_BAD_HANDLE;
+  pthread_rwlock_rdlock(&cstWriter->domain->objectEntry.objRootLock);
+  pthread_rwlock_rdlock(&cstWriter->lock);
+  status->strict=cstWriter->strictReliableCounter;
+  status->bestEffort=cstWriter->bestEffortsCounter;
+  status->issues=0;
+  ul_list_for_each(CSTWriterCSChange,cstWriter,csChange)
+    status->issues++;
+  pthread_rwlock_unlock(&cstWriter->lock);
+  pthread_rwlock_unlock(&cstWriter->domain->objectEntry.objRootLock);
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -195,7 +224,7 @@ int
 ORTEPublicationPrepareQueue(ORTEPublication *cstWriter) {
   ORTEPublProp          *pp;
   
-  if (!cstWriter) return -1;
+  if (!cstWriter) return ORTE_BAD_HANDLE;
   pthread_rwlock_wrlock(&cstWriter->lock);
   pp=(ORTEPublProp*)cstWriter->objectEntryOID->attributes;
   if (cstWriter->csChangesCounter>=pp->sendQueueSize) {
@@ -206,24 +235,22 @@ ORTEPublicationPrepareQueue(ORTEPublication *cstWriter) {
       NtpTimeAdd(expire,atime,cstWriter->domain->domainProp.baseProp.maxBlockTime);
       NtpTimeDisAssembToUs(wtime.tv_sec,wtime.tv_nsec,expire);
       wtime.tv_nsec*=1000;  //conver to nano seconds
-      pthread_mutex_lock(&cstWriter->mutexCSChangeDestroyed);
-      pthread_rwlock_unlock(&cstWriter->lock);
-      pthread_mutex_timedlock(
-          &cstWriter->mutexCSChangeDestroyed,
+      pthread_rwlock_unlock(&cstWriter->lock);    
+      sem_timedwait(
+          &cstWriter->semCSChangeDestroyed,
           &wtime);
-      pthread_mutex_unlock(&cstWriter->mutexCSChangeDestroyed);
       pthread_rwlock_wrlock(&cstWriter->lock);    
       pp=(ORTEPublProp*)cstWriter->objectEntryOID->attributes;
       if (cstWriter->csChangesCounter>=pp->sendQueueSize) {
         debug(31,5) ("Publication: queue level (%d), queue full!!!\n",
                       cstWriter->csChangesCounter);
         pthread_rwlock_unlock(&cstWriter->lock);
-        return -2;
+        return ORTE_QUEUE_FULL;
       }
     }
   }
   pthread_rwlock_unlock(&cstWriter->lock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -232,7 +259,7 @@ ORTEPublicationSendLocked(ORTEPublication *cstWriter) {
   CSChange              *csChange;
   SequenceNumber        snNext;
   
-  if (!cstWriter) return -1;
+  if (!cstWriter) return ORTE_BAD_HANDLE;
   pthread_rwlock_rdlock(&cstWriter->domain->typeEntry.lock);    
   pthread_rwlock_wrlock(&cstWriter->domain->writerPublications.lock);
   if (!CSTRemoteReader_is_empty(cstWriter)) {
@@ -271,7 +298,7 @@ ORTEPublicationSendLocked(ORTEPublication *cstWriter) {
   }
   pthread_rwlock_unlock(&cstWriter->domain->typeEntry.lock);    
   pthread_rwlock_unlock(&cstWriter->domain->writerPublications.lock);
-  return 0;
+  return ORTE_OK;
 }
 
 /*****************************************************************************/
@@ -279,8 +306,8 @@ int
 ORTEPublicationSend(ORTEPublication *cstWriter) {
   int             r;
 
-  if (!cstWriter) return -1;
-  //PrepareSendingQueue
+  if (!cstWriter) return ORTE_BAD_HANDLE;
+  //prepare sending queue
   if ((r=ORTEPublicationPrepareQueue(cstWriter))<0) return r;
   //send
   pthread_rwlock_wrlock(&cstWriter->domain->objectEntry.objRootLock);

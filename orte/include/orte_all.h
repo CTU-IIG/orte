@@ -25,17 +25,28 @@
 extern "C" {
 #endif
 
-#define _GNU_SOURCE
-
 #ifdef HAVE_CONFIG_H
   #include "orte_config.h"
+#elif defined ORTE_OMK_UNIX
+  #include "orte_config_omk_unix.h"
+#elif defined ORTE_OMK_RTL
+  #include "orte_config_omk_rtl.h"
 #endif
 
-#ifdef HAVE_UNISTD_H
-  #include <unistd.h>
+#ifdef HAVE_ARPA_INET_H
+  #include <arpa/inet.h>
+#endif
+#ifdef HAVE_FCNTL_H
+  #include <fcntl.h>
 #endif
 #ifdef HAVE_STDIO_H
   #include <stdio.h>
+#endif
+#ifdef HAVE_NETDB_H
+  #include <netdb.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+  #include <netinet/in.h>
 #endif
 #ifdef HAVE_STDLIB_H
   #include <stdlib.h>
@@ -43,55 +54,111 @@ extern "C" {
 #ifdef HAVE_STRING_H
   #include <string.h>
 #endif
-#ifdef HAVE_SOCKET
-  #include <sys/socket.h>
-#endif
-#ifdef HAVE_NETDB_H
-  #include <netdb.h>
-#endif
-#ifdef HAVE_NET_IF_H
-  #include <net/if.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-  #include <netinet/in.h>
-#endif
-#ifdef HAVE_ARPA_INET_H
-  #include <arpa/inet.h>
-#endif
-#ifdef HAVE_FCNTL_H
-  #include <fcntl.h>
-#endif
 #ifdef HAVE_SYS_IOCTL_H
   #include <sys/ioctl.h>
+#endif
+#ifdef HAVE_SYS_SOCKET
+  #include <sys/socket.h>
 #endif
 #ifdef HAVE_SYS_TIME_H
   #include <sys/time.h>
 #endif
+#ifdef HAVE_UNISTD_H
+  #include <unistd.h>
+#endif
 #ifdef HAVE_PTHREAD_H
   #include <pthread.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-  #include <sys/types.h>
-#endif
-#ifdef HAVE_BYTESWAP_H
-  #include <byteswap.h>
 #endif
 #ifdef HAVE_STDARG_H
   #include <stdarg.h>
 #endif
+#ifdef HAVE_SYS_TYPES_H
+  #include <sys/types.h>
+#endif
+#ifdef HAVE_NET_IF_H
+  #include <net/if.h>
+#endif
+#ifdef HAVE_BYTESWAP_H
+  #include <byteswap.h>
+#endif
 #ifdef HAVE_CTYPE_H
   #include <ctype.h>
 #endif
+#ifdef HAVE_SEMAPHORE_H
+  #include <semaphore.h>
+#endif
+#ifdef HAVE_GETOPT_H
+  #include <getopt.h>
+#endif
+#ifdef HAVE_SIGNAL_H
+  #include <signal.h>
+#endif
+//win32 headers
 #ifdef HAVE_WINSOCK2_H
   #include <winsock2.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
   #include <ws2tcpip.h>
 #endif
+#ifdef HAVE_WINDOWS_H
+  #include <windows.h>
+#endif
+//kernel headers
+#ifdef HAVE_ASM_BYTEORDER_H
+  #include <asm/byteorder.h>
+#endif
+#ifdef HAVE_LINUX_CTYPE_H
+  #include <linux/ctype.h>
+#endif
+#ifdef HAVE_LINUX_STRING_H
+  #include <linux/string.h>
+#endif
+#ifdef HAVE_LINUX_MODULE_H
+  #include <linux/module.h>
+#endif
+#ifdef HAVE_LINUX_IF_H
+  #include <linux/if.h>
+#endif
+#ifdef HAVE_LINUX_SOCKET_H
+  #include <linux/socket.h>
+#endif
+#ifdef HAVE_LINUX_TIME_H
+  #include <linux/time.h>
+#endif
+#ifdef HAVE_LINUX_TYPES_H
+  #include <linux/types.h>
+#endif
+#ifdef HAVE_LINUX_IN_H
+  #include <linux/in.h>
+#endif
+//RTL headers
+#ifdef HAVE_RTL_H
+  #include <rtl.h>
+#endif
+#ifdef HAVE_RTL_MALLOC_H
+  #include <rtl_malloc.h>
+#endif
+#ifdef HAVE_UDP_H
+  #include <udp.h>
+#endif
+#ifdef HAVE_NIC_H
+  #include <nic.h>
+#endif
+#ifdef HAVE_NICTAB_H
+  #include <nictab.h>
+#endif
+#ifdef HAVE_TIME_H
+  #include <time.h>
+#endif
+//RTAI headers
+#ifdef HAVE_RTNET_H
+  #include <rtnet.h>
+#endif
 
 #ifdef CONFIG_ORTE_UNIX
   #define SOCK_BSD       
 #elif defined _WIN32
+  #define SOCK_WIN
   #ifndef HAVE_CONFIG_H
     #include "config.h.undef"
     #if defined(_MSC_VER) || defined (_OMK_UNIX) 
@@ -104,70 +171,24 @@ extern "C" {
       #include <string.h>
       #include <winsock2.h>
       #include <ws2tcpip.h>
+      #include <windows.h>
     #endif
   #endif
-  #include <pthread.h>
-  #include <timeval.h>
+  #include <win32/pthread.h>
+  #include <win32/semaphore.h>
+  #include <win32/timeval.h>
+  #ifndef __GETOPT_H__  //mingw
+    #include <win32/getopt.h>
+  #endif
   #include <ew_types.h>
   #define ioctl ioctlsocket
-  #define SOCK_WIN
-#elif defined __RTL__
-  #ifndef HAVE_CONFIG_H
-    #include "config.h.undef"
-  #endif
-  #include <rtl.h>
-  #include <posix/pthread.h>
-  #include <posix/time.h>
-  #include <rtl_malloc.h>
-  #include <byteswap.h>
-  #include <udp.h>
-  #include <nic.h>
-  #include <nictab.h>
-  #include <ctype.h>
-  #include <time.h>
+#elif defined CONFIG_ORTE_RTL
+  #define SOCK_RTL
   #include <rtl/compat.h>
   #include <rtl/rwlock.h>
-  #define SOCK_RTL
 #elif defined CONFIG_ORTE_RTAI
-  #undef PACKAGE_NAME
-  #undef PACKAGE_BUGREPORT
-  #undef PACKAGE_STRING
-  #undef PACKAGE
-  #undef PACKAGE_TARNAME
-  #undef PACKAGE_VERSION
-  #undef VERSION
-//  #include "config.h.undef"
-  #include <linux/module.h>
-  #include <rtai_posix.h.patched>
-  #include <byteswap.h>
-  #include <rtnet.h>
-  #include <linux/if.h>
-  #include <linux/in.h>
-  #include <linux/ctype.h>
+  #define SOCK_BSD  
   #include <rtai/compat.h>
-  #define SOCK_BSD
-  
-//  #define SOCK_RTAI
-#elif defined _OMK_UNIX
-  #define SOCK_BSD       
-  #include "config.h.undef"
-  #include <unistd.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <string.h>
-  #include <sys/socket.h>
-  #include <netdb.h>
-  #include <net/if.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-  #include <fcntl.h>
-  #include <sys/ioctl.h>
-  #include <sys/time.h>
-  #include <pthread.h>
-  #include <sys/types.h>
-  #include <byteswap.h>
-  #include <stdarg.h>
-  #include <ctype.h>
 #endif
 
 #ifdef __cplusplus

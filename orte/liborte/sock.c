@@ -167,12 +167,6 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
     }
   }
   return 0;
-#elif defined(SOCK_RTAI)
-
-
-//insert code !!!
-
-
 #elif defined(SOCK_WIN)
   INTERFACE_INFO      InterfaceList[MAX_INTERFACES];
   struct sockaddr_in* pAddress;

@@ -5,7 +5,7 @@
 ** update this file, preserving your code. Create an init() slot in place of
 ** a constructor, and a destroy() slot in place of a destructor.
 *****************************************************************************/
-#include <orte.h>
+#include <orte_api.h>
 #include <qwidget.h>
 Subscriber *tabSub[50];
 int NSubscriber;
@@ -78,97 +78,17 @@ void MulticlipForm::closeEvent( QCloseEvent *e )
 e->accept();
 }
 
-void rcvCallBack(ORTERcvInfo *rcvInfo,u_char status)
-{
-	QRect rect;
-	int a,b,c,d;
-	char *topic,*type;
-	int top=0,typ=0;
-	switch (status) {
-		case 0:  //Issue
-			sscanf((char*)rcvInfo->data,"%i %i %i %i",&a,&b,&c,&d);
-			rect.setCoords(a,b,c,d);
-			topic=(char *)rcvInfo->subsTopic;
-			type=(char *)rcvInfo->subsTypeName;
-			if(strcmp(topic,"Ellipse")==0)top=0;
-			if(strcmp(topic,"Rectangle")==0)top=1;
-			if(strcmp(topic,"Triangle")==0)top=2;
-			if(strcmp(type,"Blue")==0)typ=0;
-			if(strcmp(type,"Green")==0)typ=1;
-			if(strcmp(type,"Red")==0)typ=2;
-			if(strcmp(type,"Black")==0)typ=3;
-
-			for(int i=0;i<NSubscriber;i++){
-			if(tabSub[i]->topS==top && tabSub[i]->typS==typ){
-				(tabSub[i]->m_mainFrm)->setCaption(tabSub[i]->strTitle);
-				(tabSub[i]->m_mainFrm)->SetShapeRect(rect);
-			}
-		}
-		break;
-		case 1:  //Data
-			for(int i=0;i<NSubscriber;i++){
-				int dead=0;
-				if(NPublisher!=0){
-					for(int j=0;j<NPublisher;j++){
-						if(tabSub[i]->topS!=tabPub[j]->top || tabSub[i]->typS!=tabPub[j]->typ){
-						dead++;
-						}
-					}
-				}
-			 if(NPublisher==0 || dead==NPublisher){
-		 		QString name=tabSub[i]->strTitle+" deadline ";
-		 		(tabSub[i]->m_mainFrm)->setCaption(name);
-			}
-		}
-		break;
-	}
-}
-
 void MulticlipForm::GotoS(  )
 {
     QString name =QString::number(ns);
-	ns++;
-    int shap=ShapeS->currentItem();
-    int color=ColorS->currentItem();
-	QString topic;
-	QString type;
-
-switch(shap)
-	{
-	case RECTANGLE:
-		topic="Rectangle";
-		break;
-	case ELLIPSE:
-		topic="Ellipse";
-		break;
-	case TRIANGLE:
-		topic="Triangle";
-		break;
-	}
-
-	switch(color)
-	{
-	case BLUE:
-		type="Blue";
-		break;
-	case GREEN:
-		type="Green";
-		break;
-	case RED:
-		type="Red";
-		break;
-	case BLACK:
-		type="Black";
-		break;
-	}
-NtpTime	minimumSeparation,deadline;
-int h_sub;
-   tabSub[NSubscriber]=new Subscriber();
-   tabSub[NSubscriber]->Create(name,shap,color);
-ORTEAppCreate(&(tabSub[NSubscriber]->app));
-  NtpTimeAssembFromMs(minimumSeparation,0,0);
-  NtpTimeAssembFromMs(deadline, 5, 0);
- h_sub=ORTEAppSubsAdd(tabSub[NSubscriber]->app,topic,type, &minimumSeparation,&deadline,rcvCallBack);
+    ns++;
+    tabSub[NSubscriber]=new Subscriber();
+    tabSub[NSubscriber]->Create(name,
+                                clBlue->isChecked(),
+                                clGreen->isChecked(),
+                                clRed->isChecked(),
+                                clBlack->isChecked(),
+                                clYellow->isChecked());
 }
 
 void MulticlipForm::addSubscriber()

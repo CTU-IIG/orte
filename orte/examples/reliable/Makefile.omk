@@ -1,12 +1,12 @@
-INCLUDES = -D_OMK_UNIX
+INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_UNIX
 
-utils_PROGRAMS = ReliablePublisher ReliableSubscriber BestEffortSubscriber
+utils_PROGRAMS = publisher subscriberreliable subscriberbesteffort
 
-ReliablePublisher_SOURCES = ReliablePublisher.c
+publisher_SOURCES = publisher.c
 
-ReliableSubscriber_SOURCES = ReliableSubscriber.c
+subscriberreliable_SOURCES = subscriberreliable.c
 
-BestEffortSubscriber_SOURCES = BestEffortSubscriber.c
+subscriberbesteffort_SOURCES = subscriberbesteffort.c
 
 lib_LOADLIBES =  orte pthread
 

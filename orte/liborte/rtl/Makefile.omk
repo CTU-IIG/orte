@@ -3,7 +3,7 @@
 
 rtlinux_LIBRARIES = pthread_rwlock
 
-rtlinux_INCLUDES = -I $(srcdir)/../../include 
+rtlinux_INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_RTL
 
 pthread_rwlock_SOURCES = \
 ptw32_rwlock_check_need_init.c \

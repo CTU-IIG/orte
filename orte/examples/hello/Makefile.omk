@@ -1,4 +1,4 @@
-INCLUDES = -D_OMK_UNIX
+INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_UNIX
 
 utils_PROGRAMS = helloPublisher helloSubscriber
 
@@ -12,9 +12,11 @@ lib_LOADLIBES =  orte pthread
 # RT-Linux version of build
 
 rtlinux_MODULES = HelloWorldPublisher HelloWorldSubscriber
+
+rtlinux_INCLUDES = -I $(srcdir)/../../include -DORTE_OMK_RTL
                
 HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
 
 HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
 
-rtlinux_LOADLIBES =  orte_rtl pthread_rwlock
+rtlinux_LOADLIBES =  orte_rt pthread_rwlock

@@ -1,7 +1,7 @@
 /*
- *  $Id: ReliablePublisher.c,v 0.0.0.1  2003/12/27 
+ *  $Id: subscriberreliable.c,v 0.0.0.1 2003/12/27 
  *
- *  DEBUG:  section                     ReliablePublisher
+ *  DEBUG:  section                     subscriber reliable
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
  *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/
@@ -26,39 +26,53 @@
 #include "orte_api.h"
 
 ORTEDomain        *d;
-char              instance2Send[64];
+char              instance2Recv[64];
+
+void
+recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
+  char *instance=(char*)vinstance;
+  
+  switch (info->status) {
+    case NEW_DATA:
+      printf("%s\n",instance);
+      break;
+    case DEADLINE:
+      printf("deadline occured\n");
+      break;
+  }
+}
+
 
 int 
 main(int argc, char *args[]) {
-  ORTEPublication *p;
-  NtpTime         persistence;
-  int             i=1;            
+  ORTESubscription *s;
+  NtpTime         deadline,minimumSeparation;
 
   ORTEInit();
   //ORTEVerbositySetOptions("ALL,10");
   d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
   ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,64);
-  NTPTIME_BUILD(persistence,3); 
-  p=ORTEPublicationCreate(
+  NTPTIME_BUILD(deadline,3); 
+  NTPTIME_BUILD(minimumSeparation,0); 
+  s=ORTESubscriptionCreate(
        d,
-      "Reliable HelloMsg",
-      "HelloMsg",
-      &instance2Send,
-      &persistence,
-      1,
-      NULL,
-      NULL,
-      NULL);
-  while (1) {
+       IMMEDIATE,
+       STRICT_RELIABLE,
+       "Reliable HelloMsg",
+       "HelloMsg",
+       &instance2Recv,
+       &deadline,
+       &minimumSeparation,
+       recvCallBack,
+       NULL);
+  #ifndef CONFIG_ORTE_RT
+  while (1) 
     ORTESleepMs(1000);
-    printf("Sampling publication, count %d\n", i);
-    sprintf(instance2Send,"Hello Universe! (%d)",i++);
-    ORTEPublicationSend(p);
-  }
+  #endif
   return 0;
 }
 
-#ifdef __RTL__
+#ifdef CONFIG_ORTE_RT
 void 
 hello_init(void) {
   main(0,NULL);

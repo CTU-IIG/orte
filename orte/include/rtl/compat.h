@@ -22,6 +22,8 @@
 #define _COMPAT_H
 
 #define printf rtl_printf
+#define bswap_16 swab16
+#define bswap_32 swab32
 #define gettimeofday(tv, tz) do_gettimeofday(tv)
 #define setsockopt(a, b, c, d, e) (-1)
 #define getsockopt(a, b, c, d, e) (-1)

@@ -45,12 +45,20 @@ void ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta) {
             sizeof(des)); 
       } else {
         des.sin_port = htons((u_int16_t)appParams->userdataUnicastPort); 
-        sock_sendto (
-            &d->taskSend.sock,
-            d->mbSend.cdrStreamDirect->buffer,
-            d->mbSend.cdrStreamDirect->length,
-            &des,
-            sizeof(des)); 
+        if (d->mbSend.cdrStreamDirect)
+          sock_sendto (
+              &d->taskSend.sock,
+              d->mbSend.cdrStreamDirect->buffer,
+              d->mbSend.cdrStreamDirect->length,
+              &des,
+              sizeof(des)); 
+        else
+          sock_sendto (
+              &d->taskSend.sock,
+              d->mbSend.cdrStream.buffer,
+              d->mbSend.cdrStream.length,
+              &des,
+              sizeof(des)); 
       }
     }
   }
@@ -85,9 +93,9 @@ void ORTEAppSendThread(ORTEDomain *d) {
     if (s<0) s=ms=0;
     debug(24,4) ("ORTEAppSendThread: sleeping for %lis %lims\n",s,ms);
     if (!((wtime.tv_sec==0) && (wtime.tv_nsec==0))) {
-      pthread_mutex_timedlock(
-          &d->objectEntry.htimSendMutex,
-          &wtime);
+      sem_timedwait(
+          &d->objectEntry.htimSendSem,
+	  &wtime);
     }
     debug(24,7) ("ORTEAppSendThread: fired\n");
     actTime=getActualNtpTime();
