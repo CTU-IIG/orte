@@ -291,7 +291,7 @@ USER_SOURCES += $$($(1)_SOURCES)
 $(2)/$(1): $$($(1)_OBJS)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
 	$(Q) $$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
-	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $(2)/$(1)
+	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) $$(LDFLAGS) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $(2)/$(1)
 	@echo "$(2)/$(1): \\" >$(USER_OBJS_DIR)/$(1).exe.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(USER_OBJS_DIR)/$(1).exe.map  >>$(USER_OBJS_DIR)/$(1).exe.d
 	@echo >>$(USER_OBJS_DIR)/$(1).exe.d
@@ -374,7 +374,10 @@ else # CONFIG_RTLINUX
 
 include $(KERN_LIB_DIR)/kernel.mk
 
-kernel_INCLUDES += -idirafter $(LINUX_DIR)/include/linux
+ifeq ($(LINUX_SRC),)
+LINUX_SRC = LINUX_DIR
+endif
+kernel_INCLUDES += -idirafter $(LINUX_SRC)/include/linux
 
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
@@ -422,7 +425,11 @@ kern_CC_DEPFLAGS = -MT $@ -MD -MP -MF "$@.d.tmp"
 endif
 
 ifeq ($(KERN_EXE_SUFFIX),.ko)
+ifeq ($(wildcard $(LINUX_DIR)/scripts/mod/modpost),)
 KERN_MODPOST = $(LINUX_DIR)/scripts/modpost
+else
+KERN_MODPOST = $(LINUX_DIR)/scripts/mod/modpost
+endif
 KERN_MODULES_LINK_DIR = $(KERN_MODPOST_DIR)
 KERN_LINK_SUFFIX = .o
 else
@@ -665,15 +672,15 @@ default-config-pass-local:
 include-pass-local:
 	@$(call mkdir_def,$(USER_INCLUDE_DIR))
 	@$(foreach f, $(include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) \
-	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) ; )
+	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) || exit 1 ; )
 	@$(foreach f, $(nobase_include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) \
-	   || mkdir -p $(USER_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) ; )
+	   || ( mkdir -p $(USER_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) ) || exit 1 ; )
 # Kernel and RT-Linux stuff
 	@$(call mkdir_def,$(KERN_INCLUDE_DIR))
 	@$(foreach f, $(kernel_HEADERS) $(rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) \
-	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) ; )
+	   || cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) || exit 1 ; )
 	@$(foreach f, $(nobase_kernel_HEADERS) $(nobase_rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) \
-	   || mkdir -p $(KERN_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) ; )
+	   || ( mkdir -p $(KERN_INCLUDE_DIR)/$(dir $(f)) && cp $(CPHEADER_FLAGS) $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) ) || exit 1 ; )
 
 ifdef USER_RULE_TEMPLATES
 
