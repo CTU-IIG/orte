@@ -15,17 +15,17 @@ case "$1" in
   start)
 	echo -n "Starting ortemanager: "
 
-	daemon ORTEManager -D
+	daemon ortemanager -D
 	RETVAL=$?
 	;;
   stop)
 	echo -n "Stopping ortemanager: "
-	killproc ORTEManager
+	killproc ortemanager
 	RETVAL=$?
 	echo
 	;;
   status)
-	status ORTEManager
+	status ortemanager
 	RETVAL=$?
 	;;
   restart|reload)

@@ -1,0 +1,83 @@
+# ---------------------------------------------------------------------
+# Microsoft C/C++ Installation Directory
+#
+# CHANGE this definition to point to your compiler's installation directory
+# ---------------------------------------------------------------------
+MSCDIR=		c:\Progra~1\micros~3\vc98
+
+CFLAGS = -c -Zi -MD $(INCLUDE)
+LIB_CFLAGS=	$(CFLAGS) -LD
+INCLUDE=	-I$(MSCDIR)\include -I..\..\include -I..\..\include\win32
+ORTELIB_OBJS= \
+	"..\ul_gavlprim.obj" \
+	"..\conv.obj" \
+	"..\debug.obj" \
+	"..\event.obj" \
+	"..\fnmatch.obj" \
+	"..\htimerNtp.obj" \
+	"..\objectEntry.obj" \
+	"..\objectEntryTimer.obj" \
+	"..\objectUtils.obj" \
+	"..\ORTEAppRecvMetatrafficThread.obj" \
+	"..\ORTEAppRecvUserdataThread.obj" \
+	"..\ORTEAppSendThread.obj" \
+	"..\ORTEDomain.obj" \
+	"..\ORTEDomainApp.obj" \
+	"..\ORTEDomainMgr.obj" \
+	"..\ORTEInit.obj" \
+	"..\ORTEMisc.obj" \
+	"..\ORTEPattern.obj" \
+	"..\ORTEPublication.obj" \
+	"..\ORTEPublicationTimer.obj" \
+	"..\ORTESubscription.obj" \
+	"..\ORTEThreadUtils.obj" \
+	"..\ORTETypeRegister.obj" \
+	"..\ORTEVerbosity.obj" \
+	"..\parameter.obj" \
+	"..\RTPSAck.obj" \
+	"..\RTPSCSTReader.obj" \
+	"..\RTPSCSTReaderProc.obj" \
+	"..\RTPSCSTReaderTimer.obj" \
+	"..\RTPSCSTWriter.obj" \
+	"..\RTPSCSTWriterTimer.obj" \
+	"..\RTPSGap.obj" \
+	"..\RTPSHeader.obj" \
+	"..\RTPSHeardBeat.obj" \
+	"..\RTPSInfoDST.obj" \
+	"..\RTPSInfoREPLY.obj" \
+	"..\RTPSInfoSRC.obj" \
+	"..\RTPSInfoTS.obj" \
+	"..\RTPSIssue.obj" \
+	"..\RTPSPad.obj" \
+	"..\RTPSUtils.obj" \
+	"..\RTPSVar.obj" \
+	"..\sock.obj" \
+	"..\ul_gavl.obj"
+
+CC=		    $(MSCDIR)\bin\cl
+LINK=		$(MSCDIR)\bin\link
+LIBRARIAN=	$(MSCDIR)\bin\lib
+
+TARGETS=liborte.lib
+
+all :	default
+
+default : $(TARGETS)
+
+liborte.lib: $(ORTELIB_OBJS)
+    $(LINK) -lib -out:$@ $(ORTELIB_OBJS)
+
+# ---------------------------------------------------------------------
+# Generic Compilation Rules
+#
+# Do NOT change anything below this point.
+# ---------------------------------------------------------------------
+#.SUFFIXES: .c .obj .exe
+
+.c.obj:
+	$(CC) $(CFLAGS) $< -Fo$*.obj
+    
+clean :
+    del ..\*.obj
+    del *.lib
+    del *.pdb

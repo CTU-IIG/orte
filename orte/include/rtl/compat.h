@@ -21,6 +21,9 @@
 #ifndef _COMPAT_H
 #define _COMPAT_H
 
+#include <linux/if.h>
+#include <linux/in.h>
+
 #define printf rtl_printf
 #define bswap_16 swab16
 #define bswap_32 swab32
@@ -39,22 +42,20 @@ char *strdup(char *str) {
   return tmp;
 }
 
-static inline int 
-atoi(char *s) {
-  int i = 0;
-  int neg = 0;
-
-  while (isspace(*s)) s++;
-  if (*s == '-') {
-    neg = 1;
-    s++;
-  } else 
-    if (*s == '+') {
-      s++;
-    }
-  while (isdigit(*s))
-    i = i*10 + *s++ - '0';
-  return neg ? -i : i;
+static inline int atoi(const char* nptr)
+{
+    return simple_strtol(nptr, (char **)NULL, 10);
 }
+
+/*static char inet_ntoa_buf[16];
+static inline char *inet_ntoa(struct in_addr in) {
+  unsigned char *octet;
+
+  octet = (unsigned char *)&(in.s_addr);
+  sprintf(inet_ntoa_buf, "%u.%u.%u.%u", octet[0], octet[1], octet[2], octet[3]);
+
+  return inet_ntoa_buf;
+}
+*/
 
 #endif /* _COMPAT_H */

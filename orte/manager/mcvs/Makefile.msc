@@ -39,8 +39,6 @@ ORTEManager.exe: ..\ORTEManager.obj getopt.obj getopt_long.obj
 	$(LINK) -out:$@ getopt.obj getopt_long.obj $(ORTELIB) $< $(LIBS)
 
 clean :
-	del *.obj
-        del *.exe
-        del *.pdb
-
-
+    del *.obj
+    del *.exe
+    del *.pdb
