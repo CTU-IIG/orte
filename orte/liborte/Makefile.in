@@ -450,9 +450,9 @@ LIBORTE_HDRS2 = \
 @CONFIG_ORTE_RT_FALSE@liborte_la_LDFLAGS = \
 @CONFIG_ORTE_RT_FALSE@    -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 @CONFIG_ORTE_RT_FALSE@    -release $(LT_RELEASE) \
-@CONFIG_ORTE_RT_FALSE@    -export-dynamic \
-@CONFIG_ORTE_RT_FALSE@    $(LDADDS)
+@CONFIG_ORTE_RT_FALSE@    -export-dynamic 
 
+#    $(LDADDS)
 @CONFIG_ORTE_RT_FALSE@liborte_la_CFLAGS = $(AM_CFLAGS)
 
 # headers

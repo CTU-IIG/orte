@@ -1,7 +1,7 @@
 
 AC_DEFUN([DS_LINUX_DIR],
 [
-	AC_ARG_WITH([linuxdir],
+	AC_ARG_WITH([linux],
 		[AC_HELP_STRING([--with-linux=DIR],
 			[path to Linux patched source directory])],
 		[LINUX_DIR="${withval}"],
@@ -214,13 +214,13 @@ AC_DEFUN([DS_LINUX_CONFIG_OPTION_MODULE],
 
 AC_DEFUN([DS_RTAI],
 [
-	AC_ARG_WITH([rtaidir],
+	AC_ARG_WITH([rtai],
 		[AC_HELP_STRING([--with-rtai=DIR],
     		    [path to configured RTAI 24.1.X sources, or RTAI 3 installation])],
 		[RTAI_DIR="${withval}"],
 		[RTAI_DIR=/usr/src/rtai])
 
-	AC_ARG_WITH([rtnetdir],
+	AC_ARG_WITH([rtnet],
 		[AC_HELP_STRING([--with-rtnet=DIR],
 			[path to RTnet installation directory])],
 		[RTNET_DIR="${withval}"],
@@ -261,13 +261,13 @@ AC_DEFUN([DS_RTAI],
 
 AC_DEFUN([DS_RTLINUX],
 [
-	AC_ARG_WITH([rtlinuxdir],
+	AC_ARG_WITH([rtlinux],
 		[AC_HELP_STRING([--with-rtlinux=DIR],
 			[path to RTLinux source directory])],
 		[RTLINUX_DIR="${withval}"],
 		[RTLINUX_DIR=/usr/src/rtlinux])
 		
-	AC_ARG_WITH([rtlinuxudpdir],
+	AC_ARG_WITH([rtlinuxudp],
 		[AC_HELP_STRING([--with-rtlinuxudp=DIR],
 			[path to RTLinux UDP source directory])],
 		[RTLINUXUDP_DIR="${withval}"],

@@ -79,6 +79,8 @@
 /* Define to 1 if you have the <net/if.h> header file. */
 /* #undef HAVE_NET_IF_H */
 
+#define HAVE_ERRNO_H 1
+
 /* Define to 1 if you have the <nictab.h> header file. */
 #define HAVE_NICTAB_H 1
 

@@ -2057,9 +2057,9 @@ fi
 
 
 
-# Check whether --with-linuxdir or --without-linuxdir was given.
-if test "${with_linuxdir+set}" = set; then
-  withval="$with_linuxdir"
+# Check whether --with-linux or --without-linux was given.
+if test "${with_linux+set}" = set; then
+  withval="$with_linux"
   LINUX_DIR="${withval}"
 else
   LINUX_DIR=default
@@ -2251,18 +2251,18 @@ fi
 
 
 
-# Check whether --with-rtaidir or --without-rtaidir was given.
-if test "${with_rtaidir+set}" = set; then
-  withval="$with_rtaidir"
+# Check whether --with-rtai or --without-rtai was given.
+if test "${with_rtai+set}" = set; then
+  withval="$with_rtai"
   RTAI_DIR="${withval}"
 else
   RTAI_DIR=/usr/src/rtai
 fi;
 
 
-# Check whether --with-rtnetdir or --without-rtnetdir was given.
-if test "${with_rtnetdir+set}" = set; then
-  withval="$with_rtnetdir"
+# Check whether --with-rtnet or --without-rtnet was given.
+if test "${with_rtnet+set}" = set; then
+  withval="$with_rtnet"
   RTNET_DIR="${withval}"
 else
   RTNET_DIR=/usr/src/rtnet
@@ -2376,18 +2376,18 @@ _ACEOF
 
 
 
-# Check whether --with-rtlinuxdir or --without-rtlinuxdir was given.
-if test "${with_rtlinuxdir+set}" = set; then
-  withval="$with_rtlinuxdir"
+# Check whether --with-rtlinux or --without-rtlinux was given.
+if test "${with_rtlinux+set}" = set; then
+  withval="$with_rtlinux"
   RTLINUX_DIR="${withval}"
 else
   RTLINUX_DIR=/usr/src/rtlinux
 fi;
 
 
-# Check whether --with-rtlinuxudpdir or --without-rtlinuxudpdir was given.
-if test "${with_rtlinuxudpdir+set}" = set; then
-  withval="$with_rtlinuxudpdir"
+# Check whether --with-rtlinuxudp or --without-rtlinuxudp was given.
+if test "${with_rtlinuxudp+set}" = set; then
+  withval="$with_rtlinuxudp"
   RTLINUXUDP_DIR="${withval}"
 else
   RTLINUXUDP_DIR="${RTLINUX_DIR}"
@@ -9171,8 +9171,15 @@ _ACEOF
   LIBS="-lc_r $LIBS"
 
 else
-  { echo "$as_me:$LINENO: Can't compile on 100% without pthreads!!!" >&5
-echo "$as_me: Can't compile on 100% without pthreads!!!" >&6;}
+  if test ${MINGW} == 'yes' ; then
+                     LIBS=$LIBS' $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a'
+                     { echo "$as_me:$LINENO: Using internal version of pthreads!!!" >&5
+echo "$as_me: Using internal version of pthreads!!!" >&6;}
+              else
+                     { { echo "$as_me:$LINENO: error: Can't compile without pthreads!!!" >&5
+echo "$as_me: error: Can't compile without pthreads!!!" >&2;}
+   { (exit 1); exit 1; }; }
+              fi
 
 fi
 

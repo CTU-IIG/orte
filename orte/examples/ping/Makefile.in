@@ -53,9 +53,7 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_orteping_OBJECTS = orteping.$(OBJEXT)
 orteping_OBJECTS = $(am_orteping_OBJECTS)
-@CONFIG_ORTE_MINGW_TRUE@am__DEPENDENCIES_1 = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-orteping_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la \
-	$(am__DEPENDENCIES_1)
+orteping_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
@@ -215,8 +213,7 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 orteping_SOURCES = orteping.c
-@CONFIG_ORTE_MINGW_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
-orteping_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+orteping_LDADD = $(top_builddir)/orte/liborte/liborte.la
 orteping_LDFLAGS = -static
 all: all-am
 

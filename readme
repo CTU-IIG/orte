@@ -45,7 +45,7 @@ make install
 How to start?
 -------------
 run :ortemanager &
-see :ortemanager -h for usaged
+see :ortemanager -h for usage
 note:ortemanager have to be running during all communication. For future work can 
 be added into /etc/init.d/... script for starting ortemanager during boot
 of machine. This script (redhat and mandrake) is placed in 

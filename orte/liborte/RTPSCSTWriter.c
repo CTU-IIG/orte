@@ -409,7 +409,7 @@ CSTWriterDestroyCSChangeForReader(CSTRemoteReader *cstRemoteReader,
       }
       pthread_mutex_lock(&cstRemoteReader->cstWriter->mutexCSChangeDestroyed);
       cstRemoteReader->cstWriter->condValueCSChangeDestroyed=1;
-      pthread_cond_broadcast(&cstRemoteReader->cstWriter->condCSChangeDestroyed);
+      pthread_cond_signal(&cstRemoteReader->cstWriter->condCSChangeDestroyed);
       pthread_mutex_unlock(&cstRemoteReader->cstWriter->mutexCSChangeDestroyed);
       debug(51,5) ("Publication: new queue level (%d)\n",
                   cstRemoteReader->cstWriter->csChangesCounter);

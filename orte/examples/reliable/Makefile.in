@@ -52,17 +52,15 @@ CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_publisher_OBJECTS = publisher.$(OBJEXT)
 publisher_OBJECTS = $(am_publisher_OBJECTS)
-@CONFIG_ORTE_MINGW_TRUE@am__DEPENDENCIES_1 = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-publisher_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la \
-	$(am__DEPENDENCIES_1)
+publisher_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la
 am_subscriberbesteffort_OBJECTS = subscriberbesteffort.$(OBJEXT)
 subscriberbesteffort_OBJECTS = $(am_subscriberbesteffort_OBJECTS)
 subscriberbesteffort_DEPENDENCIES =  \
-	$(top_builddir)/orte/liborte/liborte.la $(am__DEPENDENCIES_1)
+	$(top_builddir)/orte/liborte/liborte.la
 am_subscriberreliable_OBJECTS = subscriberreliable.$(OBJEXT)
 subscriberreliable_OBJECTS = $(am_subscriberreliable_OBJECTS)
 subscriberreliable_DEPENDENCIES =  \
-	$(top_builddir)/orte/liborte/liborte.la $(am__DEPENDENCIES_1)
+	$(top_builddir)/orte/liborte/liborte.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
@@ -225,15 +223,14 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-@CONFIG_ORTE_MINGW_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 publisher_SOURCES = publisher.c
-publisher_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+publisher_LDADD = $(top_builddir)/orte/liborte/liborte.la 
 publisher_LDFLAGS = -static
 subscriberreliable_SOURCES = subscriberreliable.c
-subscriberreliable_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+subscriberreliable_LDADD = $(top_builddir)/orte/liborte/liborte.la 
 subscriberreliable_LDFLAGS = -static
 subscriberbesteffort_SOURCES = subscriberbesteffort.c
-subscriberbesteffort_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+subscriberbesteffort_LDADD = $(top_builddir)/orte/liborte/liborte.la 
 subscriberbesteffort_LDFLAGS = -static
 all: all-am
 

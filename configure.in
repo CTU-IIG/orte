@@ -1,10 +1,10 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.10 2004/08/30 19:18:21 smolik Exp $
+# $Id: configure.in,v 1.11 2004/09/21 21:09:33 smolik Exp $
 
 # autoconf requirement
 
-AC_PREREQ([2.57])
+AC_PREREQ([2.56])
 
 AC_INIT([orte],[0.2.3],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
@@ -129,7 +129,12 @@ if test -z ${CONFIG_ORTE_RT} ; then
   dnl Check for pthreads
   AC_CHECK_LIB(pthread, pthread_create, ,
          AC_CHECK_LIB(c_r, pthread_create, ,
-              AC_MSG_NOTICE([Can't compile on 100% without pthreads!!!])
+              if test ${MINGW} == 'yes' ; then
+                     LIBS=$LIBS' $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a'
+                     AC_MSG_NOTICE([Using internal version of pthreads!!!])
+              else
+                     AC_MSG_ERROR([Can't compile without pthreads!!!])
+              fi       
          )
   )
 fi

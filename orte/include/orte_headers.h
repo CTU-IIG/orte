@@ -173,11 +173,13 @@ extern "C" {
   #define SOCK_BSD         
 #elif CONFIG_ORTE_MINGW
   #define SOCK_WIN
-  #include <win32/pthread.h>
-  #include <win32/timeval.h>
+  #ifndef HAVE_PTHREAD_H
+    #include <win32/pthread.h>
+  #endif
   #ifndef __GETOPT_H__  //mingw
     #include <win32/getopt.h>
   #endif
+  #include <win32/timeval.h>
   #include <orte/ew_types.h>
   #define ioctl ioctlsocket
 #elif defined CONFIG_ORTE_RTL

@@ -58,10 +58,8 @@ am__HelloWorldPublisher_SOURCES_DIST = HelloWorldPublisher.c
 @CONFIG_ORTE_RT_FALSE@am_HelloWorldPublisher_OBJECTS =  \
 @CONFIG_ORTE_RT_FALSE@	HelloWorldPublisher.$(OBJEXT)
 HelloWorldPublisher_OBJECTS = $(am_HelloWorldPublisher_OBJECTS)
-@CONFIG_ORTE_MINGW_TRUE@@CONFIG_ORTE_RT_FALSE@am__DEPENDENCIES_1 = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 @CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_DEPENDENCIES =  \
-@CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la \
-@CONFIG_ORTE_RT_FALSE@	$(am__DEPENDENCIES_1)
+@CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la
 am__HelloWorldPublisher_rt_ko_SOURCES_DIST = HelloWorldPublisher.c
 @CONFIG_ORTE_RT_TRUE@am_HelloWorldPublisher_rt_ko_OBJECTS =  \
 @CONFIG_ORTE_RT_TRUE@	HelloWorldPublisher.$(OBJEXT)
@@ -73,8 +71,7 @@ am__HelloWorldSubscriber_SOURCES_DIST = HelloWorldSubscriber.c
 @CONFIG_ORTE_RT_FALSE@	HelloWorldSubscriber.$(OBJEXT)
 HelloWorldSubscriber_OBJECTS = $(am_HelloWorldSubscriber_OBJECTS)
 @CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_DEPENDENCIES =  \
-@CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la \
-@CONFIG_ORTE_RT_FALSE@	$(am__DEPENDENCIES_1)
+@CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la
 am__HelloWorldSubscriber_rt_ko_SOURCES_DIST = HelloWorldSubscriber.c
 @CONFIG_ORTE_RT_TRUE@am_HelloWorldSubscriber_rt_ko_OBJECTS =  \
 @CONFIG_ORTE_RT_TRUE@	HelloWorldSubscriber.$(OBJEXT)
@@ -250,12 +247,11 @@ target_vendor = @target_vendor@
 @CONFIG_ORTE_RT_TRUE@HelloWorldSubscriber_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
 @CONFIG_ORTE_RT_TRUE@HelloWorldPublisher_rt_ko_SOURCES = HelloWorldPublisher.c  
 @CONFIG_ORTE_RT_TRUE@HelloWorldPublisher_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
-@CONFIG_ORTE_MINGW_TRUE@@CONFIG_ORTE_RT_FALSE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 @CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
-@CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+@CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_LDADD = $(top_builddir)/orte/liborte/liborte.la 
 @CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_LDFLAGS = -static
 @CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
-@CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+@CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_LDADD = $(top_builddir)/orte/liborte/liborte.la 
 @CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_LDFLAGS = -static
 all: all-am
 

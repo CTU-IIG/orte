@@ -53,9 +53,7 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_ortespy_OBJECTS = ortespy.$(OBJEXT)
 ortespy_OBJECTS = $(am_ortespy_OBJECTS)
-@CONFIG_ORTE_MINGW_TRUE@am__DEPENDENCIES_1 = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-ortespy_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la \
-	$(am__DEPENDENCIES_1)
+ortespy_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
@@ -215,8 +213,7 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 ortespy_SOURCES = ortespy.c
-@CONFIG_ORTE_MINGW_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-ortespy_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+ortespy_LDADD = $(top_builddir)/orte/liborte/liborte.la
 ortespy_LDFLAGS = -static
 all: all-am
 

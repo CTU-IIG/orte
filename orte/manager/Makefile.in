@@ -59,10 +59,8 @@ am__ortemanager_SOURCES_DIST = ortemanager.c service.c
 @CONFIG_ORTE_RT_FALSE@am_ortemanager_OBJECTS = ortemanager.$(OBJEXT) \
 @CONFIG_ORTE_RT_FALSE@	$(am__objects_1)
 ortemanager_OBJECTS = $(am_ortemanager_OBJECTS)
-@CONFIG_ORTE_MINGW_TRUE@@CONFIG_ORTE_RT_FALSE@am__DEPENDENCIES_1 = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 @CONFIG_ORTE_RT_FALSE@ortemanager_DEPENDENCIES =  \
-@CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la \
-@CONFIG_ORTE_RT_FALSE@	$(am__DEPENDENCIES_1)
+@CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la
 am__ortemanager_rt_ko_SOURCES_DIST = ortemanager.c
 @CONFIG_ORTE_RT_TRUE@am_ortemanager_rt_ko_OBJECTS =  \
 @CONFIG_ORTE_RT_TRUE@	ortemanager_rt_ko-ortemanager.$(OBJEXT)
@@ -233,8 +231,7 @@ target_vendor = @target_vendor@
 @CONFIG_ORTE_RT_TRUE@ortemanager_rt_ko_SOURCES = ortemanager.c  
 @CONFIG_ORTE_RT_TRUE@ortemanager_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
 @CONFIG_ORTE_RT_FALSE@ortemanager_SOURCES = ortemanager.c $(am__append_1)
-@CONFIG_ORTE_MINGW_TRUE@@CONFIG_ORTE_RT_FALSE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
-@CONFIG_ORTE_RT_FALSE@ortemanager_LDADD = $(top_builddir)/orte/liborte/liborte.la $(win_libs)
+@CONFIG_ORTE_RT_FALSE@ortemanager_LDADD = $(top_builddir)/orte/liborte/liborte.la 
 @CONFIG_ORTE_RT_FALSE@ortemanager_LDFLAGS = -static
 all: all-am
 
