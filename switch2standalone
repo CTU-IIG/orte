@@ -4,7 +4,7 @@
 # without OCERA framework
 
 if [ ! -e Makefile.rules-ocera ] ; then
-#  cp Makefile.rules Makefile.rules-ocera
+  cp Makefile.rules Makefile.rules-ocera
 fi
 
 if [ -e OCERA_TOP_DIR ] ; then

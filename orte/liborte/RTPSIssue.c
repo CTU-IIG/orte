@@ -38,7 +38,7 @@ RTPSIssueCreateHeader(CDR_Codec *cdrCodec,uint32_t length,
   CDR_put_octet(cdrCodec,flags);
 
   /* length */
-  CDR_put_ushort(cdrCodec,length);
+  CDR_put_ushort(cdrCodec,(CORBA_unsigned_short)length);
 
   data_endian=cdrCodec->data_endian;
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;

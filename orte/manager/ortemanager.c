@@ -57,7 +57,7 @@ int managerInit(void) {
   return 0;
 }
 int managerStart(void) {
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE);
+  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
   return 0;
 }
 int managerStop(void) {
@@ -251,12 +251,10 @@ int main(int argc,char *argv[]) {
     daemonInit();
   #endif
 
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE);
-/*  #ifndef CONFIG_ORTE_UNIX
-    d->taskSend.terminate=ORTE_FALSE;
-    ORTEAppSendThread(d);
-  #endif*/
-  ORTEDomainStart(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
+  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
+  #ifndef CONFIG_ORTE_UNIX
+     while(1) ORTESleepMs(1000);
+  #endif
 
   #ifdef CONFIG_ORTE_UNIX
   waitForEndingCommand();

@@ -91,7 +91,7 @@ RTPSVarCreate(CDR_Codec *cdrCodec,ObjectId roid,ObjectId woid,CSChange *csChange
  
   /* length */
   cdrCodec->wptr=swptr+2;
-  CDR_put_ushort(cdrCodec,len-4);
+  CDR_put_ushort(cdrCodec,(CORBA_unsigned_short)(len-4));
 
   cdrCodec->wptr=swptr+len;
 

@@ -145,7 +145,7 @@ parameterCodeCodecFromCSChange(CSChange *csChange,CDR_Codec *cdrCodec)
         }
 	len+=4;				  //data size
 	cdrCodec->wptr-=2;                //new alignments value 
-        if (CDR_put_ushort(cdrCodec,len)==CORBA_FALSE) return -1;	
+        if (CDR_put_ushort(cdrCodec,(CORBA_unsigned_short)len)==CORBA_FALSE) return -1;	
 
         if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH) {
           if (CDR_put_string(cdrCodec,(char*)ps->parameter)==

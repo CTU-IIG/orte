@@ -31,12 +31,12 @@ void RTPSInfoDST(CDR_Codec *cdrCodec,MessageInterpret *mi) {
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* Host Id */
-  CDR_put_ulong(cdrCodec,                          
-		*(CORBA_unsigned_long*)&hid);
+  CDR_get_ulong(cdrCodec,                          
+		(CORBA_unsigned_long*)&hid);
 
   /* App Id */
-  CDR_put_ulong(cdrCodec,                          
-		*(CORBA_unsigned_long*)&aid);
+  CDR_get_ulong(cdrCodec,                          
+		(CORBA_unsigned_long*)&aid);
 
   cdrCodec->data_endian=data_endian;
 

@@ -321,7 +321,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 
     /* receiving multicast port (metatraffic) */
     Domain2PortMulticastMetatraffic(d->domain,mport);
-    sock_bind(&d->taskRecvMulticastMetatraffic.sock,mport); 
+    sock_bind(&d->taskRecvMulticastMetatraffic.sock,(uint16_t)mport); 
     debug(30,2) ("ORTEDomainCreate: bind on port(RecvMulticastMetatraffic): %u\n",
                   d->taskRecvMulticastMetatraffic.sock.port);
   }
@@ -353,7 +353,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       
       /* receiving multicast port (userdata) */
       Domain2PortMulticastUserdata(d->domain,mport);
-      sock_bind(&d->taskRecvMulticastUserdata.sock,mport); 
+      sock_bind(&d->taskRecvMulticastUserdata.sock,(uint16_t)mport); 
       debug(30,2) ("ORTEDomainCreate: bind on port(RecvMulticastUserdata): %u\n",
                     d->taskRecvMulticastUserdata.sock.port);
     }

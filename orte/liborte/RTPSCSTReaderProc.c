@@ -169,7 +169,7 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
   ORTERecvInfo         info;  
   ORTESubsProp         *sp;
   ObjectEntryOID       *objectEntryOID;
-  int         	       max_size;
+  unsigned int 	       max_size;
         
   if (cstRemoteWriter==NULL) return;
   objectEntryOID=cstRemoteWriter->cstReader->objectEntryOID;

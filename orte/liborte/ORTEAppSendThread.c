@@ -37,7 +37,7 @@ void ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta) {
       for(i=0;i<appParams->metatrafficMulticastIPAddressCount;i++) {
         des.sin_family=AF_INET; 
         des.sin_addr.s_addr = htonl(appParams->metatrafficMulticastIPAddressList[i]);
-        des.sin_port = htons(object->multicastPort); 
+        des.sin_port = htons((uint16_t)object->multicastPort); 
         if (d->taskSend.mb.cdrCodecDirect) {
           sock_sendto (&d->taskSend.sock,
                        d->taskSend.mb.cdrCodecDirect->buffer,
@@ -61,7 +61,7 @@ void ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta) {
         } else {
           port=appParams->userdataUnicastPort; 
         }
-        des.sin_port = htons(port); 
+        des.sin_port = htons((uint16_t)port); 
         if (d->taskSend.mb.cdrCodecDirect) {
           sock_sendto (&d->taskSend.sock,
                        d->taskSend.mb.cdrCodecDirect->buffer,

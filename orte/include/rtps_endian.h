@@ -1,8 +1,6 @@
 #ifndef RTPS_ENDIAN_H
 #define RTPS_ENDIAN_H 1
 
-#include "orte/orte_config.h"
-
 #define FLAG_BIG_ENDIAN 0
 #define FLAG_LITTLE_ENDIAN 1
 
