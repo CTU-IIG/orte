@@ -8,6 +8,9 @@
 *****************************************************************************/
 #include <stdio.h>
 #include <qtimer.h> 
+#include <qapplication.h>
+
+extern QApplication *a;
 
 void FSubscriber::init()
 {
@@ -16,7 +19,6 @@ void FSubscriber::init()
     ORTETypeRegisterBoxType(domain);
     subscriberBlue=subscriberGreen=subscriberRed=NULL;
     subscriberBlack=subscriberYellow=NULL;
-    pthread_mutex_init(&mutex,NULL);
 }
 
 void FSubscriber::closeEvent( QCloseEvent *e )
@@ -40,9 +42,9 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   FSubscriber *s=(FSubscriber*)recvCallBackParam;
   QRect   rect;
 
+  a->lock();
   switch (info->status) {
     case NEW_DATA:
-      pthread_mutex_lock(&s->mutex);
       rect.setCoords(
           boxType->rectangle.top_left_x,
 	  boxType->rectangle.top_left_y,
@@ -50,7 +52,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 	  boxType->rectangle.bottom_right_y);
       s->view->activateObject(boxType->color,boxType->color,boxType->shape);
       s->view->setPosition(boxType->color,rect);
-      pthread_mutex_unlock(&s->mutex);
       break;
     case DEADLINE:
       if (strcmp(info->topic,"Blue")==0)
@@ -65,6 +66,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
         s->view->deactivateObject(4);
       break;
   }
+  a->unlock();
 }
 
 
@@ -153,6 +155,7 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
 
 void FSubscriber::comboActivated( int )
 {
+    a->lock();
     if  (combo->currentText()==QString("Blue")) 
 	slider->setValue(msBlue.seconds);
     if  (combo->currentText()==QString("Green")) 
@@ -163,6 +166,7 @@ void FSubscriber::comboActivated( int )
 	slider->setValue(msBlack.seconds);
     if  (combo->currentText()==QString("Yellow")) 
 	slider->setValue(msYellow.seconds);
+    a->unlock();
 }
 
 
@@ -171,6 +175,7 @@ void FSubscriber::sliderValueChanged( int  value)
     NtpTime minSep;
     ORTESubsProp  sp;
   
+    a->lock();
     NtpTimeAssembFromMs(minSep, value, 0);
     if  (combo->currentText()==QString("Blue")) {
 	 msBlue=minSep;
@@ -202,4 +207,5 @@ void FSubscriber::sliderValueChanged( int  value)
 	 sp.minimumSeparation=msYellow;
 	 ORTESubscriptionPropertiesSet(subscriberYellow,&sp);    
     }
+    a->unlock();
 }

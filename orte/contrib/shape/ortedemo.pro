@@ -18,7 +18,8 @@ FORMS	= MainForm.ui \
 IMAGES	= ocera_logo.png \
 	shapes.png
 TEMPLATE	=app
-CONFIG	+= qt debug
+CONFIG	+= qt-mt 
 INCLUDEPATH	+= /orte/orte/include .
-LIBS	+= -lorte -lpthread
+DEFINES += HAVE_STDINT_H QT_THREAD_SUPPORT
+LIBS	+= ../../../debug/orte/liborte/liborte.a -lpthread
 LANGUAGE	= C++
