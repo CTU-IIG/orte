@@ -271,15 +271,15 @@ AC_DEFUN(DS_RTLINUX,
 	AC_ARG_WITH([rtlinuxdir],
 		[AC_HELP_STRING([--with-rtlinuxdir=DIR],
 			[specify path to RTLinux source directory])],
-		[RTLINUX_DIR="${withval}"],
-		[RTLINUX_DIR=/usr/src/rtlinux])
+		[RTL_DIR="${withval}"],
+		[RTL_DIR=/usr/src/rtlinux])
 
 	DS_LINUX_CONFIG_OPTION_MODULE([CONFIG_RTLINUX])
 
 	if test "${CONFIG_RTLINUX}" != "no" ; then
-		AC_MSG_CHECKING([RTLinux directory ${RTLINUX_DIR} for rtl.mk])
-		if [[ -d ${RTLINUX_DIR}/include ]] ; then
-                        RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
+		AC_MSG_CHECKING([RTLinux directory ${RTL_DIR} for rtl.mk])
+		if [[ -d ${RTL_DIR}/include ]] ; then
+                        RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTL_DIR}/rtl.mk`
 		else
 			AC_MSG_ERROR([incorrect RTLinux directory?])
 		fi

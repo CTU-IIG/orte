@@ -23,11 +23,11 @@
 # xxx_SOURCES      .. list of specific target sources
 #
 # LINUX_DIR        .. location of Linux kernel sources
-# RTLINUX_DIR      .. location of RT-Linux sources
+# RTL_DIR      .. location of RT-Linux sources
 
 # Hack to check RT-Linux rules
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
-#RTLINUX_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
+#RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
 OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
 
 # We need to ensure definition of sources directory first
@@ -61,7 +61,7 @@ USER_UTILS_DIR   := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/utils
 USER_BIN_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/bin
 USER_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/user/orte
 LINUX_DIR        := $(OCERA_DIR)/kernel/linux
-#RTLINUX_DIR      := $(OCERA_DIR)/kernel/rtlinux
+#RTL_DIR      := $(OCERA_DIR)/kernel/rtlinux
 CONFIG_FILE      := $(OCERA_DIR)/emdebsys/.config 
 else 
 KERN_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include-kern
@@ -81,7 +81,7 @@ LINUX_DIR=/lib/modules/$(LINUX_VERSION)/build
 endif
 endif
 
-export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTLINUX_DIR
+export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
 
 CFLAGS = -O2 -ggdb
 
@@ -236,8 +236,8 @@ ifdef KERN_RULE_TEMPLATES
 $(KERN_MODULES_DIR)/kernel.mk: $(LINUX_DIR)/.config $(MAKERULES_DIR)/kernelcfg2mk
 	$(MAKERULES_DIR)/kernelcfg2mk $(LINUX_DIR) $(KERN_MODULES_DIR)
 
-ifdef RTLINUX_DIR
-include $(RTLINUX_DIR)/rtl.mk
+ifdef RTL_DIR
+include $(RTL_DIR)/rtl.mk
 
 KERN_CC = $(CC)
 INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
@@ -248,7 +248,7 @@ KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
 KERN_LD = ld -m elf_$(KERN_ARCH)
 
-else # RTLINUX_DIR
+else # RTL_DIR
 
 include $(KERN_MODULES_DIR)/kernel.mk
 
@@ -359,7 +359,7 @@ $(foreach lib,$(kernel_LIBRARIES),$(eval $(call LIBRARY_kern_template,$(lib))))
 endif
 
 
-ifdef RTLINUX_DIR
+ifdef RTL_DIR
 
 kernel-pass-local: $(rtlinux_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
 

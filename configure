@@ -2108,9 +2108,9 @@ _ACEOF
 # Check whether --with-rtlinuxdir or --without-rtlinuxdir was given.
 if test "${with_rtlinuxdir+set}" = set; then
   withval="$with_rtlinuxdir"
-  RTLINUX_DIR="${withval}"
+  RTL_DIR="${withval}"
 else
-  RTLINUX_DIR=/usr/src/rtlinux
+  RTL_DIR=/usr/src/rtlinux
 fi;
 
 
@@ -2147,10 +2147,10 @@ fi
 
 
 	if test "${CONFIG_RTLINUX}" != "no" ; then
-		echo "$as_me:$LINENO: checking RTLinux directory ${RTLINUX_DIR} for rtl.mk" >&5
-echo $ECHO_N "checking RTLinux directory ${RTLINUX_DIR} for rtl.mk... $ECHO_C" >&6
-		if [ -d ${RTLINUX_DIR}/include ] ; then
-                        RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTLINUX_DIR}/rtl.mk`
+		echo "$as_me:$LINENO: checking RTLinux directory ${RTL_DIR} for rtl.mk" >&5
+echo $ECHO_N "checking RTLinux directory ${RTL_DIR} for rtl.mk... $ECHO_C" >&6
+		if [ -d ${RTL_DIR}/include ] ; then
+                        RTLINUX_CFLAGS=`sed -n -e 's/^CFLAGS *=\(.*\)$/\1/p' ${RTL_DIR}/rtl.mk`
 		else
 			{ { echo "$as_me:$LINENO: error: incorrect RTLinux directory?" >&5
 echo "$as_me: error: incorrect RTLinux directory?" >&2;}
