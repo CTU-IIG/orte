@@ -24,7 +24,7 @@
 /*****************************************************************************/
 void ORTEAppRecvUserdataThread(ORTEDomain *d) {
   struct sockaddr_in    des;
-  int16_t               submsg_len;
+  u_int16_t             submsg_len;
   MessageInterpret      mi; 
 
   debug(23,10) ("ORTEAppRecvUserdataThread: start\n");
@@ -40,7 +40,7 @@ void ORTEAppRecvUserdataThread(ORTEDomain *d) {
     debug(23,7) ("ORTEAppRecvUserdataThread: fired\n");
     //is it header of valid RTPS packet?
     if (RTPSHeaderCheck(d->mbRecvUserdata.cdrStream.buffer,
-                        d->mbSend.cdrStream.length,&mi)==0) {
+                        d->mbRecvUserdata.cdrStream.length,&mi)==0) {
       debug(23,7) ("ORTEAppRecvUserdataThread: RTPS Heard OK\n");
       debug(23,7) ("  PV: %d.%d VID:%d.%d HID:0x%x AID:0x%x\n",
                     mi.sourceVersion.major,mi.sourceVersion.minor,
@@ -52,7 +52,7 @@ void ORTEAppRecvUserdataThread(ORTEDomain *d) {
         if ((d->mbRecvUserdata.cdrStream.bufferPtr-
              d->mbRecvUserdata.cdrStream.buffer+3)<=d->mbRecvUserdata.cdrStream.length) {
           char e_bit=d->mbRecvUserdata.cdrStream.bufferPtr[1] & 1;
-          submsg_len=(u_int16_t)d->mbRecvUserdata.cdrStream.bufferPtr[2];
+          submsg_len=*(u_int16_t*)&d->mbRecvUserdata.cdrStream.bufferPtr[2];
           conv_u16(&submsg_len,e_bit);
           // check if length of submessage OK 
           if ((submsg_len+d->mbRecvUserdata.cdrStream.bufferPtr-

@@ -12,10 +12,6 @@ unix {
   OBJECTS_DIR = .obj
 }
 
-
-
-
-
 FORMS	= MainForm.ui \
 	FPublisher.ui \
 	FSubscriber.ui
@@ -24,5 +20,5 @@ IMAGES	= ocera_logo.png \
 TEMPLATE	=app
 CONFIG	+= qt debug
 INCLUDEPATH	+= /orte/orte/include .
-LIBS	+= /orte/debug/orte/liborte/liborte.a -lpthread
+LIBS	+= -lorte -lpthread
 LANGUAGE	= C++
