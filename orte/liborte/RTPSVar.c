@@ -1,5 +1,5 @@
 /*                            
- *  $Id: RTPSVar.c,v 0.0.0.1            2003/10/07 
+ *  $Id: RTPSVar.c,v 0.0.0.2            2004/11/24 
  *
  *  DEBUG:  section 46                  RTPS message VAR
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
@@ -102,7 +102,7 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
           AppParams *ap=(AppParams*)MALLOC(sizeof(AppParams));
           AppParamsInit(ap);
           parameterUpdateApplication(csChange,ap);
-          if (generateEvent(d,&objectGUID,(void*)ap,ORTE_TRUE) &&
+          if (generateEvent(d,&objectGUID,(void*)ap,csChange->alive) &&
               csChange->alive) {
             debug(46,2) ("manager 0x%x-0x%x accepted\n",
                           objectGUID.hid,objectGUID.aid);
@@ -146,7 +146,7 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
         AppParams *ap=(AppParams*)MALLOC(sizeof(AppParams));
         AppParamsInit(ap);
         parameterUpdateApplication(csChange,ap);
-        if (generateEvent(d,&objectGUID,(void*)ap,ORTE_TRUE) &&
+        if (generateEvent(d,&objectGUID,(void*)ap,csChange->alive) &&
             csChange->alive) {
           objectEntryOID=objectEntryAdd(d,&objectGUID,(void*)ap);
           objectEntryOID->appMOM=getTypeApp(d,ap,senderIPAddress);
@@ -202,7 +202,7 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
           AppParams *ap=(AppParams*)MALLOC(sizeof(AppParams));
           AppParamsInit(ap);
           parameterUpdateApplication(csChange,ap);
-          if (generateEvent(d,&objectGUID,(void*)ap,ORTE_TRUE) &&
+          if (generateEvent(d,&objectGUID,(void*)ap,csChange->alive) &&
               csChange->alive) {
             debug(46,2) ("new manager 0x%x-0x%x accepted\n",
                           objectGUID.hid,objectGUID.aid);
@@ -268,7 +268,7 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
               AppParams *ap=(AppParams*)MALLOC(sizeof(AppParams));
               AppParamsInit(ap);
               parameterUpdateApplication(csChange,ap);
-              if (generateEvent(d,&objectGUID,(void*)ap,ORTE_TRUE) &&
+              if (generateEvent(d,&objectGUID,(void*)ap,csChange->alive) &&
                   csChange->alive) {
                 debug(46,2) ("new application 0x%x-0x%x accepted\n",
                               objectGUID.hid,objectGUID.aid);
@@ -318,7 +318,7 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
             ORTEPublProp *pp=(ORTEPublProp*)MALLOC(sizeof(ORTEPublProp));
             PublParamsInit(pp);
             parameterUpdatePublication(csChange,pp);
-            if (generateEvent(d,&objectGUID,(void*)pp,ORTE_TRUE) &&
+            if (generateEvent(d,&objectGUID,(void*)pp,csChange->alive) &&
                 csChange->alive) {
               debug(46,2) ("new publisher 0x%x-0x%x-0x%x accepted\n",
                             objectGUID.hid,objectGUID.aid,objectGUID.oid);
@@ -351,7 +351,7 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
             ORTESubsProp *sp=(ORTESubsProp*)MALLOC(sizeof(ORTESubsProp));
             SubsParamsInit(sp);
             parameterUpdateSubscription(csChange,sp);
-            if (generateEvent(d,&objectGUID,(void*)sp,ORTE_TRUE) &&
+            if (generateEvent(d,&objectGUID,(void*)sp,csChange->alive) &&
                 csChange->alive) {
               debug(46,2) ("new subscriber 0x%x-0x%x-0x%x accepted\n",
                             objectGUID.hid,objectGUID.aid,objectGUID.oid);
