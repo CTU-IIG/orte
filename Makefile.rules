@@ -32,6 +32,7 @@
 # Hack to check RT-Linux rules
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
+#CONFIG_RTLINUX = y
 OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
 
 BUILD_DIR_NAME = _build
@@ -295,7 +296,7 @@ ifdef KERN_RULE_TEMPLATES
 $(KERN_MODULES_DIR)/kernel.mk: $(LINUX_DIR)/.config $(MAKERULES_DIR)/kernelcfg2mk
 	$(MAKERULES_DIR)/kernelcfg2mk $(LINUX_DIR) $(KERN_MODULES_DIR)
 
-ifdef RTL_DIR
+ifeq ($(CONFIG_RTLINUX),y)
 include $(RTL_DIR)/rtl.mk
 
 KERN_CC = $(CC)
@@ -308,7 +309,7 @@ KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
 KERN_LD = $(LD)
 
-else # RTL_DIR
+else # CONFIG_RTLINUX
 
 include $(KERN_MODULES_DIR)/kernel.mk
 
@@ -334,7 +335,7 @@ KERN_LD = $(LINUX_LD)
 else
 KERN_LD = echo KERN_LD  not defined - skipped
 endif
-endif
+endif # CONFIG_RTLINUX
 
 KERN_LOADLIBES += -L$(KERN_LIB_DIR) 
 
@@ -431,7 +432,7 @@ $(foreach lib,$(kernel_LIBRARIES),$(eval $(call LIBRARY_kern_template,$(lib))))
 endif
 
 
-ifdef RTL_DIR
+ifeq ($(CONFIG_RTLINUX),y)
 
 kernel-pass-local: $(rtlinux_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
 
