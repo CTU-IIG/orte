@@ -102,7 +102,8 @@ include $(SOURCES_DIR)/Makefile.omk
 OMK_INCLUDED := 1
 endif
 
-export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR CONFIG_FILE
+export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
+export CONFIG_FILE OMK_SERIALIZE_INCLUDED
 
 CFLAGS += -ggdb
 CFLAGS += -O2 
@@ -144,6 +145,17 @@ KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
 .PHONY: kernel-pass default-config-pass
 .PHONY: check-dir-local include-pass-local library-pass-local binary-pass-local 
 .PHONY: utils-pass-local kernel-lib-pass-local kernel-pass-local default-config-pass-local
+
+# Some support to serialize some targets for parallel make
+ifneq ($(OMK_SERIALIZE_INCLUDED),y)
+include-pass: check-dir
+library-pass: include-pass
+binary-pass utils-pass: library-pass
+kernel-lib-pass: include-pass
+kernel-pass: kernel-lib-pass
+
+OMK_SERIALIZE_INCLUDED = y
+endif
 
 default: check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass 
 
