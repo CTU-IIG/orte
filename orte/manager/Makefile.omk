@@ -15,7 +15,7 @@ endif #CONFIG_OC_ETH_ORTE_MANAGER
 #############################################################################
 # RT-Linux version of build
 
-default_CONFIG = CONFIG_OC_ETH_ORTE_MANAGER_RTL=n
+default_CONFIG += CONFIG_OC_ETH_ORTE_MANAGER_RTL=n
 
 ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER_RTL),y)
 
