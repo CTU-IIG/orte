@@ -229,7 +229,8 @@ ORTESubscriptionPull(ORTESubscription *cstReader) {
   pthread_rwlock_rdlock(&cstReader->domain->writerSubscriptions.lock);
   pthread_rwlock_wrlock(&cstReader->lock);
   sp=(ORTESubsProp*)cstReader->objectEntryOID->attributes;
-  if (sp->mode==PULLED) {
+  if ((sp->mode==PULLED) && 
+      (cstReader->objectEntryOID->recvCallBack)) {
     if (NtpTimeCmp(
           getActualNtpTime(),
           htimerUnicastCommon_get_expire(&cstReader->deadlineTimer))>=0) {

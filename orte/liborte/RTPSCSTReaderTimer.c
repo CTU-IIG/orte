@@ -202,9 +202,11 @@ CSTReaderDeadlineTimer(ORTEDomain *d,void *vcstReader) {
   info.status=DEADLINE;
   info.topic=sp->topic;
   info.type=sp->typeName;
-  cstReader->objectEntryOID->recvCallBack(&info,
-      cstReader->objectEntryOID->instance,
-      cstReader->objectEntryOID->callBackParam);
+  if (cstReader->objectEntryOID->recvCallBack) {
+    cstReader->objectEntryOID->recvCallBack(&info,
+        cstReader->objectEntryOID->instance,
+        cstReader->objectEntryOID->callBackParam);
+  }
   eventDetach(d,
       cstReader->objectEntryOID->objectEntryAID,
       &cstReader->deadlineTimer,
