@@ -102,12 +102,13 @@ CSTWriterAnnounceIssueTimer(ORTEDomain *d,void *vcstRemoteReader) {
   CSTRemoteReader *cstRemoteReader=(CSTRemoteReader*)vcstRemoteReader;
   NtpTime         nextHB;
   ORTEPublProp    *pp;
+  int 	           len;
 
   debug(52,10) ("CSTWriterAnnounceIssueTimer: start\n");
   pp=(ORTEPublProp*)cstRemoteReader->cstWriter->objectEntryOID->attributes;
   //create HB
   d->mbSend.cdrStreamDirect=NULL;
-  int len=RTPSHeardBeatCreate(
+  len=RTPSHeardBeatCreate(
       d->mbSend.cdrStream.bufferPtr,
       getMaxMessageLength(d),
       &cstRemoteReader->cstWriter->firstSN,
