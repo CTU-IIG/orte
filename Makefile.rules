@@ -244,9 +244,10 @@ ifdef RTL_DIR
 include $(RTL_DIR)/rtl.mk
 
 KERN_CC = $(CC)
-kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
+kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )
+INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
 #-DEXPORT_NO_SYMBOLS
-c_o_kern_COMPILE = $(KERN_CC) $(INCLUDES) -I$(kern_GCCLIB_DIR)/include $(CFLAGS) -DEXPORT_SYMTAB  -nostdinc
+c_o_kern_COMPILE = $(KERN_CC) $(INCLUDES) -I$(kern_GCCLIB_DIR)/include $(CFLAGS) -DEXPORT_SYMTAB -nostdinc
 cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DEXPORT_SYMTAB
 KERN_EXE_SUFFIX := .o
 KERN_ARCH = $(ARCH)
@@ -258,7 +259,7 @@ include $(KERN_MODULES_DIR)/kernel.mk
 
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
-kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
+kern_GCCLIB_DIR=$(shell $(CC) -print-search-dirs | sed -n -e 's/^install: \(.*\)$$/\1/p' )
 else
 KERN_CC = echo KERN_CC not defined - compilation skipped
 endif
