@@ -1,0 +1,241 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>FSubscriber</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>FSubscriber</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>389</width>
+            <height>331</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Subscriber</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="MyQFrame" row="0" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>view</cstring>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+        </widget>
+        <widget class="QSplitter" row="1" column="0">
+            <property name="name">
+                <cstring>splitter2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Color:</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name">
+                    <cstring>spacer3_2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>40</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+        </widget>
+        <widget class="QSplitter" row="2" column="0">
+            <property name="name">
+                <cstring>splitter3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>strengt</cstring>
+                </property>
+                <property name="text">
+                    <string>Min. Separation:</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name">
+                    <cstring>spacer3</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>21</height>
+                    </size>
+                </property>
+            </spacer>
+        </widget>
+        <widget class="QComboBox" row="1" column="1">
+            <property name="name">
+                <cstring>combo</cstring>
+            </property>
+        </widget>
+        <widget class="QSlider" row="2" column="1">
+            <property name="name">
+                <cstring>slider</cstring>
+            </property>
+            <property name="minValue">
+                <number>0</number>
+            </property>
+            <property name="maxValue">
+                <number>4</number>
+            </property>
+            <property name="pageStep">
+                <number>1</number>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="tickmarks">
+                <enum>NoMarks</enum>
+            </property>
+            <property name="tickInterval">
+                <number>1</number>
+            </property>
+        </widget>
+        <spacer row="1" column="2">
+            <property name="name">
+                <cstring>spacer4_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>110</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="2" column="2">
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>100</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>MyQFrame</class>
+        <header location="global">MyQFrame.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>combo</sender>
+        <signal>activated(int)</signal>
+        <receiver>FSubscriber</receiver>
+        <slot>comboActivated(int)</slot>
+    </connection>
+    <connection>
+        <sender>slider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>FSubscriber</receiver>
+        <slot>sliderValueChanged(int)</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="global" impldecl="in declaration">orte_api.h</include>
+    <include location="global" impldecl="in declaration">pthread.h</include>
+    <include location="local" impldecl="in declaration">ortedemo_types.h</include>
+    <include location="local" impldecl="in implementation">FSubscriber.ui.h</include>
+</includes>
+<variables>
+    <variable access="public">BoxType boxTypeYellow;</variable>
+    <variable access="public">BoxType boxTypeBlack;</variable>
+    <variable access="public">BoxType boxTypeRed;</variable>
+    <variable access="public">BoxType boxTypeBlue;</variable>
+    <variable access="public">BoxType boxTypeGreen;</variable>
+    <variable access="public">ORTEDomain *domain;</variable>
+    <variable>ORTESubscription *subscriberGreen;</variable>
+    <variable>ORTESubscription *subscriberBlue;</variable>
+    <variable>ORTESubscription *subscriberRed;</variable>
+    <variable>ORTESubscription *subscriberBlack;</variable>
+    <variable>ORTESubscription *subscriberYellow;</variable>
+    <variable>NtpTime msGreen;</variable>
+    <variable>NtpTime msBlue;</variable>
+    <variable>NtpTime msRed;</variable>
+    <variable>NtpTime msBlack;</variable>
+    <variable>NtpTime msYellow;</variable>
+    <variable access="public">pthread_mutex_t mutex;</variable>
+</variables>
+<slots>
+    <slot access="protected">init()</slot>
+    <slot access="protected">closeEvent( QCloseEvent * e )</slot>
+    <slot>destroy()</slot>
+    <slot>comboActivated( int )</slot>
+    <slot>sliderValueChanged( int value )</slot>
+</slots>
+<functions>
+    <function>initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, int iYellow )</function>
+</functions>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>myqframe.h</includehint>
+</includehints>
+</UI>
