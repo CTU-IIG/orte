@@ -58,6 +58,7 @@ KERN_INCLUDE_DIR := $(OCERA_KERNEL_INCLUDES_DIR)
 KERN_LIB_DIR     := $(OCERA_KERNEL_LIBRARIES_DIR)
 KERN_MODULES_DIR := $(OCERA_MODULES_DIR)
 KERN_BUILD_DIR   := $(BUILD_DIR)/kern/$(GROUP_DIR_NAME)
+KERN_MODPOST_DIR := $(BUILD_DIR)/kern-modpost
 USER_INCLUDE_DIR := $(OCERA_USER_INCLUDES_DIR)
 USER_LIB_DIR     := $(OCERA_USER_LIBRARIES_DIR)
 USER_UTILS_DIR   := $(TARGET_DIR)/usr/bin
@@ -75,6 +76,7 @@ KERN_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include-kern
 KERN_LIB_DIR     := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/lib-kern
 KERN_MODULES_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/modules
 KERN_BUILD_DIR   := $(MAKERULES_DIR)/$(BUILD_DIR_NAME)/kern
+KERN_MODPOST_DIR := $(MAKERULES_DIR)/$(BUILD_DIR_NAME)/kern-modpost
 USER_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include
 USER_LIB_DIR     := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/lib
 USER_UTILS_DIR   := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/bin-utils
@@ -85,6 +87,8 @@ CONFIG_FILE      := $(MAKERULES_DIR)/config.omk
 endif
 ifneq ($(wildcard $(CONFIG_FILE)-default),)
 -include $(CONFIG_FILE)-default
+else
+$(warning Please, run "make default-config" first)
 endif
 ifneq ($(wildcard $(CONFIG_FILE)),)
 include $(CONFIG_FILE)
@@ -144,9 +148,10 @@ KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
 
 .PHONY: default dep subdirs clean cleandepend default-config
 .PHONY: check-make-ver check-dir include-pass library-pass binary-pass utils-pass
-.PHONY: kernel-lib-pass kernel-pass default-config-pass
+.PHONY: kernel-lib-pass kernel-pass kernel-mod-pass kernel-modpost-pass default-config-pass
 .PHONY: check-dir-local include-pass-local library-pass-local binary-pass-local 
-.PHONY: utils-pass-local kernel-lib-pass-local kernel-pass-local default-config-pass-local
+.PHONY: utils-pass-local kernel-lib-pass-local kernel-mod-pass-local kernel-modpost-pass-local
+.PHONY: default-config-pass-local
 
 # Some support to serialize some targets for parallel make
 ifneq ($(OMK_SERIALIZE_INCLUDED),y)
@@ -154,12 +159,14 @@ include-pass: check-dir
 library-pass: include-pass
 binary-pass utils-pass: library-pass
 kernel-lib-pass: include-pass
-kernel-pass: kernel-lib-pass
+kernel-mod-pass: kernel-lib-pass
+kernel-modpost-pass: kernel-mod-pass
+kernel-pass: kernel-mod-pass kernel-modpost-pass
 
 OMK_SERIALIZE_INCLUDED = y
 endif
 
-default: check-make-ver check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass 
+default: check-make-ver check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass
 
 
 #=====================================================================
@@ -362,7 +369,14 @@ else
 kern_CC_DEPFLAGS = -MT $@ -MD -MP -MF "$@.d.tmp"
 endif
 
-
+ifeq ($(KERN_EXE_SUFFIX),.ko)
+KERN_MODPOST = $(LINUX_DIR)/scripts/modpost
+KERN_MODULES_LINK_DIR = $(KERN_MODPOST_DIR)
+KERN_LINK_SUFFIX = .o
+else
+KERN_MODULES_LINK_DIR = $(KERN_MODULES_DIR)
+KERN_LINK_SUFFIX = $(KERN_EXE_SUFFIX)
+endif
 
 define COMPILE_c_o_kern_template
 
@@ -396,38 +410,44 @@ $(1)_OBJS := $$(sort $$($(1)_OBJS))
 KERN_OBJS  += $$($(1)_OBJS)
 KERN_SOURCES += $$($(1)_SOURCES)
 
-# this is required to build right "__this_module" structure for 2.6.x kernels
+# this is hack to build "__this_module" structure for 2.6.x kernels
+# modpost is used for that purpose now
 
-$(1).mod.c:
-	echo  "\
-	#include <linux/version.h>@\
-	#include <linux/module.h>@\
-	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,5))@\
-	#include <linux/vermagic.h>@\
-	#include <linux/compiler.h>@\
-	@\
-	MODULE_INFO(vermagic, VERMAGIC_STRING);@\
-	@\
-	#undef unix@\
-	struct module __this_module@\
-	__attribute__((section(\".gnu.linkonce.this_module\"))) = {@\
-	 .name = __stringify(KBUILD_MODNAME),@\
-	 .init = init_module,@\
-	#ifdef CONFIG_MODULE_UNLOAD@\
-	 .exit = cleanup_module,@\
-	#endif@\
-	};@\
-	#endif@\
-	" | tr @ \\n >$$@ 
+#$(1).mod.c:
+#	echo  "\
+#	#include <linux/version.h>@\
+#	#include <linux/module.h>@\
+#	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,5))@\
+#	#include <linux/vermagic.h>@\
+#	#include <linux/compiler.h>@\
+#	@\
+#	MODULE_INFO(vermagic, VERMAGIC_STRING);@\
+#	@\
+#	#undef unix@\
+#	struct module __this_module@\
+#	__attribute__((section(\".gnu.linkonce.this_module\"))) = {@\
+#	 .name = __stringify(KBUILD_MODNAME),@\
+#	 .init = init_module,@\
+#	#ifdef CONFIG_MODULE_UNLOAD@\
+#	 .exit = cleanup_module,@\
+#	#endif@\
+#	};@\
+#	#endif@\
+#	" | tr @ \\n >$$@ 
    
 
-$(eval $(call COMPILE_c_o_kern_template,$(1).mod.c,$(1).mod.o,-DKBUILD_MODNAME=$(1)))
+#$(eval $(call COMPILE_c_o_kern_template,$(1).mod.c,$(1).mod.o,-DKBUILD_MODNAME=$(1)))
 
-$(2)/$(1)$(KERN_EXE_SUFFIX): $$($(1)_OBJS) $(1).mod.o
-	$$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) $(1).mod.o $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $$@
-	@echo "$(2)/$(1)$(KERN_EXE_SUFFIX): \\" >$(KERN_OBJS_DIR)/$(1).mod.d
+$(2)/$(1)$(KERN_LINK_SUFFIX): $$($(1)_OBJS)
+	$$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $$@
+	@echo "$(2)/$(1)$(KERN_LINK_SUFFIX): \\" >$(KERN_OBJS_DIR)/$(1).mod.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(KERN_OBJS_DIR)/$(1).mod.map  >>$(KERN_OBJS_DIR)/$(1).mod.d
 	@echo >>$(KERN_OBJS_DIR)/$(1).mod.d
+	@if [ "$(KERN_EXE_SUFFIX)" == ".ko" ] ; then \
+	  echo $(1) >>$(KERN_MODPOST_DIR)/module-changes ; \
+	  echo $(1) >>$(KERN_MODPOST_DIR)/$(1).mod.stamp ; \
+	fi
+
 endef
 
 
@@ -450,9 +470,9 @@ ifdef LINUX_DIR
 
 kernel-lib-pass-local: $(kernel_LIBRARIES:%=$(KERN_LIB_DIR)/lib%.a)
 
-kernel-pass-local: $(kernel_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
+kernel-mod-pass-local: $(kernel_MODULES:%=$(KERN_MODULES_LINK_DIR)/%$(KERN_LINK_SUFFIX))
 
-$(foreach module,$(kernel_MODULES),$(eval $(call MODULE_kern_template,$(module),$(KERN_MODULES_DIR))))
+$(foreach module,$(kernel_MODULES),$(eval $(call MODULE_kern_template,$(module),$(KERN_MODULES_LINK_DIR))))
 
 $(foreach lib,$(kernel_LIBRARIES),$(eval $(call LIBRARY_kern_template,$(lib))))
 
@@ -461,13 +481,38 @@ endif
 
 ifeq ($(CONFIG_RTLINUX),y)
 
-kernel-pass-local: $(rtlinux_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
+kernel-mod-pass-local: $(rtlinux_MODULES:%=$(KERN_MODULES_LINK_DIR)/%$(KERN_LINK_SUFFIX))
 
 kernel-lib-pass-local: $(rtlinux_LIBRARIES:%=$(KERN_LIB_DIR)/lib%.a)
 
-$(foreach module,$(rtlinux_MODULES),$(eval $(call MODULE_kern_template,$(module),$(KERN_MODULES_DIR))))
+$(foreach module,$(rtlinux_MODULES),$(eval $(call MODULE_kern_template,$(module),$(KERN_MODULES_LINK_DIR))))
 
 $(foreach lib,$(rtlinux_LIBRARIES),$(eval $(call LIBRARY_kern_template,$(lib))))
+
+endif
+
+ifeq ($(KERN_MODPOST_PASS),y)
+
+MODULES_LIST :=	$(wildcard *.mod.stamp)
+MODULES_LIST := $(MODULES_LIST:%.mod.stamp=%)
+
+define MODPOST_kern_template
+$(2) : $(1)$(KERN_LINK_SUFFIX) $(1).mod.c
+	$$(cc_o_kern_COMPILE) -DKBUILD_BASENAME=$(1) -DKBUILD_MODNAME=$(1) -o $(1).mod.o -c $(1).mod.c
+	$$(KERN_LD) $$(KERN_LDFLAGS) $(1)$(KERN_LINK_SUFFIX) $(1).mod.o -r -o $$@
+endef
+
+kernel-modpost-versions: $(wildcard $(LINUX_DIR)/Module.symvers)
+	@echo  >$(KERN_MODPOST_DIR)/modpost-running
+	@rm -f $(KERN_MODPOST_DIR)/module-changes
+	$(KERN_MODPOST) $(MODULES_LIST:%=%$(KERN_LINK_SUFFIX)) $(^:%=-i %)
+
+$(MODULES_LIST:%=%.mod.c) : kernel-modpost-versions
+
+kernel-modpost-pass-local: $(MODULES_LIST:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
+	@rm -f $(KERN_MODPOST_DIR)/modpost-running
+
+$(foreach module,$(MODULES_LIST),$(eval $(call MODPOST_kern_template,$(module),$(module:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX)))))
 
 endif
 
@@ -490,7 +535,7 @@ kernel-lib-pass:
 		-f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y $(@:%=%-local) ; \
 	fi
 
-kernel-pass:
+kernel-mod-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(KERN_OBJS_DIR)/$(dir)) ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
 		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
@@ -500,6 +545,13 @@ kernel-pass:
 	then \
 	    $(MAKE) --no-print-directory -C $(KERN_OBJS_DIR) \
 		-f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y $(@:%=%-local) ; \
+	fi
+
+kernel-modpost-pass:
+	+@if [ -e "$(KERN_MODPOST_DIR)/module-changes" -o -e "$(KERN_MODPOST_DIR)/modpost-running" ] ; \
+	then \
+	    $(MAKE) --no-print-directory -C $(KERN_MODPOST_DIR) \
+	       -f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y KERN_MODPOST_PASS=y $(@:%=%-local) ; \
 	fi
 
 library-pass binary-pass utils-pass:
@@ -534,11 +586,15 @@ check-dir-local:
 	@$(call mkdir_def,$(USER_BIN_DIR))
 	@$(call mkdir_def,$(USER_UTILS_DIR))
 	@$(call mkdir_def,$(KERN_MODULES_DIR))
+	@$(call mkdir_def,$(KERN_MODPOST_DIR))
 
 install-local:
 
 default-config:
 	@echo "# Start of OMK config file" > "$(CONFIG_FILE)-default"
+	@echo "# This file should not be altered manually" >> "$(CONFIG_FILE)-default"
+	@echo "# Overrides should be stored in file $(notdir $(CONFIG_FILE))" >> "$(CONFIG_FILE)-default"
+	@echo >> "$(CONFIG_FILE)-default"
 	@$(MAKE) --no-print-directory -C $(MAKERULES_DIR) \
 		RELATIVE_DIR="" SOURCES_DIR=$(MAKERULES_DIR) \
 		-f $(MAKERULES_DIR)/Makefile default-config-pass
@@ -592,5 +648,12 @@ clean-local:
 	@rm -f $(KERN_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.lo \
 	       $(KERN_OBJS_DIR)/*.d $(USER_OBJS_DIR)/*.d \
 	       $(KERN_OBJS_DIR)/*.map $(USER_OBJS_DIR)/*.map \
-	       $(KERN_OBJS_DIR)/*.mod.c
+	       $(KERN_OBJS_DIR)/*.mod.c \
+	       $(kernel_MODULES:%=$(KERN_MODPOST_DIR)/%.*) \
+	       $(LOCAL_CONFIG_H:%=$(KERN_OBJS_DIR)/%) \
+	       $(LOCAL_CONFIG_H:%=$(USER_OBJS_DIR)/%)
+	@if [ -e $(KERN_LIB_DIR)/kernel.mk ] ; then \
+	    touch -t 200001010101 $(KERN_LIB_DIR)/kernel.mk ; \
+	fi
+	       
 
