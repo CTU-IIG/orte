@@ -32,11 +32,11 @@
 # Hack to check RT-Linux rules
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
-OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
+OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../.. ; pwd -L ) )
 
 BUILD_DIR_NAME = _build
 COMPILED_DIR_NAME = _compiled
-GROUP_DIR_NAME = orte
+GROUP_DIR_NAME = can
 
 
 # We need to ensure definition of sources directory first
@@ -82,11 +82,12 @@ USER_BUILD_DIR   := $(MAKERULES_DIR)/$(BUILD_DIR_NAME)/user
 ifndef CONFIG_FILE
 CONFIG_FILE      := $(MAKERULES_DIR)/config.omk
 endif
+ifneq ($(wildcard $(CONFIG_FILE)-default),)
+-include $(CONFIG_FILE)-default
+endif
 ifneq ($(wildcard $(CONFIG_FILE)),)
 include $(CONFIG_FILE)
 CONFIG_FILE_OK = y
-else
--include $(CONFIG_FILE)-default
 endif
 ifndef LINUX_VERSION
 LINUX_VERSION=$(shell uname -r)
@@ -167,6 +168,26 @@ define mkdir_def
 	[ -d $(1) ] || mkdir -p $(1) || exit 1
 endef
 
+ifdef LOCAL_CONFIG_H
+
+$(LOCAL_CONFIG_H) : $(wildcard $(CONFIG_FILE)) $(wildcard $(CONFIG_FILE)-default)
+	@echo LOCAL_CONFIG_H=`pwd`/$(LOCAL_CONFIG_H)
+	@echo "/* Automatically generated from */" > "$(LOCAL_CONFIG_H).tmp"
+	@echo "/* config file : $< */" >> "$(LOCAL_CONFIG_H).tmp"
+	@echo "#ifndef _LOCAL_CONFIG_H" >> "$(LOCAL_CONFIG_H).tmp"
+	@echo "#define _LOCAL_CONFIG_H" >> "$(LOCAL_CONFIG_H).tmp"
+	@( $(foreach x, $(shell echo $(default_CONFIG) | sed -e 's/\<\([^ ]*\)=[^ ]\>/\1/g' ), \
+		echo $(x).$($(x)) ; ) echo ; ) | \
+		sed -n -e 's/^\(.*\)\.[ym]$$/#define \1 1/p' \
+		  >> "$(LOCAL_CONFIG_H).tmp"
+	@echo "#endif /*_LOCAL_CONFIG_H*/" >> "$(LOCAL_CONFIG_H).tmp"
+	@if cmp --quiet "$(LOCAL_CONFIG_H).tmp" "$(LOCAL_CONFIG_H)" ; then \
+	echo rm "$(LOCAL_CONFIG_H).tmp" ; \
+	else mv "$(LOCAL_CONFIG_H).tmp" "$(LOCAL_CONFIG_H)" ; \
+	echo Updated configuration "$(LOCAL_CONFIG_H)" ; fi
+
+endif
+
 #=====================================================================
 # User-space rules and templates to compile programs, libraries etc.
 
@@ -198,7 +219,7 @@ endif
 
 
 define COMPILE_c_o_template
-$(2): $(1)
+$(2): $(1) $(LOCAL_CONFIG_H)
 	if $$(c_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
 	else rm -f "$$@.d.tmp" ; exit 1; \
@@ -208,7 +229,7 @@ endef
 
 
 define COMPILE_cc_o_template
-$(2): $(1)
+$(2): $(1) $(LOCAL_CONFIG_H)
 	if $$(cc_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
 	else rm -f "$$@.d.tmp" ; exit 1; \
@@ -225,7 +246,7 @@ $(1)_OBJS := $$(sort $$($(1)_OBJS))
 USER_OBJS  += $$($(1)_OBJS)
 USER_SOURCES += $$($(1)_SOURCES)
 
-$(2)/$(1): $$($(1)_OBJS) 
+$(2)/$(1): $$($(1)_OBJS)
 	$$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
 	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $(2)/$(1)
 	@echo "$(2)/$(1): \\" >$(USER_OBJS_DIR)/$(1).exe.d
@@ -337,7 +358,7 @@ endif
 
 define COMPILE_c_o_kern_template
 
-$(2): $(1)
+$(2): $(1) $(LOCAL_CONFIG_H)
 	if $$(c_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -DKBUILD_BASENAME=$(notdir $(basename $(1))) \
 	-o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
@@ -349,7 +370,7 @@ endef
 
 define COMPILE_cc_o_kern_template
 
-$(2): $(1)
+$(2): $(1) $(LOCAL_CONFIG_H)
 	if $$(cc_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -DKBUILD_BASENAME=$(notdir $(basename $(1))) \
 	-o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
@@ -497,7 +518,8 @@ default-config:
 default-config-pass-local:
 	@echo Default config for $(RELATIVE_DIR)
 	@echo "# Config for $(RELATIVE_DIR)" >> "$(CONFIG_FILE)-default"
-	@$(foreach x, $(default_CONFIG), echo $(x) >> "$(CONFIG_FILE)-default" ; )
+	@$(foreach x, $(default_CONFIG), echo $(x) | \
+		sed -e 's/^.*=x$$/#\0/' >> "$(CONFIG_FILE)-default" ; )
 
 include-pass-local:
 	@$(call mkdir_def,$(USER_INCLUDE_DIR))
