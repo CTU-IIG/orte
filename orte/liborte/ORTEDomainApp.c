@@ -381,7 +381,7 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
   pthread_rwlock_destroy(&d->typeEntry.lock);
   
   //Pattern
-  ORTEDomainAppSubscriptionPatternDestroyAll(d);
+  ORTEDomainAppSubscriptionPatternDestroy(d);
   pthread_rwlock_unlock(&d->typeEntry.lock);    
   pthread_rwlock_destroy(&d->patternEntry.lock);
   
@@ -455,7 +455,7 @@ ORTEDomainAppSubscriptionPatternRemove(ORTEDomain *d,const char *topic,
 
 /*****************************************************************************/
 Boolean 
-ORTEDomainAppSubscriptionPatternDestroyAll(ORTEDomain *d) {
+ORTEDomainAppSubscriptionPatternDestroy(ORTEDomain *d) {
   PatternNode *pnode;
   
   if (!d) return ORTE_FALSE;

@@ -18,9 +18,6 @@
  *  GNU General Public License for more details.
  *
  */
-#ifdef HAVE_CONFIG_H
-  #include <orte_config.h>
-#endif
 #include "orte_api.h"
 #ifdef CONFIG_ORTE_RTL
   #include <linux/module.h>

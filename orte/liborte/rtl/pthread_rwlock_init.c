@@ -42,6 +42,10 @@
 
 #include "orte.h"
 
+#ifdef CONFIG_ORTE_RT
+MODULE_LICENSE("GPL");
+#endif
+
 int
 pthread_rwlock_init(pthread_rwlock_t *rwlock, const pthread_rwlockattr_t *attr)
 {
