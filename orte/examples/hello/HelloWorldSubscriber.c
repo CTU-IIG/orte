@@ -90,8 +90,10 @@ main(int argc, char *args[]) {
 }
 
 #else
-
-char manager[MAX_STRING_IPADDRESS_LENGTH]="127.0.0.1";
+char *verbosity="";
+MODULE_PARM(verbosity,"1s");
+MODULE_PARM_DESC(verbosity,"set verbosity level SECTION, up to LEVEL:...");
+char *manager="127.0.0.1";
 MODULE_PARM(manager,"s");
 MODULE_PARM_DESC(manager,"IP address of local manager");
 MODULE_LICENSE("GPL");
@@ -110,12 +112,13 @@ init_module(void) {
 
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
-  //ORTEVerbositySetOptions("ALL,10");  
+  ORTEVerbositySetOptions(verbosity);
   dp.appLocalManager=StringToIPAddress(manager);
   d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
-  if (d) 
-    pthread_create(&thread,NULL,&subscriberCreate,NULL);
-  else
+  if (d) {
+    if (pthread_create(&thread,NULL,&subscriberCreate,NULL)!=0)
+      printf("pthread_create failed!\n");    
+  } else
     printf("ORTEDomainAppCreate failed!\n");
   return 0;
 }

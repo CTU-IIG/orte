@@ -1,7 +1,13 @@
 /* orte/include/config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define if is target CYGWIN */
+#undef CONFIG_ORTE_CYGWIN
+
 /* Define if linux kernel is found */
 #undef CONFIG_ORTE_KERNEL
+
+/* Define if is target MINGW */
+#undef CONFIG_ORTE_MINGW
 
 /* Define to enable ORTE's RT support */
 #undef CONFIG_ORTE_RT

@@ -76,8 +76,8 @@ static void usage(void) {
   printf("  -k, --key  <IPAdd:IPAdd:...>  manualy assigned manager's keys\n");
   printf("  -d, --domain <domain>         working manager domain\n");
   printf("  -v, --verbosity <level>       set verbosity level SECTION, up to LEVEL:...\n");
-  printf("      examples: ORTEManager -v 51,7:32,5 sections 51 and 32\n");
-  printf("                ORTEManager -v ALL,7     all sections up to level 7\n");
+  printf("      examples: ORTEManager -v 51.7:32.5 sections 51 and 32\n");
+  printf("                ORTEManager -v ALL.7     all sections up to level 7\n");
   printf("  -R, --refresh <s>             refresh period in second(s)\n");
   printf("  -P, --purge <s>               purge time in second(s)\n");
 #ifdef CONFIG_ORTE_UNIX

@@ -77,15 +77,15 @@ void conv_ntp(NtpTime *ntp,char ef) {
 /**********************************************************************************/
 //get part of string, div. by semi.
 int
-getStringPart(char *string,char divChar,int iterator,char *buff) {
+getStringPart(char *string,char divChar,int *iterator,char *buff) {
   char *cp;
   int len;
   
   if (!string || !buff) return -1;
   len=strlen(string);
-  if (len<iterator) return -2;
-  cp=string+iterator;
-  while (cp[0]!=0) {  //till is length>0
+  if (len<(*iterator)) return -2;
+  cp=string+(*iterator);
+  if (cp[0]!=0) {  //till is length>0
     char *dcp,tcp; 
     dcp=strchr(cp,divChar);
     if (!dcp) dcp=cp+strlen(cp);
@@ -93,8 +93,8 @@ getStringPart(char *string,char divChar,int iterator,char *buff) {
     *dcp=0;           //temporary end of string
     strcpy(buff,cp);  
     *dcp=tcp;         //restore value
-    if (dcp[0]!=0) iterator=dcp-cp+1;//next value
-    else iterator=dcp-cp;
+    if (dcp[0]!=0) (*iterator)=dcp-cp+1;//next value
+    else (*iterator)=dcp-cp;
     return 1;
   }
   return 0;

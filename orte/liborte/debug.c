@@ -97,7 +97,7 @@ debug_arg(const char *arg) {
     arg += 4;
   } else {
     s = atoi(arg);
-    while (*arg && *arg++ != ',');
+    while (*arg && *arg++ != '.');
   }
   l = atoi(arg);
   if (l < 0) l = 0;

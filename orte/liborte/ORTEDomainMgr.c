@@ -190,15 +190,18 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
     appParams->managerKeyCount=d->domainProp.IFCount+1;
   } else {
     appParams->managerKeyCount=i=0;
-    while (getStringPart(d->domainProp.keys,':',i,sbuff)) {
+    while (getStringPart(d->domainProp.keys,':',&i,sbuff)) {
+      printf("a");
+      ORTESleepMs(100);
       appParams->managerKeyList[appParams->managerKeyCount++]=
           StringToIPAddress(sbuff);
     }
+    
   }
   d->appParams=appParams;
   //insert object, doesn't need to be locked
   d->objectEntryOID=objectEntryAdd(d,&d->guid,(void*)appParams);
-  d->objectEntryOID->private=ORTE_TRUE;
+  d->objectEntryOID->privateCreated=ORTE_TRUE;
 
   //CST objects
   //  writerApplicationSelf (WAS)
@@ -212,7 +215,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
       OID_WRITE_APPSELF,&cstWriterParams,NULL);
   //  add to WAS remote writer(s)
   i=0;
-  while (getStringPart(d->domainProp.mgrs,':',i,sbuff)>0) {
+  while (getStringPart(d->domainProp.mgrs,':',&i,sbuff)>0) {
     GUID_RTPS guid;
     IPAddress ipAddress=StringToIPAddress(sbuff);
     guid.hid=ipAddress;

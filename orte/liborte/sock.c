@@ -86,7 +86,7 @@ sock_getsockopt(sock_t *sock,int optname,char *optval, int *optlen) {
 int
 sock_bind(sock_t *sock,u_int16_t port) {
   struct sockaddr_in name;
-  int32_t size;
+  int size;
 
   name.sin_family = AF_INET;
   name.sin_port = htons(port);
@@ -118,7 +118,7 @@ sock_sendto(sock_t *sock, void *buf, int len,struct sockaddr_in *des,int des_len
 
 /*********************************************************************/
 inline int
-sock_ioctl(sock_t *sock, int cmd, int *arg) {
+sock_ioctl(sock_t *sock, long cmd, unsigned long *arg) {
   return ioctl(sock->fd, cmd, arg);
 }
 
@@ -170,7 +170,7 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
 #elif defined(SOCK_WIN)
   INTERFACE_INFO      InterfaceList[MAX_INTERFACES];
   struct sockaddr_in* pAddress;
-  int                 len,i;
+  unsigned long       len,i;
 
   *IFCount=0;
   if (WSAIoctl(sock->fd,SIO_GET_INTERFACE_LIST,NULL,0,

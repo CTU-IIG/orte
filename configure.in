@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.5 2004/02/26 21:58:28 smolik Exp $
+# $Id: configure.in,v 1.6 2004/03/17 22:15:37 smolik Exp $
 
 # autoconf requirement
 
@@ -34,12 +34,23 @@ AC_SUBST(ORTE_VERSION)
 ###############################
 # target
 WIN='no'
+MINGW='no'
+CYGWIN='no'
 UNIX='no'
 case "$target" in
-  *-cygwin* | *-mingw*)
+  *-cygwin*)
     CFLAGS="$CFLAGS"
     WIN='yes'
+    CYGWIN='yes'
     AC_DEFINE([CONFIG_ORTE_WIN],[1],[Define if is target windows])
+    AC_DEFINE([CONFIG_ORTE_CYGWIN],[1],[Define if is target CYGWIN])
+    ;;  
+  *-mingw*)
+    CFLAGS="$CFLAGS"
+    WIN='yes'
+    MINGW='yes'
+    AC_DEFINE([CONFIG_ORTE_WIN],[1],[Define if is target windows])
+    AC_DEFINE([CONFIG_ORTE_MINGW],[1],[Define if is target MINGW])
     ;;
   *)
     # Assume Unix.
@@ -50,6 +61,8 @@ case "$target" in
     ;;
 esac
 AM_CONDITIONAL(CONFIG_ORTE_WIN, test x$WIN = xyes)
+AM_CONDITIONAL(CONFIG_ORTE_CYGWIN, test x$CIGWIN = xyes)
+AM_CONDITIONAL(CONFIG_ORTE_MINGW, test x$MINGW = xyes)
 AM_CONDITIONAL(CONFIG_ORTE_UNIX, test x$UNIX = xyes)
 
 ###############################
@@ -82,10 +95,10 @@ AC_PROG_CC
 AC_PROG_RANLIB
 
 ###############################
-# Checks for libraries (not for RT)
+# Checks for libraries
 if test -z ${CONFIG_ORTE_RT} ; then
-AC_CHECK_LIB([ws2_32], [main])
-AC_CHECK_LIB([pthread], [main])
+  AC_CHECK_LIB([ws2_32], [main])
+  AC_CHECK_LIB([pthread], [main])
 fi
 
 ###############################

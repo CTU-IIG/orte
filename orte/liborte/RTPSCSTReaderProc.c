@@ -168,6 +168,7 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
   ORTERecvInfo         info;  
   ORTESubsProp         *sp;
   ObjectEntryOID       *objectEntryOID;
+  unsigned int         length;
         
   if (cstRemoteWriter==NULL) return;
   objectEntryOID=cstRemoteWriter->cstReader->objectEntryOID;
@@ -179,7 +180,7 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
           &csChangeFromWriter->csChange->cdrStream,
           objectEntryOID->instance);
     } else {
-      int length=csChangeFromWriter->csChange->cdrStream.length;
+      length=csChangeFromWriter->csChange->cdrStream.length;
       if (cstRemoteWriter->cstReader->typeRegister->getMaxSize<length)
         length=cstRemoteWriter->cstReader->typeRegister->getMaxSize;
       //no deserialization -> memcpy

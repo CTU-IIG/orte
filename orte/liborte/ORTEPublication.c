@@ -39,8 +39,10 @@ ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
   CSChange              *csChange;
   TypeNode              *typeNode;
   
+  debug(31,10) ("ORTEPublicationCreate: start\n");
   cstWriter=(CSTWriter*)MALLOC(sizeof(CSTWriter));
   if (!cstWriter) return NULL;
+  debug(31,10) ("ORTEPublicationCreate: memory OK\n");
   pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
   pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
   pthread_rwlock_rdlock(&d->typeEntry.lock);    
@@ -67,7 +69,7 @@ ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
                          PID_VALUE_RELIABILITY_STRICT;
   //insert object to structure objectEntry
   objectEntryOID=objectEntryAdd(d,&guid,(void*)pp);
-  objectEntryOID->private=ORTE_TRUE;
+  objectEntryOID->privateCreated=ORTE_TRUE;
   objectEntryOID->instance=instance;
   objectEntryOID->sendCallBack=sendCallBack;
   objectEntryOID->callBackParam=sendCallBackParam;
@@ -103,12 +105,14 @@ ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
   csChange->guid=guid;
   csChange->alive=ORTE_TRUE;
   csChange->cdrStream.buffer=NULL;
+  debug(31,10) ("ORTEPublicationCreate: add CSChange\n");
   CSTWriterAddCSChange(d,&d->writerPublications,csChange);
   pthread_rwlock_unlock(&d->writerPublications.lock);
   pthread_rwlock_unlock(&d->publications.lock);
   pthread_rwlock_unlock(&d->typeEntry.lock);    
   pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&d->objectEntry.objRootLock);
+  debug(31,10) ("ORTEPublicationCreate: finished\n");
   return cstWriter;
 }
 
@@ -183,7 +187,7 @@ ORTEPublicationPropertiesSet(ORTEPublication *cstWriter,ORTEPublProp *pp) {
 int
 ORTEPublicationWaitForSubscriptions(ORTEPublication *cstWriter,NtpTime wait,
     unsigned int retries,unsigned int noSubscriptions) {
-  int rSubscriptions;
+  unsigned int rSubscriptions;
   u_int32_t sec,ms;
 
   if (!cstWriter) return ORTE_BAD_HANDLE;

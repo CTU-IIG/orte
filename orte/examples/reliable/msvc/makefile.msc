@@ -3,7 +3,7 @@
 #
 # CHANGE this definition to point to your compiler's installation directory
 # ---------------------------------------------------------------------
-MSCDIR=		d:\Progra~1\micros~2\vc98
+MSCDIR=		c:\Progra~1\micros~3\vc98
 
 CFLAGS = -c -Zi -MD $(INCLUDE)
 LIB_CFLAGS=	$(CFLAGS) -LD
@@ -17,13 +17,17 @@ CC=		$(MSCDIR)\bin\cl
 LINK=		$(MSCDIR)\bin\link
 LIBRARIAN=	$(MSCDIR)\bin\lib
 
-TARGETS=HelloWorldPublisher.exe
+TARGETS=publisher.exe subscriberreliable.exe subscriberbesteffort.exe
 
 all :	default
 
 default : $(TARGETS)
 
-HelloWorldPublisher.exe: ..\HelloWorldPublisher.obj
+publisher.exe: ..\publisher.obj
+
+subscriberreliable.exe: ..\subscriberreliable.obj
+
+subscriberbesteffort.exe: ..\subscriberbesteffort.obj
 
 # ---------------------------------------------------------------------
 # Generic Compilation Rules

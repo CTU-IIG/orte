@@ -57,7 +57,7 @@ AC_DEFUN(DS_LINUX,
           AC_DEFINE([CONFIG_ORTE_KERNEL],[1],[Define if linux kernel is found])	  
 
 	else
-          AC_MSG_RESULT(["none"])	
+          AC_MSG_RESULT([no])	
   	  
 	  CONFIG_ORTE_KERNEL=no
 	  	  

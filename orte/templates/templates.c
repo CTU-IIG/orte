@@ -1,7 +1,7 @@
 /*
  *  $Id: filename.c,v 0.0.0.1           2003/MM/DD 
  *
- *  DEBUG:  section 16                  Description
+ *  DEBUG:  section XX                  Description
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
  *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/

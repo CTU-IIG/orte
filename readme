@@ -10,9 +10,9 @@ area, which is build on top of standard UDP stack.
 Which targets are supported by ORTE?
 --------------------------
 Linux
-Windows - MinGW, MSVC
+Windows - MinGW, CygWin, MSVC
 RTLinux
-RTAI
+RTAI - RTNet
 
 How to install it?
 ------------------
@@ -41,7 +41,7 @@ How to start?
 -------------
 run :ortemanager &
 see :ortemanager -h for usaged
-note:ortemanager have to run during all communication. For future work can 
+note:ortemanager have to be running during all communication. For future work can 
 be added into /etc/init.d/... script for starting ortemanager during boot
 of machine. This script (redhat and mandrake) is placed in 
 "orte/manager/rc/ortemanagerd"

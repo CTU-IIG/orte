@@ -1,15 +1,15 @@
 If you are a developper and wants to help, enjoy !
 
 ################################################################
-               Release: ORTE0-2-0      Date: 1/8/2004
+               Release: ORTE0-2-0      Date: 17/3/2004
 
 1) clean code !!! :)))
 
-2) autoconf for RTLinux , done
+2) multicast support, infrastructure is prepared
 
-3) portation into RTAI, RTnet
+3) add support CDR types, IDL
 
-4) add support CDR types
+4) java interface, Lukas is working on this implementation
 
 ...
 

@@ -381,7 +381,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         pthread_rwlock_wrlock(&d->psEntry.publicationsLock);
         PublicationList_delete(&d->psEntry,objectEntryOID);
         pthread_rwlock_unlock(&d->psEntry.publicationsLock);
-        if (!objectEntryOID->private) { //not local object cann't be purged
+        if (!objectEntryOID->privateCreated) { //not local object cann't be purged
           objectEntryDelete(d,objectEntryOID);
           objectEntryOID=NULL;
         }
@@ -404,7 +404,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         pthread_rwlock_wrlock(&d->psEntry.subscriptionsLock);
         SubscriptionList_delete(&d->psEntry,objectEntryOID);
         pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
-        if (!objectEntryOID->private) { //local object cann't be purged immediately
+        if (!objectEntryOID->privateCreated) { //local object cann't be purged immediately
           objectEntryDelete(d,objectEntryOID);
           objectEntryOID=NULL;
         }

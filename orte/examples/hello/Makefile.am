@@ -8,7 +8,7 @@ if CONFIG_ORTE_RT
   rt_HelloWorldPublisher_ko_LINK = $(top_builddir)/modtool --link -o $@
 else
   noinst_PROGRAMS = HelloWorldPublisher HelloWorldSubscriber
-if CONFIG_ORTE_WIN
+if CONFIG_ORTE_MINGW
   win_libs= $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 endif
   HelloWorldPublisher_SOURCES = HelloWorldPublisher.c

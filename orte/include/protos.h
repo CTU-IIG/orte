@@ -46,7 +46,7 @@ sock_recvfrom(sock_t *sock, void *buf, int max_len,struct sockaddr_in *des,int d
 extern int
 sock_sendto(sock_t *sock, void *buf, int len,struct sockaddr_in *des,int des_len);
 extern int
-sock_ioctl(sock_t *sock, int cmd, int *arg);
+sock_ioctl(sock_t *sock, long cmd, unsigned long *arg);
 extern int
 sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount);
 
@@ -61,7 +61,7 @@ conv_sn(SequenceNumber *sn,char ef);
 extern void 
 conv_ntp(NtpTime *ntp,char ef);
 extern int
-getStringPart(char *string,char divChar,int iterator,char *buff);
+getStringPart(char *string,char divChar,int *iterator,char *buff);
 
 ///////////////////////////////////////////////////////////////////////////////
 // htimerNtp.c

@@ -74,7 +74,7 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
   sp->mode=mode;
   //insert object to structure objectEntry
   objectEntryOID=objectEntryAdd(d,&guid,(void*)sp);
-  objectEntryOID->private=ORTE_TRUE;
+  objectEntryOID->privateCreated=ORTE_TRUE;
   objectEntryOID->instance=instance;
   objectEntryOID->recvCallBack=recvCallBack;
   objectEntryOID->callBackParam=recvCallBackParam;
@@ -180,7 +180,7 @@ ORTESubscriptionPropertiesSet(ORTESubscription *cstReader,ORTESubsProp *sp) {
 int
 ORTESubscriptionWaitForPublications(ORTESubscription *cstReader,NtpTime wait,
     unsigned int retries,unsigned int noPublications) {
-  int wPublications;
+  unsigned int wPublications;
   u_int32_t sec,ms;
 
   if (!cstReader) return ORTE_BAD_HANDLE;

@@ -74,7 +74,7 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////////////
 // conv
-#ifdef _WIN32
+#if defined CONFIG_ORTE_WIN || defined _MSC_VER
 /* Swap bytes in 16 bit value.  */
 #define bswap_16(x) \
      ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)) 

@@ -164,7 +164,7 @@ struct ObjectEntryOID{
   ObjectEntryHID         *objectEntryHID;
   void                   *attributes;  //atributes of object
   Boolean                appMOM;
-  Boolean                private;      //object created by me self app
+  Boolean                privateCreated;  //object created by me self app
   HTimFncUserNode	       expirationPurgeTimer;
   //only for private CSTPublication,CSTSubscription
   void                   *instance;    //data stream
@@ -261,7 +261,7 @@ typedef struct CSTRemoteReader {
   GUID_RTPS              guid;
   
   gavl_cust_root_field_t csChangeForReader;
-  int                    csChangesCounter;
+  unsigned int           csChangesCounter;
 
   //comm states
   StateMachineHB         commStateHB;
@@ -292,9 +292,9 @@ struct CSTWriter {
   CSTWriterParams        params;
 
   ul_list_head_t         csChanges;
-  int                    csChangesCounter;
+  unsigned int           csChangesCounter;
   gavl_cust_root_field_t cstRemoteReader;
-  int                    cstRemoteReaderCounter;
+  unsigned int           cstRemoteReaderCounter;
   pthread_rwlock_t       lock;
 
   HTimFncUserNode        refreshPeriodTimer;
@@ -338,7 +338,7 @@ typedef struct CSTRemoteWriter {
   GUID_RTPS              guid;
   
   gavl_cust_root_field_t csChangeFromWriter;
-  int                    csChangesCounter;
+  unsigned int           csChangesCounter;
   
   SequenceNumber         sn;
   SequenceNumber         firstSN;
@@ -351,7 +351,7 @@ typedef struct CSTRemoteWriter {
   HTimFncUserNode        delayResponceTimer;
   HTimFncUserNode        repeatActiveQueryTimer;
 
-  int                    ACKRetriesCounter;
+  unsigned int           ACKRetriesCounter;
 } CSTRemoteWriter;
 
 typedef struct CSTSubscriptions CSTSubscriptions;
@@ -368,7 +368,7 @@ struct CSTReader {
 
   ul_list_head_t         csChanges;
   gavl_cust_root_field_t cstRemoteWriter;
-  int                    cstRemoteWriterCounter;
+  unsigned int           cstRemoteWriterCounter;
   pthread_rwlock_t       lock;
   
   //ser./deser. function

@@ -1,6 +1,6 @@
 noinst_PROGRAMS = publisher subscriberreliable subscriberbesteffort
 
-if CONFIG_ORTE_WIN
+if CONFIG_ORTE_MINGW
   win_libs= $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
 endif
 

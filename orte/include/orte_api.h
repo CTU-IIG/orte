@@ -29,8 +29,6 @@ extern "C" {
   #include "orte_config.h"
 #elif defined OMK_FOR_USER
   #include "orte_config_omk_unix.h"
-#elif defined OMK_FOR_WIN32
-  #include "orte_config_omk_win32.h"
 #elif defined OMK_FOR_KERNEL
   #include "orte_config_omk_rtl.h"
 #endif
@@ -41,7 +39,7 @@ extern "C" {
 #ifdef HAVE_LINUX_TYPES_H
   #include <linux/types.h>
 #endif
-#if defined _WIN32 || defined CONFIG_ORTE_WIN
+#if defined _MSC_VER || defined CONFIG_ORTE_MINGW
   #include <ew_types.h>
 #endif
 #include <typedefs_defines_rtps.h>

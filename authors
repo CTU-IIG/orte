@@ -25,3 +25,11 @@ Jan Kiszka <Jan.Kiszka@web.de>
 Zdenek Sebek <sebek@fel.cvut.cz>
     * documentation
 
+Lukas Pokorny <maskis@seznam.cz>
+    * RTPS Ethereal analyzer
+    * Java interface
+    
+Tomas Ciganek <t.ciganek@sh.cvut.cz>
+    * OPNet simulation
+
+

@@ -17,6 +17,7 @@ extern "C" {
 #define GREEN		1
 #define RED		2
 #define BLACK		3
+#define YELLOW          4
 
 typedef struct BoxRect {
     int top_left_x;

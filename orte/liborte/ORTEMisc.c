@@ -29,7 +29,7 @@ ORTESleepMs(unsigned int ms) {
   #ifdef CONFIG_ORTE_RTL
     usleep(ms*1000);
   #endif
-  #ifdef CONFIG_ORTE_WIN
+  #if defined CONFIG_ORTE_WIN
     Sleep(ms);
   #endif
   #ifdef CONFIG_ORTE_RTAI

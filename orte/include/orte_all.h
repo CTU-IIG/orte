@@ -29,8 +29,6 @@ extern "C" {
   #include "orte_config.h"
 #elif defined OMK_FOR_USER
   #include "orte_config_omk_unix.h"
-#elif defined OMK_FOR_WIN32
-  #include "orte_config_omk_win32.h"
 #elif defined OMK_FOR_KERNEL
   #include "orte_config_omk_rtl.h"
 #endif
@@ -59,7 +57,7 @@ extern "C" {
 #ifdef HAVE_SYS_IOCTL_H
   #include <sys/ioctl.h>
 #endif
-#ifdef HAVE_SYS_SOCKET
+#ifdef HAVE_SYS_SOCKET_H
   #include <sys/socket.h>
 #endif
 #ifdef HAVE_SYS_TIME_H
@@ -96,10 +94,10 @@ extern "C" {
   #include <signal.h>
 #endif
 //win32 headers
-#ifdef HAVE_WINSOCK2_H
+#if defined HAVE_WINSOCK2_H && !HAVE_SYS_SOCKET_H
   #include <winsock2.h>
 #endif
-#ifdef HAVE_WS2TCPIP_H
+#if defined HAVE_WS2TCPIP_H && !HAVE_SYS_SOCKET_H
   #include <ws2tcpip.h>
 #endif
 #ifdef HAVE_WINDOWS_H
@@ -159,23 +157,10 @@ extern "C" {
 
 #ifdef CONFIG_ORTE_UNIX
   #define SOCK_BSD       
-#elif defined _WIN32
+#elif CONFIG_ORTE_CYGWIN
+  #define SOCK_BSD         
+#elif CONFIG_ORTE_MINGW
   #define SOCK_WIN
-  #ifndef HAVE_CONFIG_H
-    #include "config.h.undef"
-    #if defined(_MSC_VER) || defined (_OMK_UNIX) 
-      #ifndef inline
-        #define inline _inline
-      #endif
-      #include <stdio.h>
-      #include <stdlib.h>
-      #include <stdarg.h>
-      #include <string.h>
-      #include <winsock2.h>
-      #include <ws2tcpip.h>
-      #include <windows.h>
-    #endif
-  #endif
   #include <win32/pthread.h>
   #include <win32/semaphore.h>
   #include <win32/timeval.h>
@@ -191,6 +176,25 @@ extern "C" {
 #elif defined CONFIG_ORTE_RTAI
   #define SOCK_BSD  
   #include <rtai/compat.h>
+#elif defined _MSC_VER
+  #define SOCK_WIN
+  #ifndef inline
+    #define inline _inline
+  #endif
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <stdarg.h>
+  #include <string.h>
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <windows.h>
+  #include <win32/pthread.h>
+  #include <win32/semaphore.h>
+  #include <win32/timeval.h>
+  #include <win32/getopt.h>
+  #include <ew_types.h>
+  #define ioctl ioctlsocket
+  #define ORTE_PACKAGE_STRING "orte 0.2.0"
 #endif
 
 #ifdef __cplusplus

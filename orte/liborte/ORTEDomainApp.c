@@ -223,7 +223,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
     appParams->managerKeyCount=d->domainProp.IFCount+1;
   } else {
     appParams->managerKeyCount=i=0;
-    while (getStringPart(d->domainProp.keys,':',i,sbuff)) {
+    while (getStringPart(d->domainProp.keys,':',&i,sbuff)) {
       appParams->managerKeyList[appParams->managerKeyCount++]=
           StringToIPAddress(sbuff);
     }
@@ -231,7 +231,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   d->appParams=appParams;
   //insert object, doesn't need to be locked
   d->objectEntryOID=objectEntryAdd(d,&d->guid,(void*)appParams);
-  d->objectEntryOID->private=ORTE_TRUE;
+  d->objectEntryOID->privateCreated=ORTE_TRUE;
 
   //CST objects
   //  writerApplicationSelf (WAS)

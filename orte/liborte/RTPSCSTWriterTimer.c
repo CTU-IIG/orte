@@ -102,7 +102,7 @@ CSTWriterAnnounceIssueTimer(ORTEDomain *d,void *vcstRemoteReader) {
   CSTRemoteReader *cstRemoteReader=(CSTRemoteReader*)vcstRemoteReader;
   NtpTime         nextHB;
   ORTEPublProp    *pp;
-  int 	           len;
+  int             len;
 
   debug(52,10) ("CSTWriterAnnounceIssueTimer: start\n");
   pp=(ORTEPublProp*)cstRemoteReader->cstWriter->objectEntryOID->attributes;
@@ -226,9 +226,8 @@ int
 CSTWriterSendStrictTimer(ORTEDomain *d,void *vcstRemoteReader) {
   CSTRemoteReader   *cstRemoteReader=(CSTRemoteReader*)vcstRemoteReader;
   CSChangeForReader *csChangeForReader=NULL;
-  unsigned int      max_msg_len;
+  int               max_msg_len,len;
   CSChange          *csChange;
-  int               len;
   Boolean           firstTrace=ORTE_TRUE;
   
   debug(52,10) ("CSTWriterSendStrictTimer: start\n");

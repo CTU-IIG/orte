@@ -207,7 +207,7 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
             debug(46,2) ("new manager 0x%x-0x%x accepted\n",
                           objectGUID.hid,objectGUID.aid);
             objectEntryOID=objectEntryAdd(d,&objectGUID,(void*)ap);
-            objectEntryOID->private=ORTE_FALSE;
+            objectEntryOID->privateCreated=ORTE_FALSE;
             pthread_rwlock_wrlock(&d->readerApplications.lock);
             CSTReaderAddRemoteWriter(d,&d->readerApplications,
                                     objectEntryOID,OID_WRITE_APP);
@@ -273,7 +273,7 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
                 debug(46,2) ("new application 0x%x-0x%x accepted\n",
                               objectGUID.hid,objectGUID.aid);
                 objectEntryOID=objectEntryAdd(d,&objectGUID,(void*)ap);
-                objectEntryOID->private=ORTE_FALSE;
+                objectEntryOID->privateCreated=ORTE_FALSE;
               } else {
                 FREE(ap);
                 break;
@@ -323,7 +323,7 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
               debug(46,2) ("new publisher 0x%x-0x%x-0x%x accepted\n",
                             objectGUID.hid,objectGUID.aid,objectGUID.oid);
               objectEntryOID=objectEntryAdd(d,&objectGUID,(void*)pp);
-              objectEntryOID->private=ORTE_FALSE;
+              objectEntryOID->privateCreated=ORTE_FALSE;
               pthread_rwlock_wrlock(&d->psEntry.publicationsLock);
               PublicationList_insert(&d->psEntry,objectEntryOID);
               pthread_rwlock_unlock(&d->psEntry.publicationsLock);
@@ -356,7 +356,7 @@ RTPSVar(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIP
               debug(46,2) ("new subscriber 0x%x-0x%x-0x%x accepted\n",
                             objectGUID.hid,objectGUID.aid,objectGUID.oid);
               objectEntryOID=objectEntryAdd(d,&objectGUID,(void*)sp);
-              objectEntryOID->private=ORTE_FALSE;
+              objectEntryOID->privateCreated=ORTE_FALSE;
               pthread_rwlock_wrlock(&d->psEntry.subscriptionsLock);
               SubscriptionList_insert(&d->psEntry,objectEntryOID);
               pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
@@ -453,7 +453,7 @@ NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
         (strcmp(pp->typeName,sp->typeName)==0) &&
         (pp->typeChecksum==sp->typeChecksum)) {
       //add Subscription to Publisher (only if private)
-      if (op->private) {
+      if (op->privateCreated) {
         pthread_rwlock_rdlock(&d->publications.lock);
         if ((cstWriter=CSTWriter_find(&d->publications,&op->guid))) {
           pthread_rwlock_wrlock(&cstWriter->lock);
@@ -468,7 +468,7 @@ NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
         pthread_rwlock_unlock(&d->publications.lock);
       }
       //add Publisher to Subscriber (only if private)
-      if (o->private) {
+      if (o->privateCreated) {
         pthread_rwlock_rdlock(&d->subscriptions.lock);
         if ((cstReader=CSTReader_find(&d->subscriptions,&o->guid))) {
           pthread_rwlock_wrlock(&cstReader->lock);
@@ -504,7 +504,7 @@ NewSubscriber(ORTEDomain *d,ObjectEntryOID *os) {
         (strcmp(sp->typeName,pp->typeName)==0) &&
         (sp->typeChecksum==pp->typeChecksum)) {
       //add Publication to Subscription (only if private)
-      if (os->private) {
+      if (os->privateCreated) {
         pthread_rwlock_rdlock(&d->subscriptions.lock);
         if ((cstReader=CSTReader_find(&d->subscriptions,&os->guid))) {
           pthread_rwlock_wrlock(&cstReader->lock);
@@ -519,7 +519,7 @@ NewSubscriber(ORTEDomain *d,ObjectEntryOID *os) {
         pthread_rwlock_unlock(&d->subscriptions.lock);
       }
       //add Subscriber to Publisher (only if private)
-      if (o->private) {
+      if (o->privateCreated) {
         pthread_rwlock_rdlock(&d->publications.lock);
         if ((cstWriter=CSTWriter_find(&d->publications,&o->guid))) {
           pthread_rwlock_wrlock(&cstWriter->lock);
