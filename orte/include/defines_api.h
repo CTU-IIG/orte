@@ -38,10 +38,15 @@ extern "C" {
 #define ORTE_QUEUE_FULL		  -3
 
 /*****************************************************************/
-// Cmp two sequence numbers
-// Return:  1 if sn1>sn2
-//         -1 if sn1<sn2
-//          0 if sn1=sn2
+/**
+ * SeqNumberCmp - comparison of two sequence numbers
+ * @sn1: source sequential number 1
+ * @sn2: source sequential number 2
+ * 
+ * Return:  1 if sn1 > sn2
+ *         -1 if sn1 < sn2
+ *          0 if sn1 = sn2
+ */
 #define SeqNumberCmp(sn1, sn2) (                 \
           (sn1).high>(sn2).high ? 1 :            \
         ((sn1).high<(sn2).high ? -1 :            \
@@ -50,14 +55,29 @@ extern "C" {
     )
 
 /*****************************************************************/
-#define SeqNumberInc(res,sn) {                   \
+/**
+ * SeqNumberInc - incrementation of a sequence number
+ * @res: result
+ * @sn: sequential number to be incremented
+ * 
+ * res = sn + 1
+ */
+ #define SeqNumberInc(res,sn) {                   \
       (res) = (sn);                              \
           if (++(res).low==0) (res).high++;      \
         }
 
 
 /*****************************************************************/
-#define SeqNumberAdd(res,sn1,sn2) {              \
+/**
+ * SeqNumberSub - addition of two sequential numbers
+ * @res: result
+ * @sn1: source sequential number 1
+ * @sn2: source sequential number 2
+ *
+ * res = sn1 + sn2
+ */
+ #define SeqNumberAdd(res,sn1,sn2) {              \
     (res).low = (sn1).low+(sn2).low;             \
     (res).high = (sn1).high+(sn2).high;          \
     if (((res).low < (sn1).low) ||               \
@@ -67,12 +87,27 @@ extern "C" {
 }
 
 /*****************************************************************/
+/**
+ * SeqNumberDec - decrementation of a sequence number
+ * @res: result
+ * @sn: sequential number to be decremented
+ * 
+ * res = sn - 1
+ */
 #define SeqNumberDec(res,sn) {                   \
       (res) = (sn);                              \
           if ((res).low--==0) (res).high--;      \
         }
 
 /*****************************************************************/
+/**
+ * SeqNumberSub - substraction of two sequential numbers
+ * @res: result
+ * @sn1: source sequential number 1
+ * @sn2: source sequential number 2
+ *
+ * res = sn1 - sn2
+ */
 #define SeqNumberSub(res,sn1,sn2) {                  \
     (res).low = (sn1).low-(sn2).low;                 \
     (res).high = (sn1).high-(sn2).high;              \
@@ -82,6 +117,16 @@ extern "C" {
 }
 
 /*****************************************************************/
+/**
+ * NtpTimeCmp - comparation of two NtpTimes
+ * @time1: source time 1
+ * @time2: source time 2
+ *
+ * Return value:
+ * 1 if time 1 > time 2 
+ * -1 if time 1 < time 2
+ * 0 if time 1 = time 2
+ */
 #define NtpTimeCmp(time1, time2)                     \
 ((((time1).seconds) > ((time2).seconds)) ? 1 :       \
  ((((time1).seconds) < ((time2).seconds)) ? -1 :     \
@@ -90,6 +135,14 @@ extern "C" {
 
 
 /*****************************************************************/
+/**
+ * NtpTimeAdd - addition of two NtpTimes
+ * @res: result
+ * @time1: source time 1
+ * @time2: source time 2
+ *
+ * res = time1 + time2
+ */
 #define NtpTimeAdd(res, time1, time2) {              \
     (res).seconds  = (time1).seconds + (time2).seconds;   \
     (res).fraction = (time1).fraction + (time2).fraction; \
@@ -100,6 +153,14 @@ extern "C" {
 }
 
 /*****************************************************************/
+/**
+ * NtpTimeSub - substraction of two NtpTimes
+ * @res: result
+ * @time1: source time 1
+ * @time2: source time 2
+ *
+ * res = time1 - time2
+ */
 #define NtpTimeSub(res, time1, time2) {              \
    (res).seconds  = (time1).seconds - (time2).seconds;   \
    (res).fraction = (time1).fraction - (time2).fraction; \
@@ -163,8 +224,8 @@ extern "C" {
 
 /**
  * Domain2Port - converts Domain value to IP Port value
- * @domain: 
- * @port:
+ * @d: domain
+ * @p: port
  */
 #define Domain2Port(d,p) {                   \
   p = RTPS_DEFAULT_PORT + d*10;              \
@@ -172,8 +233,8 @@ extern "C" {
 
 /**
  * Domain2PortMulticastUserdata - converts Domain value to userdata IP Port value
- * @domain: 
- * @port:
+ * @d: domain
+ * @p: port
  */
 #define Domain2PortMulticastUserdata(d,p) {  \
     p = RTPS_DEFAULT_PORT + d*10+1;          \
@@ -181,8 +242,8 @@ extern "C" {
 
 /**
  * Domain2PortMulticastMetatraffic - converts Domain value to metatraffic IP Port value
- * @domain: 
- * @port:
+ * @d: domain
+ * @p: port
  */
 #define Domain2PortMulticastMetatraffic(d,p) {        \
     p = RTPS_DEFAULT_PORT + d*10+2;          \
