@@ -1,7 +1,10 @@
+v0.3.0 -
+- fixed csChange memory lake in RTPSVar
+
 v0.2.3 - 09/26/2004
 
 - fixed unsolve symbols for RTNet
-- fix aclocal script for 1.8.3 version (admin/linux.m4)
+- fixed aclocal script for 1.8.3 version (admin/linux.m4)
 - add support shared lobraries (libtool)
 - added new target (FreeBSD)
 - ortemanager runable like windows service
