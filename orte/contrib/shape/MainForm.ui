@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>MainForm</class>
 <widget class="QDialog">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>500</width>
-            <height>325</height>
+            <width>447</width>
+            <height>306</height>
         </rect>
     </property>
     <property name="caption">
@@ -157,14 +157,14 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>40</width>
+                    <width>16</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout25</cstring>
+                <cstring>layout8</cstring>
             </property>
             <vbox>
                 <property name="name">
@@ -233,6 +233,34 @@
                 </widget>
                 <spacer>
                     <property name="name">
+                        <cstring>spacer10_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>40</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Don't forget to run ortemanager!</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignCenter</set>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
                         <cstring>spacer13</cstring>
                     </property>
                     <property name="orientation">
@@ -244,7 +272,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>20</width>
-                            <height>167</height>
+                            <height>50</height>
                         </size>
                     </property>
                 </spacer>
@@ -279,7 +307,7 @@
                             </property>
                             <property name="minimumSize">
                                 <size>
-                                    <width>140</width>
+                                    <width>120</width>
                                     <height>0</height>
                                 </size>
                             </property>
@@ -320,7 +348,7 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>40</width>
+                    <width>16</width>
                     <height>20</height>
                 </size>
             </property>

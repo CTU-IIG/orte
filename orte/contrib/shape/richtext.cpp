@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.cpp,v 1.2 2004/03/17 23:12:54 smolik Exp $
+** $Id: richtext.cpp,v 1.3 2004/03/18 21:38:02 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
@@ -18,13 +18,25 @@
 #include <qapplication.h>
 
 static const char* publisherExamples[] = {
-    "<b>Saying 1:</b><br>"
-    "<hr><br><br>"
-    "<big>Evil is that which one believes of others.  It is a sin to believe evil "
-    "of others, but it is seldom a mistake.</big><br><br>"
-    "<center><i>-- H.L. Mencken</i></center>",
+    "<b>Publisher Example 1:</b><br>"
+    "<hr><br>"
 
-    "<b>Saying 2:</b><br>"
+    "<pre>ORTEInit();<br>"
+    "d=<b>ORTEDomainAppCreate</b>(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);<br>"
+    "<b>ORTETypeRegisterAdd</b>(d,\"HelloMsg\",NULL,NULL,64);<br>"
+    "NTPTIME_BUILD(persistence,3);<br>"
+    "p=<b>ORTEPublicationCreate</b>(<br>"
+    "     d,<br>"
+    "     \"Example HelloMsg\",    /* Topic */<br>"
+    "     \"HelloMsg\",            /* Type */<br>"
+    "     &instance2Send,        /* Instance */<br>"
+    "     &persistence,          /* Persistance */<br>"
+    "     1,                     /* Strength */<br>"
+    "     NULL,<br>"
+    "     NULL,<br>"
+    "     NULL);<br></pre>",
+  
+    "<b>Example 2:</b><br>"
     "<hr><br><br>"
     "<big>A well-used door needs no oil on its hinges.<br>"
     "A swift-flowing steam does not grow stagnant.<br>"
@@ -37,11 +49,36 @@ static const char* publisherExamples[] = {
 };
 
 static const char* subscriberExamples[] = {
-    "<b>Example 1:</b><br>"
-    "<hr><br><br>"
-    "<big>Evil is that which one believes of others.  It is a sin to believe evil "
-    "of others, but it is seldom a mistake.</big><br><br>"
-    "<center><i>-- H.L. Mencken</i></center>",
+    "<b>Subscriber Example 1:</b><br>"
+    "<hr><br>"
+
+    "<pre>ORTEInit();<br>"
+    "d=<b>ORTEDomainAppCreate</b>(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);<br>"
+    "<b>ORTETypeRegisterAdd</b>(d,\"HelloMsg\",NULL,NULL,64);<br>"
+    "NTPTIME_BUILD(persistence,3);<br>"
+    "s=<b>ORTESubscriptionCreate</b>(<br>"
+    "    d,<br>"
+    "    IMMEDIATE,<br>"
+    "    BEST_EFFORTS,<br>"
+    "    \"Example HelloMsg\",     /* Topic */<br>"
+    "    \"HelloMsg\",             /* Type */<br>"
+    "    &instance2Recv,         /* Instance */<br>"
+    "    &deadline,              /* Deadline */<br>"
+    "    &minimumSeparation,     /* Minimum Separation */<br>"
+    "    recvCallBack,           /* CallBack function */<br>"
+    "    NULL);<br><br>"
+    "void <b>recvCallBack</b>(const ORTERecvInfo *info,<br>"
+    "                  void *vinstance, void *recvCallBackParam) {<br>"
+    "  char *instance=(char*)vinstance;<br><br>"
+    "  switch (info->status) {<br>"
+    "    case NEW_DATA:<br>"
+    "      printf(\"%s\",instance);<br>"
+    "      break;<br>"
+    "    case DEADLINE:<br>"
+    "      printf(\"deadline occured\");<br>"
+    "      break;<br>"
+    "  }<br>"
+    "}<br></pre>",
 
     "<b>Example 2:</b><br>"
     "<hr><br><br>"
@@ -69,7 +106,7 @@ MyRichText::MyRichText( QWidget *parent, const char *name )
     else
 	view->setPaper( white );
 
-    view->setMinimumSize( 450, 250 );
+    view->setMinimumSize( 500, 250 );
 
     QHBox *buttons = new QHBox( this );
     buttons->setMargin( 5 );

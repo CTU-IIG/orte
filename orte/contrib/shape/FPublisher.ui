@@ -1,6 +1,6 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>FPublisher</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>FPublisher</cstring>
     </property>
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>389</width>
-            <height>254</height>
+            <height>256</height>
         </rect>
     </property>
     <property name="caption">
@@ -83,7 +83,7 @@
                         <number>5</number>
                     </property>
                     <property name="pageStep">
-                        <number>10</number>
+                        <number>1</number>
                     </property>
                     <property name="orientation">
                         <enum>Horizontal</enum>

@@ -20,7 +20,8 @@ void MainForm::addPublisher()
 {
 
     FPublisher *fp;
-    fp = new FPublisher(this);
+    fp = new FPublisher;
+    connect( this, SIGNAL( sigClose() ), fp, SLOT( destroy() ) );
     fp->initPublisher(publGroup->id(publGroup->selected()),rand()%3);
     fp->show();
 }
@@ -28,7 +29,8 @@ void MainForm::addPublisher()
 void MainForm::addSubscriber()
 {
     FSubscriber *fs;
-    fs = new FSubscriber(this);
+    fs = new FSubscriber;
+    connect( this, SIGNAL( sigClose() ), fs, SLOT( destroy() ) );
     fs->initSubscribers(
 	clBlue->isChecked(),
         clGreen->isChecked(),
@@ -41,7 +43,7 @@ void MainForm::addSubscriber()
 void MainForm::about()
 {
     QMessageBox::about( this, "ORTE application demo",
-                        "This application demonstrates use of ORTE library\n\n"
+                        "This application demonstrates usege of ORTE library\n\n"
 			"Petr Smolik (c) 2004\n"
 			"OCERA team");
 }
