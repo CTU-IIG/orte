@@ -230,7 +230,8 @@ appSelfParamChanged(ORTEDomain *d,
      
   if (lock) {
     pthread_rwlock_wrlock(&d->writerApplicationSelf.lock);
-    pthread_rwlock_wrlock(&d->writerManagers.lock);
+    if (forWM)
+      pthread_rwlock_wrlock(&d->writerManagers.lock);
   }
   csChange=(CSChange*)MALLOC(sizeof(CSChange));
   parameterUpdateCSChange(csChange,d->appParams,ORTE_TRUE);
@@ -248,6 +249,7 @@ appSelfParamChanged(ORTEDomain *d,
   }
   if (unlock) {
     pthread_rwlock_unlock(&d->writerApplicationSelf.lock);
-    pthread_rwlock_unlock(&d->writerManagers.lock);
+    if (forWM)
+      pthread_rwlock_unlock(&d->writerManagers.lock);
   }
 }

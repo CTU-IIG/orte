@@ -56,7 +56,7 @@ subscriberCreate(void *arg) {
   NtpTime             deadline,minimumSeparation;
 
   ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,64);
-  NTPTIME_BUILD(deadline,20);
+  NTPTIME_BUILD(deadline,10);
   NTPTIME_BUILD(minimumSeparation,0);
   s=ORTESubscriptionCreate(
        d,
@@ -108,7 +108,9 @@ int
 init_module(void) {
   ORTEDomainProp      dp;
 
+  ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
+  //ORTEVerbositySetOptions("ALL,10");  
   dp.appLocalManager=StringToIPAddress(manager);
   d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
   if (d) 

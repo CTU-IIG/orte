@@ -273,7 +273,7 @@ PACKAGE_VERSION='0.2.0'
 PACKAGE_STRING='orte 0.2.0'
 PACKAGE_BUGREPORT='petr.smolik@wo.cz'
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LINUX_DIR LINUX_ARCH LINUX_AFLAGS LINUX_LDFLAGS LINUX_ARFLAGS LINUX_CROSS_COMPILE LINUX_KERNELRELEASE LINUX_CFLAGS LINUX_CC LINUX_LD LINUX_AS LINUX_MODULE_EXT CONFIG_ORTE_KERNEL CONFIG_ORTE_KERNEL_TRUE CONFIG_ORTE_KERNEL_FALSE CONFIG_RTHAL_TRUE CONFIG_RTHAL_FALSE RTAI_CFLAGS CONFIG_RTLINUX_TRUE CONFIG_RTLINUX_FALSE RTLINUX_CFLAGS RTLINUX_CC CONFIG_ORTE_RT USE_RTAI_TRUE USE_RTAI_FALSE USE_RTLINUX_TRUE USE_RTLINUX_FALSE CONFIG_ORTE_RT_TRUE CONFIG_ORTE_RT_FALSE ORTE_MAJOR_VERSION ORTE_MINOR_VERSION ORTE_MICRO_VERSION ORTE_VERSION CONFIG_ORTE_WIN_TRUE CONFIG_ORTE_WIN_FALSE CONFIG_ORTE_UNIX_TRUE CONFIG_ORTE_UNIX_FALSE moduledir modulePROGRAMS_INSTALL CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE RANLIB ac_ct_RANLIB CPP EGREP INCLUDES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LINUX_DIR LINUX_ARCH LINUX_AFLAGS LINUX_LDFLAGS LINUX_ARFLAGS LINUX_CROSS_COMPILE LINUX_KERNELRELEASE LINUX_CFLAGS LINUX_CC LINUX_LD LINUX_AS LINUX_MODULE_EXT CONFIG_ORTE_KERNEL CONFIG_ORTE_KERNEL_TRUE CONFIG_ORTE_KERNEL_FALSE CONFIG_RTHAL_TRUE CONFIG_RTHAL_FALSE CONFIG_ADEOS_TRUE CONFIG_ADEOS_FALSE RTAI_CFLAGS CONFIG_RTLINUX_TRUE CONFIG_RTLINUX_FALSE RTLINUX_CFLAGS RTLINUX_CC CONFIG_ORTE_RT USE_RTAI_TRUE USE_RTAI_FALSE USE_RTLINUX_TRUE USE_RTLINUX_FALSE CONFIG_ORTE_RT_TRUE CONFIG_ORTE_RT_FALSE ORTE_MAJOR_VERSION ORTE_MINOR_VERSION ORTE_MICRO_VERSION ORTE_VERSION CONFIG_ORTE_WIN_TRUE CONFIG_ORTE_WIN_FALSE CONFIG_ORTE_UNIX_TRUE CONFIG_ORTE_UNIX_FALSE moduledir modulePROGRAMS_INSTALL CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE RANLIB ac_ct_RANLIB CPP EGREP INCLUDES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -825,7 +825,8 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-linuxdir=DIR     specify path to Linux source directory
-  --with-rtaidir=DIR      specify path to RTAI source directory
+  --with-rtaidir=DIR      specify path to RTAI source/installation directory
+  --with-rtnetdir=DIR     specify path to RTnet source/installation directory
   --with-rtlinuxdir=DIR   specify path to RTLinux source directory
   --with-rtlinuxudpdir=DIR
                           specify path to RTLinux UDP source directory
@@ -1993,6 +1994,15 @@ else
 fi;
 
 
+# Check whether --with-rtnetdir or --without-rtnetdir was given.
+if test "${with_rtnetdir+set}" = set; then
+  withval="$with_rtnetdir"
+  RTNET_DIR="${withval}"
+else
+  RTNET_DIR=/usr/src/rtnet
+fi;
+
+
 
 	echo "$as_me:$LINENO: checking Linux config option CONFIG_RTHAL" >&5
 echo $ECHO_N "checking Linux config option CONFIG_RTHAL... $ECHO_C" >&6
@@ -2025,7 +2035,39 @@ fi
 
 
 
-	if test "${CONFIG_RTHAL}" != "no" ; then
+
+	echo "$as_me:$LINENO: checking Linux config option CONFIG_ADEOS" >&5
+echo $ECHO_N "checking Linux config option CONFIG_ADEOS... $ECHO_C" >&6
+
+	if grep '^CONFIG_ADEOS=y$' ${LINUX_DIR}/.config >/dev/null 2>/dev/null; then
+		result=yes
+		CONFIG_ADEOS=yes
+	else if grep '^CONFIG_ADEOS=m$' ${LINUX_DIR}/.config >/dev/null 2>/dev/null; then
+		result=module
+		CONFIG_ADEOS=module
+	else
+		result=no
+		CONFIG_ADEOS=no
+	fi
+	fi
+
+	echo "$as_me:$LINENO: result: $result" >&5
+echo "${ECHO_T}$result" >&6
+
+
+
+
+if test "${CONFIG_ADEOS}" = yes -o "${CONFIG_ADEOS}" = module; then
+  CONFIG_ADEOS_TRUE=
+  CONFIG_ADEOS_FALSE='#'
+else
+  CONFIG_ADEOS_TRUE='#'
+  CONFIG_ADEOS_FALSE=
+fi
+
+
+
+	if test "${CONFIG_RTHAL}" != "no" -o "${CONFIG_ADEOS}" != "no"; then
 		echo "$as_me:$LINENO: checking RTAI directory ${RTAI_DIR}" >&5
 echo $ECHO_N "checking RTAI directory ${RTAI_DIR}... $ECHO_C" >&6
 		if [ -d ${RTAI_DIR}/include ] ; then
@@ -2039,11 +2081,22 @@ echo "$as_me: error: incorrect RTAI directory?" >&2;}
    { (exit 1); exit 1; }; }
 			fi
 		fi
-		USE_RTAI=yes
-                RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
-		RTAI_CFLAGS="${RTAI_CFLAGS} -I${RT_GCCLIB_DIR}/include -nostdinc"
 		echo "$as_me:$LINENO: result: found" >&5
 echo "${ECHO_T}found" >&6
+		echo "$as_me:$LINENO: checking RTnet directory ${RTNET_DIR}" >&5
+echo $ECHO_N "checking RTnet directory ${RTNET_DIR}... $ECHO_C" >&6
+		if [ -d ${RTNET_DIR}/include ] ; then
+			RTAI_CFLAGS="${RTAI_CFLAGS} -I${RTNET_DIR}/include"
+		else
+			{ { echo "$as_me:$LINENO: error: incorrect RTnet directory?" >&5
+echo "$as_me: error: incorrect RTnet directory?" >&2;}
+   { (exit 1); exit 1; }; }
+		fi
+		echo "$as_me:$LINENO: result: found" >&5
+echo "${ECHO_T}found" >&6
+		USE_RTAI=yes
+		RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
+		RTAI_CFLAGS="${RTAI_CFLAGS} -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 
 cat >>confdefs.h <<\_ACEOF
 #define CONFIG_ORTE_RTAI 1
@@ -2137,7 +2190,7 @@ echo "$as_me: error: incorrect RTLinux UDP directory!!!" >&2;}
    { (exit 1); exit 1; }; }
 		fi
                 RT_GCCLIB_DIR=`${RTLINUX_CC} -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
-		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -I${RT_GCCLIB_DIR}/include -nostdinc"
+		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 		echo "$as_me:$LINENO: result: found" >&5
 echo "${ECHO_T}found" >&6
 		USE_RTLINUX=yes
@@ -5183,6 +5236,13 @@ echo "$as_me: error: conditional \"CONFIG_RTHAL\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
+if test -z "${CONFIG_ADEOS_TRUE}" && test -z "${CONFIG_ADEOS_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"CONFIG_ADEOS\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"CONFIG_ADEOS\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 if test -z "${CONFIG_RTLINUX_TRUE}" && test -z "${CONFIG_RTLINUX_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"CONFIG_RTLINUX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
@@ -5823,6 +5883,8 @@ s,@CONFIG_ORTE_KERNEL_TRUE@,$CONFIG_ORTE_KERNEL_TRUE,;t t
 s,@CONFIG_ORTE_KERNEL_FALSE@,$CONFIG_ORTE_KERNEL_FALSE,;t t
 s,@CONFIG_RTHAL_TRUE@,$CONFIG_RTHAL_TRUE,;t t
 s,@CONFIG_RTHAL_FALSE@,$CONFIG_RTHAL_FALSE,;t t
+s,@CONFIG_ADEOS_TRUE@,$CONFIG_ADEOS_TRUE,;t t
+s,@CONFIG_ADEOS_FALSE@,$CONFIG_ADEOS_FALSE,;t t
 s,@RTAI_CFLAGS@,$RTAI_CFLAGS,;t t
 s,@CONFIG_RTLINUX_TRUE@,$CONFIG_RTLINUX_TRUE,;t t
 s,@CONFIG_RTLINUX_FALSE@,$CONFIG_RTLINUX_FALSE,;t t

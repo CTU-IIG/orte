@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.4 2004/02/15 22:23:51 smolik Exp $
+# $Id: configure.in,v 1.5 2004/02/26 21:58:28 smolik Exp $
 
 # autoconf requirement
 

@@ -216,13 +216,20 @@ AC_DEFUN(DS_RTAI,
 [
 	AC_ARG_WITH([rtaidir],
 		[AC_HELP_STRING([--with-rtaidir=DIR],
-			[specify path to RTAI source directory])],
+    		    [specify path to RTAI source/installation directory])],
 		[RTAI_DIR="${withval}"],
 		[RTAI_DIR=/usr/src/rtai])
 
-	DS_LINUX_CONFIG_OPTION_MODULE([CONFIG_RTHAL])
+	AC_ARG_WITH([rtnetdir],
+		[AC_HELP_STRING([--with-rtnetdir=DIR],
+			[specify path to RTnet source/installation directory])],
+		[RTNET_DIR="${withval}"],
+		[RTNET_DIR=/usr/src/rtnet])
 
-	if test "${CONFIG_RTHAL}" != "no" ; then
+	DS_LINUX_CONFIG_OPTION_MODULE([CONFIG_RTHAL])
+	DS_LINUX_CONFIG_OPTION_MODULE([CONFIG_ADEOS])
+
+	if test "${CONFIG_RTHAL}" != "no" -o "${CONFIG_ADEOS}" != "no"; then
 		AC_MSG_CHECKING([RTAI directory ${RTAI_DIR}])
 		if [[ -d ${RTAI_DIR}/include ]] ; then
 			RTAI_CFLAGS="-I${RTAI_DIR}/include"
@@ -233,10 +240,17 @@ AC_DEFUN(DS_RTAI,
 				AC_MSG_ERROR([incorrect RTAI directory?])
 			fi
 		fi
-		$1
-                RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
-		RTAI_CFLAGS="${RTAI_CFLAGS} -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 		AC_MSG_RESULT([found])
+		AC_MSG_CHECKING([RTnet directory ${RTNET_DIR}])
+		if [[ -d ${RTNET_DIR}/include ]] ; then
+			RTAI_CFLAGS="${RTAI_CFLAGS} -I${RTNET_DIR}/include"
+		else
+			AC_MSG_ERROR([incorrect RTnet directory?])
+		fi
+		AC_MSG_RESULT([found])
+		$1
+		RT_GCCLIB_DIR=`gcc -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
+		RTAI_CFLAGS="${RTAI_CFLAGS} -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 		AC_DEFINE([CONFIG_ORTE_RTAI],[1],[Define if kernel is RTAI patched])
 	else
 		$2

@@ -1,3 +1,5 @@
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
+
 bin_PROGRAMS = orteping
 
 INCLUDES = -I $(srcdir)/../../include
@@ -5,4 +7,6 @@ INCLUDES = -I $(srcdir)/../../include
 orteping_SOURCES = orteping.c
 
 lib_LOADLIBES =  orte pthread
+
+endif #CONFIG_OC_ETH_ORTE_EXAMPLES
 

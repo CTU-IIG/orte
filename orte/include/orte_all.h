@@ -29,6 +29,8 @@ extern "C" {
   #include "orte_config.h"
 #elif defined OMK_FOR_USER
   #include "orte_config_omk_unix.h"
+#elif defined OMK_FOR_WIN32
+  #include "orte_config_omk_win32.h"
 #elif defined OMK_FOR_KERNEL
   #include "orte_config_omk_rtl.h"
 #endif

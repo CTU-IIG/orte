@@ -1,3 +1,5 @@
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
+
 bin_PROGRAMS = ortespy
 
 INCLUDES = -I $(srcdir)/../../include
@@ -6,3 +8,4 @@ ortespy_SOURCES = ortespy.c
 
 lib_LOADLIBES =  orte pthread
 
+endif #CONFIG_OC_ETH_ORTE_EXAMPLES

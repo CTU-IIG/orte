@@ -106,6 +106,7 @@ int
 init_module(void) {
   ORTEDomainProp      dp;
 
+  ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
   dp.appLocalManager=StringToIPAddress(manager);
   d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);

@@ -1,3 +1,5 @@
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
+
 INCLUDES = -I $(srcdir)/../../include
 
 utils_PROGRAMS = publisher subscriberreliable subscriberbesteffort
@@ -10,3 +12,4 @@ subscriberbesteffort_SOURCES = subscriberbesteffort.c
 
 lib_LOADLIBES =  orte pthread
 
+endif #CONFIG_OC_ETH_ORTE_EXAMPLES

@@ -1,3 +1,5 @@
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
+
 INCLUDES = -I $(srcdir)/../../include
 
 utils_PROGRAMS = helloPublisher helloSubscriber
@@ -8,8 +10,12 @@ helloSubscriber_SOURCES = HelloWorldSubscriber.c
 
 lib_LOADLIBES =  orte pthread
 
+endif #CONFIG_OC_ETH_ORTE_EXAMPLES
+
 #############################################################################
 # RT-Linux version of build
+
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_RTL),y)
 
 rtlinux_MODULES = HelloWorldPublisher HelloWorldSubscriber
 
@@ -20,3 +26,5 @@ HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
 HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
 
 rtlinux_LOADLIBES =  orte_rt pthread_rwlock
+
+endif #CONFIG_OC_ETH_ORTE_EXAMPLES
