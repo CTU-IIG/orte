@@ -1,0 +1,7 @@
+INCLUDES = -D_OMK_UNIX
+
+bin_PROGRAMS = ORTEManager
+
+ORTEManager_SOURCES = ORTEManager.c
+
+lib_LOADLIBES =  orte pthread

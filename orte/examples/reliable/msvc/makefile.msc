@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------
+# Microsoft C/C++ Installation Directory
+#
+# CHANGE this definition to point to your compiler's installation directory
+# ---------------------------------------------------------------------
+MSCDIR=		d:\Progra~1\micros~2\vc98
+
+CFLAGS = -c -Zi -MD $(INCLUDE)
+LIB_CFLAGS=	$(CFLAGS) -LD
+INCLUDE=	-I$(MSCDIR)\include -I..\..\..\include -I..\..\..\include\win32
+LIBS=		$(MSCDIR)\lib\msvcrt.lib $(MSCDIR)\lib\uuid.lib $(MSCDIR)\lib\oldnames.lib \
+                $(MSCDIR)\lib\kernel32.lib $(MSCDIR)\lib\libcd.lib $(MSCDIR)\lib\wsock32.lib \
+                $(MSCDIR)\lib\advapi32.lib $(MSCDIR)\lib\ws2_32.lib\
+                ..\..\..\contrib\win_pthread\pthreadVC.lib \
+                ..\..\..\liborte\msvc\liborte.lib
+CC=		$(MSCDIR)\bin\cl
+LINK=		$(MSCDIR)\bin\link
+LIBRARIAN=	$(MSCDIR)\bin\lib
+
+TARGETS=HelloWorldPublisher.exe
+
+all :	default
+
+default : $(TARGETS)
+
+HelloWorldPublisher.exe: ..\HelloWorldPublisher.obj
+
+# ---------------------------------------------------------------------
+# Generic Compilation Rules
+#
+# Do NOT change anything below this point.
+# ---------------------------------------------------------------------
+#.SUFFIXES: .c .obj .exe
+
+.c.obj:
+	$(CC) $(CFLAGS) $< -Fo$*.obj
+
+.obj.exe:
+	$(LINK) -out:$@ $(ORTELIB) $< $(LIBS)
+
+clean :
+	del *.obj
+        del *.exe
+        del *.pdb
+
+

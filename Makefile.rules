@@ -1,0 +1,413 @@
+#  Makefile.rules - OCERA make framework common project rules
+#   
+#  (C) Copyright 2003 by Pavel Pisa - OCERA team member
+#
+#  The uLan driver is distributed under the Gnu General Public License. 
+#  See file COPYING for details.
+#
+#
+# input variables
+# SUBDIRS          .. list of subdirectories intended for make from actual directory
+# lib_LIBRARIES    .. list of the user-space libraries
+# shared_LIBRARIES .. list of the user-space shared libraries
+# kernel_LIBRARIES .. list of the kernel-space libraries
+# rtlinux_LIBRARIES.. list of the RT-Linux kernel-space libraries
+# include_HEADERS  .. list of the user-space header files
+# nobase_include_HEADERS .. headers copied even with directory part
+# kernel_HEADERS   .. list of the kernel-space  header files
+# rtlinux_HEADERS  .. list of the RT-Linux kernel-space  header files
+# bin_PROGRAMS     .. list of the require binary programs
+# utils_PROGRAMS   .. list of the development utility programs
+# kernel_MODULES   .. list of the kernel side modules/applications
+# rtlinux_MODULES  .. list of RT-Linux the kernel side modules/applications
+# xxx_SOURCES      .. list of specific target sources
+#
+# LINUX_DIR        .. location of Linux kernel sources
+# RTLINUX_DIR      .. location of RT-Linux sources
+
+# Hack to check RT-Linux rules
+#LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
+#RTLINUX_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
+LINUX_DIR := /usr/src/linux-2.4.18rt
+RTLINUX_DIR := /usr/rtlinux
+KERN_EXE_SUFFIX := .o
+
+# We need to ensure definition of sources directory first
+ifndef SOURCES_DIR
+SOURCES_DIR := $(shell ( pwd -L ) )
+endif
+
+all: default
+
+# Check and include real OCERA style Makefile.omk now
+ifndef OMK_INCLUDED
+include $(SOURCES_DIR)/Makefile.omk
+OMK_INCLUDED := 1
+endif
+
+ifdef OCERA_DIR
+KERN_INCLUDE_DIR := $(OCERA_DIR)/compiled/kernel/include
+KERN_LIB_DIR     := $(OCERA_DIR)/compiled/kernel/lib
+KERN_MODULES_DIR := $(OCERA_DIR)/compiled/kernel/modules
+KERN_BUILD_DIR   := $(OCERA_DIR)/build/kern
+USER_INCLUDE_DIR := $(OCERA_DIR)/compiled/user/include
+USER_LIB_DIR     := $(OCERA_DIR)/compiled/user/lib
+USER_UTILS_DIR   := $(OCERA_DIR)/compiled/user/utils
+USER_BIN_DIR     := $(OCERA_DIR)/compiled/user/bin
+USER_BUILD_DIR   := $(OCERA_DIR)/build/user
+else 
+KERN_INCLUDE_DIR := $(MAKERULES_DIR)/compiled/include-kern
+KERN_LIB_DIR     := $(MAKERULES_DIR)/compiled/lib-kern
+KERN_MODULES_DIR := $(MAKERULES_DIR)/compiled/modules
+KERN_BUILD_DIR   := $(MAKERULES_DIR)/build/kern
+USER_INCLUDE_DIR := $(MAKERULES_DIR)/compiled/include
+USER_LIB_DIR     := $(MAKERULES_DIR)/compiled/lib
+USER_UTILS_DIR   := $(MAKERULES_DIR)/compiled/bin-utils
+USER_BIN_DIR     := $(MAKERULES_DIR)/compiled/bin
+USER_BUILD_DIR   := $(MAKERULES_DIR)/build/user
+endif
+
+export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR RTLINUX_DIR
+
+CFLAGS = -O2 -ggdb
+
+CPPFLAGS  += -I $(USER_INCLUDE_DIR)
+
+LOADLIBES += -L$(USER_LIB_DIR) 
+
+LOADLIBES += $(lib_LOADLIBES:%=-l%)
+
+LIB_CPPFLAGS += $(CPPFLAGS)
+LIB_CFLAGS   += $(CFLAGS)
+
+
+ifndef RELATIVE_DIR
+RELATIVE_DIR := $(SOURCES_DIR:$(MAKERULES_DIR)%=%)
+RELATIVE_DIR := $(RELATIVE_DIR:/%=%)
+RELATIVE_DIR := $(RELATIVE_DIR:\\%=%)
+endif
+
+#$(warning SOURCES_DIR = $(SOURCES_DIR))
+#$(warning MAKERULES_DIR = $(MAKERULES_DIR))
+#$(warning RELATIVE_DIR = $(RELATIVE_DIR))
+
+#vpath %.c $(SOURCES_DIR)
+#vpath %.cc $(SOURCES_DIR)
+
+VPATH = $(SOURCES_DIR)
+srcdir = $(SOURCES_DIR)
+
+USER_OBJS_DIR = $(USER_BUILD_DIR)/$(RELATIVE_DIR)
+KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
+
+.PHONY: default dep subdirs clean cleandepend 
+.PHONY: check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass
+.PHONY: check-dir-local include-pass-local library-pass-local 
+.PHONY: binary-pass-local utils-pass-local kernel-lib-pass-local kernel-pass-local
+
+default: check-dir include-pass library-pass binary-pass utils-pass kernel-lib-pass kernel-pass 
+
+
+#=====================================================================
+# Common utility rules
+
+define mkdir_def
+	[ -d $(1) ] || mkdir -p $(1) || exit 1
+endef
+
+#=====================================================================
+# User-space rules and templates to compile programs, libraries etc.
+
+ifdef USER_RULE_TEMPLATES
+
+
+#%.lo: %.c
+#	$(CC) -o $@ $(LCFLAGS) -c $<
+
+c_o_COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
+cc_o_COMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
+
+# Check GCC version for user build
+ifndef CC_VERSION
+CC_MAJOR_VERSION := $(shell $(CC) -dumpversion | sed -e 's/\([^.]\)\..*/\1/')
+endif
+# Prepare suitable define for dependency building
+ifeq ($(CC_MAJOR_VERSION),2)
+CC_DEPFLAGS = -Wp,-MD,"$@.d.tmp"
+else
+CC_DEPFLAGS = -MT $@ -MD -MP -MF "$@.d.tmp"
+endif
+
+
+
+
+define COMPILE_c_o_template
+$(2): $(1)
+	if $$(c_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+	then mv -f "$$@.d.tmp" "$$@.d" ; \
+	else rm -f "$$@.d.tmp" ; exit 1; \
+	fi
+endef
+
+
+
+define COMPILE_cc_o_template
+$(2): $(1)
+	if $$(cc_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+	then mv -f "$$@.d.tmp" "$$@.d" ; \
+	else rm -f "$$@.d.tmp" ; exit 1; \
+	fi
+endef
+
+
+
+define PROGRAM_template
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS := $$(sort $$($(1)_OBJS))
+
+USER_OBJS  += $$($(1)_OBJS)
+USER_SOURCES += $$($(1)_SOURCES)
+
+$(2)/$(1): $$($(1)_OBJS) 
+	$$(shell if [ -z "$$(filter %.cc,$$($(1)_SOURCES))" ] ; then echo $$(CC) ; else echo $$(CXX) ; fi) \
+	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $(2)/$(1)
+	@echo "$(2)/$(1): \\" >$(USER_OBJS_DIR)/$(1).exe.d
+	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(USER_OBJS_DIR)/$(1).exe.map  >>$(USER_OBJS_DIR)/$(1).exe.d
+	@echo >>$(USER_OBJS_DIR)/$(1).exe.d
+endef
+
+
+
+define LIBRARY_template
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS := $$(sort $$($(1)_OBJS))
+
+USER_OBJS  += $$($(1)_OBJS)
+USER_SOURCES += $$($(1)_SOURCES)
+
+$(USER_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
+	ar rcs $$@ $$^
+	ranlib $$@
+endef
+
+
+
+library-pass-local: $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(USER_LIB_DIR)/lib%.so)
+
+binary-pass-local: $(bin_PROGRAMS:%=$(USER_BIN_DIR)/%)
+
+utils-pass-local: $(utils_PROGRAMS:%=$(USER_UTILS_DIR)/%)
+
+$(foreach prog,$(utils_PROGRAMS),$(eval $(call PROGRAM_template,$(prog),$(USER_UTILS_DIR))))
+
+$(foreach prog,$(bin_PROGRAMS),$(eval $(call PROGRAM_template,$(prog),$(USER_BIN_DIR))))
+
+$(foreach lib,$(lib_LIBRARIES),$(eval $(call LIBRARY_template,$(lib))))
+
+-include $(USER_OBJS_DIR)/*.d
+
+endif
+
+#=====================================================================
+# Kernel-space rules and templates to compile modules, libraries etc.
+
+ifdef KERN_RULE_TEMPLATES
+
+ifdef RTLINUX_DIR
+include $(RTLINUX_DIR)/rtl.mk
+endif
+
+KERN_LOADLIBES += -L$(KERN_LIB_DIR) 
+
+KERN_LOADLIBES += $(rtlinux_LOADLIBES:%=-l%)
+KERN_LOADLIBES += $(kernel_LOADLIBES:%=-l%)
+
+INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES)
+
+#-DEXPORT_NO_SYMBOLS
+
+c_o_kern_COMPILE = $(CC) $(INCLUDES) $(CFLAGS) -DEXPORT_SYMTAB 
+
+cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DEXPORT_SYMTAB
+
+
+# Check GCC version for kernel part of build
+ifndef CC_VERSION
+kern_CC_MAJOR_VERSION := $(shell $(CC) -dumpversion | sed -e 's/\([^.]\)\..*/\1/')
+endif
+# Prepare suitable define for dependency building
+ifeq ($(kern_CC_MAJOR_VERSION),2)
+kern_CC_DEPFLAGS = -Wp,-MD,"$@.d.tmp"
+else
+kern_CC_DEPFLAGS = -MT $@ -MD -MP -MF "$@.d.tmp"
+endif
+
+
+
+define COMPILE_c_o_kern_template
+
+$(2): $(1)
+	if $$(c_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+	then mv -f "$$@.d.tmp" "$$@.d" ; \
+	else rm -f "$$@.d.tmp" ; exit 1; \
+	fi
+endef
+
+
+
+define COMPILE_cc_o_kern_template
+
+$(2): $(1)
+	if $$(cc_o_kern_COMPILE) $$(kern_CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+	then mv -f "$$@.d.tmp" "$$@.d" ; \
+	else rm -f "$$@.d.tmp" ; exit 1; \
+	fi
+endef
+
+
+
+define MODULE_kern_template
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS := $$(sort $$($(1)_OBJS))
+
+KERN_OBJS  += $$($(1)_OBJS)
+KERN_SOURCES += $$($(1)_SOURCES)
+
+$(2)/$(1)$(KERN_EXE_SUFFIX): $$($(1)_OBJS) 
+	ld -m elf_$(ARCH) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $(2)/$(1)$(KERN_EXE_SUFFIX)
+	@echo "$(2)/$(1)$(KERN_EXE_SUFFIX): \\" >$(KERN_OBJS_DIR)/$(1).mod.d
+	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(KERN_OBJS_DIR)/$(1).mod.map  >>$(KERN_OBJS_DIR)/$(1).mod.d
+	@echo >>$(KERN_OBJS_DIR)/$(1).mod.d
+endef
+
+
+
+define LIBRARY_kern_template
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
+$(1)_OBJS := $$(sort $$($(1)_OBJS))
+
+KERN_OBJS  += $$($(1)_OBJS)
+KERN_SOURCES += $$($(1)_SOURCES)
+
+$(KERN_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
+	ar rcs $$@ $$^
+	ranlib $$@
+endef
+
+kernel-lib-pass-local: $(kernel_LIBRARIES:%=$(KERN_LIB_DIR)/lib%.a)
+
+kernel-pass-local: $(kernel_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
+
+ifdef RTLINUX_DIR
+
+kernel-pass-local: $(rtlinux_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
+
+kernel-lib-pass-local: $(rtlinux_LIBRARIES:%=$(KERN_LIB_DIR)/lib%.a)
+
+$(foreach module,$(rtlinux_MODULES),$(eval $(call MODULE_kern_template,$(module),$(KERN_MODULES_DIR))))
+
+$(foreach lib,$(rtlinux_LIBRARIES),$(eval $(call LIBRARY_kern_template,$(lib))))
+
+endif
+
+-include $(KERN_OBJS_DIR)/*.d
+
+endif
+
+#=====================================================================
+
+
+kernel-lib-pass kernel-pass:
+	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(KERN_OBJS_DIR)/$(dir)) ; \
+		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
+		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
+	+@$(call mkdir_def,$(KERN_OBJS_DIR))
+	@$(MAKE) --no-print-directory -C $(KERN_OBJS_DIR) \
+		-f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y $(@:%=%-local)
+
+library-pass binary-pass utils-pass:
+	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
+		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(USER_OBJS_DIR)/$(dir) \
+		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
+	+@$(call mkdir_def,$(USER_OBJS_DIR))
+	@$(MAKE) --no-print-directory -C $(USER_OBJS_DIR) \
+		-f $(SOURCES_DIR)/Makefile USER_RULE_TEMPLATES=y $(@:%=%-local)
+
+
+dep clean install check-dir include-pass:
+	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
+		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(USER_OBJS_DIR)/$(dir) \
+		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
+	+@$(call mkdir_def,$(USER_OBJS_DIR))
+	@$(MAKE) --no-print-directory -C $(USER_OBJS_DIR) \
+		-f $(SOURCES_DIR)/Makefile $(@:%=%-local)
+
+
+dep-local:
+	
+check-dir-local:
+	@$(call mkdir_def,$(USER_OBJS_DIR))
+	@$(call mkdir_def,$(KERN_OBJS_DIR))
+	@$(call mkdir_def,$(USER_INCLUDE_DIR))
+	@$(call mkdir_def,$(KERN_INCLUDE_DIR))
+	@$(call mkdir_def,$(USER_LIB_DIR))
+	@$(call mkdir_def,$(KERN_LIB_DIR))
+	@$(call mkdir_def,$(USER_BIN_DIR))
+	@$(call mkdir_def,$(USER_UTILS_DIR))
+	@$(call mkdir_def,$(KERN_MODULES_DIR))
+
+install-local:
+
+include-pass-local:
+	@$(call mkdir_def,$(USER_INCLUDE_DIR))
+	@$(foreach f, $(include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) \
+	   || cp -v $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(notdir $(f)) ; )
+	@$(foreach f, $(nobase_include_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) \
+	   || mkdir -p $(USER_INCLUDE_DIR)/$(dir $(f)) && cp -v $(SOURCES_DIR)/$(f) $(USER_INCLUDE_DIR)/$(f) ; )
+# Kernel and RT-Linux stuff
+	@$(call mkdir_def,$(KERN_INCLUDE_DIR))
+	@$(foreach f, $(kernel_HEADERS) $(rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) \
+	   || cp -v $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(notdir $(f)) ; )
+	@$(foreach f, $(nobase_kernel_HEADERS) $(nobase_rtlinux_HEADERS), cmp --quiet $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) \
+	   || mkdir -p $(KERN_INCLUDE_DIR)/$(dir $(f)) && cp -v $(SOURCES_DIR)/$(f) $(KERN_INCLUDE_DIR)/$(f) ; )
+
+ifdef USER_RULE_TEMPLATES
+
+USER_SOURCES := $(sort $(USER_SOURCES))
+
+#$(warning USER_SOURCES = $(USER_SOURCES))
+
+$(foreach src,$(filter %.c,$(USER_SOURCES)),$(eval $(call COMPILE_c_o_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.o),)))
+
+$(foreach src,$(filter %.cc,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.o),)))
+
+endif
+
+ifdef KERN_RULE_TEMPLATES
+
+KERN_SOURCES := $(sort $(KERN_SOURCES))
+
+#$(warning KERN_SOURCES = $(KERN_SOURCES))
+
+$(foreach src,$(filter %.c,$(KERN_SOURCES)),$(eval $(call COMPILE_c_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.o),)))
+
+$(foreach src,$(filter %.cc,$(KERN_SOURCES)),$(eval $(call COMPILE_cc_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.o),)))
+
+endif
+
+
+clean-local:
+	@echo Cleaning in $(KERN_OBJS_DIR) and $(USER_OBJS_DIR)
+	@rm -f $(KERN_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.lo $(USER_OBJS_DIR)/*.d $(USER_OBJS_DIR)/*.map 
+

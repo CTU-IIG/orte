@@ -1,0 +1,12 @@
+v0.2.0 - 08/01/2004
+
+- many things (circa 80% of code scratched)
+- event subssystem
+- htimer, gavl,
+- support serialization/deserialization functions
+- ...
+
+V0.1.1 - 14/12/2002
+
+- cleaned up source code a little.
+

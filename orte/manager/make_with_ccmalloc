@@ -1,0 +1,3 @@
+rm -f FILE.log
+rm -f ORTEManager
+gcc  -O0 -g3   -o ORTEManager  ORTEManager.o ../liborte/liborte.a  -lpthread -lccmalloc -ldl

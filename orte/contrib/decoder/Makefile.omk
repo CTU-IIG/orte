@@ -1,0 +1,5 @@
+INCLUDES = -I$(SOURCES_DIR)/../../include/ 
+
+utils_PROGRAMS = decode_msg
+
+decode_msg_SOURCES = decode_msg.c

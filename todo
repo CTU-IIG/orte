@@ -1,0 +1,29 @@
+If you are a developper and wants to help, enjoy !
+
+################################################################
+               Release: ORTE0-2-0      Date: 1/8/2004
+
+1) clean code !!! :)))
+
+2) autoconf for RTLinux
+
+3) portation into RTAI, RTnet
+
+4) add support CDR types
+
+...
+
+################################################################
+               Release: ORTE0-1        Date: 4/16/2003
+
+1) clean code !!! :)))
+ 
+2) change faster algorithm for storing data (GAVL - generic AVL)
+
+3) split application thread on two threads:
+   
+   metatraffic:
+   
+   userdata:
+
+4) alarms for events in application

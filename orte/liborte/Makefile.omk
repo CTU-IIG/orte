@@ -1,0 +1,116 @@
+lib_LIBRARIES = orte
+
+INCLUDES = -I $(srcdir)/../include -D_OMK_UNIX
+
+include_HEADERS = \
+../include/orte_api.h \
+../include/typedefs_defines_rtps.h \
+../include/defines_api.h \
+../include/typedefs_api.h \
+../include/protos_api.h
+
+orte_SOURCES = \
+conv.c \
+debug.c \
+event.c \
+fnmatch.c \
+htimerNtp.c \
+objectEntry.c \
+objectEntryTimer.c \
+objectUtils.c \
+ORTEAppRecvMetatrafficThread.c \
+ORTEAppRecvUserdataThread.c \
+ORTEAppSendThread.c \
+ORTEDomainApp.c \
+ORTEPublication.c \
+ORTEPublicationTimer.c \
+ORTESubscription.c \
+ORTEDomain.c \
+ORTEDomainMgr.c \
+ORTEInit.c \
+ORTEThreadUtils.c \
+ORTETypeRegister.c \
+ORTEVerbosity.c \
+ORTEPattern.c \
+parameter.c \
+RTPSAck.c \
+RTPSCSTReader.c \
+RTPSCSTReaderTimer.c \
+RTPSCSTReaderProc.c \
+RTPSCSTWriter.c \
+RTPSCSTWriterTimer.c \
+RTPSGap.c \
+RTPSHeader.c \
+RTPSHeardBeat.c \
+RTPSInfoDST.c \
+RTPSInfoREPLY.c \
+RTPSInfoSRC.c \
+RTPSInfoTS.c \
+RTPSPad.c \
+RTPSUtils.c \
+RTPSVar.c \
+RTPSIssue.c \
+sock.c \
+ul_gavl.c \
+ul_gavlprim.c
+
+#############################################################################
+# RT-Linux version of build
+
+rtlinux_LIBRARIES = orte_rtl
+
+rtlinux_INCLUDES = -I $(srcdir)/../include 
+
+rtlinux_HEADERS = \
+../include/orte_api.h \
+../include/typedefs_defines_rtps.h \
+../include/defines_api.h \
+../include/typedefs_api.h \
+../include/protos_api.h
+
+orte_rtl_SOURCES = \
+conv.c \
+debug.c \
+event.c \
+fnmatch.c \
+htimerNtp.c \
+objectEntry.c \
+objectEntryTimer.c \
+objectUtils.c \
+ORTEAppRecvMetatrafficThread.c \
+ORTEAppRecvUserdataThread.c \
+ORTEAppSendThread.c \
+ORTEDomainApp.c \
+ORTEPublication.c \
+ORTEPublicationTimer.c \
+ORTESubscription.c \
+ORTEDomain.c \
+ORTEDomainMgr.c \
+ORTEInit.c \
+ORTEThreadUtils.c \
+ORTETypeRegister.c \
+ORTEVerbosity.c \
+ORTEPattern.c \
+parameter.c \
+RTPSAck.c \
+RTPSCSTReader.c \
+RTPSCSTReaderTimer.c \
+RTPSCSTReaderProc.c \
+RTPSCSTWriter.c \
+RTPSCSTWriterTimer.c \
+RTPSGap.c \
+RTPSHeader.c \
+RTPSHeardBeat.c \
+RTPSInfoDST.c \
+RTPSInfoREPLY.c \
+RTPSInfoSRC.c \
+RTPSInfoTS.c \
+RTPSPad.c \
+RTPSUtils.c \
+RTPSVar.c \
+RTPSIssue.c \
+sock.c \
+ul_gavl.c \
+ul_gavlprim.c
+
+SUBDIRS = rtl

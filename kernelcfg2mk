@@ -1,0 +1,161 @@
+#!/bin/bash
+
+if [ $# -lt 1 ] ; then
+  echo "kernelcfg2mk: requires linux kernel directory as the first argument"
+  exit 2
+fi
+
+LINUX_DIR="$1"
+
+if [ $# -gt 1 ] ; then
+  KERN_MODULES_DIR="$2"
+fi
+
+if [ ! -e $LINUX_DIR/.config ] ; then
+  echo "kernelcfg2mk: the provided locations doesnot point to configured kernel sources"
+  echo "        check directory $LINUX_DIR"
+  exit 2
+fi
+
+if [ ! -e $LINUX_DIR/.config ] ; then
+  echo "kernelcfg2mk: the provided locations doesnot point to configured kernel sources"
+  echo "        check directory $LINUX_DIR"
+  exit 2
+fi
+
+if [ -z "$KERN_BUILD_DIR" ]  ; then
+  KERN_BUILD_DIR=`pwd`
+fi
+
+if [ -z "$KERN_MODULES_DIR" ]  ; then
+  KERN_MODULES_DIR=`pwd`
+fi
+
+
+if [ -z "$MAKE" ]  ; then
+  MAKE="make"
+fi
+
+
+KERN_TEST_DIR="$KERN_BUILD_DIR/kern-test-mk"
+
+mkdir -p $KERN_TEST_DIR
+
+#echo MAKERULES_DIR $MAKERULES_DIR
+#echo LINUX_DIR $LINUX_DIR
+#echo KERN_BUILD_DIR $KERN_BUILD_DIR
+#echo KERN_MODULES_DIR $KERN_MODULES_DIR
+
+RETVAL="0"
+
+LINUX_VERSION=$(grep UTS_RELEASE ${LINUX_DIR}/include/linux/version.h | \
+               sed 's/[^"]*"\(.*\)\{1\}"/\1/')
+
+LINUX_VERSION_MAJOR=$(echo ${LINUX_VERSION} | cut -d. -f1)
+LINUX_VERSION_MINOR=$(echo ${LINUX_VERSION} | cut -d. -f2)
+
+#echo $LINUX_VERSION
+#echo $LINUX_VERSION_MAJOR
+#echo $LINUX_VERSION_MINOR
+
+
+case $LINUX_VERSION_MAJOR.$LINUX_VERSION_MINOR in
+
+
+#=====================================================================
+# test for 2.4.x kernels
+    2.[01234])
+
+	rm -f ${KERN_BUILD_DIR}/kernel.mk
+	rm -rf ${KERN_TEST_DIR}
+	mkdir ${KERN_TEST_DIR}
+	cd ${KERN_TEST_DIR}
+
+	cat >${KERN_TEST_DIR}/Makefile <<EOF
+
+.PHONY: modules
+modules:
+	echo LINUX_ARCH="\$(ARCH)" >>flags
+	echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>flags
+	echo LINUX_LDFLAGS="" >>flags
+	echo LINUX_ARFLAGS="\$(ARFLAGS)" >>flags
+	echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>flags
+	echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>flags
+	echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>flags
+	echo LINUX_CC="\$(CC)" >>flags
+	echo LINUX_LD="\$(LD) \$(LDFLAGS)" >>flags
+	echo LINUX_AS="\$(AS)" >>flags
+	echo LINUX_MODULE_EXT=".o" >>flags
+
+EOF
+
+	echo ${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} modules
+	${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} modules
+	if [ $? == 0 ] ; then
+		cp -v flags ${KERN_MODULES_DIR}/kernel.mk	
+		if [ ! $? == 0 ] ; then
+			RETVAL="2"
+		fi
+	else
+		RETVAL="1"
+	fi
+
+	cd ${KERN_BUILD_DIR}
+	rm -rf ${KERN_TEST_DIR}
+	;;
+
+#=====================================================================
+# test for 2.6.x kernels
+
+    2.6)
+
+	rm -f ${KERN_BUILD_DIR}/kernel.mk
+	rm -rf ${KERN_TEST_DIR}
+	mkdir ${KERN_TEST_DIR}
+	cd ${KERN_TEST_DIR}
+
+	cat >${KERN_TEST_DIR}/Makefile <<EOF
+obj-m += fake.o
+
+\$(obj)/fake.c: flags
+	touch \$(obj)/fake.c
+
+.PHONY: flags
+flags:
+	echo LINUX_ARCH="\$(ARCH)" >>\$(obj)/flags
+	echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>\$(obj)/flags
+	echo LINUX_LDFLAGS="" >>\$(obj)/flags
+	echo LINUX_ARFLAGS="\$(ARFLAGS)" >>\$(obj)/flags
+	echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>\$(obj)/flags
+	echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>\$(obj)/flags
+	echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>\$(obj)/flags
+	echo LINUX_CC="\$(CC)" >>\$(obj)/flags
+	echo LINUX_LD="\$(LD) \$(LDFLAGS)" >>\$(obj)/flags
+	echo LINUX_AS="\$(AS)" >>\$(obj)/flags
+	echo LINUX_MODULE_EXT=".ko" >>\$(obj)/flags
+EOF
+
+	echo ${MAKE} -C ${LINUX_DIR} V=1 SUBDIRS=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR} modules
+	${MAKE} -C ${LINUX_DIR} V=1 SUBDIRS=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR} modules
+	#if [ $? == 0 ] ; then
+		cp -v flags ${KERN_MODULES_DIR}/kernel.mk	
+		if [ ! $? == 0 ] ; then
+			RETVAL="2"
+		fi
+	#else
+	#	RETVAL="1"
+	#fi
+
+	cd ${KERN_BUILD_DIR}
+	rm -rf ${KERN_TEST_DIR}
+	;;
+
+#=====================================================================
+
+    *)
+	echo "Unsupported Linux version $LINUX_VERSION_MAJOR.$LINUX_VERSION_MINOR"
+    ;;
+esac
+
+
+exit ${RETVAL}

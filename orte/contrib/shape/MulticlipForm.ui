@@ -1,0 +1,510 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>MulticlipForm</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>MulticlipForm</cstring>
+    </property>
+    <property name="enabled">
+        <bool>true</bool>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>408</width>
+            <height>228</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>0</width>
+            <height>0</height>
+        </size>
+    </property>
+    <property name="maximumSize">
+        <size>
+            <width>408</width>
+            <height>228</height>
+        </size>
+    </property>
+    <property name="font">
+        <font>
+            <family>Helvetica [Urw]</family>
+            <pointsize>12</pointsize>
+        </font>
+    </property>
+    <property name="caption">
+        <string>ORTE Demo</string>
+    </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel6</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>16</x>
+                <y>30</y>
+                <width>79</width>
+                <height>35</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>   List of 
+Publishers :</string>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>deletePushButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>90</x>
+                <y>190</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>10</pointsize>
+            </font>
+        </property>
+        <property name="text">
+            <string>&amp;Delete Publisher</string>
+        </property>
+        <property name="accel">
+            <number>4194372</number>
+        </property>
+        <property name="autoDefault">
+            <bool>false</bool>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>addPushButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>90</x>
+                <y>160</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>10</pointsize>
+            </font>
+        </property>
+        <property name="text">
+            <string>&amp;Add Publisher</string>
+        </property>
+        <property name="accel">
+            <number>4194369</number>
+        </property>
+        <property name="autoDefault">
+            <bool>false</bool>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <item>
+            <property name="text">
+                <string>Blue</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Green</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Red</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Black</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>ColorP</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>92</x>
+                <y>125</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="Line">
+        <property name="name">
+            <cstring>Line2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>204</x>
+                <y>0</y>
+                <width>3</width>
+                <height>231</height>
+            </rect>
+        </property>
+        <property name="frameShape">
+            <enum>VLine</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Sunken</enum>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+    </widget>
+    <widget class="QListBox">
+        <property name="name">
+            <cstring>PublishersListBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>70</y>
+                <width>75</width>
+                <height>150</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QListBox">
+        <property name="name">
+            <cstring>SubscribersListBox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>211</x>
+                <y>70</y>
+                <width>75</width>
+                <height>150</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>addS</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>293</x>
+                <y>160</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>10</pointsize>
+            </font>
+        </property>
+        <property name="text">
+            <string>&amp;Add Suscriber</string>
+        </property>
+        <property name="autoDefault">
+            <bool>false</bool>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>deleteS</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>293</x>
+                <y>195</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>10</pointsize>
+            </font>
+        </property>
+        <property name="text">
+            <string>&amp;Delete Suscriber</string>
+        </property>
+        <property name="autoDefault">
+            <bool>false</bool>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>127</x>
+                <y>108</y>
+                <width>70</width>
+                <height>17</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Color</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel1_3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>127</x>
+                <y>60</y>
+                <width>60</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Shape</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2_3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>215</x>
+                <y>30</y>
+                <width>95</width>
+                <height>35</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>    List of 
+Subscribers :</string>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <item>
+            <property name="text">
+                <string>Ellipse</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Rectangle</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Triangle</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>ShapeP</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>92</x>
+                <y>80</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <item>
+            <property name="text">
+                <string>Blue</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Green</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Red</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Black</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>ColorS</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>293</x>
+                <y>125</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QComboBox">
+        <item>
+            <property name="text">
+                <string>Ellipse</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Rectangle</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Triangle</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>ShapeS</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>293</x>
+                <y>80</y>
+                <width>105</width>
+                <height>25</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel1_3_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>327</x>
+                <y>60</y>
+                <width>72</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Shape </string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2_2_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>328</x>
+                <y>108</y>
+                <width>65</width>
+                <height>17</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Color</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>45</x>
+                <y>0</y>
+                <width>145</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>20</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="text">
+            <string>Publishers</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel4</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>245</x>
+                <y>0</y>
+                <width>145</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>20</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="text">
+            <string>Suscribers</string>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>addPushButton</sender>
+        <signal>clicked()</signal>
+        <receiver>MulticlipForm</receiver>
+        <slot>addPublisher()</slot>
+    </connection>
+    <connection>
+        <sender>deletePushButton</sender>
+        <signal>clicked()</signal>
+        <receiver>MulticlipForm</receiver>
+        <slot>deletePublisher()</slot>
+    </connection>
+    <connection>
+        <sender>addS</sender>
+        <signal>clicked()</signal>
+        <receiver>MulticlipForm</receiver>
+        <slot>addSubscriber()</slot>
+    </connection>
+    <connection>
+        <sender>deleteS</sender>
+        <signal>clicked()</signal>
+        <receiver>MulticlipForm</receiver>
+        <slot>deleteSubscriber()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in declaration">Subscriber.h</include>
+    <include location="local" impldecl="in declaration">Publisher.h</include>
+    <include location="global" impldecl="in implementation">qtimer.h</include>
+    <include location="global" impldecl="in implementation">sys/types.h</include>
+    <include location="global" impldecl="in implementation">qapplication.h</include>
+    <include location="global" impldecl="in implementation">qcombobox.h</include>
+    <include location="global" impldecl="in implementation">qwidget.h</include>
+    <include location="global" impldecl="in implementation">qtabwidget.h</include>
+    <include location="global" impldecl="in implementation">qapplication.h</include>
+    <include location="global" impldecl="in implementation">qpushbutton.h</include>
+    <include location="global" impldecl="in implementation">qinputdialog.h</include>
+    <include location="global" impldecl="in implementation">unistd.h</include>
+    <include location="global" impldecl="in implementation">signal.h</include>
+    <include location="local" impldecl="in implementation">MulticlipForm.ui.h</include>
+</includes>
+<slots>
+    <slot access="protected">init()</slot>
+    <slot access="protected">addPublisher()</slot>
+    <slot access="protected">deletePublisher()</slot>
+    <slot access="protected">GotoP()</slot>
+    <slot access="protected">closeEvent( QCloseEvent * e )</slot>
+    <slot access="protected">GotoS()</slot>
+    <slot access="protected">addSubscriber()</slot>
+    <slot access="protected">deleteSubscriber()</slot>
+    <slot access="protected">keyPressEvent( QKeyEvent * e )</slot>
+    <slot access="protected">Timer()</slot>
+</slots>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

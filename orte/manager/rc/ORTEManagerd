@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# description: Start/Stop Manager application for RTPS communication
+#
+
+# This init script contains functions specific for redhat
+# and mandrake init scripts.
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+
+# See how we were called.
+case "$1" in
+  start)
+	echo -n "Starting ORTEManager: "
+
+	daemon ORTEManager -D
+	RETVAL=$?
+	;;
+  stop)
+	echo -n "Stopping ORTEManager: "
+	killproc ORTEManager
+	RETVAL=$?
+	echo
+	;;
+  status)
+	status ORTEManager
+	RETVAL=$?
+	;;
+  restart|reload)
+	$0 stop
+	$0 start
+	RETVAL=$?
+	;;
+  *)
+	echo "Usage: ORTEManager {start|stop|status|restart|reload}"
+	exit 1
+esac
+
+exit $RETVAL
+

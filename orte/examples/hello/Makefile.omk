@@ -1,0 +1,20 @@
+INCLUDES = -D_OMK_UNIX
+
+utils_PROGRAMS = helloPublisher helloSubscriber
+
+helloPublisher_SOURCES = HelloWorldPublisher.c
+
+helloSubscriber_SOURCES = HelloWorldSubscriber.c
+
+lib_LOADLIBES =  orte pthread
+
+#############################################################################
+# RT-Linux version of build
+
+rtlinux_MODULES = HelloWorldPublisher HelloWorldSubscriber
+               
+HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
+
+HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
+
+rtlinux_LOADLIBES =  orte_rtl pthread_rwlock

@@ -1,0 +1,12 @@
+INCLUDES = -D_OMK_UNIX
+
+utils_PROGRAMS = ReliablePublisher ReliableSubscriber BestEffortSubscriber
+
+ReliablePublisher_SOURCES = ReliablePublisher.c
+
+ReliableSubscriber_SOURCES = ReliableSubscriber.c
+
+BestEffortSubscriber_SOURCES = BestEffortSubscriber.c
+
+lib_LOADLIBES =  orte pthread
+

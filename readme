@@ -1,0 +1,56 @@
+  	         ORTE - OCERA Real-Time Ethernet
+
+The ORTE is open source implementation of RTPS communication protocol 
+defined by Real Time Innovations (http://www.rti.com). 
+RTPS is new application layer protocol targeted to real-time communication 
+area, which is build on top of standard UDP stack.
+
+Supported targets:
+Linux
+Windows - MinGW, MSVC
+RTLinux - need to fix UDP (Miquele or Ismael Ripoll), call function bind 
+with port 0, doesn't give any free port.
+
+To build: 
+simply untar instalation package into desired directory, enter this 
+directory and issue following commands.
+
+./configure
+make 
+make install
+
+after this procedure ORTEManager and ORTEPing are placed in /usr/local/bin.
+
+To start:
+run :ORTEManager &
+see :ORTEManager -h for usaged
+note:ORTEManager have to run during all communication. For future work can 
+be added into /etc/init.d/... script for starting ORTEManager during boot
+of machine. This script (redhat and mandrake) is placed in 
+"orte/manager/rc/ORTEManagerd"
+For developping a RT application, ORTEManager can be running in userspace.
+Start it with parameter "-k 192.168.4.2". This address is IP address of 
+RT application.
+
+To test communication:
+in a shell try to type "ORTEPing -p -s". So, now will be created one publisher
+and one subscriber with same topic and type. If you see messages like
+
+[root@localhost ORTEPing]# ./ORTEPing -p -s
+sent issue 1
+received fresh issue 1
+sent issue 2
+received fresh issue 2
+sent issue 3
+received fresh issue 3
+
+communication works. If you see only sending messsages, it's sign that ORTEManager 
+is not probably running.
+See "ORTEPing -h" for usaged.
+
+Now, you can develop self applications (see documentation).
+
+Feedback is welcome - send bug reports, enhancements, checks, money
+orders, etc. to the address below.
+
+Petr Smolik             petr.smolik@wo.cz  
