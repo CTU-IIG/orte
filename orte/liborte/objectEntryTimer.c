@@ -61,7 +61,7 @@ objectEntryPurgeTimer(ORTEDomain *d,void *vobjectEntryOID) {
                objectEntryOID->objectEntryHID->hid,
                objectEntryOID->objectEntryAID->aid,
                objectEntryOID->oid);
-  objectEntryDelete(d,objectEntryOID);
+  objectEntryDelete(d,objectEntryOID,ORTE_TRUE);
   objectEntryDump(&d->objectEntry);
   
   debug(12,10) ("objectEntryPurgeTimer: finished\n");
@@ -175,7 +175,7 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
         pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
         break;
     }
-    objectEntryDelete(d,objectEntryOID_delete);
+    objectEntryDelete(d,objectEntryOID_delete,ORTE_TRUE);
   }
 }
 
@@ -222,7 +222,7 @@ removeManager(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
   pthread_rwlock_unlock(&d->readerApplications.lock);
   pthread_rwlock_unlock(&d->readerManagers.lock);        
-  objectEntryDelete(d,robjectEntryOID);
+  objectEntryDelete(d,robjectEntryOID,ORTE_TRUE);
 }
 
        
@@ -267,7 +267,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
     CSChangeAttributes_init_head(csChange);
     csChange->guid=guid;
     csChange->alive=ORTE_FALSE;
-    csChange->cdrStream.buffer=NULL;
+    csChange->cdrCodec.buffer=NULL;
     CSTWriterAddCSChange(d,&d->writerManagers,csChange);
     gavl_cust_for_each(ObjectEntryAID,
                        objectEntryOID->objectEntryHID,objectEntryAID) {
@@ -328,14 +328,14 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         parameterUpdateCSChange(csChange,d->appParams,ORTE_TRUE);
         csChange->guid=guid;
         csChange->alive=ORTE_FALSE;
-        csChange->cdrStream.buffer=NULL;
+        csChange->cdrCodec.buffer=NULL;
         CSTWriterAddCSChange(d,&d->writerApplications,csChange);
         //increment vargAppsSequenceNumber and make csChange
         SeqNumberInc(d->appParams->vargAppsSequenceNumber,
                      d->appParams->vargAppsSequenceNumber);
         appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE,ORTE_TRUE);
      } else {
-       objectEntryDelete(d,objectEntryOID);
+       objectEntryDelete(d,objectEntryOID,ORTE_TRUE);
        objectEntryOID=NULL;  
      }
      pthread_rwlock_unlock(&d->writerApplicationSelf.lock);
@@ -384,7 +384,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         PublicationList_delete(&d->psEntry,objectEntryOID);
         pthread_rwlock_unlock(&d->psEntry.publicationsLock);
         if (!objectEntryOID->privateCreated) { //not local object cann't be purged
-          objectEntryDelete(d,objectEntryOID);
+          objectEntryDelete(d,objectEntryOID,ORTE_TRUE);
           objectEntryOID=NULL;
         }
         break;
@@ -407,7 +407,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         SubscriptionList_delete(&d->psEntry,objectEntryOID);
         pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
         if (!objectEntryOID->privateCreated) { //local object cann't be purged immediately
-          objectEntryDelete(d,objectEntryOID);
+          objectEntryDelete(d,objectEntryOID,ORTE_TRUE);
           objectEntryOID=NULL;
         }
         break;

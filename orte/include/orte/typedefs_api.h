@@ -52,13 +52,13 @@ typedef enum SubscriptionType {
         BEST_EFFORTS     = 0x01,
         STRICT_RELIABLE  = 0x02
       } SubscriptionType;
-      
+
 /**
  * enum ORTERecvStatus - status of a subscription
  * @NEW_DATA: new data has arrived
  * @DEADLINE: deadline has occurred 
  *
- * Specifies which event has occured in the subscription object.
+ * Specifies which event has occurred in the subscription object.
  */
 typedef enum ORTERecvStatus {
         NEW_DATA         = 0x01, 
@@ -70,7 +70,7 @@ typedef enum ORTERecvStatus {
  * @NEED_DATA: need new data (set when callback function specified for publciation is beeing called)
  * @CQL: transmit queue has been filled up to critical level.
  *
- * Specifies which event has occured in the publication object. Critical level of transmit queue is specified as one of publication properties (ORTEPublProp.criticalQueueLevel).
+ * Specifies which event has occurred in the publication object. Critical level of transmit queue is specified as one of publication properties (ORTEPublProp.criticalQueueLevel).
  */
 typedef enum ORTESendStatus {
         NEED_DATA        = 0x01,
@@ -105,33 +105,40 @@ typedef struct ORTEMulticastProp {
   IPAddress      ipAddress;
 } ORTEMulticastProp;
 
+
 /**
- * struct ORTECDRStream - used for serialization
- * @buffer: buffer for data
- * @bufferPtr: current position within buffer
- * @needByteSwap: ORTE_TRUE if it is necessary to swap byte ordering otherwise ORTE_FALSE
- * @length: buffer length
+ * struct ORTETypeGetMaxSizeParam - parameters for function ORTETypeGetMaxSize
+ * @host_endian: 
+ * @data_endian: 
+ * @data: 
+ * @max_size: 
+ * @recv_size: 
+ * @csize:
  *
- * Struct @ORTECDRStream is used by serialization and deserialization functions.
+ * It used to determine maximal size of intermal buffer for incomming data
  */
-typedef struct ORTECDRStream {
-  uint8_t        *buffer;
-  uint8_t        *bufferPtr;
-  Boolean        needByteSwap;
-  int            length;
-} ORTECDRStream;
+typedef struct ORTEGetMaxSizeParam {
+  CDR_Endianness host_endian;
+  CDR_Endianness data_endian;
+  CORBA_octet *data;
+  unsigned int max_size;
+  int recv_size;
+  int csize;
+} ORTEGetMaxSizeParam;
 
+typedef void (*ORTETypeSerialize)(CDR_Codec *cdrCodec, void *instance);
 
-typedef void (*ORTETypeSerialize)(ORTECDRStream *cdr_stream, void *instance);
+typedef void (*ORTETypeDeserialize)(CDR_Codec *cdrCodec, void *instance);
 
-typedef void (*ORTETypeDeserialize)(ORTECDRStream *cdr_stream, void *instance);
+typedef int (*ORTETypeGetMaxSize)(ORTEGetMaxSizeParam *gms);
 
 /**
  * struct ORTETypeRegister - registered data type
  * @typeName: name of data type 
  * @serialize: pointer to serialization function
  * @deserialize: pointer to deserialization function
- * @getMaxSize: max data type length in bytes
+ * @getMaxSize: pointer to function given maximal data length
+ * @maxSize: maximal size of ser./deser. data
  *
  * Contains description of registered data type. See @ORTETypeRegisterAdd function for details.
  */
@@ -139,11 +146,18 @@ typedef struct ORTETypeRegister {
   const char             *typeName;
   ORTETypeSerialize      serialize;
   ORTETypeDeserialize    deserialize;
-  unsigned int           getMaxSize;
+  ORTETypeGetMaxSize     getMaxSize;
+  unsigned int		 maxSize;
 } ORTETypeRegister;
 
 /**
  * struct ORTEDomainBaseProp - base properties of a domain
+ * @registrationMgrRetries: a manager which want to start communication have to register to other manager. This parametr
+ * is used for specify maximal repetition retries of registration process when it fail.
+ * @registrationMgrPeriod: an application which want to start communication have to register to a manager. This parametr
+ * is used for specify maximal repetition retries of registration process when it fail.
+ * @registrationAppRetries: same like registrationMgrRetries parameter, but is used for an application
+ * @registrationAppPeriod: repetition time for registration process
  * @expirationTime: specifies how long is this application taken as alive in other applications/managers (default 180s)
  * @refreshPeriod: how often an application refresh itself to its manager or manager to other managers (default 60s)
  * @purgeTime: how often the local database should be cleaned from invalid (expired) objects (default 60s)
@@ -156,6 +170,10 @@ typedef struct ORTETypeRegister {
  * @maxBlockTime: timeout for send functions if sending queue is full (default 30s)
  */
 typedef struct ORTEDomainBaseProp {
+  unsigned int		 registrationMgrRetries;
+  NtpTime		 registrationMgrPeriod;
+  unsigned int		 registrationAppRetries;
+  NtpTime		 registrationAppPeriod;
   NtpTime                expirationTime;
   NtpTime                refreshPeriod;
   NtpTime                purgeTime;
@@ -172,14 +190,14 @@ typedef struct ORTEDomainBaseProp {
  * struct ORTEDomainWireProp - wire properties of a message
  * @metaBytesPerPacket: maximum number of bytes in single frame (default 1500B)
  * @metaBytesPerFastPacket: maximum number of bytes in single frame if transmitting queue has reached @criticalQueueLevel level (see @ORTEPublProp struct)
- * @metabitsPerACKBitmap: not supported yet
- * @userMaxSerDeserSize: maximum number of user data in frame (default 1500B) 
+ * @metabitsPerACKBitmap: not supported yet (default 32)
+ * @userMaxSerDeserSize: maximum number of user data in frame (default 0x3000B) 
  */
 typedef struct ORTEDomainWireProp {
   unsigned int           metaBytesPerPacket;
   unsigned int           metaBytesPerFastPacket;
   unsigned int           metabitsPerACKBitmap;
-  unsigned int           userMaxSerDeserSize;
+  unsigned int           userBytesPerPacket;
 } ORTEDomainWireProp;
 
 /**
@@ -224,6 +242,7 @@ typedef struct ORTEPublProp {
  * @reliabilityRequested: reliability policy requested by the subscription
  * @deadline: deadline for subscription, a callback function  (see @ORTESubscriptionCreate) will be called if no data were received within this period of time
  * @mode: mode of subscription (strict reliable/best effort), see @SubscriptionType enum for values
+ * @multicast: registered multicast IP address(read only)
  */
 typedef struct ORTESubsProp {
   PathName               topic;
@@ -235,6 +254,7 @@ typedef struct ORTESubsProp {
   //additional parameters
   NtpTime                deadline;
   uint32_t               mode;
+  IPAddress		 multicast;
 }  ORTESubsProp;
 
 /**
@@ -356,6 +376,15 @@ typedef void
 typedef ORTESubscription*
 (*ORTESubscriptionPatternCallBack)(const char *topic, const char *type, void *Param);
 
+/**
+ * struct ORTEPublicationSendParam - description of sending data
+ * @instance: pointer to new data instance
+ * @data_endian: endianing of sending data (BIG | LITTLE)
+ */
+typedef struct ORTEPublicationSendParam {
+  void                  *instance;
+  int			data_endian;
+} ORTEPublicationSendParam;
 
 //Pattern
 typedef Boolean
@@ -370,7 +399,10 @@ extern void
 ORTEPatternRegister(ORTEDomain *d,ORTEPatternCheck check,
      ORTEPatternMatch match,void *param);
 
+
 //Manager
+typedef void
+(*ORTEOnRegFail)(void *param);
 typedef Boolean 
 (*ORTEOnMgrNew)(const struct ORTEAppInfo *appInfo, void *param);
 typedef void 
@@ -397,6 +429,8 @@ typedef void
 
 /**
  * struct ORTEDomainAppEvents - Domain event handlers of an application
+ * @onRegFail: registration protocol has been failed
+ * @onRegFailParam: user parameters for @onRegFail handler
  * @onMgrNew: new manager has been created
  * @onMgrNewParam: user parameters for @onMgrNew handler
  * @onMgrDelete: manager has been deleted
@@ -421,6 +455,8 @@ typedef void
  * Prototypes of events handler fucntions can be found in file typedefs_api.h.
  */
 typedef struct ORTEDomainAppEvents {
+  ORTEOnRegFail          onRegFail;
+  void                   *onRegFailParam;
   ORTEOnMgrNew           onMgrNew;
   void                   *onMgrNewParam;
   ORTEOnMgrDelete        onMgrDelete;

@@ -16,7 +16,7 @@ void FSubscriber::init()
 {
     ORTEInit(); 
     domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
-    ORTETypeRegisterBoxType(domain);
+    BoxType_type_register(domain);
     subscriberBlue=subscriberGreen=subscriberRed=NULL;
     subscriberBlack=subscriberYellow=NULL;
 }
@@ -41,6 +41,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   BoxType *boxType=(BoxType*)vinstance;
   FSubscriber *s=(FSubscriber*)recvCallBackParam;
   QRect   rect;
+
 
   a->lock();
   switch (info->status) {
@@ -91,7 +92,8 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
 	    &deadline,
 	    &msBlue,
 	    recvCallBack,
-	    this);
+	    this,
+            IPADDRESS_INVALID);
 	combo->insertItem("Blue",combo->count());
     }
     if (iGreen) {
@@ -105,7 +107,8 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             &deadline,
             &msGreen,
             recvCallBack,
-            this);
+            this,
+	    IPADDRESS_INVALID);
 	combo->insertItem("Green",combo->count());
     }
     if (iRed) {
@@ -119,7 +122,8 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             &deadline,
             &msRed,
             recvCallBack,
-            this);
+            this,
+	    IPADDRESS_INVALID);
 	combo->insertItem("Red",combo->count());
     }
     if (iBlack) {
@@ -133,7 +137,8 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             &deadline,
             &msBlack,
             recvCallBack,
-            this);
+            this,
+	    IPADDRESS_INVALID);
 	combo->insertItem("Black",combo->count());
     }
     if (iYellow) {
@@ -147,7 +152,8 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             &deadline,
             &msYellow,
             recvCallBack,
-            this);
+            this,
+	    IPADDRESS_INVALID);
 	combo->insertItem("Yellow",combo->count());
      }
 }

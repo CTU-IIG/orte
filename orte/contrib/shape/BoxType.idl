@@ -1,0 +1,12 @@
+struct BoxRect {
+    short 	top_left_x;
+    short 	top_left_y;
+    short 	bottom_right_x;
+    short 	bottom_right_y;
+};
+	
+struct BoxType {
+    octet    	color;
+    long	shape;
+    BoxRect	rectangle;
+};

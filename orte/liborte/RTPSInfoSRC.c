@@ -22,25 +22,37 @@
 #include "orte_all.h"
 
 /**********************************************************************************/
-void RTPSInfoSRC(uint8_t *rtps_msg,MessageInterpret *mi) {
+void RTPSInfoSRC(CDR_Codec *cdrCodec,MessageInterpret *mi) {
   IPAddress          ipa;
   ProtocolVersion    protocol;
   VendorId           vid;
   HostId             hid;
   AppId              aid;
-  int8_t             e_bit;
   char               sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  CDR_Endianness     data_endian;
 
-  //Parsing
-  e_bit=rtps_msg[1] & 0x01;
-  ipa=*((IPAddress*)(rtps_msg+4));              /* appIPAddress */
-  conv_u32(&ipa,e_bit);
-  protocol=*((ProtocolVersion*)(rtps_msg+8));   /* ProtocolVersion */
-  vid=*((VendorId*)(rtps_msg+10));              /* Vendor Id */
-  hid=*((HostId*)(rtps_msg+12));                /* HostId */
-  conv_u32(&hid,0);
-  aid=*((AppId*)(rtps_msg+16));                 /* AppId */
-  conv_u32(&aid,0);
+  /* appIPAddress */
+  CDR_get_ulong(cdrCodec,&ipa);
+  
+  /* ProtocolVersion */
+  CDR_get_octet(cdrCodec,&protocol.major);
+  CDR_get_octet(cdrCodec,&protocol.minor);
+
+  /* Vendor Id */
+  CDR_get_octet(cdrCodec,&vid.major);
+  CDR_get_octet(cdrCodec,&vid.minor);
+
+  /* next data are sent in big endianing */
+  data_endian=cdrCodec->data_endian;
+  cdrCodec->data_endian=FLAG_BIG_ENDIAN;
+
+  /* HostId */
+  CDR_get_ulong(cdrCodec,&hid);
+
+  /* AppId */
+  CDR_get_ulong(cdrCodec,&aid);
+
+  cdrCodec->data_endian=data_endian;
 
   debug(44,3) ("  RTPSInfoSRC: \n");
   debug(44,4) ("    appIPAddress:%s\n",IPAddressToString(ipa,sIPAddress));

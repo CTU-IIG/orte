@@ -2,11 +2,11 @@ ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
 INCLUDES = -I $(srcdir)/../../include
 
-utils_PROGRAMS = helloPublisher helloSubscriber
+utils_PROGRAMS = h_publisher h_subscriber
 
-helloPublisher_SOURCES = HelloWorldPublisher.c
+h_publisher_SOURCES = h_publisher.c
 
-helloSubscriber_SOURCES = HelloWorldSubscriber.c
+h_subscriber_SOURCES = h_subscriber.c
 
 lib_LOADLIBES =  orte pthread
 
@@ -17,13 +17,13 @@ endif #CONFIG_OC_ETH_ORTE_EXAMPLES
 
 ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_RTL),y)
 
-rtlinux_MODULES = HelloWorldPublisher_rt HelloWorldSubscriber_rt
+rtlinux_MODULES = h_publisher_rt h_subscriber_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../../include
                
-HelloWorldPublisher_rt_SOURCES = HelloWorldPublisher.c
+h_publisher_rt_SOURCES = h_publisher.c
 
-HelloWorldSubscriber_rt_SOURCES = HelloWorldSubscriber.c
+h_subscriber_rt_SOURCES = h_subscriber.c
 
 rtlinux_LOADLIBES =  orte_rt pthread_rwlock_rt
 

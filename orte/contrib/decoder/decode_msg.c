@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <endian.h>
+#include <stdint.h>
 #include <byteswap.h>
 #include <typedefs_defines_rtps.h>
 

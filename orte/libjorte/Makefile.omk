@@ -1,0 +1,41 @@
+default_CONFIG = CONFIG_OC_ETH_JORTE=n
+
+ifeq ($(CONFIG_OC_ETH_JORTE),y) 
+
+ifndef JAVA_HOME
+JAVA_HOME=/opt/java
+endif
+
+export JAVA_HOME
+
+shared_LIBRARIES = jorte
+
+lib_LOADLIBES = orte
+
+INCLUDES = -I $(srcdir)/../include -I $(JAVA_HOME)/include  -I $(JAVA_HOME)/include/linux
+
+jorte_SOURCES = \
+getNtpTime.c \
+JGetORTEConstant.c \
+JIPAddressToString.c \
+JNtpTimeToStringMs.c \
+JNtpTimeToStringUs.c \
+JORTEDomainAppCreate.c \
+JORTEDomainAppDestroy.c \
+JORTEDomainInitEvents.c \
+JORTEDomainMgrCreate.c \
+JORTEDomainMgrDestroy.c \
+JORTEDomainPropDefaultGet.c \
+JORTEDomainStart.c \
+JORTEInit.c \
+JORTEPublicationCreate.c \
+JORTEPublicationDestroy.c \
+JORTEPublicationSend.c \
+JORTESleepMs.c \
+JORTESubscriptionCreate.c \
+JORTESubscriptionDestroy.c \
+JORTETypeRegisterAdd.c \
+JStringToIPAddress.c
+
+endif #CONFIG_OC_ETH_JORTE
+

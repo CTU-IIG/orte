@@ -37,6 +37,14 @@
 #endif
 
 Boolean                 quite=ORTE_FALSE;
+int			regfail=0;
+
+//event system
+void
+onRegFail(void *param) {
+  printf("registration to a manager failed\n");
+  regfail=1;
+}
 
 void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
@@ -48,7 +56,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
         printf("received fresh issue %d\n",*instance);
       break;
     case DEADLINE:
-      printf("deadline occured\n");
+      printf("deadline occurred\n");
       break;
   }
 }
@@ -70,7 +78,7 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) 
 
 static void usage(void) {
   printf("usage: orteping <parameters> \n");
-  printf("  -d, --domain <domain>         working manager domain\n");
+  printf("  -d, --domain <domain>         working application domain\n");
   printf("  -p, --publisher               create publisher Ping,PingData\n");
   printf("  -S, --strength                strength of publisher <1>\n");
   printf("  -D, --delay <ms>              delay between two publications <1000>\n");
@@ -79,6 +87,9 @@ static void usage(void) {
   printf("  -P, --purge <s>               purge time for services\n");
   printf("  -E, --expiration <s>          expiration time of application\n");
   printf("  -m, --minimumSeparation <s>   minimumSeparation between two issues\n");
+  printf("  -I, --metaMulticast <IPAdd>   use multicast IPAddr for metatraffic comm.\n");
+  printf("  -i, --dataMulticast <IPAdd>   use multicast IPAddr for userdata comm.\n");  
+  printf("  -t, --timetolive <number>     time-to-live for multicast packets\n");
   printf("  -v, --verbosity <level>       set verbosity level SECTION, up to LEVEL:...\n");
   printf("      examples: ORTEManager -v 51.7:32.5 sections 51 and 32\n");
   printf("                ORTEManager -v ALL.7     all sections up to level 7\n");
@@ -99,6 +110,9 @@ int main(int argc,char *argv[]) {
     { "purge",1,0, 'P' },
     { "expiration",1,0, 'E' },
     { "minimumSeparation",1,0, 'm' },
+    { "metaMulticast",1,0, 'I' },
+    { "dataMulticast",1,0, 'i' },
+    { "timetolive",1,0, 't' },
     { "delay",1,0, 'D' },
     { "verbosity",1,0, 'v' },
     { "quiet",0,0, 'q' },
@@ -118,6 +132,8 @@ int main(int argc,char *argv[]) {
   NtpTime                 persistence,deadline,minimumSeparation,delay;
   Boolean                 havePublisher=ORTE_FALSE;
   Boolean                 haveSubscriber=ORTE_FALSE;
+  IPAddress		  smIPAddress=IPADDRESS_INVALID;
+  ORTEDomainAppEvents     events;
   
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
@@ -125,9 +141,9 @@ int main(int argc,char *argv[]) {
   NTPTIME_BUILD(delay,1); //1s
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
-  while ((opt = getopt_long(argc, argv, "m:S:d:v:R:E:P:l:D:Vhpsq",&long_opts[0], NULL)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "m:S:d:v:R:E:P:l:I:i:t:D:Vhpsq",&long_opts[0], NULL)) != EOF) {
 #else
-  while ((opt = getopt(argc, argv, "m:S:d:v:R:E:P:l:D:Vhpsq")) != EOF) {
+  while ((opt = getopt(argc, argv, "m:S:d:v:R:E:P:l:I:i:t:D:Vhpsq")) != EOF) {
 #endif
     switch (opt) {
       case 'S':
@@ -160,6 +176,17 @@ int main(int argc,char *argv[]) {
       case 'D':
         NtpTimeAssembFromMs(delay,strtol(optarg,NULL,0)/1000,strtol(optarg,NULL,0)%1000);
         break;
+      case 'I':
+        dp.multicast.enabled=ORTE_TRUE;
+        dp.multicast.ipAddress=StringToIPAddress(optarg);
+        break;
+      case 'i':
+        dp.multicast.enabled=ORTE_TRUE;
+        smIPAddress=StringToIPAddress(optarg);
+        break;
+      case 't':
+        dp.multicast.ttl=strtol(optarg,NULL,0);
+        break;
       case 'l':
         ORTEVerbositySetLogFile(optarg);
       case 'q':
@@ -175,10 +202,15 @@ int main(int argc,char *argv[]) {
         exit(opt == 'h' ? 0 : 1);
     }
   }
+
+  //initiate event system
+  ORTEDomainInitEvents(&events);
+  events.onRegFail=onRegFail;
+
   //Create application     
-  d=ORTEDomainAppCreate(domain,&dp,NULL,ORTE_FALSE);
+  d=ORTEDomainAppCreate(domain,&dp,&events,ORTE_FALSE);
   //Register ser./deser. rutines with maximal size 4 Bytes
-  ORTETypeRegisterAdd(d,"PingData",NULL,NULL,4);   
+  ORTETypeRegisterAdd(d,"PingData",NULL,NULL,NULL,4);   
   //Create publisher
   if (havePublisher) {
     NTPTIME_BUILD(persistence,5); 
@@ -205,10 +237,11 @@ int main(int argc,char *argv[]) {
          &deadline,
          &minimumSeparation,
          recvCallBack,
-         NULL);
+         NULL,
+	 smIPAddress);
   }
   //never ending loop
-  while (1) 
+  while (!regfail) 
     ORTESleepMs(1000);
   exit(0);
 }

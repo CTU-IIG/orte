@@ -116,10 +116,13 @@ debug_options(const char *options) {
   char *s = NULL;
 
   if (options) {
-    p = strdup((char *)options);
+    p=(char*)MALLOC(strlen(options)+1);
+    if (p) {
+      memcpy(p, options, strlen(options) + 1);
+    }    
     for (s = strtok(p, ":"); s; s = strtok(NULL, ":"))
       debug_arg(s);
-    free(p);
+    FREE(p);
   }     
 }
 
@@ -162,6 +165,16 @@ void *mem_check_malloc(size_t size) {
     debug(1,9) ("mem check: inc %d\n",mem_check_counter);
   }
   return ptr;
+}
+
+void *mem_check_realloc(void *ptr,size_t size) { 
+  void *nptr;
+  
+  if (!ptr) {
+    mem_check_counter++;
+    debug(1,9) ("mem check: inc %d\n",mem_check_counter);
+  }
+  return nptr=realloc(ptr,size);
 }
 
 void mem_check_free(void *ptr) {

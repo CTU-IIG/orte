@@ -22,15 +22,23 @@
 #include "orte_all.h"
 
 /**********************************************************************************/
-void RTPSInfoDST(uint8_t *rtps_msg,MessageInterpret *mi) {
+void RTPSInfoDST(CDR_Codec *cdrCodec,MessageInterpret *mi) {
+  CDR_Endianness     data_endian;
   HostId             hid;
   AppId              aid;
 
-  //parsing
-  hid=*((HostId*)(rtps_msg+4));                 /* HostId */
-  conv_u32(&hid,0);
-  aid=*((uint32_t*)(rtps_msg+8));              /* AppId */
-  conv_u32(&aid,0);
+  data_endian=cdrCodec->data_endian;
+  cdrCodec->data_endian=FLAG_BIG_ENDIAN;
+
+  /* Host Id */
+  CDR_put_ulong(cdrCodec,                          
+		*(CORBA_unsigned_long*)&hid);
+
+  /* App Id */
+  CDR_put_ulong(cdrCodec,                          
+		*(CORBA_unsigned_long*)&aid);
+
+  cdrCodec->data_endian=data_endian;
 
   debug(42,3) ("  RTPSInfoDST:\n");
   debug(42,4) ("    hid:0x%x, aid:0x%x\n",hid,aid);

@@ -30,60 +30,53 @@ CSTReaderResponceTimer(ORTEDomain *d,void *vcstRemoteWriter) {
   
   if ((cstRemoteWriter->guid.oid & 0x07) == OID_PUBLICATION) 
     queue=2;
-  if (!d->mbSend.containsInfoReply) { 
+  if (!d->taskSend.mb.containsInfoReply) { 
     if (queue==1) {
       len=RTPSInfoREPLYCreate(
-          d->mbSend.cdrStream.bufferPtr,
-          getMaxMessageLength(d),
+          &d->taskSend.mb.cdrCodec,
           IPADDRESS_INVALID,
           ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->metatrafficUnicastPort);
     } else {
       len=RTPSInfoREPLYCreate(
-          d->mbSend.cdrStream.bufferPtr,
-          getMaxMessageLength(d),
+          &d->taskSend.mb.cdrCodec,
           IPADDRESS_INVALID,
           ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->userdataUnicastPort);
     }
     if (len<0) {
-      d->mbSend.needSend=ORTE_TRUE;
+      d->taskSend.mb.needSend=ORTE_TRUE;
       return 1;
     }
-    d->mbSend.containsInfoReply=ORTE_TRUE;  
-    d->mbSend.cdrStream.bufferPtr+=len;
-    d->mbSend.cdrStream.length+=len;
+    d->taskSend.mb.containsInfoReply=ORTE_TRUE;  
     debug(55,3) ("sent: RTPS_InfoREPLY(0x%x) to 0x%x-0x%x\n",
                   cstRemoteWriter->cstReader->guid.oid,
                   cstRemoteWriter->guid.hid,
                   cstRemoteWriter->guid.aid);
   }
   len=RTPSAckCreate(
-       d->mbSend.cdrStream.bufferPtr,
-       getMaxMessageLength(d),
+       &d->taskSend.mb.cdrCodec,
        &cstRemoteWriter->sn,
        cstRemoteWriter->cstReader->guid.oid,
        cstRemoteWriter->guid.oid,
        ORTE_TRUE);
   if (len<0) {
     //not enought space in sending buffer
-    d->mbSend.needSend=ORTE_TRUE;
+    d->taskSend.mb.needSend=ORTE_TRUE;
     return 1;
   }
-  d->mbSend.cdrStream.bufferPtr+=len;
-  d->mbSend.cdrStream.length+=len;
   debug(55,3) ("sent: RTPS_ACKF(0x%x) to 0x%x-0x%x\n",
                 cstRemoteWriter->cstReader->guid.oid,
                 cstRemoteWriter->guid.hid,
                 cstRemoteWriter->guid.aid);
   if (cstRemoteWriter->commStateACK==PULLING) {
     eventDetach(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        cstRemoteWriter->spobject->objectEntryAID,
         &cstRemoteWriter->delayResponceTimer,
         queue); 
     if (cstRemoteWriter->ACKRetriesCounter<
         cstRemoteWriter->cstReader->params.ACKMaxRetries) {
       cstRemoteWriter->ACKRetriesCounter++;
       eventAdd(d,
-          cstRemoteWriter->objectEntryOID->objectEntryAID,
+          cstRemoteWriter->spobject->objectEntryAID,
           &cstRemoteWriter->delayResponceTimer,
           queue,
           "CSTReaderResponceTimer",
@@ -99,13 +92,13 @@ CSTReaderResponceTimer(ORTEDomain *d,void *vcstRemoteWriter) {
   if (cstRemoteWriter->commStateACK==ACKPENDING) { 
     cstRemoteWriter->commStateACK=WAITING;
     eventDetach(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        cstRemoteWriter->spobject->objectEntryAID,
         &cstRemoteWriter->repeatActiveQueryTimer,
         queue); 
     if (NtpTimeCmp(cstRemoteWriter->cstReader->
                    params.repeatActiveQueryTime,iNtpTime)!=0) {
       eventAdd(d,
-          cstRemoteWriter->objectEntryOID->objectEntryAID,
+          cstRemoteWriter->spobject->objectEntryAID,
           &cstRemoteWriter->repeatActiveQueryTimer,
           queue,
           "CSTReaderQueryTimer",
@@ -127,57 +120,50 @@ CSTReaderQueryTimer(ORTEDomain *d,void *vcstRemoteWriter) {
   
   if ((cstRemoteWriter->guid.oid & 0x07) == OID_PUBLICATION) 
     queue=2;  
-  if (!d->mbSend.containsInfoReply) { 
+  if (!d->taskSend.mb.containsInfoReply) { 
     if (queue==1) {
       len=RTPSInfoREPLYCreate(
-          d->mbSend.cdrStream.bufferPtr,
-          getMaxMessageLength(d),
+          &d->taskSend.mb.cdrCodec,
           IPADDRESS_INVALID,
           ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->metatrafficUnicastPort);
     } else {
       len=RTPSInfoREPLYCreate(
-          d->mbSend.cdrStream.bufferPtr,
-          getMaxMessageLength(d),
+          &d->taskSend.mb.cdrCodec,
           IPADDRESS_INVALID,
           ((AppParams*)cstRemoteWriter->cstReader->objectEntryOID->attributes)->userdataUnicastPort);
     }
     if (len<0) {
-      d->mbSend.needSend=ORTE_TRUE;
+      d->taskSend.mb.needSend=ORTE_TRUE;
       return 1;
     }
-    d->mbSend.containsInfoReply=ORTE_TRUE;  
-    d->mbSend.cdrStream.bufferPtr+=len;
-    d->mbSend.cdrStream.length+=len;
+    d->taskSend.mb.containsInfoReply=ORTE_TRUE;  
     debug(55,3) ("sent: RTPS_InfoREPLY(0x%x) to 0x%x-0x%x\n",
                   cstRemoteWriter->cstReader->guid.oid,
                   cstRemoteWriter->guid.hid,
                   cstRemoteWriter->guid.aid);
   }
   len=RTPSAckCreate(
-      d->mbSend.cdrStream.bufferPtr,
-      getMaxMessageLength(d),
+      &d->taskSend.mb.cdrCodec,
       &cstRemoteWriter->sn,
       cstRemoteWriter->cstReader->guid.oid,
       cstRemoteWriter->guid.oid,
       ORTE_FALSE);
   if (len<0) {
-    d->mbSend.needSend=ORTE_TRUE;
+    d->taskSend.mb.needSend=ORTE_TRUE;
     return 1;
   }
   debug(55,3) ("sent: RTPS_ACKf(0x%x) to 0x%x-0x%x\n",
                 cstRemoteWriter->cstReader->guid.oid,
                 cstRemoteWriter->guid.hid,
                 cstRemoteWriter->guid.aid);
-  d->mbSend.cdrStream.bufferPtr+=len;
-  d->mbSend.cdrStream.length+=len;
   eventDetach(d,
-      cstRemoteWriter->objectEntryOID->objectEntryAID,
+      cstRemoteWriter->spobject->objectEntryAID,
       &cstRemoteWriter->repeatActiveQueryTimer,
       queue);   
   if (NtpTimeCmp(cstRemoteWriter->cstReader->
                  params.repeatActiveQueryTime,iNtpTime)!=0) {
     eventAdd(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        cstRemoteWriter->spobject->objectEntryAID,
         &cstRemoteWriter->repeatActiveQueryTimer,
         queue,
         "CSTReaderQueryTimer",
@@ -250,7 +236,7 @@ CSTReaderPersistenceTimer(ORTEDomain *d,void *vcstReader) {
   sp=(ORTESubsProp*)cstReader->objectEntryOID->attributes;
   strength=0;
   gavl_cust_for_each(CSTRemoteWriter,cstReader,cstRemoteWriter) {
-    pp=(ORTEPublProp*)cstRemoteWriter->objectEntryOID->attributes;
+    pp=(ORTEPublProp*)cstRemoteWriter->spobject->attributes;
     csChangeFromWriter=CSChangeFromWriter_last(cstRemoteWriter);
     if ((pp->strength>strength) && (csChangeFromWriter!=NULL)){
       NtpTime persistence,persistenceExpired,actTime;

@@ -1,11 +1,21 @@
-v0.3.0 -
+v0.3.0 - 050220
 - fixed csChange memory lake in RTPSVar
+- added support CDR types (imported from ORBIT)
+  * CDR_Codec type
+  for serialization/deserialization are used functions
+- java interface - preliminary
+- IDL compiler, jorte library - both preliminary
+- multicast communication
+  * new demo in orte/example/multicast
+- documentation in developing branch
+- added registration retries and period parameters. New event 
+  generated when application fail to register to a manager (onRegFail).
 
 v0.2.3 - 09/26/2004
 
 - fixed unsolve symbols for RTNet
 - fixed aclocal script for 1.8.3 version (admin/linux.m4)
-- add support shared lobraries (libtool)
+- added support shared lobraries (libtool)
 - added new target (FreeBSD)
 - ortemanager runable like windows service
 - MinGW pthread corection (when is instaled a version of pthread)
@@ -33,5 +43,5 @@ v0.2.0 - 01/08/2004
 
 V0.1.1 - 12/14/2002
 
-- cleaned up source code a little.
+- a little cleaned up source code.
 

@@ -35,12 +35,14 @@
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
 #CONFIG_RTLINUX = y
-OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
+#OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
+-include $(MAKERULES_DIR)/OCERA_TOP_DIR
 
 BUILD_DIR_NAME = _build
 COMPILED_DIR_NAME = _compiled
-GROUP_DIR_NAME = orte
-
+ifndef GROUP_DIR_NAME
+GROUP_DIR_NAME = nogroup
+endif
 
 # We need to ensure definition of sources directory first
 ifndef SOURCES_DIR
@@ -332,7 +334,7 @@ SOLIB_SOURCES += $$($(1)_SOURCES)
 
 $(USER_LIB_DIR)/lib$(1).so: $$($(1)_OBJSLO)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
-	$(Q) $(LD) --shared --soname=lib$(1).so -o $$@ $$^
+	$(Q) $(LD) --shared --soname=lib$(1).so -o $$@ $$^ $(LOADLIBES)
 endef
 
 

@@ -21,18 +21,17 @@
  
 #include "orte_all.h"
 
-void 
+inline void 
 ORTESleepMs(unsigned int ms) {
   #if defined(CONFIG_ORTE_UNIX) && defined (HAVE_UNISTD_H)
     usleep(ms*1000);
-  #endif
-  #ifdef CONFIG_ORTE_RTL
+  #elif define CONFIG_ORTE_RTL 
     usleep(ms*1000);
-  #endif
-  #if defined CONFIG_ORTE_WIN
+  #elif defined CONFIG_ORTE_WIN 
     Sleep(ms);
-  #endif
-  #ifdef CONFIG_ORTE_RTAI
+  #elif defined CONFIG_ORTE_RTAI
     rt_sleep(nano2count(ms*1000000));
+  #elif
+    #error "NOT DEFINED SLEEP FUNCTION!"
   #endif
 }

@@ -22,13 +22,13 @@
 #include "orte_all.h"
 
 /*****************************************************************************/
-void 
+inline void 
 ORTEVerbositySetOptions(const char *options) {
   debug_options(options);
 }
 
 /*****************************************************************************/
-void 
+inline void 
 ORTEVerbositySetLogFile(const char *logfile) {
   debug_open_log(logfile);
 }

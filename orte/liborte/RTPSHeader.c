@@ -22,36 +22,78 @@
 #include "orte_all.h"
 
 /**********************************************************************************/
-int16_t
-RTPSHeaderCreate(uint8_t *msg,HostId hid,AppId aid) {
-  msg[0]='R';msg[1]='T'; msg[2]='P'; msg[3]='S';
-  //Protocol version
-  PROTOCOL_VERSION_1_0((*((ProtocolVersion*)(msg+4))));
+int
+RTPSHeaderCreate(CDR_Codec *cdrCodec,HostId hid,AppId aid) {
+  CDR_Endianness  data_endian;
+  ProtocolVersion pv;
+  VendorId vid;
+
+  CDR_put_octet(cdrCodec,'R');
+  CDR_put_octet(cdrCodec,'T');
+  CDR_put_octet(cdrCodec,'P');
+  CDR_put_octet(cdrCodec,'S');
+
+  /* Protocol version */
+  PROTOCOL_VERSION_1_0(pv);
+  CDR_put_octet(cdrCodec,pv.major);
+  CDR_put_octet(cdrCodec,pv.minor);
+
   //Vendor id
-  VENDOR_ID_UNKNOWN((*((VendorId*)(msg+6))));
-  //HID
-  conv_u32(&hid,0);
-  *((HostId*)(msg+8))=hid;
-  //AID
-  conv_u32(&aid,0);
-  *((AppId*)(msg+12))=aid;
+  VENDOR_ID_UNKNOWN(vid);
+  CDR_put_octet(cdrCodec,vid.major);
+  CDR_put_octet(cdrCodec,vid.minor);
+
+  /* next data are sent in big endianing */
+  data_endian=cdrCodec->data_endian;
+  cdrCodec->data_endian=FLAG_BIG_ENDIAN;
+
+  /* Host Id */
+  CDR_put_ulong(cdrCodec,hid);
+
+  /* App Id */
+  CDR_put_ulong(cdrCodec,aid);
+
+  cdrCodec->data_endian=data_endian;
+
   return 16;
 } 
 /**********************************************************************************/
-int16_t
-RTPSHeaderCheck(uint8_t *msg,int32_t len,MessageInterpret *mi) {
-  if (len<16) return -1;                          /* message is too small */
-  if (msg[0]!='R') return -2;                     /* header is invalid */
-  if (msg[1]!='T') return -2;                     /* header is invalid */
-  if (msg[2]!='P') return -2;                     /* header is invalid */
-  if (msg[3]!='S') return -2;                     /* header is invalid */
-  mi->sourceVersion=*((ProtocolVersion*)(msg+4)); /* ProtocolVersion */
-  mi->sourceVendorId=*((VendorId*)(msg+6));       /* Vendor Id */
-  mi->sourceHostId=*((HostId*)(msg+8));           /* Host Id */
-  conv_u32(&mi->sourceHostId,0);
-  mi->sourceAppId=*((AppId*)(msg+12));            /* App Id */
-  conv_u32(&mi->sourceAppId,0);
-  mi->haveTimestamp=ORTE_FALSE;                   /* false */
+int
+RTPSHeaderCheck(CDR_Codec *cdrCodec,int32_t len,MessageInterpret *mi) {
+  CDR_Endianness  data_endian;
+  CORBA_octet c;
+
+  if (len<16) return -1;                            /* message is too small */
+  CDR_get_octet(cdrCodec,&c);
+  if (c!='R') return -2;                            /* header is invalid */
+  CDR_get_octet(cdrCodec,&c);
+  if (c!='T') return -2;                            
+  CDR_get_octet(cdrCodec,&c);
+  if (c!='P') return -2;                            
+  CDR_get_octet(cdrCodec,&c);
+  if (c!='S') return -2;                            
+
+  /* Protocol Version */
+  CDR_get_octet(cdrCodec,&mi->sourceVersion.major);
+  CDR_get_octet(cdrCodec,&mi->sourceVersion.minor);
+
+   /* Vendor Id */
+  CDR_get_octet(cdrCodec,&mi->sourceVendorId.major);
+  CDR_get_octet(cdrCodec,&mi->sourceVendorId.minor);
+
+  /* next data are sent in big endianing */
+  data_endian=cdrCodec->data_endian;
+  cdrCodec->data_endian=FLAG_BIG_ENDIAN;
+
+  /* Host Id */
+  CDR_get_ulong(cdrCodec,&mi->sourceHostId);
+
+  /* App Id */
+  CDR_get_ulong(cdrCodec,&mi->sourceAppId);
+
+  cdrCodec->data_endian=data_endian;
+
+  mi->haveTimestamp=ORTE_FALSE;                     /* false */
   return 0;
 }
 

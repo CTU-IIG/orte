@@ -1,19 +1,19 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.11 2004/09/21 21:09:33 smolik Exp $
+# $Id: configure.in,v 1.12 2005/02/23 10:12:09 smolik Exp $
 
 # autoconf requirement
 
 AC_PREREQ([2.56])
 
-AC_INIT([orte],[0.2.3],[petr.smolik@wo.cz])
+AC_INIT([orte],[0.3.0],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
 
 ###############################
 # Package info
 ORTE_MAJOR_VERSION=0
-ORTE_MINOR_VERSION=2
-ORTE_MICRO_VERSION=3
+ORTE_MINOR_VERSION=3
+ORTE_MICRO_VERSION=0
 ORTE_INTERFACE_AGE=0
 ORTE_BINARY_AGE=0
 ORTE_VERSION=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION.$ORTE_MICRO_VERSION
@@ -44,7 +44,7 @@ echo
 #Check for CPU / vendor / OS
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_CONFIG_HEADER(orte/include/config.h)
+AM_CONFIG_HEADER(orte/include/orte/orte_config.h)
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
 
 
@@ -116,6 +116,14 @@ fi
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
+
+###############################
+# Checks for ability to compile ORTE_IDL
+AM_ORTE_IDL
+
+###############################
+# Checks for ability to compile JORTE
+AM_JORTE
 
 ###############################
 # Checks for libraries and init libtools
@@ -203,6 +211,17 @@ if test ${USE_RTLINUX} == 'yes' ; then
       #include <nic.h>
     #endif
     ])
+    AC_CHECK_HEADERS([onetd.h],,,[
+    #ifdef HAVE_LINUX_IF_H
+      #include <linux/if.h>
+    #endif
+    #ifdef HAVE_LINUX_IN_H
+      #include <linux/in.h>
+    #endif
+    #ifdef HAVE_PTHREAD_H
+      #include <pthread.h>
+    #endif
+    ])
 fi
 # RTAI
 if test ${USE_RTAI} == 'yes' ; then
@@ -212,7 +231,7 @@ fi
 
 ###############################
 # includes
-INCLUDES='-I$(top_srcdir)/orte/include'
+INCLUDES='-I$(top_srcdir)/orte/include -I$(top_builddir)/orte/include'
 AC_SUBST(INCLUDES)
 
 ###############################
@@ -225,7 +244,7 @@ AC_C_INLINE
 # Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
 if test -z ${CONFIG_ORTE_RT} ; then
-AC_CHECK_FUNCS([strdup gethostbyname getopt_long])
+AC_CHECK_FUNCS([gethostbyname getopt_long])
 fi
 
 AC_CONFIG_FILES([Makefile
@@ -234,9 +253,12 @@ AC_CONFIG_FILES([Makefile
 		 orte/liborte/rtl/Makefile
 		 orte/examples/Makefile
 		 orte/examples/hello/Makefile
+		 orte/examples/multicast/Makefile
 		 orte/examples/reliable/Makefile
 		 orte/examples/ping/Makefile
 		 orte/examples/spy/Makefile
+		 orte/idl-compiler/Makefile
+		 orte/libjorte/Makefile
                  orte/manager/Makefile])
 
 
@@ -245,19 +267,18 @@ modtool
 ])
 chmod +x modtool
 
-
 # ======================================================================
-#		generate orte/include/orte_config.h
+#		generate orte/include/orte/orte_config.h
 # ======================================================================
 
-AC_MSG_NOTICE([creating orte/include/orte_config.h])
+AC_MSG_NOTICE([creating orte/include/orte/orte_config.h])
 sed -e "s/ PACKAGE/ ORTE_PACKAGE/" -e "s/ VERSION/ ORTE_VERSION/" \
-    orte/include/config.h >orte/include/orte_config.h.new
-if cmp -s orte/include/orte_config.h.new orte/include/orte_config.h; then
-	rm orte/include/orte_config.h.new
-	AC_MSG_NOTICE([orte/include/orte_config.h is unchanged])
+    orte/include/orte/orte_config.h >orte/include/orte/orte_config.h.new
+if cmp -s orte/include/orte/orte_config.h.new orte/include/orte/orte_config.h; then
+	rm orte/include/orte/orte_config.h.new
+	AC_MSG_NOTICE([orte/include/orte/orte_config.h is unchanged])
 else
-	mv orte/include/orte_config.h.new orte/include/orte_config.h
+	mv orte/include/orte/orte_config.h.new orte/include/orte/orte_config.h
 fi
 
 echo \
@@ -269,7 +290,7 @@ Configuration ORTE:
   Compiler flags:             ${CFLAGS}
   Host System Type:           ${host}
   
-  See config.h for future configuration information.
+  See orte_config.h for future configuration information.
   
   Now you can run
   make  

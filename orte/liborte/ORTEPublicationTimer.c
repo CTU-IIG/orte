@@ -38,7 +38,7 @@ PublicationCallBackTimer(ORTEDomain *d,void *vcstWriter) {
                           cstWriter->objectEntryOID->callBackParam);
   CSTWriterTryDestroyBestEffortIssue(cstWriter);
   if (cstWriter->csChangesCounter<pp->sendQueueSize) {
-    ORTEPublicationSendLocked(cstWriter);
+    ORTEPublicationSendLocked(cstWriter,NULL);
   }
   eventAdd(d,
       cstWriter->objectEntryOID->objectEntryAID,

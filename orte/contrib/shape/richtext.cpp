@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.cpp,v 1.6 2004/07/12 20:17:58 smolik Exp $
+** $Id: richtext.cpp,v 1.7 2005/02/23 10:14:23 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
@@ -75,7 +75,7 @@ static const char* subscriberExamples[] = {
     "      printf(\"%s\",instance);<br>"
     "      break;<br>"
     "    case DEADLINE:<br>"
-    "      printf(\"deadline occured\");<br>"
+    "      printf(\"deadline occurred\");<br>"
     "      break;<br>"
     "  }<br>"
     "}<br></pre>",

@@ -19,7 +19,7 @@ void FPublisher::init()
     rect.setRect(0,0,25,45);
     ORTEInit(); 
     domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
-    ORTETypeRegisterBoxType(domain);
+    BoxType_type_register(domain);
     publisher=NULL;
 }
 

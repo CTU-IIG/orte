@@ -1,0 +1,5 @@
+struct TestAnyStruct 
+{
+  string<20> string_value;
+  long long_value;
+};

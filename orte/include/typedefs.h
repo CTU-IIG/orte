@@ -26,6 +26,7 @@ extern "C" {
 #endif
 
 typedef struct CSTWriter CSTWriter;               //forward declarations
+typedef struct CSTRemoteReader CSTRemoteReader;               
 typedef struct CSTReader CSTReader;               
 typedef struct ObjectEntryOID ObjectEntryOID;
 typedef struct ObjectEntryHID ObjectEntryHID;
@@ -44,8 +45,8 @@ typedef struct sock_t {
  * struct  - MessageBuffer
  */
 typedef struct MessageBuffer {
-  ORTECDRStream          cdrStream;
-  ORTECDRStream          *cdrStreamDirect;
+  CDR_Codec		 cdrCodec;
+  CDR_Codec              *cdrCodecDirect;
   Boolean                needSend;
   Boolean                containsInfoReply;
 } MessageBuffer;
@@ -56,6 +57,8 @@ typedef struct TaskProp {
   sock_t                 sock;
   pthread_t              thread;
   Boolean                terminate;
+  MessageBuffer		 mb;
+  ORTEDomain	 	 *d;
 } TaskProp;
 
 
@@ -147,7 +150,7 @@ typedef int EVH2(ORTEDomain *,void *);
 typedef struct HTimFncUserNode {
   ul_htim_node_t        htim;
   const char            *name;
-  pthread_rwlock_t      *lock; //when func share params, lock is called before call the func
+  pthread_rwlock_t      *lock; //when a func share params, lock is called before call the func
   EVH2                  *func;
   void                  *arg1;
 } HTimFncUserNode;
@@ -165,22 +168,27 @@ struct ObjectEntryOID{
   void                   *attributes;  //atributes of object
   Boolean                appMOM;
   Boolean                privateCreated;  //object created by me self app
-  HTimFncUserNode	       expirationPurgeTimer;
+  HTimFncUserNode	 expirationPurgeTimer;
   //only for private CSTPublication,CSTSubscription
-  void                   *instance;    //data stream
+  void                   *instance;    //data Codec
   ORTERecvCallBack       recvCallBack;
   ORTESendCallBack       sendCallBack;
   void                   *callBackParam;
   NtpTime                sendCallBackDelay;
-  HTimFncUserNode	       sendCallBackDelayTimer;
+  HTimFncUserNode        sendCallBackDelayTimer;
   //only for list of publishers or subscribers
   gavl_node_t            psNode;
+  //multicast
+  ul_list_head_t         multicastRemoteReaders;
+  int			 multicastPort;
 };
 struct ObjectEntryAID {
   gavl_node_t            aidNode;
   AppId                  aid;
   HTimNode               htimUnicast;  //parameters for Unicast
   gavl_cust_root_field_t oidRoot;
+  //just one application 1c1 can be connected to AID
+  ObjectEntryOID         *aobject;     //application
 };
 struct ObjectEntryHID{
   gavl_node_t            hidNode;
@@ -221,8 +229,9 @@ typedef struct CSChange {
   SequenceNumber         gapSN;  //>0 means sn is in GAP
                                  // 1 - sn is gap, 2 - sn,sn+1 are gaps, ...
   ul_list_head_t         attributes;
-  ORTECDRStream          cdrStream; //for issue
+  CDR_Codec              cdrCodec; //for issue
   //how many times was a cstRemoteWriter acknowledged
+  ul_list_head_t         writerParticipants;
   int                    remoteReaderCount;
   int                    remoteReaderBest;
   int                    remoteReaderStrict;
@@ -235,6 +244,8 @@ typedef struct CSChange {
  * struct CSTWriterParams - 
  */
 typedef struct CSTWriterParams {
+  unsigned int		 registrationRetries;
+  NtpTime		 registrationPeriod;
   NtpTime                waitWhileDataUnderwayTime;
   NtpTime                repeatAnnounceTime;
   NtpTime                delayResponceTime;
@@ -248,6 +259,8 @@ typedef struct CSTWriterParams {
  */
 typedef struct CSChangeForReader {
   gavl_node_t            node;
+  ul_list_node_t         participantNode;
+  CSTRemoteReader        *cstRemoteReader;
   CSChange               *csChange;
   StateMachineChFReader  commStateChFReader;
   HTimFncUserNode        waitWhileDataUnderwayTimer;
@@ -256,10 +269,11 @@ typedef struct CSChangeForReader {
 /**
  * struct CSTRemoteReader - 
  */
-typedef struct CSTRemoteReader {
+struct CSTRemoteReader {
   gavl_node_t            node;
   CSTWriter              *cstWriter;
-  ObjectEntryOID         *objectEntryOID;
+  ObjectEntryOID         *sobject; /* to send object */
+  ObjectEntryOID         *pobject; /* physical object (for multicast is differnet than sobject) */
   GUID_RTPS              guid;
   
   gavl_cust_root_field_t csChangeForReader;
@@ -268,6 +282,7 @@ typedef struct CSTRemoteReader {
   //comm states
   StateMachineHB         commStateHB;
   StateMachineSend       commStateSend;
+  unsigned int		 commStateToSentCounter;
 
   //timing properties
   HTimFncUserNode        delayResponceTimer;
@@ -276,7 +291,10 @@ typedef struct CSTRemoteReader {
   unsigned int           HBRetriesCounter;
   
   NtpTime                lastSentIssueTime;
-} CSTRemoteReader;
+  
+  //multicast
+  ul_list_node_t         multicastNode; //connected into objectEntryOID
+};
 
 typedef struct CSTPublications CSTPublications;
 /**
@@ -300,6 +318,9 @@ struct CSTWriter {
   pthread_rwlock_t       lock;
 
   HTimFncUserNode        refreshPeriodTimer;
+
+  unsigned int		 registrationCounter;
+  HTimFncUserNode        registrationTimer;
   
   //ser./deser. function
   ORTETypeRegister       *typeRegister;
@@ -338,7 +359,7 @@ typedef struct CSChangeFromWriter {
 typedef struct CSTRemoteWriter {
   gavl_node_t            node;
   CSTReader              *cstReader;
-  ObjectEntryOID         *objectEntryOID;
+  ObjectEntryOID         *spobject;   /* sender, physical object */
   GUID_RTPS              guid;
   
   gavl_cust_root_field_t csChangeFromWriter;
@@ -428,12 +449,11 @@ struct ORTEDomain {
   
   ////////////////////////////////////////////////////
   //variables for tasks
-  TaskProp               taskRecvMetatraffic;
-  MessageBuffer          mbRecvMetatraffic;
+  TaskProp               taskRecvUnicastMetatraffic;
+  TaskProp               taskRecvMulticastMetatraffic;
+  TaskProp               taskRecvUnicastUserdata;
+  TaskProp               taskRecvMulticastUserdata;
   TaskProp               taskSend;
-  MessageBuffer          mbSend;
-  TaskProp               taskRecvUserdata;
-  MessageBuffer          mbRecvUserdata;
 
   ////////////////////////////////////////////////////
   //databases

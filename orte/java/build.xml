@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!-- build file for OCERA CanMonitor -->
+
+<project name="orte" default="default" basedir=".">
+
+    <property name="src" location="src"/>
+    <property name="class" location="${java_class_dir}class"/>
+    <property name="lib"  location="${java_lib_dir}lib"/>
+    <property name="path.orte" value="org/ocera/orte"/>
+
+    <target name="default" depends="orte">
+    </target>
+
+    <target name="orte" depends="jar-orte">
+    </target>
+
+    <target name="prepare-compile">
+         <mkdir dir="${class}"/>
+         <mkdir dir="${lib}"/>
+     </target>
+
+    <target name="compile-orte" depends="prepare-compile">
+        <javac srcdir="${src}" destdir="${class}"
+            classpath=""
+            source="1.4"
+            debug="true"
+            optimize="false"
+            />
+    </target>
+
+<!--            includes="${path.monitor}/CanMonitor.java" -->
+
+    <target name="jar-orte" depends="compile-orte">
+        <jar jarfile="${lib}/orte.jar" basedir="${class}"
+            manifest="${src}/${path.orte}/manifest">
+            <!-- Do not include test files in the runtime jar
+            <exclude name="**/Test*.*"/>
+            <exclude name="**/test*.*"/>
+            -->
+        </jar>
+<!--        <copy todir="${java_lib_dir}" file="orte"/>
+	<chmod file="${java_lib_dir}/canmonitor" perm="a+x"/> -->
+    </target>
+
+
+<!--    <target name="run"  depends="jar-orte">
+        <exec dir="." executable="canmonitor" os="Linux"/>
+    </target>
+-->
+    <target name="clean" >
+        <delete quiet="true">
+            <fileset dir="${class}" includes="**/*.class" defaultexcludes="no"/>
+        </delete>
+        <delete quiet="true">
+            <fileset dir="${lib}" includes="*.jar" excludes="jdom*, ui.jar" defaultexcludes="no"/>
+        </delete>
+    </target>
+
+</project>
+

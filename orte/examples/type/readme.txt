@@ -1,1 +1,0 @@
-see contrib/shape/ortedemo

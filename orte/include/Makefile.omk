@@ -1,10 +1,13 @@
-default_CONFIG = CONFIG_OC_ETH_ORTE=x
-
 ifeq ($(CONFIG_OC_ETH_ORTE),y)
+
+renamed_include_HEADERS = \
+orte/orte_config_omk_unix.h->orte/orte_config.h
 
 nobase_include_HEADERS = \
 orte.h \
-orte_config_omk_unix.h \
+orte/cdr.h \
+orte/basic_types.h \
+orte/orte_config_omk_unix.h \
 orte/typedefs_defines_rtps.h \
 orte/defines_api.h \
 orte/typedefs_api.h \
@@ -15,13 +18,13 @@ endif #CONFIG_OC_ETH_ORTE
 #############################################################################
 # RT-Linux version of build
 
-default_CONFIG = CONFIG_OC_ETH_ORTE_RTL=x
-
 ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
 
 nobase_rtlinux_HEADERS = \
 orte.h \
-orte_config_omk_rtl.h \
+orte/cdr.h \
+orte/basic_types.h \
+orte/orte_config_omk_rtl.h \
 orte/typedefs_defines_rtps.h \
 orte/defines_api.h \
 orte/typedefs_api.h \

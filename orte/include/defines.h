@@ -42,9 +42,11 @@ extern "C" {
 #ifndef ENABLE_MEM_CHECK
   #define MALLOC malloc
   #define FREE   free
+  #define REALLOC realloc
 #else
   #define MALLOC mem_check_malloc
   #define FREE   mem_check_free
+  #define REALLOC mem_check_realloc
 #endif        
         
 //////////////////////////////////////////////////////////////////////////////
@@ -72,19 +74,8 @@ extern "C" {
 #define HASH_INUSE       0x11111111
 #define HASH_DELETED     0xffffffff
 
-//////////////////////////////////////////////////////////////////////////////
-// conv
-//#if defined CONFIG_ORTE_WIN || defined _MSC_VER || !define HAVE_BYTESWAP_H
-#if !defined HAVE_BYTESWAP_H && !defined HAVE_ASM_BYTEORDER_H
-/* Swap bytes in 16 bit value.  */
-#define bswap_16(x) \
-     ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)) 
+#define GUID_PRINTF(g) (g).hid,(g).aid,(g).oid
 
-/* Swap bytes in 32 bit value.  */
-#define bswap_32(x) \
-     ((((x) & 0xff000000) >> 24) | (((x) & 0x00ff0000) >>  8) |           \
-      (((x) & 0x0000ff00) <<  8) | (((x) & 0x000000ff) << 24)) 
-#endif
 
 #ifdef __cplusplus
 } /* extern "C"*/

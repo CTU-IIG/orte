@@ -25,25 +25,22 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
-  #include "orte_config.h"
-#elif defined OMK_FOR_USER
-  #include "orte_config_omk_unix.h"
-#elif defined OMK_FOR_KERNEL
-  #include "orte_config_omk_rtl.h"
+#ifdef _MSC_VER
+  #include <orte/ew_types.h>
+#else
+  #include <orte/orte_config.h>
 #endif
 
 #ifdef HAVE_STDINT_H
   #include <stdint.h>
 #elif defined HAVE_SYS_TYPES_H
   #include <sys/types.h>
-#endif
-#ifdef HAVE_LINUX_TYPES_H
+#elif defined HAVE_LINUX_TYPES_H
   #include <linux/types.h>
 #endif
-#if defined _MSC_VER || defined CONFIG_ORTE_MINGW
-  #include <orte/ew_types.h>
-#endif
+
+#include <orte/basic_types.h>
+#include <orte/cdr.h>
 #include <orte/typedefs_defines_rtps.h>
 #include <orte/defines_api.h>
 #include <orte/typedefs_api.h>

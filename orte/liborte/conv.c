@@ -27,54 +27,6 @@
 #include "orte_all.h"
 
 /**********************************************************************************/
-void conv_u16(uint16_t *x,char ef) {
-  #if WORDS_BIGENDIAN
-     if(ef) *x=bswap_16(*x);
-  #else
-     if(!ef) *x=bswap_16(*x);
-  #endif
-}
-
-/**********************************************************************************/
-void conv_u32(uint32_t *x,char ef) {
-  #if WORDS_BIGENDIAN
-     if(ef) *x=bswap_32(*x);
-  #else
-     if(!ef) *x=bswap_32(*x);
-  #endif
-}
-
-/**********************************************************************************/
-void conv_sn(SequenceNumber *sn,char ef) {
-  #if WORDS_BIGENDIAN
-     if(ef) {
-       sn->high=bswap_32(sn->high);
-       sn->low=bswap_32(sn->low);
-     }  
-  #else
-     if(!ef) {
-       sn->high=bswap_32(sn->high);
-       sn->low=bswap_32(sn->low);
-     }  
-  #endif
-}
-
-/**********************************************************************************/
-void conv_ntp(NtpTime *ntp,char ef) {
-  #if WORDS_BIGENDIAN
-     if(ef) {
-       ntp->seconds=bswap_32(ntp->seconds);
-       ntp->fraction=bswap_32(ntp->fraction);
-     }  
-  #else
-     if(!ef) {
-       ntp->seconds=bswap_32(ntp->seconds);
-       ntp->fraction=bswap_32(ntp->fraction);
-     }  
-  #endif
-}
-
-/**********************************************************************************/
 //get part of string, div. by semi.
 int
 getStringPart(char *string,char divChar,int *iterator,char *buff) {

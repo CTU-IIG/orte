@@ -25,7 +25,10 @@
 extern "C" {
 #endif
 
+#define orte_assert(x)
+
 #include "orte_headers.h"
+#include "orte/cdr.h"
 #include "ul_gavl.h"
 #include "ul_gavlcust.h"
 #include "ul_gavlflesint.h"
@@ -40,13 +43,7 @@ extern "C" {
 #include "protos.h"
 #include "orte/protos_api.h"
 #include "globals.h"
-
-
-#if WORDS_BIGENDIAN
-  #define ORTE_MY_MBO    0     //ORTE my Machine Byte Order - big endian
-#else
-  #define ORTE_MY_MBO    1     //ORTE my Machine Byte Order - little endian
-#endif
+#include "rtps_endian.h"
 
 #ifdef __cplusplus
 } /* extern "C"*/

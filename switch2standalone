@@ -4,11 +4,15 @@
 # without OCERA framework
 
 if [ ! -e Makefile.rules-ocera ] ; then
-  mv Makefile.rules Makefile.rules-ocera
+#  cp Makefile.rules Makefile.rules-ocera
+fi
+
+if [ -e OCERA_TOP_DIR ] ; then
+  mv -f OCERA_TOP_DIR OCERA_TOP_DIR-ocera
 fi
 
 # Commentout definition of OCERA location
-sed -e 's/^OCERA_DIR := /#OCERA_DIR := /' <Makefile.rules-ocera >Makefile.rules
+#sed -e 's/^OCERA_DIR := /#OCERA_DIR := /' <Makefile.rules-ocera >Makefile.rules
 
 # Prepare "config.omk-default" file, user overrides should go into "config.omk"
 make default-config

@@ -216,6 +216,34 @@ getTypeApp(ORTEDomain *d,AppParams *ap,IPAddress senderIPAddress) {
 }
 
 /*
+ * matchMulticastAddresses - Test if objects contain same a multicast ip address
+ * @o1: pointer to a object
+ * @o2: pointer to a object
+ *
+ * Return: return ORTE_TRUE if a multicast ip address was match
+ */
+Boolean
+matchMulticastAddresses(ObjectEntryOID *o1,ObjectEntryOID *o2) 
+{
+  AppParams 	*ap1,*ap2;
+  uint16_t      i,j;
+  
+  if ((o1->guid.oid!=OID_APP) || 
+      (o1->guid.oid!=OID_APP)) return ORTE_FALSE;
+
+  ap1=o1->attributes;
+  ap2=o2->attributes;
+  for (i=0;i<ap1->metatrafficMulticastIPAddressCount;i++) {
+    for (j=0;j<ap2->metatrafficMulticastIPAddressCount;j++) {
+      if (ap1->metatrafficMulticastIPAddressList[i]==
+          ap2->metatrafficMulticastIPAddressList[j])
+	  return ORTE_TRUE;
+    }
+  }
+  return ORTE_FALSE;
+}
+
+/*
  * appSelfParamChanged - Self parameters changed
  * @d: pointer to an domain
  * @lock: lock CSTWriters at the start of function
@@ -237,14 +265,14 @@ appSelfParamChanged(ORTEDomain *d,
   parameterUpdateCSChange(csChange,d->appParams,ORTE_TRUE);
   csChange->guid=d->guid;
   csChange->alive=alive;
-  csChange->cdrStream.buffer=NULL;
+  csChange->cdrCodec.buffer=NULL;
   CSTWriterAddCSChange(d,&d->writerApplicationSelf,csChange);
   if (forWM) {
     csChange=(CSChange*)MALLOC(sizeof(CSChange));
     parameterUpdateCSChange(csChange,d->appParams,ORTE_TRUE);
     csChange->guid=d->guid;
     csChange->alive=alive;
-    csChange->cdrStream.buffer=NULL;
+    csChange->cdrCodec.buffer=NULL;
     CSTWriterAddCSChange(d,&d->writerManagers,csChange);
   }
   if (unlock) {
@@ -252,4 +280,93 @@ appSelfParamChanged(ORTEDomain *d,
     if (forWM)
       pthread_rwlock_unlock(&d->writerManagers.lock);
   }
+}
+
+/*
+ * getAppO2SRemoteReader - returns pointer to virtual multicat object in case multicast application
+ * @d: pointer to an domain
+ * @objectEntryOID:
+ * @ap: pointer to an application 
+ *
+ */
+ObjectEntryOID *
+getAppO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
+    AppParams *ap) {
+  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  struct 	    ip_mreq mreq;
+  GUID_RTPS         guid;
+  AppParams 	    *map;
+  IPAddress         maddr;
+
+  maddr=ap->metatrafficMulticastIPAddressList[0];
+  if (ap->metatrafficMulticastIPAddressCount &&
+      IN_MULTICAST(maddr)) {
+    map=(AppParams*)MALLOC(sizeof(AppParams));
+    guid.hid=maddr;
+    guid.aid=AID_UNKNOWN;
+    guid.oid=OID_APP;
+    objectEntryOID=objectEntryFind(d,&guid);
+    if (!objectEntryOID) {
+      memcpy(map,ap,sizeof(AppParams));
+      objectEntryOID=objectEntryAdd(d,&guid,(void*)map);
+      Domain2PortMulticastMetatraffic(d->domain,
+  				      objectEntryOID->multicastPort);
+      debug(9,2) ("new multicast application 0x%x-0x%x-0x%x temporary created\n",
+                   GUID_PRINTF(guid));
+
+       // join multicast group
+      mreq.imr_multiaddr.s_addr=htonl(maddr);
+      mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+      if(sock_setsockopt(&d->taskRecvMulticastUserdata.sock,IPPROTO_IP,
+  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+        debug(9,2) ("getAppO2SRemoteReader: listening to mgroup %s\n",
+                      IPAddressToString(maddr,sIPAddress));
+      }
+    }
+  }
+  return objectEntryOID;
+}
+
+/*
+ * getSubsO2SRemoteReader - returns pointer to virtual multicat object in case multicast subscription
+ * @d: pointer to an domain
+ * @objectEntryOID:
+ * @sp: pointer to a subscription
+ *
+ */
+ObjectEntryOID *
+getSubsO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
+    ORTESubsProp *sp) {
+  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  struct 	    ip_mreq mreq;
+  AppParams 	    *map;
+  GUID_RTPS         guid;
+
+  if (IN_MULTICAST(sp->multicast)) {
+    map=(AppParams*)MALLOC(sizeof(AppParams));
+    guid.hid=sp->multicast;
+    guid.aid=AID_UNKNOWN;
+    guid.oid=OID_APP;
+    objectEntryOID=objectEntryFind(d,&guid);
+    if (!objectEntryOID) {
+      AppParamsInit(map);
+      map->metatrafficMulticastIPAddressList[0]=sp->multicast;
+      map->metatrafficMulticastIPAddressCount=1;
+      objectEntryOID=objectEntryAdd(d,&guid,(void*)map);
+      Domain2PortMulticastUserdata(d->domain,
+  				   objectEntryOID->multicastPort);
+      debug(9,2) ("new subs. multicast application 0x%x-0x%x-0x%x temporary created\n",
+                   GUID_PRINTF(guid));
+
+       // join multicast group
+      mreq.imr_multiaddr.s_addr=htonl(sp->multicast);
+      mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+      if(sock_setsockopt(&d->taskRecvMulticastUserdata.sock,IPPROTO_IP,
+  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+        debug(9,2) ("getSubsO2SRemoteReader: listening to mgroup %s\n",
+                      IPAddressToString(sp->multicast,sIPAddress));
+      }
+    }
+  }
+  return objectEntryOID;
 }

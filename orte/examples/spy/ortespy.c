@@ -55,14 +55,14 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
              NtpTimeToStringUs(info->remoteTimePublished, rbuff));
       break;
     case DEADLINE:
-//      printf("deadline occured\n");
+//      printf("deadline occurred\n");
       break;
   }
 }
 
 ORTESubscription*
 subscriptionCallBack(const char *topic, const char *type, void *param) {
-  ORTETypeRegisterAdd(d,type,NULL,NULL,0);   
+  ORTETypeRegisterAdd(d,type,NULL,NULL,NULL,0);   
   if (strcmp(topic,"Red")==0) return NULL;
   return ORTESubscriptionCreate(
         d,
@@ -74,7 +74,8 @@ subscriptionCallBack(const char *topic, const char *type, void *param) {
         &deadline,
         &minimumSeparation,
         recvCallBack,
-        NULL);
+        NULL,
+        IPADDRESS_INVALID);
 }
 
 static void usage(void) {
@@ -153,7 +154,7 @@ int main(int argc,char *argv[]) {
   printf("|------------------------------------------------------------------------------|\n");
   d=ORTEDomainAppCreate(domain,&dp,NULL,ORTE_TRUE);
   ORTEDomainAppSubscriptionPatternAdd(d,"*","*",subscriptionCallBack,NULL);
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_TRUE,ORTE_TRUE);
+  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE);
   while (1) {
     ORTESleepMs(1000);
   }

@@ -1,0 +1,20 @@
+const short SHORT_CONST = 12;
+const string STRING_CONST = "mystring";
+
+struct FirstType {
+    short myShort;
+};
+
+struct SecondType {
+    string<SHORT_CONST> myString;
+};
+
+typedef long ReturnCode_t;
+
+struct ThirdType {
+    FirstType myFirstType;
+    SecondType mySecondType;
+
+    ReturnCode_t tt;
+    unsigned long MyLong;
+};

@@ -43,12 +43,13 @@ host_triplet = @host@
 subdir = orte/manager
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/admin/linux.m4 \
-	$(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/admin/idl.m4 \
+	$(top_srcdir)/admin/jorte.m4 $(top_srcdir)/admin/linux.m4 \
+	$(top_srcdir)/admin/pkg.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/orte/include/config.h
+CONFIG_HEADER = $(top_builddir)/orte/include/orte/orte_config.h
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(moduledir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -66,7 +67,7 @@ am__ortemanager_rt_ko_SOURCES_DIST = ortemanager.c
 @CONFIG_ORTE_RT_TRUE@	ortemanager_rt_ko-ortemanager.$(OBJEXT)
 ortemanager_rt_ko_OBJECTS = $(am_ortemanager_rt_ko_OBJECTS)
 ortemanager_rt_ko_LDADD = $(LDADD)
-DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include/orte
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ortemanager.Po \
@@ -99,8 +100,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CONFIG_ADEOS_FALSE = @CONFIG_ADEOS_FALSE@
 CONFIG_ADEOS_TRUE = @CONFIG_ADEOS_TRUE@
+CONFIG_JORTE = @CONFIG_JORTE@
+CONFIG_JORTE_FALSE = @CONFIG_JORTE_FALSE@
+CONFIG_JORTE_TRUE = @CONFIG_JORTE_TRUE@
 CONFIG_ORTE_CYGWIN_FALSE = @CONFIG_ORTE_CYGWIN_FALSE@
 CONFIG_ORTE_CYGWIN_TRUE = @CONFIG_ORTE_CYGWIN_TRUE@
+CONFIG_ORTE_IDL = @CONFIG_ORTE_IDL@
+CONFIG_ORTE_IDL_FALSE = @CONFIG_ORTE_IDL_FALSE@
+CONFIG_ORTE_IDL_TRUE = @CONFIG_ORTE_IDL_TRUE@
 CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_KERNEL_FALSE = @CONFIG_ORTE_KERNEL_FALSE@
 CONFIG_ORTE_KERNEL_TRUE = @CONFIG_ORTE_KERNEL_TRUE@
@@ -134,6 +141,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LIBIDL_CFLAGS = @LIBIDL_CFLAGS@
+LIBIDL_LIBS = @LIBIDL_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -173,6 +182,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 RTAI_CFLAGS = @RTAI_CFLAGS@
 RTLINUX_CC = @RTLINUX_CC@

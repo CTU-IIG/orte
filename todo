@@ -1,6 +1,21 @@
 If you are a developper and wants to help, enjoy !
 
 ################################################################
+               Release: ORTE0-3-0      Date: 040220
+
+1) clean code !!! :)))
+
+2) improve java interface
+
+3) implement reference counting into main tree to make thread safe operations
+
+4) RTerms port
+
+
+...
+
+
+################################################################
                Release: ORTE0-2-3      Date: 9/26/2004
 
 1) clean code !!! :)))

@@ -26,11 +26,18 @@ extern "C" {
 #endif
 
 #ifdef HAVE_CONFIG_H
-  #include "orte_config.h"
+  #include "orte/orte_config.h"
 #elif defined OMK_FOR_USER
-  #include "orte_config_omk_unix.h"
+  #include "orte/orte_config_omk_unix.h"
 #elif defined OMK_FOR_KERNEL
-  #include "orte_config_omk_rtl.h"
+  #include "orte/orte_config_omk_rtl.h"
+#elif defined _MSC_VER
+  #include "orte/ew_types.h"
+#else
+  #error ""
+  #error "You don't have file 'orte/orte_config.h'."
+  #error "Please make sure that this file exists!."
+  #error ""
 #endif
 
 #ifdef HAVE_ARPA_INET_H
@@ -162,6 +169,9 @@ extern "C" {
 #ifdef HAVE_TIME_H
   #include <time.h>
 #endif
+#ifdef HAVE_ONETD_H
+  #include <onetd.h>
+#endif
 //RTAI headers
 #ifdef HAVE_RTNET_H
   #include <rtnet.h>
@@ -183,9 +193,16 @@ extern "C" {
   #include <orte/ew_types.h>
   #define ioctl ioctlsocket
 #elif defined CONFIG_ORTE_RTL
-  #define SOCK_RTL
-  #include <rtl/compat.h>
   #include <rtl/rwlock.h>
+  #ifdef CONFIG_ORTE_RTL_ONETD
+    #define SOCK_BSD         
+    #include <rtl/compat_onetd.h>
+  #elif CONFIG_ORTE_RTL_WIP
+    #define SOCK_RTLWIP
+    #include <rtl/compat_rtlwip.h>
+  #else
+    #error "no UDP stack for RTLinux"
+  #endif
 #elif defined CONFIG_ORTE_RTAI
   #define SOCK_BSD  
   #include <rtai/compat.h>
@@ -204,9 +221,8 @@ extern "C" {
   #include <win32/pthread.h>
   #include <win32/timeval.h>
   #include <win32/getopt.h>
-  #include <orte/ew_types.h>
   #define ioctl ioctlsocket
-  #define ORTE_PACKAGE_STRING "orte 0.2.3"
+  #define ORTE_PACKAGE_STRING "orte 0.3.0"
   #define CONFIG_ORTE_WIN
 #endif
 

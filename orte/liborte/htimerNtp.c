@@ -155,7 +155,7 @@ htimerUnicastSendMetatraffic_run_expired(ORTEDomain *d,
     debug(2,10) ("htimerUnicastMetatraffic: %s\n",
                   timer->name);               
     retValue=timer->func(d,timer->arg1);
-    while (d->mbSend.needSend) {
+    while (d->taskSend.mb.needSend) {
       ORTESendData(d,objectEntryAID,ORTE_TRUE);
       timer->func(d,timer->arg1);
     }
@@ -163,7 +163,7 @@ htimerUnicastSendMetatraffic_run_expired(ORTEDomain *d,
       pthread_rwlock_unlock(timer->lock);
   }
   htimerUnicastSendMetatraffic_update_root_timer(&d->objectEntry,objectEntryAID);
-  if (d->mbSend.cdrStream.length>RTPS_HEADER_LENGTH) {
+  if (d->taskSend.mb.cdrCodec.wptr>RTPS_HEADER_LENGTH) {
       ORTESendData(d,objectEntryAID,ORTE_TRUE);
   }
 } 
@@ -215,7 +215,7 @@ htimerUnicastSendUserData_run_expired(ORTEDomain *d,
     if (timer->lock)
       pthread_rwlock_wrlock(timer->lock);
     retValue=timer->func(d,timer->arg1);
-    while (d->mbSend.needSend) {
+    while (d->taskSend.mb.needSend) {
       ORTESendData(d,objectEntryAID,ORTE_FALSE);
       timer->func(d,timer->arg1);
     }
@@ -223,7 +223,7 @@ htimerUnicastSendUserData_run_expired(ORTEDomain *d,
       pthread_rwlock_unlock(timer->lock);
   }
   htimerUnicastSendUserData_update_root_timer(&d->objectEntry,objectEntryAID);
-  if (d->mbSend.cdrStream.length>RTPS_HEADER_LENGTH) {
+  if (d->taskSend.mb.cdrCodec.wptr>RTPS_HEADER_LENGTH) {
       ORTESendData(d,objectEntryAID,ORTE_FALSE);
   }
 }

@@ -1,8 +1,13 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE=y
+default_CONFIG += CONFIG_OC_ETH_ORTE_SOLIB=n
 
 ifeq ($(CONFIG_OC_ETH_ORTE),y)
 
 lib_LIBRARIES = orte
+
+ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
+shared_LIBRARIES = orte
+endif #CONFIG_OC_ETH_ORTE_LIB
 
 INCLUDES = -I $(srcdir)/../include
 
@@ -15,8 +20,7 @@ htimerNtp.c \
 objectEntry.c \
 objectEntryTimer.c \
 objectUtils.c \
-ORTEAppRecvMetatrafficThread.c \
-ORTEAppRecvUserdataThread.c \
+ORTEAppRecvThread.c \
 ORTEAppSendThread.c \
 ORTEDomainApp.c \
 ORTEPublication.c \
@@ -50,7 +54,8 @@ RTPSVar.c \
 RTPSIssue.c \
 sock.c \
 ul_gavl.c \
-ul_gavlprim.c
+ul_gavlprim.c \
+cdr.c
 
 endif #CONFIG_OC_ETH_ORTE
 
@@ -109,7 +114,8 @@ RTPSVar.c \
 RTPSIssue.c \
 sock.c \
 ul_gavl.c \
-ul_gavlprim.c
+ul_gavlprim.c \
+cdr.c
 
 rtlinux_MODULES = orte_rt
 

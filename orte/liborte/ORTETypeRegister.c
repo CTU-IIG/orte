@@ -30,7 +30,9 @@ Boolean
 ORTETypeRegisterFind(ORTEDomain *d,const char *typeName) {
   Boolean            result=ORTE_FALSE;
   
-  if (!d) return ORTE_FALSE;  //bat handle
+  if (!d) 
+    return ORTE_FALSE;  //bat handle
+
   pthread_rwlock_rdlock(&d->typeEntry.lock);    
   if (ORTEType_find(&d->typeEntry,&typeName)) 
     result=ORTE_TRUE;
@@ -41,22 +43,34 @@ ORTETypeRegisterFind(ORTEDomain *d,const char *typeName) {
 /*****************************************************************************/
 int
 ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
-                    ORTETypeDeserialize ds,unsigned int gms) {
+                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,unsigned int ms) {
   TypeNode           *tn;
   
-  if (!d) return ORTE_BAD_HANDLE;       //bat handle
-  if (gms>d->domainProp.wireProp.userMaxSerDeserSize) return -2;
+  if (!d) 
+    return ORTE_BAD_HANDLE;       //bat handle
+
+  if (gms) {
+    if (d->domainProp.wireProp.userBytesPerPacket<ms) 
+      return -2;
+  }
+
   pthread_rwlock_wrlock(&d->typeEntry.lock);    
   tn=ORTEType_find(&d->typeEntry,&typeName);
   if (!tn) {
     tn=(TypeNode*)MALLOC(sizeof(TypeNode));
-    tn->typeRegister.typeName=strdup(typeName);
+    tn->typeRegister.typeName=(char*)MALLOC(strlen(typeName)+1);
+    if (tn->typeRegister.typeName) {
+      memcpy((void*)tn->typeRegister.typeName, 
+	     typeName, 
+	     strlen(typeName) + 1);
+    }    
     ORTEType_insert(&d->typeEntry,tn);
     debug(26,3) ("ORTETypeRegisterAdd: created\n");
   }
   tn->typeRegister.serialize=ts;
   tn->typeRegister.deserialize=ds;
   tn->typeRegister.getMaxSize=gms;
+  tn->typeRegister.maxSize=ms;
   pthread_rwlock_unlock(&d->typeEntry.lock);    
   debug(26,3) ("ORTETypeRegisterAdd: registered type:%s\n",typeName);
   return ORTE_OK;
@@ -67,10 +81,12 @@ int
 ORTETypeRegisterDestroyAll(ORTEDomain *d) {
   TypeNode           *tn;
   
-  if (!d) return ORTE_BAD_HANDLE;  //bat handle
+  if (!d) 
+    return ORTE_BAD_HANDLE;  //bat handle
+
   pthread_rwlock_wrlock(&d->typeEntry.lock);    
   while((tn=ORTEType_cut_first(&d->typeEntry))) {
-    free((char*)tn->typeRegister.typeName);
+    FREE((char*)tn->typeRegister.typeName);
     FREE(tn);
   }
   pthread_rwlock_unlock(&d->typeEntry.lock);    

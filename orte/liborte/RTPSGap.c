@@ -21,10 +21,59 @@
 
 #include "orte_all.h"
 
+/**********************************************************************************/
+int 
+RTPSGapCreate(CDR_Codec *cdrCodec,ObjectId roid,ObjectId woid,CSChange *csChange) 
+{
+  CDR_Endianness     data_endian;
+  SequenceNumber     bsn;
+  CORBA_octet        flags;
+
+  if (cdrCodec->buf_len<cdrCodec->wptr+32) return -1;
+
+  /* submessage id */
+  CDR_put_octet(cdrCodec,GAP);
+
+  /* flags */
+  flags=cdrCodec->data_endian;
+  CDR_put_octet(cdrCodec,flags);
+
+  /* length */
+  CDR_put_ushort(cdrCodec,28);
+
+  /* next data are sent in big endianing */
+  data_endian=cdrCodec->data_endian;
+  cdrCodec->data_endian=FLAG_BIG_ENDIAN;
+
+  /* readerObjectId */
+  CDR_put_ulong(cdrCodec,roid);
+  
+  /* writerObjectId */
+  CDR_put_ulong(cdrCodec,woid);
+
+  cdrCodec->data_endian=data_endian;
+
+  /* firstSeqNumber */
+  CDR_put_ulong(cdrCodec,csChange->sn.high);
+  CDR_put_ulong(cdrCodec,csChange->sn.low);
+
+  /* bitmap sn */
+  SeqNumberAdd(bsn,  
+               csChange->sn,
+               csChange->gapSN);
+  CDR_put_ulong(cdrCodec,bsn.high);
+  CDR_put_ulong(cdrCodec,bsn.low);
+
+  /* numbits */
+  CDR_put_ulong(cdrCodec,0);
+
+  return 32;
+}
+
 /*****************************************************************************/
 void 
 RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
-    SequenceNumber *sn,uint32_t numbits,uint8_t *bitmaps,Boolean e_bit) {
+    SequenceNumber *sn,uint32_t numbits,CDR_Codec *cdrCodec) {
   SequenceNumber      lsn,ssn;
   uint32_t            i;
   int8_t              bit,bit_last=0;
@@ -34,12 +83,13 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
   if (SeqNumberCmp(*sn,cstRemoteWriter->sn)<0) return;//have to be sn>=writer_sn ! 
   if (SeqNumberCmp(*fsn,*sn)==1) return;              //cannot be fsn>sn ! 
   if (numbits>256) return;
+
   //first case of GAP sn
   if (SeqNumberCmp(*fsn,*sn)<0) {                        //if fsn<sn  
     if (!CSChangeFromWriter_find(cstRemoteWriter,fsn)) {
       if (SeqNumberCmp(*fsn,cstRemoteWriter->sn)>0) {    //have to be sn>writer_sn
         csChange=(CSChange*)MALLOC(sizeof(CSChange));
-        csChange->cdrStream.buffer=NULL;
+        csChange->cdrCodec.buffer=NULL;
         csChange->sn=*fsn;
         csChange->guid=*guid;
         csChange->alive=ORTE_TRUE;
@@ -49,18 +99,20 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
       }
     }
   }
+
   //second case of GAP sn
   lsn=ssn=*sn;bit=0;
   for(i=0;i<numbits;i++) {
-    bitmap=*(((uint32_t*)bitmaps)+i/32);
-    conv_u32(&bitmap,e_bit);
+    if ((i%32)==0) 
+      CDR_get_ulong(cdrCodec,&bitmap);
+
     bit=(bitmap & (1<<(31-i%32))) ? 1:0;
     if (i>0) {
       if (bit_last && !bit) {                           //end of GAP     1->0
         if (!CSChangeFromWriter_find(cstRemoteWriter,&ssn)) {
           if (SeqNumberCmp(ssn,cstRemoteWriter->sn)>0) {  
             csChange=(CSChange*)MALLOC(sizeof(CSChange));
-            csChange->cdrStream.buffer=NULL;
+            csChange->cdrCodec.buffer=NULL;
             csChange->sn=ssn;
             csChange->guid=*guid;
             csChange->alive=ORTE_TRUE;
@@ -78,11 +130,12 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
     SeqNumberInc(lsn,lsn);
     bit_last=bit;
   }
+
   if (bit) {
     if (!CSChangeFromWriter_find(cstRemoteWriter,&ssn)) {
       if (SeqNumberCmp(ssn,cstRemoteWriter->sn)>0) {  
         csChange=(CSChange*)MALLOC(sizeof(CSChange));
-        csChange->cdrStream.buffer=NULL;
+        csChange->cdrCodec.buffer=NULL;
         csChange->sn=ssn;
         csChange->guid=*guid;
         csChange->alive=ORTE_TRUE;
@@ -96,26 +149,38 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
 
 /**********************************************************************************/
 void 
-RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress) {
+RTPSGap(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderIPAddress) {
   CSTReader          *cstReader=NULL;
   CSTRemoteWriter    *cstRemoteWriter;
   GUID_RTPS          writerGUID;
-  ObjectId	         roid,woid;
+  ObjectId	     roid,woid;
   SequenceNumber     sn,fsn;
   uint32_t           numbits;
-  int8_t             e_bit;
+  CDR_Endianness     data_endian;
 
-  e_bit=rtps_msg[1] & 0x01;
-  roid=*((ObjectId*)(rtps_msg+4));              /* readerObjectId */
-  conv_u32(&roid,0);
-  woid=*((ObjectId*)(rtps_msg+8));              /* writerObjectId */
-  conv_u32(&woid,0);
-  fsn=*((SequenceNumber*)(rtps_msg+12));        /* firstSeqNumber */
-  conv_sn(&fsn,e_bit);
-  sn=*((SequenceNumber*)(rtps_msg+20));         /* Bitmap - SN    */
-  conv_sn(&sn,e_bit);
-  numbits=*((uint32_t*)(rtps_msg+28));         /* numbits */
-  conv_u32(&numbits,e_bit);
+  /* next data are sent in big endianing */
+  data_endian=cdrCodec->data_endian;
+  cdrCodec->data_endian=FLAG_BIG_ENDIAN;
+
+  /* readerObjectId */
+  CDR_get_ulong(cdrCodec,&roid);
+  
+  /* writerObjectId */
+  CDR_get_ulong(cdrCodec,&woid);
+
+  cdrCodec->data_endian=data_endian;
+
+  /* firstSeqNumber */
+  CDR_get_ulong(cdrCodec,&fsn.high);
+  CDR_get_ulong(cdrCodec,&fsn.low);
+
+  /* Bitmap - SN  */
+  CDR_get_ulong(cdrCodec,&sn.high);
+  CDR_get_ulong(cdrCodec,&sn.low);
+
+  /* numbits  */
+  CDR_get_ulong(cdrCodec,&numbits);
+
   writerGUID.hid=mi->sourceHostId;
   writerGUID.aid=mi->sourceAppId;
   writerGUID.oid=woid;
@@ -123,7 +188,7 @@ RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
   debug(49,3) ("recv: RTPS_GAP(0x%x) from 0x%x-0x%x\n",
                 woid,mi->sourceHostId,mi->sourceAppId);
   
-  //Manager
+  /* Manager */
   if ((d->guid.aid & 0x03)==MANAGER) {
     if ((writerGUID.oid==OID_WRITE_APPSELF) && 
         ((writerGUID.aid & 0x03)==MANAGER)) {
@@ -138,6 +203,8 @@ RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
       cstReader=&d->readerApplications;
     }
   }
+
+  /* Application */
   if ((d->guid.aid & 3)==MANAGEDAPPLICATION) {
     switch (writerGUID.oid) {
       case OID_WRITE_MGR:
@@ -158,14 +225,17 @@ RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
         break;
     }
   }  
+
   if (!cstReader) return;
   cstRemoteWriter=CSTRemoteWriter_find(cstReader,&writerGUID);
   if (!cstRemoteWriter) {
     pthread_rwlock_unlock(&cstReader->lock);
     return;
   }
+
   RTPSGapAdd(cstRemoteWriter,&writerGUID,&fsn,&sn,numbits,
-             rtps_msg+32,e_bit);
+             cdrCodec);
+
   CSTReaderProcCSChanges(d,cstRemoteWriter);
   pthread_rwlock_unlock(&cstReader->lock);
 } 

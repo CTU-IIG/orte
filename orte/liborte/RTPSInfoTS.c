@@ -22,26 +22,55 @@
 #include "orte_all.h"
 
 /**********************************************************************************/
-int32_t 
-RTPSInfoTSCreate(uint8_t *rtps_msg,uint32_t max_msg_len,NtpTime time) {
-  if (max_msg_len<12) return -1;
-  rtps_msg[0]=(uint8_t)INFO_TS;
-  rtps_msg[1]=ORTE_MY_MBO; //I-bit = 0
-  *((ParameterLength*)(rtps_msg+2))=8;
-  *((NtpTime*)(rtps_msg+4))=time;
-  return 0;
+int
+RTPSInfoTSCreate(CDR_Codec *cdrCodec,NtpTime time) {
+  CORBA_octet flags;
+
+  if (cdrCodec->buf_len<cdrCodec->wptr+12) return -1;
+
+  /* submessage id */
+  CDR_put_octet(cdrCodec,INFO_TS);
+
+  /* flags - I-bit=0 */
+  flags=cdrCodec->data_endian;
+  CDR_put_octet(cdrCodec,flags);
+
+  /* length */
+  CDR_put_ushort(cdrCodec,8);
+
+  /* time in seconds */
+  CDR_put_long(cdrCodec,time.seconds);
+
+  /* time in seconds / 2^32 */
+  CDR_put_ulong(cdrCodec,time.fraction);
+
+  return 12;
 }
 
 /**********************************************************************************/
 void 
-RTPSInfoTS(uint8_t *rtps_msg,MessageInterpret *mi) {
-  int8_t   e_bit=rtps_msg[1] & 0x01;
-  char buff[MAX_STRING_NTPTIME_LENGTH];
+RTPSInfoTS(CDR_Codec *cdrCodec,MessageInterpret *mi) {
+  char 		     buff[MAX_STRING_NTPTIME_LENGTH];
+  CORBA_octet        flags;  
 
-  if ((rtps_msg[1] & 0x02)==0) {               /* I = bit */
+  /* restore flag possition in submessage */
+  cdrCodec->rptr-=3;
+
+  /* flags */
+  CDR_get_octet(cdrCodec,&flags);
+
+  /* move reading possition to begin of submessage */
+  cdrCodec->rptr+=2;
+
+
+  if ((flags & 0x02)==0) {              /* I = bit */
     mi->haveTimestamp=ORTE_TRUE;
-    mi->timestamp=*((NtpTime*)(rtps_msg+4));
-    conv_sn((SequenceNumber*)&mi->timestamp,e_bit);
+
+    /* time in seconds */
+    CDR_get_long(cdrCodec,&mi->timestamp.seconds);
+
+    /* time in seconds / 2^32 */
+    CDR_get_ulong(cdrCodec,&mi->timestamp.fraction);
   } else {
     mi->haveTimestamp=ORTE_FALSE;
     NTPTIME_ZERO(mi->timestamp);

@@ -1,7 +1,7 @@
 SOURCES	+= main.cpp \
 	MyQFrame.cpp \
 	richtext.cpp \
-	ortedemo_types.c
+	BoxType.c
 HEADERS	+= richtext.h \
 	MyQFrame.h
 TARGET		= ortedemo

@@ -123,7 +123,7 @@ CSTReaderAddRemoteWriter(ORTEDomain *d,CSTReader *cstReader,ObjectEntryOID *obje
   cstRemoteWriter->guid.hid=object->objectEntryHID->hid;
   cstRemoteWriter->guid.aid=object->objectEntryAID->aid;
   cstRemoteWriter->guid.oid=oid;
-  cstRemoteWriter->objectEntryOID=object;
+  cstRemoteWriter->spobject=object;
   cstRemoteWriter->cstReader=cstReader;
   cstRemoteWriter->csChangesCounter=0;
   cstRemoteWriter->ACKRetriesCounter=0;
@@ -138,7 +138,7 @@ CSTReaderAddRemoteWriter(ORTEDomain *d,CSTReader *cstReader,ObjectEntryOID *obje
   //add event for repeatActiveTime
   if (NtpTimeCmp(cstReader->params.repeatActiveQueryTime,iNtpTime)!=0) {
     eventAdd(d,
-        cstRemoteWriter->objectEntryOID->objectEntryAID,
+        cstRemoteWriter->spobject->objectEntryAID,
         &cstRemoteWriter->repeatActiveQueryTimer,
         1,   //metatraffic timer
         "CSTReaderQueryTimer",
@@ -176,7 +176,7 @@ CSTReaderDestroyRemoteWriter(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter) {
                 cstRemoteWriter->guid.oid);
   if ((cstRemoteWriter->cstReader->guid.oid & 0x07)==OID_SUBSCRIPTION) {
     ORTEPublProp *pp;
-    pp=(ORTEPublProp*)cstRemoteWriter->objectEntryOID->attributes;
+    pp=(ORTEPublProp*)cstRemoteWriter->spobject->attributes;
     if ((pp->reliabilityOffered & PID_VALUE_RELIABILITY_STRICT)!=0)
       cstRemoteWriter->cstReader->strictReliableCounter++;
     else {
@@ -191,11 +191,11 @@ CSTReaderDestroyRemoteWriter(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter) {
         csChangeFromWriter,ORTE_FALSE);
   }
   eventDetach(d,
-      cstRemoteWriter->objectEntryOID->objectEntryAID,
+      cstRemoteWriter->spobject->objectEntryAID,
       &cstRemoteWriter->delayResponceTimer,
       1);   //metatraffic timer
   eventDetach(d,
-      cstRemoteWriter->objectEntryOID->objectEntryAID,
+      cstRemoteWriter->spobject->objectEntryAID,
       &cstRemoteWriter->repeatActiveQueryTimer,
       1);   //metatraffic timer
   CSTRemoteWriter_delete(cstRemoteWriter->cstReader,cstRemoteWriter);
@@ -225,8 +225,8 @@ CSTReaderDestroyCSChangeFromWriter(CSTRemoteWriter *cstRemoteWriter,
   CSTReaderCSChange_delete(cstRemoteWriter->cstReader,
                            csChangeFromWriter->csChange);
   if (!keepCSChange) {
-    if (csChangeFromWriter->csChange->cdrStream.buffer)
-      FREE(csChangeFromWriter->csChange->cdrStream.buffer);
+    if (csChangeFromWriter->csChange->cdrCodec.buffer)
+      FREE(csChangeFromWriter->csChange->cdrCodec.buffer);
     parameterDelete(csChangeFromWriter->csChange);
     FREE(csChangeFromWriter->csChange);
   }
@@ -258,15 +258,15 @@ CSTReaderSetupState(CSTRemoteWriter *cstRemoteWriter) {
         cstRemoteWriter->commStateACK=PULLING;
         cstRemoteWriter->ACKRetriesCounter=0;
         eventDetach(cstRemoteWriter->cstReader->domain,
-            cstRemoteWriter->objectEntryOID->objectEntryAID,
+            cstRemoteWriter->spobject->objectEntryAID,
             &cstRemoteWriter->repeatActiveQueryTimer,
             1);  //metatraffic timer
         eventDetach(cstRemoteWriter->cstReader->domain,
-            cstRemoteWriter->objectEntryOID->objectEntryAID,
+            cstRemoteWriter->spobject->objectEntryAID,
             &cstRemoteWriter->delayResponceTimer,
             1);   //metatraffic timer
         eventAdd(cstRemoteWriter->cstReader->domain,
-            cstRemoteWriter->objectEntryOID->objectEntryAID,
+            cstRemoteWriter->spobject->objectEntryAID,
             &cstRemoteWriter->delayResponceTimer,
             1,   //metatraffic timer
             "CSTReaderResponceTimer",
@@ -280,17 +280,17 @@ CSTReaderSetupState(CSTRemoteWriter *cstRemoteWriter) {
         cstRemoteWriter->commStateACK=WAITING;
         cstRemoteWriter->ACKRetriesCounter=0;
         eventDetach(cstRemoteWriter->cstReader->domain,
-            cstRemoteWriter->objectEntryOID->objectEntryAID,
+            cstRemoteWriter->spobject->objectEntryAID,
             &cstRemoteWriter->delayResponceTimer,
             1);   //metatraffic timer
         if (NtpTimeCmp(cstRemoteWriter->cstReader->params.repeatActiveQueryTime,
                        iNtpTime)!=0) {
           eventDetach(cstRemoteWriter->cstReader->domain,
-              cstRemoteWriter->objectEntryOID->objectEntryAID,
+              cstRemoteWriter->spobject->objectEntryAID,
               &cstRemoteWriter->repeatActiveQueryTimer,
               1);   //metatraffic timer
           eventAdd(cstRemoteWriter->cstReader->domain,
-              cstRemoteWriter->objectEntryOID->objectEntryAID,
+              cstRemoteWriter->spobject->objectEntryAID,
               &cstRemoteWriter->repeatActiveQueryTimer,
               1,   //metatraffic timer
               "CSTReaderQueryTimer",
@@ -306,15 +306,15 @@ CSTReaderSetupState(CSTRemoteWriter *cstRemoteWriter) {
       cstRemoteWriter->commStateACK=PULLING;
       cstRemoteWriter->ACKRetriesCounter=0;
       eventDetach(cstRemoteWriter->cstReader->domain,
-          cstRemoteWriter->objectEntryOID->objectEntryAID,
+          cstRemoteWriter->spobject->objectEntryAID,
           &cstRemoteWriter->repeatActiveQueryTimer,
           1);   //metatraffic timer
       eventDetach(cstRemoteWriter->cstReader->domain,
-          cstRemoteWriter->objectEntryOID->objectEntryAID,
+          cstRemoteWriter->spobject->objectEntryAID,
           &cstRemoteWriter->delayResponceTimer,
           1);   //metatraffic timer
       eventAdd(cstRemoteWriter->cstReader->domain,
-          cstRemoteWriter->objectEntryOID->objectEntryAID,
+          cstRemoteWriter->spobject->objectEntryAID,
           &cstRemoteWriter->delayResponceTimer,
           1,   //metatraffic timer
           "CSTReaderResponceTimer",

@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-SOURCES = $(publisher_SOURCES) $(subscriberbesteffort_SOURCES) $(subscriberreliable_SOURCES)
+SOURCES = $(r_publisher_SOURCES) $(r_subscriber_besteffort_SOURCES) $(r_subscriber_reliable_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -37,36 +37,39 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
-noinst_PROGRAMS = publisher$(EXEEXT) subscriberreliable$(EXEEXT) \
-	subscriberbesteffort$(EXEEXT)
+noinst_PROGRAMS = r_publisher$(EXEEXT) r_subscriber_reliable$(EXEEXT) \
+	r_subscriber_besteffort$(EXEEXT)
 subdir = orte/examples/reliable
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/admin/linux.m4 \
-	$(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/admin/idl.m4 \
+	$(top_srcdir)/admin/jorte.m4 $(top_srcdir)/admin/linux.m4 \
+	$(top_srcdir)/admin/pkg.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/orte/include/config.h
+CONFIG_HEADER = $(top_builddir)/orte/include/orte/orte_config.h
 CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_publisher_OBJECTS = publisher.$(OBJEXT)
-publisher_OBJECTS = $(am_publisher_OBJECTS)
-publisher_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la
-am_subscriberbesteffort_OBJECTS = subscriberbesteffort.$(OBJEXT)
-subscriberbesteffort_OBJECTS = $(am_subscriberbesteffort_OBJECTS)
-subscriberbesteffort_DEPENDENCIES =  \
+am_r_publisher_OBJECTS = r_publisher.$(OBJEXT)
+r_publisher_OBJECTS = $(am_r_publisher_OBJECTS)
+r_publisher_DEPENDENCIES = $(top_builddir)/orte/liborte/liborte.la
+am_r_subscriber_besteffort_OBJECTS =  \
+	r_subscriber_besteffort.$(OBJEXT)
+r_subscriber_besteffort_OBJECTS =  \
+	$(am_r_subscriber_besteffort_OBJECTS)
+r_subscriber_besteffort_DEPENDENCIES =  \
 	$(top_builddir)/orte/liborte/liborte.la
-am_subscriberreliable_OBJECTS = subscriberreliable.$(OBJEXT)
-subscriberreliable_OBJECTS = $(am_subscriberreliable_OBJECTS)
-subscriberreliable_DEPENDENCIES =  \
+am_r_subscriber_reliable_OBJECTS = r_subscriber_reliable.$(OBJEXT)
+r_subscriber_reliable_OBJECTS = $(am_r_subscriber_reliable_OBJECTS)
+r_subscriber_reliable_DEPENDENCIES =  \
 	$(top_builddir)/orte/liborte/liborte.la
-DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include/orte
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/publisher.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/subscriberbesteffort.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/subscriberreliable.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/r_publisher.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/r_subscriber_besteffort.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/r_subscriber_reliable.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
@@ -75,10 +78,11 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(publisher_SOURCES) $(subscriberbesteffort_SOURCES) \
-	$(subscriberreliable_SOURCES)
-DIST_SOURCES = $(publisher_SOURCES) $(subscriberbesteffort_SOURCES) \
-	$(subscriberreliable_SOURCES)
+SOURCES = $(r_publisher_SOURCES) $(r_subscriber_besteffort_SOURCES) \
+	$(r_subscriber_reliable_SOURCES)
+DIST_SOURCES = $(r_publisher_SOURCES) \
+	$(r_subscriber_besteffort_SOURCES) \
+	$(r_subscriber_reliable_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -95,8 +99,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CONFIG_ADEOS_FALSE = @CONFIG_ADEOS_FALSE@
 CONFIG_ADEOS_TRUE = @CONFIG_ADEOS_TRUE@
+CONFIG_JORTE = @CONFIG_JORTE@
+CONFIG_JORTE_FALSE = @CONFIG_JORTE_FALSE@
+CONFIG_JORTE_TRUE = @CONFIG_JORTE_TRUE@
 CONFIG_ORTE_CYGWIN_FALSE = @CONFIG_ORTE_CYGWIN_FALSE@
 CONFIG_ORTE_CYGWIN_TRUE = @CONFIG_ORTE_CYGWIN_TRUE@
+CONFIG_ORTE_IDL = @CONFIG_ORTE_IDL@
+CONFIG_ORTE_IDL_FALSE = @CONFIG_ORTE_IDL_FALSE@
+CONFIG_ORTE_IDL_TRUE = @CONFIG_ORTE_IDL_TRUE@
 CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_KERNEL_FALSE = @CONFIG_ORTE_KERNEL_FALSE@
 CONFIG_ORTE_KERNEL_TRUE = @CONFIG_ORTE_KERNEL_TRUE@
@@ -130,6 +140,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LIBIDL_CFLAGS = @LIBIDL_CFLAGS@
+LIBIDL_LIBS = @LIBIDL_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -169,6 +181,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 RTAI_CFLAGS = @RTAI_CFLAGS@
 RTLINUX_CC = @RTLINUX_CC@
@@ -223,15 +236,15 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-publisher_SOURCES = publisher.c
-publisher_LDADD = $(top_builddir)/orte/liborte/liborte.la 
-publisher_LDFLAGS = -static
-subscriberreliable_SOURCES = subscriberreliable.c
-subscriberreliable_LDADD = $(top_builddir)/orte/liborte/liborte.la 
-subscriberreliable_LDFLAGS = -static
-subscriberbesteffort_SOURCES = subscriberbesteffort.c
-subscriberbesteffort_LDADD = $(top_builddir)/orte/liborte/liborte.la 
-subscriberbesteffort_LDFLAGS = -static
+r_publisher_SOURCES = r_publisher.c
+r_publisher_LDADD = $(top_builddir)/orte/liborte/liborte.la 
+r_publisher_LDFLAGS = -static
+r_subscriber_reliable_SOURCES = r_subscriber_reliable.c
+r_subscriber_reliable_LDADD = $(top_builddir)/orte/liborte/liborte.la 
+r_subscriber_reliable_LDFLAGS = -static
+r_subscriber_besteffort_SOURCES = r_subscriber_besteffort.c
+r_subscriber_besteffort_LDADD = $(top_builddir)/orte/liborte/liborte.la 
+r_subscriber_besteffort_LDFLAGS = -static
 all: all-am
 
 .SUFFIXES:
@@ -272,15 +285,15 @@ clean-noinstPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-publisher$(EXEEXT): $(publisher_OBJECTS) $(publisher_DEPENDENCIES) 
-	@rm -f publisher$(EXEEXT)
-	$(LINK) $(publisher_LDFLAGS) $(publisher_OBJECTS) $(publisher_LDADD) $(LIBS)
-subscriberbesteffort$(EXEEXT): $(subscriberbesteffort_OBJECTS) $(subscriberbesteffort_DEPENDENCIES) 
-	@rm -f subscriberbesteffort$(EXEEXT)
-	$(LINK) $(subscriberbesteffort_LDFLAGS) $(subscriberbesteffort_OBJECTS) $(subscriberbesteffort_LDADD) $(LIBS)
-subscriberreliable$(EXEEXT): $(subscriberreliable_OBJECTS) $(subscriberreliable_DEPENDENCIES) 
-	@rm -f subscriberreliable$(EXEEXT)
-	$(LINK) $(subscriberreliable_LDFLAGS) $(subscriberreliable_OBJECTS) $(subscriberreliable_LDADD) $(LIBS)
+r_publisher$(EXEEXT): $(r_publisher_OBJECTS) $(r_publisher_DEPENDENCIES) 
+	@rm -f r_publisher$(EXEEXT)
+	$(LINK) $(r_publisher_LDFLAGS) $(r_publisher_OBJECTS) $(r_publisher_LDADD) $(LIBS)
+r_subscriber_besteffort$(EXEEXT): $(r_subscriber_besteffort_OBJECTS) $(r_subscriber_besteffort_DEPENDENCIES) 
+	@rm -f r_subscriber_besteffort$(EXEEXT)
+	$(LINK) $(r_subscriber_besteffort_LDFLAGS) $(r_subscriber_besteffort_OBJECTS) $(r_subscriber_besteffort_LDADD) $(LIBS)
+r_subscriber_reliable$(EXEEXT): $(r_subscriber_reliable_OBJECTS) $(r_subscriber_reliable_DEPENDENCIES) 
+	@rm -f r_subscriber_reliable$(EXEEXT)
+	$(LINK) $(r_subscriber_reliable_LDFLAGS) $(r_subscriber_reliable_OBJECTS) $(r_subscriber_reliable_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -288,9 +301,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/publisher.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subscriberbesteffort.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subscriberreliable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/r_publisher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/r_subscriber_besteffort.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/r_subscriber_reliable.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

@@ -267,11 +267,17 @@ AC_DEFUN([DS_RTLINUX],
 		[RTLINUX_DIR="${withval}"],
 		[RTLINUX_DIR=/usr/src/rtlinux])
 		
-	AC_ARG_WITH([rtlinuxudp],
-		[AC_HELP_STRING([--with-rtlinuxudp=DIR],
-			[path to RTLinux UDP source directory])],
-		[RTLINUXUDP_DIR="${withval}"],
-		[RTLINUXUDP_DIR="${RTLINUX_DIR}"])
+	AC_ARG_WITH([rtlinuxwip],
+		[AC_HELP_STRING([--with-rtlinuxwip=DIR],
+			[path to RTLinux wIP source directory])],
+		[RTLINUXWIP_DIR="${withval}"],
+		[RTLINUXWIP_DIR="${RTLINUX_DIR}"])
+
+	AC_ARG_WITH([rtlinuxonetd],
+		[AC_HELP_STRING([--with-rtlinuxonetd=DIR],
+			[path to RTLinux onetd source directory])],
+		[RTLINUXONETD_DIR="${withval}"],
+		[RTLINUXONETD_DIR="${RTLINUX_DIR}"])
 
 	DS_LINUX_CONFIG_OPTION_MODULE([CONFIG_RTLINUX])
 
@@ -285,17 +291,32 @@ AC_DEFUN([DS_RTLINUX],
 		fi
 		AC_MSG_RESULT([found])
 		AC_DEFINE([CONFIG_ORTE_RTL],[1],[Define if kernel is RTLinux patched])
-		AC_MSG_CHECKING([RTLinux for UDP])
-                if [[ ! -e "${RTLINUXUDP_DIR}/include/udp.h" -o \
-		      ! -e "${RTLINUXUDP_DIR}/include/nic.h" -o \ 
-		      ! -e "${RTLINUXUDP_DIR}/include/ip.h" -o \ 
-		      ! -e "${RTLINUXUDP_DIR}/include/ethernet.h" -o \ 
-		      ! -e "${RTLINUXUDP_DIR}/include/nictab.h" ]] ; then 
-			AC_MSG_ERROR([incorrect RTLinux UDP directory!!!])
+
+		AC_MSG_CHECKING([RTLinux for a UDP stack])
+		RTL_STACK="no"
+
+                if [[ -e "${RTLINUXWIP_DIR}/include/udp.h" -a \
+		      -e "${RTLINUXWIP_DIR}/include/nic.h" -a \ 
+		      -e "${RTLINUXWIP_DIR}/include/ip.h" -a \ 
+		      -e "${RTLINUXWIP_DIR}/include/ethernet.h" -a \ 
+		      -e "${RTLINUXWIP_DIR}/include/nictab.h" ]] ; then 
+    		        AC_MSG_RESULT([found wIP])
+		        AC_DEFINE([CONFIG_ORTE_RTL_WIP],[1],[Define if wIP stack is found])
+ 			RTL_STACK="yes"
 		fi
+
+                if [[ -e "${RTLINUXONETD_DIR}/onetd.h" ]] ; then 
+    		        AC_MSG_RESULT([found onetd])
+		        AC_DEFINE([CONFIG_ORTE_RTL_ONETD],[1],[Define if onetd stack is found])
+ 			RTL_STACK="yes"
+		fi
+
+		if test "${RTL_STACK}" == "no" ; then
+			AC_MSG_ERROR([incorrect a RTLinux UDP directory.])
+		fi
+
                 RT_GCCLIB_DIR=`${RTLINUX_CC} -print-search-dirs | sed -n -e 's/^install: \(.*\)$/\1/p'`
-		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXUDP_DIR}/include -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
-		AC_MSG_RESULT([found])
+		RTLINUX_CFLAGS="${RTLINUX_CFLAGS} -I${RTLINUXWIP_DIR}/include -I${RTLINUXONETD_DIR} -idirafter ${RT_GCCLIB_DIR}/include -nostdinc"
 		$1
 	else
 		$2

@@ -30,7 +30,7 @@ ORTESubscription *
 ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sType,
     const char *topic,const char *typeName,void *instance,NtpTime *deadline,
     NtpTime *minimumSeparation,ORTERecvCallBack recvCallBack,
-    void *recvCallBackParam) {
+    void *recvCallBackParam, IPAddress multicastIPAddress) {
   GUID_RTPS             guid;
   CSTReader             *cstReader;
   CSTReaderParams       cstReaderParams;
@@ -63,6 +63,7 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
   strcpy(sp->typeName,typeName);
   sp->deadline=*deadline;
   sp->minimumSeparation=*minimumSeparation;
+  sp->multicast=multicastIPAddress;
   switch (sType) {
     case BEST_EFFORTS:
       sp->reliabilityRequested=PID_VALUE_RELIABILITY_BEST_EFFORTS;
@@ -94,13 +95,14 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
   parameterUpdateCSChangeFromSubscription(csChange,sp);
   csChange->guid=guid;
   csChange->alive=ORTE_TRUE;
-  csChange->cdrStream.buffer=NULL;
+  CDR_codec_init_static(&csChange->cdrCodec);
   CSTWriterAddCSChange(d,&d->writerSubscriptions,csChange);
   pthread_rwlock_unlock(&d->writerSubscriptions.lock);
   pthread_rwlock_unlock(&d->subscriptions.lock);
   pthread_rwlock_unlock(&d->typeEntry.lock);    
   pthread_rwlock_unlock(&d->objectEntry.objRootLock);
   pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
+
   return cstReader;
 }
 
@@ -115,7 +117,7 @@ ORTESubscriptionDestroyLocked(ORTESubscription *cstReader) {
   CSChangeAttributes_init_head(csChange);
   csChange->guid=cstReader->guid;
   csChange->alive=ORTE_FALSE;
-  csChange->cdrStream.buffer=NULL;
+  csChange->cdrCodec.buffer=NULL;
   CSTWriterAddCSChange(cstReader->domain,
                        &cstReader->domain->writerSubscriptions,
                        csChange);
@@ -166,7 +168,7 @@ ORTESubscriptionPropertiesSet(ORTESubscription *cstReader,ORTESubsProp *sp) {
   parameterUpdateCSChangeFromSubscription(csChange,sp);
   csChange->guid=cstReader->guid;
   csChange->alive=ORTE_TRUE;
-  csChange->cdrStream.buffer=NULL;
+  csChange->cdrCodec.buffer=NULL;
   CSTWriterAddCSChange(cstReader->domain,
       &cstReader->domain->writerSubscriptions,csChange);
   pthread_rwlock_unlock(&cstReader->lock);

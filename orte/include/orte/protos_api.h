@@ -64,8 +64,10 @@ NtpTimeToStringUs(NtpTime time,char *buff);
 /**
  * ORTEDomainStart - start specific threads
  * @d: domain object handle
- * @recvMetatrafficThread: specifies whether recvMetatrafficThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
- * @recvUserDataThread: specifies whether recvUserDataThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
+ * @recvUnicastMetatrafficThread: specifies whether recvUnicastMetatrafficThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
+ * @recvMulticastMetatrafficThread: specifies whether recvMulticastMetatrafficThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
+ * @recvUnicastUserdataThread: specifies whether recvUnicastUserdataThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
+ * @recvMulticastUserdataThread: specifies whether recvMulticastUserdataThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
  * @sendThread: specifies whether sendThread should be started (ORTE_TRUE) or remain suspended (ORTE_FALSE).
  *
  * Functions @ORTEDomainAppCreate and @ORTEDomainMgrCreate provide facility to create an object with its threads suspended. Use function @ORTEDomainStart to resume those
@@ -73,10 +75,11 @@ NtpTimeToStringUs(NtpTime time,char *buff);
  */
 extern void
 ORTEDomainStart(ORTEDomain *d,
-                Boolean recvMetatrafficThread,
-		Boolean recvUserDataThread,
+                Boolean recvUnicastMetatrafficThread,
+                Boolean recvMulticastMetatrafficThread,
+	        Boolean recvUnicastUserdataThread,
+	        Boolean recvMulticastUserdataThread,
 		Boolean sendThread);
-
 /**
  * ORTEDomainPropDefaultGet - returns default properties of a domain
  * @prop: pointer to struct ORTEDomainProp
@@ -177,7 +180,7 @@ ORTEDomainAppSubscriptionPatternDestroy(ORTEDomain *d);
 
 /**
  * ORTEDomainMgrCreate - create manager object in given domain
- * @d: given domain
+ * @domain: given domain
  * @prop: desired manager's properties
  * @events: manager's event handlers or NULL   
  * @suspended: specifies whether threads of this manager should be started as well (ORTE_FALSE) or stay suspended (ORTE_TRUE). See @ORTEDomainStart for details how to resume
@@ -292,6 +295,17 @@ ORTEPublicationGetStatus(ORTEPublication *cstWriter,ORTEPublStatus *status);
 extern int 
 ORTEPublicationSend(ORTEPublication *cstWriter);
 
+/**
+ * ORTEPublicationSendEx - force publication object to issue new data with additional parameters
+ * @cstWriter: publication object
+ * @psp: publication parameters
+ *
+ * Returns ORTE_OK if successful.
+ */
+extern int
+ORTEPublicationSendEx(ORTEPublication *cstWriter,
+    ORTEPublicationSendParam *psp);
+
 ///////////////////////////////////////////////////////////////////////////////
 // ORTESubscription.c
 
@@ -307,6 +321,7 @@ ORTEPublicationSend(ORTEPublication *cstWriter);
  * @minimumSeparation: minimum time interval between two publications sent by Publisher as requested by Subscriber (strict - minumSep musi byt 0)
  * @recvCallBack: callback function called when new Subscription has been received or if any change of subscription's status occures
  * @recvCallBackParam: user parameters for @recvCallBack 
+ * @multicastIPAddress: in case multicast subscripton specify multicast IP address or use IPADDRESS_INVALID to unicast communication
  *
  * Returns handle to Subscription object.
  */
@@ -320,7 +335,8 @@ ORTESubscriptionCreate(ORTEDomain *d,
 		       NtpTime *deadline,
 		       NtpTime *minimumSeparation,
 		       ORTERecvCallBack recvCallBack,
-		       void *recvCallBackParam);
+		       void *recvCallBackParam,
+		       IPAddress multicastIPAddress);
 		       
 /**
  * ORTESubscriptionDestroy - removes a subscription
@@ -389,7 +405,8 @@ ORTESubscriptionPull(ORTESubscription *cstReader);
  * @typeName: name of data type
  * @ts: pointer to serialization function. If NULL data will be copied without any processing.
  * @ds: deserialization function. If NULL data will be copied without any processing.
- * @gms: maximum length of data (in bytes)
+ * @gms: pointer to a function given maximum length of data (in bytes)
+ * @ms: default maximal size
  *
  * Each data type has to be registered. Main purpose of this process is to define serialization and deserialization functions for given data type. The same data type can be 
  * registered several times, previous registrations of the same type will be overwritten.
@@ -400,7 +417,7 @@ ORTESubscriptionPull(ORTESubscription *cstReader);
  */
 extern int
 ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
-                    ORTETypeDeserialize ds,unsigned int gms);
+                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,unsigned int ms);
 /**
  * ORTETypeRegisterDestroyAll - destroy all registered data types
  * @d: domain object handle
@@ -455,18 +472,6 @@ ORTEVerbositySetLogFile(const char *logfile);
 */
  
 extern void ORTEInit(void);
-
-///////////////////////////////////////////////////////////////////////////////
-// ORTEAppSendThread.c
-
-/**
- * ORTEAppSendThread - resume sending thread in context of calling function. 
- * @d: domain object handle
- *
- * Sending thread will be resumed. This function never returns.
-*/
-extern void 
-ORTEAppSendThread(ORTEDomain *d);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEMisc.c

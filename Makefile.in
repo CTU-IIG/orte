@@ -36,20 +36,22 @@ POST_UNINSTALL = :
 host_triplet = @host@
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/modtool.in \
-	$(top_srcdir)/configure $(top_srcdir)/orte/include/config.h.in \
-	admin/compile admin/config.guess admin/config.sub \
-	admin/depcomp admin/install-sh admin/ltconfig admin/ltmain.sh \
-	admin/missing admin/mkinstalldirs
+	$(top_srcdir)/configure \
+	$(top_srcdir)/orte/include/orte/orte_config.h.in admin/compile \
+	admin/config.guess admin/config.sub admin/depcomp \
+	admin/install-sh admin/ltconfig admin/ltmain.sh admin/missing \
+	admin/mkinstalldirs
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/admin/linux.m4 \
-	$(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/admin/idl.m4 \
+	$(top_srcdir)/admin/jorte.m4 $(top_srcdir)/admin/linux.m4 \
+	$(top_srcdir)/admin/pkg.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/orte/include/config.h
+CONFIG_HEADER = $(top_builddir)/orte/include/orte/orte_config.h
 CONFIG_CLEAN_FILES = modtool
 SOURCES =
 DIST_SOURCES =
@@ -86,8 +88,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CONFIG_ADEOS_FALSE = @CONFIG_ADEOS_FALSE@
 CONFIG_ADEOS_TRUE = @CONFIG_ADEOS_TRUE@
+CONFIG_JORTE = @CONFIG_JORTE@
+CONFIG_JORTE_FALSE = @CONFIG_JORTE_FALSE@
+CONFIG_JORTE_TRUE = @CONFIG_JORTE_TRUE@
 CONFIG_ORTE_CYGWIN_FALSE = @CONFIG_ORTE_CYGWIN_FALSE@
 CONFIG_ORTE_CYGWIN_TRUE = @CONFIG_ORTE_CYGWIN_TRUE@
+CONFIG_ORTE_IDL = @CONFIG_ORTE_IDL@
+CONFIG_ORTE_IDL_FALSE = @CONFIG_ORTE_IDL_FALSE@
+CONFIG_ORTE_IDL_TRUE = @CONFIG_ORTE_IDL_TRUE@
 CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_KERNEL_FALSE = @CONFIG_ORTE_KERNEL_FALSE@
 CONFIG_ORTE_KERNEL_TRUE = @CONFIG_ORTE_KERNEL_TRUE@
@@ -121,6 +129,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LIBIDL_CFLAGS = @LIBIDL_CFLAGS@
+LIBIDL_LIBS = @LIBIDL_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -160,6 +170,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 RTAI_CFLAGS = @RTAI_CFLAGS@
 RTLINUX_CC = @RTLINUX_CC@
@@ -261,22 +272,22 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 
-orte/include/config.h: orte/include/stamp-h1
+orte/include/orte/orte_config.h: orte/include/orte/stamp-h1
 	@if test ! -f $@; then \
-	  rm -f orte/include/stamp-h1; \
-	  $(MAKE) orte/include/stamp-h1; \
+	  rm -f orte/include/orte/stamp-h1; \
+	  $(MAKE) orte/include/orte/stamp-h1; \
 	else :; fi
 
-orte/include/stamp-h1: $(top_srcdir)/orte/include/config.h.in $(top_builddir)/config.status
-	@rm -f orte/include/stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status orte/include/config.h
-$(top_srcdir)/orte/include/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+orte/include/orte/stamp-h1: $(top_srcdir)/orte/include/orte/orte_config.h.in $(top_builddir)/config.status
+	@rm -f orte/include/orte/stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status orte/include/orte/orte_config.h
+$(top_srcdir)/orte/include/orte/orte_config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	cd $(top_srcdir) && $(AUTOHEADER)
-	rm -f orte/include/stamp-h1
+	rm -f orte/include/orte/stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f orte/include/config.h orte/include/stamp-h1
+	-rm -f orte/include/orte/orte_config.h orte/include/orte/stamp-h1
 modtool: $(top_builddir)/config.status $(srcdir)/modtool.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
@@ -409,7 +420,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/. $(distdir)/admin $(distdir)/orte/include
+	$(mkdir_p) $(distdir)/. $(distdir)/admin $(distdir)/orte/include/orte
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

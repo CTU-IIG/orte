@@ -121,6 +121,8 @@ static void usage(void) {
   printf("                ORTEManager -v ALL.7     all sections up to level 7\n");
   printf("  -R, --refresh <s>             refresh period in second(s)\n");
   printf("  -P, --purge <s>               purge time in second(s)\n");
+  printf("  -I, --metaMulticast <IPAdd>   use multicast IPAddr for metatraffic comm.\n");
+  printf("  -t, --timetolive <number>     time-to-live for multicast packets\n");
 #ifdef CONFIG_ORTE_UNIX
   printf("  -D, --daemon                  start program like daemon\n");
 #endif
@@ -144,6 +146,8 @@ int main(int argc,char *argv[]) {
     { "verbosity",1,0, 'v' },
     { "refresh",1,0, 'R' },
     { "purge",1,0, 'P' },
+    { "metaMulticast",1,0, 'I' },
+    { "timetolive",1,0, 't' },
 #ifdef CONFIG_ORTE_UNIX
     { "daemon",1,0, 'D' },
 #endif
@@ -162,16 +166,16 @@ int main(int argc,char *argv[]) {
   ORTEDomainPropDefaultGet(&dp);
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
-  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:l:VhDesir",&long_opts[0], NULL)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:I:t:l:VhDesir",&long_opts[0], NULL)) != EOF) {
 #else
-  while ((opt = getopt(argc, argv, "k:p:d:v:R:E:P:l:VhDesir")) != EOF) {
+  while ((opt = getopt(argc, argv, "k:p:d:v:R:E:P:I:t:l:VhDesir")) != EOF) {
 #endif
     switch (opt) {
       case 'p':
-        dp.mgrs=strdup(optarg);
+        dp.mgrs=optarg;
         break;
       case 'k':
-        dp.keys=strdup(optarg);
+        dp.keys=optarg;
         break;
       case 'd':
         domain=strtol(optarg,NULL,0);
@@ -184,6 +188,13 @@ int main(int argc,char *argv[]) {
         break;
       case 'P':
         NtpTimeAssembFromMs(dp.baseProp.purgeTime,strtol(optarg,NULL,0),0);
+        break;
+      case 'I':
+        dp.multicast.enabled=ORTE_TRUE;
+        dp.multicast.ipAddress=StringToIPAddress(optarg);
+        break;
+      case 't':
+        dp.multicast.ttl=strtol(optarg,NULL,0);
         break;
       case 'E':
         NtpTimeAssembFromMs(dp.baseProp.expirationTime,strtol(optarg,NULL,0),0);
@@ -240,20 +251,16 @@ int main(int argc,char *argv[]) {
     daemonInit();
   #endif
 
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE);
-  #ifndef CONFIG_ORTE_UNIX
+  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE);
+/*  #ifndef CONFIG_ORTE_UNIX
     d->taskSend.terminate=ORTE_FALSE;
     ORTEAppSendThread(d);
-  #endif
-  ORTEDomainStart(d,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
+  #endif*/
+  ORTEDomainStart(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
 
   #ifdef CONFIG_ORTE_UNIX
   waitForEndingCommand();
   ORTEDomainMgrDestroy(d);
-  if (dp.mgrs) 
-    free(dp.mgrs);
-  if (dp.keys) 
-    free(dp.keys);
   if (events) 
     free(events);
   #endif
@@ -270,10 +277,14 @@ MODULE_PARM_DESC(peer,"possible locations of fellow managers");
 MODULE_LICENSE("GPL");
 ORTEDomain *d=NULL;
 pthread_t  thread;
-ORTEDomainProp dp;
 
 void *
 domainInit(void *arg) {
+  ORTEDomainProp dp;
+
+  ORTEDomainPropDefaultGet(&dp);
+  ORTEVerbositySetOptions(verbosity);
+  dp.mgrs=peer;
   d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_TRUE);
   return arg;
 }
@@ -288,13 +299,10 @@ domainDestroy(void *arg) {
 int
 init_module(void) {
   ORTEInit();
-  ORTEDomainPropDefaultGet(&dp);
-  ORTEVerbositySetOptions(verbosity);
-  dp.mgrs=peer;
   pthread_create(&thread,NULL,&domainInit,NULL);  //allocate resources in RT 
   pthread_join(thread,NULL);
   if (d)
-    ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE); //manager start
+    ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE); //manager start
   return 0;
 }
 void

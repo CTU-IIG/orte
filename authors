@@ -17,10 +17,10 @@ Pavel Pisa <pisa@cmp.felk.cvut.cz>
     * help with architecture
     
 Michal Sojka <sojka1@fel.cvut.cz> 
-    * RTLinux proting
+    * RTLinux ports
 
 Jan Kiszka <Jan.Kiszka@web.de>
-    * RTAI porting
+    * RTAI ports
     
 Zdenek Sebek <sebek@fel.cvut.cz>
     * documentation

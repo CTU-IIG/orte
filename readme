@@ -13,6 +13,7 @@ UNIX - Linux, Solars, MacOS, FreeBSD
 Windows - MinGW, CygWin, MSVC
 RTLinux - with preliminary UDP stack
 RTAI - with RTNet
+JAVA
 
 note: was tested on
 sparc-sun-solaris2.9
@@ -31,8 +32,13 @@ make install
 after this procedure ortemanager and orteping are placed in /usr/local/bin
 , library in /usr/local/lib and include headers /usr/local/include
 
-RTLinux compilation:
-./configure --with-linux=/patched linux dir/ --with-rtlinux=/rtlinux dir/ 
+RTLinux compilation with wIP:
+./configure --with-linux=/patched linux dir/ --with-rtlinux=/rtlinux dir/ --with-rtlinuxwip=/wip dir/
+make 
+make install
+
+RTLinux compilation with onetd:
+./configure --with-linux=/patched linux dir/ --with-rtlinux=/rtlinux dir/ --with-rtlinuxonetd=/onetd dir/
 make 
 make install
 
@@ -41,6 +47,10 @@ RTAI compilation:
 make 
 make install
 
+JAVA compilation:
+./configure --with-java=/java home dir/ 
+make
+make install
 
 How to start?
 -------------
@@ -48,7 +58,7 @@ run :ortemanager &
 see :ortemanager -h for usage
 note:ortemanager have to be running during all communication. For future work can 
 be added into /etc/init.d/... script for starting ortemanager during boot
-of machine. This script (redhat and mandrake) is placed in 
+of machine. This scripts (redhat and mandrake) are located in 
 "orte/manager/rc/ortemanagerd"
 For developping a RT application, ortemnager can be running in userspace.
 Start it with parameter "-k 192.168.4.2". This address is IP address of 

@@ -97,6 +97,7 @@ objectEntryAdd(ORTEDomain *d,GUID_RTPS *guid,void *params) {
   //not exists Application -> create 
   if (objectEntryAID==NULL) {
     objectEntryAID=(ObjectEntryAID*)MALLOC(sizeof(ObjectEntryAID));
+    objectEntryAID->aobject=NULL;
     //init items of structure objectEntryAID
     objectEntryAID->aid=guid->aid;
     ObjectEntryOID_init_root_field(objectEntryAID);
@@ -123,6 +124,12 @@ objectEntryAdd(ORTEDomain *d,GUID_RTPS *guid,void *params) {
     objectEntryOID->attributes=params;
     ul_htim_queue_init_detached(&objectEntryOID->expirationPurgeTimer.htim);
     ul_htim_queue_init_detached(&objectEntryOID->sendCallBackDelayTimer.htim);
+    ObjectEntryMulticast_init_head(objectEntryOID);
+    objectEntryOID->multicastPort=0;
+    if (guid->oid==OID_APP) {
+      objectEntryAID->aobject=objectEntryOID;
+      debug(8,5) ("objectEntry: Object: %#10.8x connected to AID\n",guid->oid);
+    }
     //insert
     ObjectEntryOID_insert(objectEntryAID,objectEntryOID);
     debug(8,5) ("objectEntry: Object: %#10.8x created\n",guid->oid);
@@ -132,7 +139,7 @@ objectEntryAdd(ORTEDomain *d,GUID_RTPS *guid,void *params) {
 }
 
 /*
- * objectEntryDestroy - Destroy a object from structure objectEntry
+ * objectEntryDelete - Delete a object from structure objectEntry
  * @objectEntry: pointer to root structure 
  * @obejctEntryOID: pointer to the deleted objectEntryOID
  *
@@ -140,7 +147,7 @@ objectEntryAdd(ORTEDomain *d,GUID_RTPS *guid,void *params) {
  *        3-OID,AID,HID was deleted
  */
 int
-objectEntryDelete(ORTEDomain *d,ObjectEntryOID *objectEntryOID) {
+objectEntryDelete(ORTEDomain *d,ObjectEntryOID *objectEntryOID,Boolean destroy) {
   ObjectEntryHID *objectEntryHID;
   ObjectEntryAID *objectEntryAID;
   int            result=0;
@@ -159,22 +166,32 @@ objectEntryDelete(ORTEDomain *d,ObjectEntryOID *objectEntryOID) {
           &objectEntryOID->sendCallBackDelayTimer,
           0);
   FREE(objectEntryOID->attributes);
-  ObjectEntryOID_delete(objectEntryAID,objectEntryOID);
+  if (objectEntryAID->aobject==objectEntryOID) {
+    objectEntryAID->aobject=NULL;
+    debug(8,5) ("objectEntry: Object: %#10.8x deleted from AID\n",objectEntryOID->oid);
+  }
+  if (destroy) {
+    ObjectEntryOID_delete(objectEntryAID,objectEntryOID);
+    FREE(objectEntryOID);
+  }
   debug(8,5) ("objectEntry: Object: %#10.8x deleted\n",objectEntryOID->oid);
-  FREE(objectEntryOID);
   result=1;
   //Destroy object on level AID
   if (ObjectEntryOID_is_empty(objectEntryAID)) {
-    ObjectEntryAID_delete(objectEntryHID,objectEntryAID);
     debug(8,5) ("objectEntry: App   : %#10.8x deleted\n",objectEntryAID->aid);
-    FREE(objectEntryAID);
+    if (destroy) {
+      ObjectEntryAID_delete(objectEntryHID,objectEntryAID);
+      FREE(objectEntryAID);
+    }
     result=2;
   }
   //Destroy object on level HID
   if (ObjectEntryAID_is_empty(objectEntryHID)) {
-    ObjectEntryHID_delete(&d->objectEntry,objectEntryHID);
     debug(8,5) ("objectEntry: Host  : %#10.8x deleted\n",objectEntryHID->hid);
-    FREE(objectEntryHID);
+    if (destroy) {
+      ObjectEntryHID_delete(&d->objectEntry,objectEntryHID);
+      FREE(objectEntryHID);
+    }
     result=3;
   }
   debug(8,10) ("objectEntryDelete: finished\n");
@@ -195,15 +212,7 @@ objectEntryDeleteAll(ORTEDomain *d,ObjectEntry *objectEntry) {
   while((objectEntryHID=ObjectEntryHID_cut_first(objectEntry))) {
     while((objectEntryAID=ObjectEntryAID_cut_first(objectEntryHID))) {
       while((objectEntryOID=ObjectEntryOID_cut_first(objectEntryAID))) {
-        eventDetach(d,
-                objectEntryOID->objectEntryAID,
-                &objectEntryOID->expirationPurgeTimer,
-                0);
-        eventDetach(d,
-                objectEntryOID->objectEntryAID,
-                &objectEntryOID->sendCallBackDelayTimer,
-                0);
-        FREE(objectEntryOID->attributes);
+        objectEntryDelete(d,objectEntryOID,ORTE_FALSE);
         FREE(objectEntryOID);
       }
       FREE(objectEntryAID);

@@ -64,7 +64,7 @@ CSTReaderProcCSChangesManager(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter,
       //update parameters of object
       parameterUpdateApplication(csChange,(AppParams*)objectEntryOID->attributes);
       //changes can make only local Apps
-      if (cstRemoteWriter->objectEntryOID->appMOM) {
+      if (cstRemoteWriter->spobject->appMOM) {
         CSTReaderDestroyCSChangeFromWriter(cstRemoteWriter,
                                  csChangeFromWriter,
                                  ORTE_TRUE);
@@ -165,10 +165,11 @@ CSTReaderProcCSChanges(ORTEDomain *d,CSTRemoteWriter *cstRemoteWriter) {
 void
 CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
     CSChangeFromWriter *csChangeFromWriter) {
+  CSChange             *csChange=csChangeFromWriter->csChange;
   ORTERecvInfo         info;  
   ORTESubsProp         *sp;
   ObjectEntryOID       *objectEntryOID;
-  unsigned int         length;
+  int         	       max_size;
         
   if (cstRemoteWriter==NULL) return;
   objectEntryOID=cstRemoteWriter->cstReader->objectEntryOID;
@@ -177,24 +178,36 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
     //deserialization routine
     if (cstRemoteWriter->cstReader->typeRegister->deserialize) {
       cstRemoteWriter->cstReader->typeRegister->deserialize(
-          &csChangeFromWriter->csChange->cdrStream,
+          &csChange->cdrCodec,
           objectEntryOID->instance);
     } else {
-      length=csChangeFromWriter->csChange->cdrStream.length;
-      if (cstRemoteWriter->cstReader->typeRegister->getMaxSize<length)
-        length=cstRemoteWriter->cstReader->typeRegister->getMaxSize;
       //no deserialization -> memcpy
+      ORTEGetMaxSizeParam gms;
+
+      /* determine maximal size */
+      gms.host_endian=csChange->cdrCodec.host_endian;
+      gms.data_endian=csChange->cdrCodec.data_endian;
+      gms.data=csChange->cdrCodec.buffer;
+      gms.max_size=cstRemoteWriter->cstReader->typeRegister->maxSize;
+      gms.recv_size=csChange->cdrCodec.buf_len;
+      gms.csize=0;
+      if (cstRemoteWriter->cstReader->typeRegister->getMaxSize)
+        max_size=cstRemoteWriter->cstReader->typeRegister->getMaxSize(&gms);
+      else
+        max_size=cstRemoteWriter->cstReader->typeRegister->maxSize;
+      if (max_size>csChange->cdrCodec.buf_len)
+        max_size=csChange->cdrCodec.buf_len;
       memcpy(objectEntryOID->instance,
-            csChangeFromWriter->csChange->cdrStream.buffer,
-            length);
+             csChange->cdrCodec.buffer,
+             max_size);
     }
     info.status=NEW_DATA;
     info.topic=sp->topic;
     info.type=sp->typeName;
-    info.senderGUID=csChangeFromWriter->csChange->guid;
-    info.localTimeReceived=csChangeFromWriter->csChange->localTimeReceived;
-    info.remoteTimePublished=csChangeFromWriter->csChange->remoteTimePublished;
-    info.sn=csChangeFromWriter->csChange->sn;
+    info.senderGUID=csChange->guid;
+    info.localTimeReceived=csChange->localTimeReceived;
+    info.remoteTimePublished=csChange->remoteTimePublished;
+    info.sn=csChange->sn;
     objectEntryOID->recvCallBack(&info,
                             objectEntryOID->instance,
                             objectEntryOID->callBackParam);
@@ -244,8 +257,6 @@ CSTReaderProcCSChangesIssue(CSTRemoteWriter *cstRemoteWriter,Boolean pullCalled)
       if (SeqNumberCmp(csChangeFromWriter->csChange->sn,
                       cstRemoteWriter->firstSN)>=0) {
         SeqNumberInc(snNext,cstRemoteWriter->sn);
-        debug(54,10) ("CSTReaderProcChangesIssue: processing sn:%u,Change sn:%u\n",snNext.low,
-                                              csChangeFromWriter->csChange->sn.low);
         if ((SeqNumberCmp(csChangeFromWriter->csChange->sn,snNext)==0) &&
             (csChangeFromWriter->commStateChFWriter==RECEIVED)) {
           if (SeqNumberCmp(csChangeFromWriter->csChange->gapSN,noneSN)==0) {
@@ -262,6 +273,7 @@ CSTReaderProcCSChangesIssue(CSTRemoteWriter *cstRemoteWriter,Boolean pullCalled)
                         cstRemoteWriter->sn,
                         csChangeFromWriter->csChange->gapSN);
           }
+
           CSTReaderDestroyCSChange(cstRemoteWriter,
               &snNext,ORTE_FALSE);
         } else
@@ -282,6 +294,9 @@ CSTReaderProcCSChangesIssue(CSTRemoteWriter *cstRemoteWriter,Boolean pullCalled)
       while((csChangeFromWriter=CSChangeFromWriter_first(cstRemoteWriter))) {
         //NewData                
         CSTReaderNewData(cstRemoteWriter,csChangeFromWriter);
+
+        cstRemoteWriter->sn=csChangeFromWriter->csChange->sn;
+
         CSTReaderDestroyCSChangeFromWriter(
             cstRemoteWriter,
             csChangeFromWriter,

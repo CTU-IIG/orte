@@ -6,4 +6,12 @@
 #  Uncomment and customize the following to ORTE your needs:
 #
 
-SUBDIRS	= liborte manager examples
+SUBDIRS	= liborte manager examples 
+
+if CONFIG_JORTE
+SUBDIRS += libjorte
+endif
+
+if CONFIG_ORTE_IDL
+SUBDIRS += idl-compiler
+endif

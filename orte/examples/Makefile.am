@@ -8,5 +8,5 @@
 if CONFIG_ORTE_RT
 SUBDIRS = hello 
 else
-SUBDIRS	= hello reliable ping spy
+SUBDIRS	= hello multicast reliable ping spy
 endif

@@ -17,13 +17,13 @@ CC=		    $(MSCDIR)\bin\cl
 LINK=		$(MSCDIR)\bin\link
 LIBRARIAN=	$(MSCDIR)\bin\lib
 
-TARGETS=ORTEPing.exe
+TARGETS=orteping.exe
 
 all :	default
 
 default : $(TARGETS)
 
-ORTEPing.exe: ..\ORTEPing.obj getopt.obj getopt_long.obj
+orteping.exe: ..\orteping.obj getopt.obj getopt_long.obj
 
 # ---------------------------------------------------------------------
 # Generic Compilation Rules

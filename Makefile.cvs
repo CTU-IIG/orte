@@ -1,7 +1,7 @@
 default: all
 
 all:
-	aclocal -I admin
+	aclocal -I admin 
 	autoheader
 	automake
 	autoconf

@@ -37,6 +37,16 @@ extern "C" {
 #define ORTE_TIMEOUT		  -2
 #define ORTE_QUEUE_FULL		  -3
 
+////////////////////////////////////////////////////////////////////////////////
+//Logging - flags
+#define LOG_FNONE	          0x00
+#define LOG_FEXCEPTION        	  0x01
+#define LOG_FWARN          	  0x02
+#define LOG_FLOCAL_OBJECT  	  0x04  
+#define LOG_FREMOTE_OBJECT        0x08
+#define LOG_FPERIODIC             0x10
+#define LOG_FCONTENT              0x20
+
 /*****************************************************************/
 /**
  * SeqNumberCmp - comparison of two sequence numbers
@@ -248,6 +258,20 @@ extern "C" {
 #define Domain2PortMulticastMetatraffic(d,p) {        \
     p = RTPS_DEFAULT_PORT + d*10+2;          \
 }
+
+
+/* Align an address upward to a boundary, expressed as a number of bytes.
+   E.g. align to an 8-byte boundary with argument of 8.  */
+
+/*
+ *   (this + boundary - 1)
+ *          &
+ *    ~(boundary - 1)
+ */
+
+#define ALIGN_ADDRESS(this, boundary) \
+  ((void*)((( ((unsigned long)(this)) + (((unsigned long)(boundary)) -1)) & (~(((unsigned long)(boundary))-1)))))
+
 
 #ifdef __cplusplus
 } /* extern "C"*/

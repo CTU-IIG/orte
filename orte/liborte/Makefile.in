@@ -50,23 +50,23 @@ subdir = orte/liborte
 DIST_COMMON = $(liborte1_HEADERS) $(liborte2_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/admin/linux.m4 \
-	$(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/admin/idl.m4 \
+	$(top_srcdir)/admin/jorte.m4 $(top_srcdir)/admin/linux.m4 \
+	$(top_srcdir)/admin/pkg.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/orte/include/config.h
+CONFIG_HEADER = $(top_builddir)/orte/include/orte/orte_config.h
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(moduledir)" "$(DESTDIR)$(liborte1dir)" "$(DESTDIR)$(liborte2dir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liborte_la_LIBADD =
-am__liborte_la_SOURCES_DIST = conv.c debug.c event.c fnmatch.c \
+am__liborte_la_SOURCES_DIST = cdr.c conv.c debug.c event.c fnmatch.c \
 	htimerNtp.c objectEntry.c objectEntryTimer.c objectUtils.c \
-	ORTEAppRecvMetatrafficThread.c ORTEAppRecvUserdataThread.c \
-	ORTEAppSendThread.c ORTEDomainApp.c ORTEPublication.c \
-	ORTEPublicationTimer.c ORTESubscription.c ORTEDomain.c \
-	ORTEDomainMgr.c ORTEInit.c ORTEThreadUtils.c \
+	ORTEAppRecvThread.c ORTEAppSendThread.c ORTEDomainApp.c \
+	ORTEPublication.c ORTEPublicationTimer.c ORTESubscription.c \
+	ORTEDomain.c ORTEDomainMgr.c ORTEInit.c ORTEThreadUtils.c \
 	ORTETypeRegister.c ORTEVerbosity.c ORTEPattern.c ORTEMisc.c \
 	parameter.c RTPSAck.c RTPSCSTReader.c RTPSCSTReaderTimer.c \
 	RTPSCSTReaderProc.c RTPSCSTWriter.c RTPSCSTWriterTimer.c \
@@ -74,12 +74,11 @@ am__liborte_la_SOURCES_DIST = conv.c debug.c event.c fnmatch.c \
 	RTPSInfoREPLY.c RTPSInfoSRC.c RTPSInfoTS.c RTPSPad.c \
 	RTPSUtils.c RTPSVar.c RTPSIssue.c sock.c ul_gavl.c \
 	ul_gavlprim.c
-am__objects_1 = liborte_la-conv.lo liborte_la-debug.lo \
-	liborte_la-event.lo liborte_la-fnmatch.lo \
+am__objects_1 = liborte_la-cdr.lo liborte_la-conv.lo \
+	liborte_la-debug.lo liborte_la-event.lo liborte_la-fnmatch.lo \
 	liborte_la-htimerNtp.lo liborte_la-objectEntry.lo \
 	liborte_la-objectEntryTimer.lo liborte_la-objectUtils.lo \
-	liborte_la-ORTEAppRecvMetatrafficThread.lo \
-	liborte_la-ORTEAppRecvUserdataThread.lo \
+	liborte_la-ORTEAppRecvThread.lo \
 	liborte_la-ORTEAppSendThread.lo liborte_la-ORTEDomainApp.lo \
 	liborte_la-ORTEPublication.lo \
 	liborte_la-ORTEPublicationTimer.lo \
@@ -102,12 +101,11 @@ am__objects_1 = liborte_la-conv.lo liborte_la-debug.lo \
 @CONFIG_ORTE_RT_FALSE@am_liborte_la_OBJECTS = $(am__objects_1)
 liborte_la_OBJECTS = $(am_liborte_la_OBJECTS)
 PROGRAMS = $(module_PROGRAMS)
-am__orte_rt_ko_SOURCES_DIST = conv.c debug.c event.c fnmatch.c \
+am__orte_rt_ko_SOURCES_DIST = cdr.c conv.c debug.c event.c fnmatch.c \
 	htimerNtp.c objectEntry.c objectEntryTimer.c objectUtils.c \
-	ORTEAppRecvMetatrafficThread.c ORTEAppRecvUserdataThread.c \
-	ORTEAppSendThread.c ORTEDomainApp.c ORTEPublication.c \
-	ORTEPublicationTimer.c ORTESubscription.c ORTEDomain.c \
-	ORTEDomainMgr.c ORTEInit.c ORTEThreadUtils.c \
+	ORTEAppRecvThread.c ORTEAppSendThread.c ORTEDomainApp.c \
+	ORTEPublication.c ORTEPublicationTimer.c ORTESubscription.c \
+	ORTEDomain.c ORTEDomainMgr.c ORTEInit.c ORTEThreadUtils.c \
 	ORTETypeRegister.c ORTEVerbosity.c ORTEPattern.c ORTEMisc.c \
 	parameter.c RTPSAck.c RTPSCSTReader.c RTPSCSTReaderTimer.c \
 	RTPSCSTReaderProc.c RTPSCSTWriter.c RTPSCSTWriterTimer.c \
@@ -115,11 +113,10 @@ am__orte_rt_ko_SOURCES_DIST = conv.c debug.c event.c fnmatch.c \
 	RTPSInfoREPLY.c RTPSInfoSRC.c RTPSInfoTS.c RTPSPad.c \
 	RTPSUtils.c RTPSVar.c RTPSIssue.c sock.c ul_gavl.c \
 	ul_gavlprim.c
-am__objects_2 = conv.$(OBJEXT) debug.$(OBJEXT) event.$(OBJEXT) \
-	fnmatch.$(OBJEXT) htimerNtp.$(OBJEXT) objectEntry.$(OBJEXT) \
-	objectEntryTimer.$(OBJEXT) objectUtils.$(OBJEXT) \
-	ORTEAppRecvMetatrafficThread.$(OBJEXT) \
-	ORTEAppRecvUserdataThread.$(OBJEXT) \
+am__objects_2 = cdr.$(OBJEXT) conv.$(OBJEXT) debug.$(OBJEXT) \
+	event.$(OBJEXT) fnmatch.$(OBJEXT) htimerNtp.$(OBJEXT) \
+	objectEntry.$(OBJEXT) objectEntryTimer.$(OBJEXT) \
+	objectUtils.$(OBJEXT) ORTEAppRecvThread.$(OBJEXT) \
 	ORTEAppSendThread.$(OBJEXT) ORTEDomainApp.$(OBJEXT) \
 	ORTEPublication.$(OBJEXT) ORTEPublicationTimer.$(OBJEXT) \
 	ORTESubscription.$(OBJEXT) ORTEDomain.$(OBJEXT) \
@@ -138,11 +135,10 @@ am__objects_2 = conv.$(OBJEXT) debug.$(OBJEXT) event.$(OBJEXT) \
 @CONFIG_ORTE_RT_TRUE@am_orte_rt_ko_OBJECTS = $(am__objects_2)
 orte_rt_ko_OBJECTS = $(am_orte_rt_ko_OBJECTS)
 orte_rt_ko_LDADD = $(LDADD)
-DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include/orte
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ORTEAppRecvMetatrafficThread.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ORTEAppRecvUserdataThread.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ORTEAppRecvThread.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ORTEAppSendThread.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ORTEDomain.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ORTEDomainApp.Po \
@@ -168,11 +164,11 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/RTPSInfoSRC.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/RTPSInfoTS.Po ./$(DEPDIR)/RTPSIssue.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/RTPSPad.Po ./$(DEPDIR)/RTPSUtils.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/RTPSVar.Po ./$(DEPDIR)/conv.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/debug.Po ./$(DEPDIR)/event.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/fnmatch.Po ./$(DEPDIR)/htimerNtp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/RTPSVar.Po ./$(DEPDIR)/cdr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/conv.Po ./$(DEPDIR)/debug.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/event.Po ./$(DEPDIR)/fnmatch.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/htimerNtp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/liborte_la-ORTEAppRecvThread.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-ORTEAppSendThread.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-ORTEDomain.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-ORTEDomainApp.Plo \
@@ -203,6 +199,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-RTPSPad.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-RTPSUtils.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-RTPSVar.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/liborte_la-cdr.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-conv.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-debug.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/liborte_la-event.Plo \
@@ -257,8 +254,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CONFIG_ADEOS_FALSE = @CONFIG_ADEOS_FALSE@
 CONFIG_ADEOS_TRUE = @CONFIG_ADEOS_TRUE@
+CONFIG_JORTE = @CONFIG_JORTE@
+CONFIG_JORTE_FALSE = @CONFIG_JORTE_FALSE@
+CONFIG_JORTE_TRUE = @CONFIG_JORTE_TRUE@
 CONFIG_ORTE_CYGWIN_FALSE = @CONFIG_ORTE_CYGWIN_FALSE@
 CONFIG_ORTE_CYGWIN_TRUE = @CONFIG_ORTE_CYGWIN_TRUE@
+CONFIG_ORTE_IDL = @CONFIG_ORTE_IDL@
+CONFIG_ORTE_IDL_FALSE = @CONFIG_ORTE_IDL_FALSE@
+CONFIG_ORTE_IDL_TRUE = @CONFIG_ORTE_IDL_TRUE@
 CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_KERNEL_FALSE = @CONFIG_ORTE_KERNEL_FALSE@
 CONFIG_ORTE_KERNEL_TRUE = @CONFIG_ORTE_KERNEL_TRUE@
@@ -292,6 +295,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LIBIDL_CFLAGS = @LIBIDL_CFLAGS@
+LIBIDL_LIBS = @LIBIDL_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -331,6 +336,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 RTAI_CFLAGS = @RTAI_CFLAGS@
 RTLINUX_CC = @RTLINUX_CC@
@@ -386,6 +392,7 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 LIBORTE_FILES = \
+cdr.c \
 conv.c \
 debug.c \
 event.c \
@@ -394,8 +401,7 @@ htimerNtp.c \
 objectEntry.c \
 objectEntryTimer.c \
 objectUtils.c \
-ORTEAppRecvMetatrafficThread.c \
-ORTEAppRecvUserdataThread.c \
+ORTEAppRecvThread.c \
 ORTEAppSendThread.c \
 ORTEDomainApp.c \
 ORTEPublication.c \
@@ -432,10 +438,12 @@ ul_gavl.c \
 ul_gavlprim.c
 
 LIBORTE_HDRS1 = \
-../include/orte.h \
-$(top_builddir)/orte/include/orte_config.h
+../include/orte.h 
 
 LIBORTE_HDRS2 = \
+$(top_builddir)/orte/include/orte/orte_config.h \
+../include/orte/cdr.h \
+../include/orte/basic_types.h \
 ../include/orte/typedefs_defines_rtps.h \
 ../include/orte/defines_api.h \
 ../include/orte/typedefs_api.h \
@@ -561,8 +569,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEAppRecvMetatrafficThread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEAppRecvUserdataThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEAppRecvThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEAppSendThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEDomain.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEDomainApp.Po@am__quote@
@@ -593,13 +600,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RTPSPad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RTPSUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RTPSVar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cdr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/event.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fnmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/htimerNtp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-ORTEAppRecvThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-ORTEAppSendThread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-ORTEDomain.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-ORTEDomainApp.Plo@am__quote@
@@ -630,6 +637,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-RTPSPad.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-RTPSUtils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-RTPSVar.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-cdr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-conv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-debug.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liborte_la-event.Plo@am__quote@
@@ -673,6 +681,30 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+liborte_la-cdr.o: cdr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-cdr.o -MD -MP -MF "$(DEPDIR)/liborte_la-cdr.Tpo" -c -o liborte_la-cdr.o `test -f 'cdr.c' || echo '$(srcdir)/'`cdr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-cdr.Tpo" "$(DEPDIR)/liborte_la-cdr.Po"; else rm -f "$(DEPDIR)/liborte_la-cdr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cdr.c' object='liborte_la-cdr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-cdr.Po' tmpdepfile='$(DEPDIR)/liborte_la-cdr.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-cdr.o `test -f 'cdr.c' || echo '$(srcdir)/'`cdr.c
+
+liborte_la-cdr.obj: cdr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-cdr.obj -MD -MP -MF "$(DEPDIR)/liborte_la-cdr.Tpo" -c -o liborte_la-cdr.obj `if test -f 'cdr.c'; then $(CYGPATH_W) 'cdr.c'; else $(CYGPATH_W) '$(srcdir)/cdr.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-cdr.Tpo" "$(DEPDIR)/liborte_la-cdr.Po"; else rm -f "$(DEPDIR)/liborte_la-cdr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cdr.c' object='liborte_la-cdr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-cdr.Po' tmpdepfile='$(DEPDIR)/liborte_la-cdr.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-cdr.obj `if test -f 'cdr.c'; then $(CYGPATH_W) 'cdr.c'; else $(CYGPATH_W) '$(srcdir)/cdr.c'; fi`
+
+liborte_la-cdr.lo: cdr.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-cdr.lo -MD -MP -MF "$(DEPDIR)/liborte_la-cdr.Tpo" -c -o liborte_la-cdr.lo `test -f 'cdr.c' || echo '$(srcdir)/'`cdr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-cdr.Tpo" "$(DEPDIR)/liborte_la-cdr.Plo"; else rm -f "$(DEPDIR)/liborte_la-cdr.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cdr.c' object='liborte_la-cdr.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-cdr.Plo' tmpdepfile='$(DEPDIR)/liborte_la-cdr.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-cdr.lo `test -f 'cdr.c' || echo '$(srcdir)/'`cdr.c
 
 liborte_la-conv.o: conv.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-conv.o -MD -MP -MF "$(DEPDIR)/liborte_la-conv.Tpo" -c -o liborte_la-conv.o `test -f 'conv.c' || echo '$(srcdir)/'`conv.c; \
@@ -866,53 +898,29 @@ liborte_la-objectUtils.lo: objectUtils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-objectUtils.lo `test -f 'objectUtils.c' || echo '$(srcdir)/'`objectUtils.c
 
-liborte_la-ORTEAppRecvMetatrafficThread.o: ORTEAppRecvMetatrafficThread.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvMetatrafficThread.o -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo" -c -o liborte_la-ORTEAppRecvMetatrafficThread.o `test -f 'ORTEAppRecvMetatrafficThread.c' || echo '$(srcdir)/'`ORTEAppRecvMetatrafficThread.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Po"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvMetatrafficThread.c' object='liborte_la-ORTEAppRecvMetatrafficThread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Po' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.TPo' @AMDEPBACKSLASH@
+liborte_la-ORTEAppRecvThread.o: ORTEAppRecvThread.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvThread.o -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo" -c -o liborte_la-ORTEAppRecvThread.o `test -f 'ORTEAppRecvThread.c' || echo '$(srcdir)/'`ORTEAppRecvThread.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Po"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvThread.c' object='liborte_la-ORTEAppRecvThread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvThread.Po' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvMetatrafficThread.o `test -f 'ORTEAppRecvMetatrafficThread.c' || echo '$(srcdir)/'`ORTEAppRecvMetatrafficThread.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvThread.o `test -f 'ORTEAppRecvThread.c' || echo '$(srcdir)/'`ORTEAppRecvThread.c
 
-liborte_la-ORTEAppRecvMetatrafficThread.obj: ORTEAppRecvMetatrafficThread.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvMetatrafficThread.obj -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo" -c -o liborte_la-ORTEAppRecvMetatrafficThread.obj `if test -f 'ORTEAppRecvMetatrafficThread.c'; then $(CYGPATH_W) 'ORTEAppRecvMetatrafficThread.c'; else $(CYGPATH_W) '$(srcdir)/ORTEAppRecvMetatrafficThread.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Po"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvMetatrafficThread.c' object='liborte_la-ORTEAppRecvMetatrafficThread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Po' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.TPo' @AMDEPBACKSLASH@
+liborte_la-ORTEAppRecvThread.obj: ORTEAppRecvThread.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvThread.obj -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo" -c -o liborte_la-ORTEAppRecvThread.obj `if test -f 'ORTEAppRecvThread.c'; then $(CYGPATH_W) 'ORTEAppRecvThread.c'; else $(CYGPATH_W) '$(srcdir)/ORTEAppRecvThread.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Po"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvThread.c' object='liborte_la-ORTEAppRecvThread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvThread.Po' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvMetatrafficThread.obj `if test -f 'ORTEAppRecvMetatrafficThread.c'; then $(CYGPATH_W) 'ORTEAppRecvMetatrafficThread.c'; else $(CYGPATH_W) '$(srcdir)/ORTEAppRecvMetatrafficThread.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvThread.obj `if test -f 'ORTEAppRecvThread.c'; then $(CYGPATH_W) 'ORTEAppRecvThread.c'; else $(CYGPATH_W) '$(srcdir)/ORTEAppRecvThread.c'; fi`
 
-liborte_la-ORTEAppRecvMetatrafficThread.lo: ORTEAppRecvMetatrafficThread.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvMetatrafficThread.lo -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo" -c -o liborte_la-ORTEAppRecvMetatrafficThread.lo `test -f 'ORTEAppRecvMetatrafficThread.c' || echo '$(srcdir)/'`ORTEAppRecvMetatrafficThread.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Plo"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvMetatrafficThread.c' object='liborte_la-ORTEAppRecvMetatrafficThread.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.Plo' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvMetatrafficThread.TPlo' @AMDEPBACKSLASH@
+liborte_la-ORTEAppRecvThread.lo: ORTEAppRecvThread.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvThread.lo -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo" -c -o liborte_la-ORTEAppRecvThread.lo `test -f 'ORTEAppRecvThread.c' || echo '$(srcdir)/'`ORTEAppRecvThread.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Plo"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvThread.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvThread.c' object='liborte_la-ORTEAppRecvThread.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvThread.Plo' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvThread.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvMetatrafficThread.lo `test -f 'ORTEAppRecvMetatrafficThread.c' || echo '$(srcdir)/'`ORTEAppRecvMetatrafficThread.c
-
-liborte_la-ORTEAppRecvUserdataThread.o: ORTEAppRecvUserdataThread.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvUserdataThread.o -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo" -c -o liborte_la-ORTEAppRecvUserdataThread.o `test -f 'ORTEAppRecvUserdataThread.c' || echo '$(srcdir)/'`ORTEAppRecvUserdataThread.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Po"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvUserdataThread.c' object='liborte_la-ORTEAppRecvUserdataThread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Po' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvUserdataThread.o `test -f 'ORTEAppRecvUserdataThread.c' || echo '$(srcdir)/'`ORTEAppRecvUserdataThread.c
-
-liborte_la-ORTEAppRecvUserdataThread.obj: ORTEAppRecvUserdataThread.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvUserdataThread.obj -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo" -c -o liborte_la-ORTEAppRecvUserdataThread.obj `if test -f 'ORTEAppRecvUserdataThread.c'; then $(CYGPATH_W) 'ORTEAppRecvUserdataThread.c'; else $(CYGPATH_W) '$(srcdir)/ORTEAppRecvUserdataThread.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Po"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvUserdataThread.c' object='liborte_la-ORTEAppRecvUserdataThread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Po' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvUserdataThread.obj `if test -f 'ORTEAppRecvUserdataThread.c'; then $(CYGPATH_W) 'ORTEAppRecvUserdataThread.c'; else $(CYGPATH_W) '$(srcdir)/ORTEAppRecvUserdataThread.c'; fi`
-
-liborte_la-ORTEAppRecvUserdataThread.lo: ORTEAppRecvUserdataThread.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppRecvUserdataThread.lo -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo" -c -o liborte_la-ORTEAppRecvUserdataThread.lo `test -f 'ORTEAppRecvUserdataThread.c' || echo '$(srcdir)/'`ORTEAppRecvUserdataThread.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo" "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Plo"; else rm -f "$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ORTEAppRecvUserdataThread.c' object='liborte_la-ORTEAppRecvUserdataThread.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.Plo' tmpdepfile='$(DEPDIR)/liborte_la-ORTEAppRecvUserdataThread.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvUserdataThread.lo `test -f 'ORTEAppRecvUserdataThread.c' || echo '$(srcdir)/'`ORTEAppRecvUserdataThread.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -c -o liborte_la-ORTEAppRecvThread.lo `test -f 'ORTEAppRecvThread.c' || echo '$(srcdir)/'`ORTEAppRecvThread.c
 
 liborte_la-ORTEAppSendThread.o: ORTEAppSendThread.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liborte_la_CFLAGS) $(CFLAGS) -MT liborte_la-ORTEAppSendThread.o -MD -MP -MF "$(DEPDIR)/liborte_la-ORTEAppSendThread.Tpo" -c -o liborte_la-ORTEAppSendThread.o `test -f 'ORTEAppSendThread.c' || echo '$(srcdir)/'`ORTEAppSendThread.c; \
@@ -1891,7 +1899,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/$(top_builddir)/orte/include $(distdir)/../include $(distdir)/../include/orte
+	$(mkdir_p) $(distdir)/$(top_builddir)/orte/include/orte $(distdir)/../include $(distdir)/../include/orte
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

@@ -17,17 +17,17 @@ CC=		$(MSCDIR)\bin\cl
 LINK=		$(MSCDIR)\bin\link
 LIBRARIAN=	$(MSCDIR)\bin\lib
 
-TARGETS=publisher.exe subscriberreliable.exe subscriberbesteffort.exe
+TARGETS=r_publisher.exe r_subscriber_reliable.exe r_subscriber_besteffort.exe
 
 all :	default
 
 default : $(TARGETS)
 
-publisher.exe: ..\publisher.obj
+r_publisher.exe: ..\r_publisher.obj
 
-subscriberreliable.exe: ..\subscriberreliable.obj
+r_subscriber_reliable.exe: ..\r_subscriber_reliable.obj
 
-subscriberbesteffort.exe: ..\subscriberbesteffort.obj
+r_subscriber_besteffort.exe: ..\r_subscriber_besteffort.obj
 
 # ---------------------------------------------------------------------
 # Generic Compilation Rules

@@ -5,6 +5,7 @@
 #
 
 LIBORTE_FILES = \
+cdr.c \
 conv.c \
 debug.c \
 event.c \
@@ -13,8 +14,7 @@ htimerNtp.c \
 objectEntry.c \
 objectEntryTimer.c \
 objectUtils.c \
-ORTEAppRecvMetatrafficThread.c \
-ORTEAppRecvUserdataThread.c \
+ORTEAppRecvThread.c \
 ORTEAppSendThread.c \
 ORTEDomainApp.c \
 ORTEPublication.c \
@@ -51,10 +51,12 @@ ul_gavl.c \
 ul_gavlprim.c
 
 LIBORTE_HDRS1 = \
-../include/orte.h \
-$(top_builddir)/orte/include/orte_config.h
+../include/orte.h 
 
 LIBORTE_HDRS2 = \
+$(top_builddir)/orte/include/orte/orte_config.h \
+../include/orte/cdr.h \
+../include/orte/basic_types.h \
 ../include/orte/typedefs_defines_rtps.h \
 ../include/orte/defines_api.h \
 ../include/orte/typedefs_api.h \

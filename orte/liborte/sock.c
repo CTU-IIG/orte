@@ -24,7 +24,7 @@
 /*********************************************************************/
 int
 sock_start(void) {
-#if defined(SOCK_BSD) || defined (SOCK_RTL)
+#if defined(SOCK_BSD) || defined (SOCK_RTLWIP)
   return 0;
 #elif defined (SOCK_WIN)
   WORD wVersionRequested;
@@ -55,7 +55,7 @@ inline void
 sock_cleanup(sock_t *sock) {
 #if defined(SOCK_BSD)
   close(sock->fd);
-#elif defined(SOCK_RTL)
+#elif defined(SOCK_RTLWIP)
   close_socket_np(sock->fd);
 #elif defined(SOCK_WIN)
   closesocket(sock->fd);
@@ -63,9 +63,9 @@ sock_cleanup(sock_t *sock) {
 }
 
 /*********************************************************************/
-int
-sock_setsockopt(sock_t *sock,int optname,const char *optval, int optlen) {
-  if (setsockopt(sock->fd, IPPROTO_IP, optname,(void *)&optval, optlen)) {
+inline int
+sock_setsockopt(sock_t *sock,int level,int optname,const char *optval, int optlen) {
+  if (setsockopt(sock->fd, level, optname,(void *)optval, optlen)) {
     sock_cleanup(sock);
     return -1;
   }
@@ -73,9 +73,9 @@ sock_setsockopt(sock_t *sock,int optname,const char *optval, int optlen) {
 }
 
 /*********************************************************************/
-int
-sock_getsockopt(sock_t *sock,int optname,char *optval, int *optlen) {
-  if (getsockopt(sock->fd, IPPROTO_IP, optname,(void *)&optval, optlen)) {
+inline int
+sock_getsockopt(sock_t *sock,int level,int optname,char *optval, int *optlen) {
+  if (getsockopt(sock->fd, level, optname,(void *)optval, optlen)) {
     sock_cleanup(sock);
     return -1;
   }
@@ -91,12 +91,26 @@ sock_bind(sock_t *sock,uint16_t port) {
   name.sin_family = AF_INET;
   name.sin_port = htons(port);
   name.sin_addr.s_addr = htonl(INADDR_ANY);
-  if (bind(sock->fd, (struct sockaddr *)&name, sizeof(name)) < 0) {
+  if (bind(sock->fd, 
+          #ifndef CONFIG_ORTE_RTL_ONETD 
+            (struct sockaddr *)
+          #endif
+          &name, sizeof(name)) < 0) {
     sock_cleanup(sock);
     return -1;
   }
   size = sizeof(name);
-  if (getsockname(sock->fd,(struct sockaddr *)&name, &size ) < 0) {
+  if (getsockname(sock->fd,
+         #ifndef CONFIG_ORTE_RTL_ONETD 
+  	   (struct sockaddr *)
+         #endif
+	 &name, 
+         #ifndef CONFIG_ORTE_RTL_ONETD 
+           &size
+         #else
+	   size 
+         #endif
+	 ) < 0) {
     sock_cleanup(sock);
     return -1;
   }
@@ -107,13 +121,21 @@ sock_bind(sock_t *sock,uint16_t port) {
 /*********************************************************************/
 inline int
 sock_recvfrom(sock_t *sock, void *buf, int max_len,struct sockaddr_in *des,int des_len) {
-  return recvfrom(sock->fd, buf, max_len, 0,(struct sockaddr*)des,&des_len);
+  return recvfrom(sock->fd, buf, max_len, 0,
+    #ifndef CONFIG_ORTE_RTL_ONETD 
+      (struct sockaddr*)
+    #endif
+    des,&des_len);
 }
 
 /*********************************************************************/
 inline int
 sock_sendto(sock_t *sock, void *buf, int len,struct sockaddr_in *des,int des_len) {
-  return sendto(sock->fd, buf, len, 0,(struct sockaddr*)des,des_len);
+  return sendto(sock->fd, buf, len, 0,
+    #ifndef CONFIG_ORTE_RTL_ONETD 
+      (struct sockaddr*)
+    #endif
+    des,des_len);
 }
 
 /*********************************************************************/
@@ -147,7 +169,7 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
     }
   }
   return 0;
-#elif defined(SOCK_RTL)
+#elif defined(SOCK_RTLWIP)
   /* loopback iface is recognized if it has this address */
   char ip_address [] = "127.0.0.1";
   struct in_addr loopaddr;

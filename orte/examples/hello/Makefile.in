@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-SOURCES = $(HelloWorldPublisher_SOURCES) $(HelloWorldPublisher_rt_ko_SOURCES) $(HelloWorldSubscriber_SOURCES) $(HelloWorldSubscriber_rt_ko_SOURCES)
+SOURCES = $(h_publisher_SOURCES) $(h_publisher_rt_ko_SOURCES) $(h_subscriber_SOURCES) $(h_subscriber_rt_ko_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -37,52 +37,49 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS =  \
-@CONFIG_ORTE_RT_TRUE@	HelloWorldSubscriber_rt.ko$(EXEEXT) \
-@CONFIG_ORTE_RT_TRUE@	HelloWorldPublisher_rt.ko$(EXEEXT)
-@CONFIG_ORTE_RT_FALSE@noinst_PROGRAMS = HelloWorldPublisher$(EXEEXT) \
-@CONFIG_ORTE_RT_FALSE@	HelloWorldSubscriber$(EXEEXT)
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = h_subscriber_rt.ko$(EXEEXT) \
+@CONFIG_ORTE_RT_TRUE@	h_publisher_rt.ko$(EXEEXT)
+@CONFIG_ORTE_RT_FALSE@noinst_PROGRAMS = h_publisher$(EXEEXT) \
+@CONFIG_ORTE_RT_FALSE@	h_subscriber$(EXEEXT)
 subdir = orte/examples/hello
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/admin/linux.m4 \
-	$(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/admin/idl.m4 \
+	$(top_srcdir)/admin/jorte.m4 $(top_srcdir)/admin/linux.m4 \
+	$(top_srcdir)/admin/pkg.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/orte/include/config.h
+CONFIG_HEADER = $(top_builddir)/orte/include/orte/orte_config.h
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(moduledir)"
 PROGRAMS = $(module_PROGRAMS) $(noinst_PROGRAMS)
-am__HelloWorldPublisher_SOURCES_DIST = HelloWorldPublisher.c
-@CONFIG_ORTE_RT_FALSE@am_HelloWorldPublisher_OBJECTS =  \
-@CONFIG_ORTE_RT_FALSE@	HelloWorldPublisher.$(OBJEXT)
-HelloWorldPublisher_OBJECTS = $(am_HelloWorldPublisher_OBJECTS)
-@CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_DEPENDENCIES =  \
+am__h_publisher_SOURCES_DIST = h_publisher.c
+@CONFIG_ORTE_RT_FALSE@am_h_publisher_OBJECTS = h_publisher.$(OBJEXT)
+h_publisher_OBJECTS = $(am_h_publisher_OBJECTS)
+@CONFIG_ORTE_RT_FALSE@h_publisher_DEPENDENCIES =  \
 @CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la
-am__HelloWorldPublisher_rt_ko_SOURCES_DIST = HelloWorldPublisher.c
-@CONFIG_ORTE_RT_TRUE@am_HelloWorldPublisher_rt_ko_OBJECTS =  \
-@CONFIG_ORTE_RT_TRUE@	HelloWorldPublisher.$(OBJEXT)
-HelloWorldPublisher_rt_ko_OBJECTS =  \
-	$(am_HelloWorldPublisher_rt_ko_OBJECTS)
-HelloWorldPublisher_rt_ko_LDADD = $(LDADD)
-am__HelloWorldSubscriber_SOURCES_DIST = HelloWorldSubscriber.c
-@CONFIG_ORTE_RT_FALSE@am_HelloWorldSubscriber_OBJECTS =  \
-@CONFIG_ORTE_RT_FALSE@	HelloWorldSubscriber.$(OBJEXT)
-HelloWorldSubscriber_OBJECTS = $(am_HelloWorldSubscriber_OBJECTS)
-@CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_DEPENDENCIES =  \
+am__h_publisher_rt_ko_SOURCES_DIST = h_publisher.c
+@CONFIG_ORTE_RT_TRUE@am_h_publisher_rt_ko_OBJECTS =  \
+@CONFIG_ORTE_RT_TRUE@	h_publisher.$(OBJEXT)
+h_publisher_rt_ko_OBJECTS = $(am_h_publisher_rt_ko_OBJECTS)
+h_publisher_rt_ko_LDADD = $(LDADD)
+am__h_subscriber_SOURCES_DIST = h_subscriber.c
+@CONFIG_ORTE_RT_FALSE@am_h_subscriber_OBJECTS =  \
+@CONFIG_ORTE_RT_FALSE@	h_subscriber.$(OBJEXT)
+h_subscriber_OBJECTS = $(am_h_subscriber_OBJECTS)
+@CONFIG_ORTE_RT_FALSE@h_subscriber_DEPENDENCIES =  \
 @CONFIG_ORTE_RT_FALSE@	$(top_builddir)/orte/liborte/liborte.la
-am__HelloWorldSubscriber_rt_ko_SOURCES_DIST = HelloWorldSubscriber.c
-@CONFIG_ORTE_RT_TRUE@am_HelloWorldSubscriber_rt_ko_OBJECTS =  \
-@CONFIG_ORTE_RT_TRUE@	HelloWorldSubscriber.$(OBJEXT)
-HelloWorldSubscriber_rt_ko_OBJECTS =  \
-	$(am_HelloWorldSubscriber_rt_ko_OBJECTS)
-HelloWorldSubscriber_rt_ko_LDADD = $(LDADD)
-DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include
+am__h_subscriber_rt_ko_SOURCES_DIST = h_subscriber.c
+@CONFIG_ORTE_RT_TRUE@am_h_subscriber_rt_ko_OBJECTS =  \
+@CONFIG_ORTE_RT_TRUE@	h_subscriber.$(OBJEXT)
+h_subscriber_rt_ko_OBJECTS = $(am_h_subscriber_rt_ko_OBJECTS)
+h_subscriber_rt_ko_LDADD = $(LDADD)
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/orte/include/orte
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/HelloWorldPublisher.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/HelloWorldSubscriber.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/h_publisher.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/h_subscriber.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
@@ -91,14 +88,12 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(HelloWorldPublisher_SOURCES) \
-	$(HelloWorldPublisher_rt_ko_SOURCES) \
-	$(HelloWorldSubscriber_SOURCES) \
-	$(HelloWorldSubscriber_rt_ko_SOURCES)
-DIST_SOURCES = $(am__HelloWorldPublisher_SOURCES_DIST) \
-	$(am__HelloWorldPublisher_rt_ko_SOURCES_DIST) \
-	$(am__HelloWorldSubscriber_SOURCES_DIST) \
-	$(am__HelloWorldSubscriber_rt_ko_SOURCES_DIST)
+SOURCES = $(h_publisher_SOURCES) $(h_publisher_rt_ko_SOURCES) \
+	$(h_subscriber_SOURCES) $(h_subscriber_rt_ko_SOURCES)
+DIST_SOURCES = $(am__h_publisher_SOURCES_DIST) \
+	$(am__h_publisher_rt_ko_SOURCES_DIST) \
+	$(am__h_subscriber_SOURCES_DIST) \
+	$(am__h_subscriber_rt_ko_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -115,8 +110,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CONFIG_ADEOS_FALSE = @CONFIG_ADEOS_FALSE@
 CONFIG_ADEOS_TRUE = @CONFIG_ADEOS_TRUE@
+CONFIG_JORTE = @CONFIG_JORTE@
+CONFIG_JORTE_FALSE = @CONFIG_JORTE_FALSE@
+CONFIG_JORTE_TRUE = @CONFIG_JORTE_TRUE@
 CONFIG_ORTE_CYGWIN_FALSE = @CONFIG_ORTE_CYGWIN_FALSE@
 CONFIG_ORTE_CYGWIN_TRUE = @CONFIG_ORTE_CYGWIN_TRUE@
+CONFIG_ORTE_IDL = @CONFIG_ORTE_IDL@
+CONFIG_ORTE_IDL_FALSE = @CONFIG_ORTE_IDL_FALSE@
+CONFIG_ORTE_IDL_TRUE = @CONFIG_ORTE_IDL_TRUE@
 CONFIG_ORTE_KERNEL = @CONFIG_ORTE_KERNEL@
 CONFIG_ORTE_KERNEL_FALSE = @CONFIG_ORTE_KERNEL_FALSE@
 CONFIG_ORTE_KERNEL_TRUE = @CONFIG_ORTE_KERNEL_TRUE@
@@ -150,6 +151,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LIBIDL_CFLAGS = @LIBIDL_CFLAGS@
+LIBIDL_LIBS = @LIBIDL_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -189,6 +192,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 RTAI_CFLAGS = @RTAI_CFLAGS@
 RTLINUX_CC = @RTLINUX_CC@
@@ -243,16 +247,16 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-@CONFIG_ORTE_RT_TRUE@HelloWorldSubscriber_rt_ko_SOURCES = HelloWorldSubscriber.c  
-@CONFIG_ORTE_RT_TRUE@HelloWorldSubscriber_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
-@CONFIG_ORTE_RT_TRUE@HelloWorldPublisher_rt_ko_SOURCES = HelloWorldPublisher.c  
-@CONFIG_ORTE_RT_TRUE@HelloWorldPublisher_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
-@CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_SOURCES = HelloWorldPublisher.c
-@CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_LDADD = $(top_builddir)/orte/liborte/liborte.la 
-@CONFIG_ORTE_RT_FALSE@HelloWorldPublisher_LDFLAGS = -static
-@CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_SOURCES = HelloWorldSubscriber.c
-@CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_LDADD = $(top_builddir)/orte/liborte/liborte.la 
-@CONFIG_ORTE_RT_FALSE@HelloWorldSubscriber_LDFLAGS = -static
+@CONFIG_ORTE_RT_TRUE@h_subscriber_rt_ko_SOURCES = h_subscriber.c  
+@CONFIG_ORTE_RT_TRUE@h_subscriber_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
+@CONFIG_ORTE_RT_TRUE@h_publisher_rt_ko_SOURCES = h_publisher.c  
+@CONFIG_ORTE_RT_TRUE@h_publisher_rt_ko_LINK = $(top_builddir)/modtool --link -o $@
+@CONFIG_ORTE_RT_FALSE@h_publisher_SOURCES = h_publisher.c
+@CONFIG_ORTE_RT_FALSE@h_publisher_LDADD = $(top_builddir)/orte/liborte/liborte.la 
+@CONFIG_ORTE_RT_FALSE@h_publisher_LDFLAGS = -static
+@CONFIG_ORTE_RT_FALSE@h_subscriber_SOURCES = h_subscriber.c
+@CONFIG_ORTE_RT_FALSE@h_subscriber_LDADD = $(top_builddir)/orte/liborte/liborte.la 
+@CONFIG_ORTE_RT_FALSE@h_subscriber_LDFLAGS = -static
 all: all-am
 
 .SUFFIXES:
@@ -321,18 +325,18 @@ clean-noinstPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-HelloWorldPublisher$(EXEEXT): $(HelloWorldPublisher_OBJECTS) $(HelloWorldPublisher_DEPENDENCIES) 
-	@rm -f HelloWorldPublisher$(EXEEXT)
-	$(LINK) $(HelloWorldPublisher_LDFLAGS) $(HelloWorldPublisher_OBJECTS) $(HelloWorldPublisher_LDADD) $(LIBS)
-HelloWorldPublisher_rt.ko$(EXEEXT): $(HelloWorldPublisher_rt_ko_OBJECTS) $(HelloWorldPublisher_rt_ko_DEPENDENCIES) 
-	@rm -f HelloWorldPublisher_rt.ko$(EXEEXT)
-	$(HelloWorldPublisher_rt_ko_LINK) $(HelloWorldPublisher_rt_ko_LDFLAGS) $(HelloWorldPublisher_rt_ko_OBJECTS) $(HelloWorldPublisher_rt_ko_LDADD) $(LIBS)
-HelloWorldSubscriber$(EXEEXT): $(HelloWorldSubscriber_OBJECTS) $(HelloWorldSubscriber_DEPENDENCIES) 
-	@rm -f HelloWorldSubscriber$(EXEEXT)
-	$(LINK) $(HelloWorldSubscriber_LDFLAGS) $(HelloWorldSubscriber_OBJECTS) $(HelloWorldSubscriber_LDADD) $(LIBS)
-HelloWorldSubscriber_rt.ko$(EXEEXT): $(HelloWorldSubscriber_rt_ko_OBJECTS) $(HelloWorldSubscriber_rt_ko_DEPENDENCIES) 
-	@rm -f HelloWorldSubscriber_rt.ko$(EXEEXT)
-	$(HelloWorldSubscriber_rt_ko_LINK) $(HelloWorldSubscriber_rt_ko_LDFLAGS) $(HelloWorldSubscriber_rt_ko_OBJECTS) $(HelloWorldSubscriber_rt_ko_LDADD) $(LIBS)
+h_publisher$(EXEEXT): $(h_publisher_OBJECTS) $(h_publisher_DEPENDENCIES) 
+	@rm -f h_publisher$(EXEEXT)
+	$(LINK) $(h_publisher_LDFLAGS) $(h_publisher_OBJECTS) $(h_publisher_LDADD) $(LIBS)
+h_publisher_rt.ko$(EXEEXT): $(h_publisher_rt_ko_OBJECTS) $(h_publisher_rt_ko_DEPENDENCIES) 
+	@rm -f h_publisher_rt.ko$(EXEEXT)
+	$(h_publisher_rt_ko_LINK) $(h_publisher_rt_ko_LDFLAGS) $(h_publisher_rt_ko_OBJECTS) $(h_publisher_rt_ko_LDADD) $(LIBS)
+h_subscriber$(EXEEXT): $(h_subscriber_OBJECTS) $(h_subscriber_DEPENDENCIES) 
+	@rm -f h_subscriber$(EXEEXT)
+	$(LINK) $(h_subscriber_LDFLAGS) $(h_subscriber_OBJECTS) $(h_subscriber_LDADD) $(LIBS)
+h_subscriber_rt.ko$(EXEEXT): $(h_subscriber_rt_ko_OBJECTS) $(h_subscriber_rt_ko_DEPENDENCIES) 
+	@rm -f h_subscriber_rt.ko$(EXEEXT)
+	$(h_subscriber_rt_ko_LINK) $(h_subscriber_rt_ko_LDFLAGS) $(h_subscriber_rt_ko_OBJECTS) $(h_subscriber_rt_ko_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -340,8 +344,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HelloWorldPublisher.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HelloWorldSubscriber.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/h_publisher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/h_subscriber.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

@@ -17,15 +17,15 @@ CC=		$(MSCDIR)\bin\cl
 LINK=		$(MSCDIR)\bin\link
 LIBRARIAN=	$(MSCDIR)\bin\lib
 
-TARGETS=HelloWorldPublisher.exe HelloWorldSubscriber.exe
+TARGETS=h_publisher.exe h_subscriber.exe
 
 all :	default
 
 default : $(TARGETS)
 
-HelloWorldPublisher.exe: ..\HelloWorldPublisher.obj
+h_publisher.exe: ..\h_publisher.obj
 
-HelloWorldSubscriber.exe: ..\HelloWorldSubscriber.obj
+h_subscriber.exe: ..\h_subscriber.obj
 
 # ---------------------------------------------------------------------
 # Generic Compilation Rules

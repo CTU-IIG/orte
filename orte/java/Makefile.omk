@@ -1,0 +1,42 @@
+#*******************************************************************
+# The JAVA ORTE Project is distributed under the
+# Library Gnu General Public Licence.
+# See file COPYING for details.
+#
+#*******************************************************************
+
+default_CONFIG = CONFIG_OC_JAVA_ORTE=n
+
+ifeq ($(CONFIG_OC_JAVA_ORTE),y)
+
+ifndef ANT
+TRY_ANT=/opt/ant/bin/ant	# Ant is searched here if it isn't found in $PATH
+ANT=$(shell if [ -n "`which ant 2>/dev/null`" ]; then which ant; else [ -x $(TRY_ANT) ] && echo $(TRY_ANT); fi)
+ifeq ($(ANT),)
+
+$(warning You need Ant in order to compile this. If you have it in non-standard \
+	location, specify it in an ANT variable.)
+$(error Ant not found)
+endif
+endif
+
+ifndef JAVA_HOME
+JAVA_HOME=/opt/java
+endif
+
+export JAVA_HOME
+
+.PHONY: jar-orte
+
+utils-pass-local: jar-orte
+
+jar-orte:
+	$(ANT) -Djava_class_dir=$(USER_OBJS_DIR)/ -Djava_lib_dir=$(USER_BIN_DIR)/ \
+	       -buildfile $(srcdir)/build.xml $@
+
+#clean-java:
+clean-custom:
+	$(ANT) -Djava_class_dir=$(USER_OBJS_DIR)/ -Djava_lib_dir=$(USER_BIN_DIR)/ \
+	       -buildfile $(srcdir)/build.xml clean
+
+endif

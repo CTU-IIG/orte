@@ -51,10 +51,4 @@ int
 gavl_cmp_str(const char *const *a,const char *const *b) {
   return strcmp(*a,*b);
 }
-/**********************************************************************************/
-int 
-getMaxMessageLength(ORTEDomain *d) {
-  return d->domainProp.wireProp.metaBytesPerPacket-d->mbSend.cdrStream.length-
-         RTPS_HEADER_LENGTH-20;
-}
 

@@ -40,7 +40,7 @@ ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,uint16_t port) {
     }
   } else {
     des.sin_addr.s_addr = inet_addr("127.0.0.1"); //local IPAddress
-    sock_sendto(sock,NULL,0,&des,sizeof(des));
+    sock_sendto(sock,&i,1,&des,sizeof(des));
     debug(25,2) ("Sent wake up signal to: %s.%d\n",
                   IPAddressToString(ntohl(des.sin_addr.s_addr),sIPAddress),
                   port);

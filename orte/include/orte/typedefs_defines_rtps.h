@@ -44,7 +44,7 @@ typedef int32_t                  TypeChecksum;
 /*****************************************************************/
 
          
-/**
+/*
   Host identifier.
    
   for example: IP address working nodes
@@ -52,7 +52,7 @@ typedef int32_t                  TypeChecksum;
 typedef uint32_t                 HostId;
 #define HID_UNKNOWN              0x00
 
-/**
+/*
   Application identifier.
  
   composed from: 3 bytes - instance Id
@@ -63,7 +63,7 @@ typedef uint32_t                 AppId;
 #define MANAGEDAPPLICATION       0x01
 #define MANAGER                  0x02
 
-/**
+/*
   Object identifier.
    
   composed from: 3 bytes - instance Id

@@ -32,8 +32,6 @@
 #define printf      rt_printk /* catch some probably forgotten printf's */
 #define malloc      rt_malloc
 #define free        rt_free
-#define bswap_16    swab16
-#define bswap_32    swab32
 
 typedef __u32 in_addr_t;
 
@@ -67,20 +65,6 @@ static inline void clock_gettime(int dummy, struct timespec *time)
 static inline int atoi(const char* nptr)
 {
     return simple_strtol(nptr, (char **)NULL, 10);
-}
-
-
-static inline char *strdup(const char *s)
-{
-    size_t len = strlen(s)+1;
-    char *new_s;
-
-    new_s = MALLOC(len);
-    if (new_s == NULL)
-        return NULL;
-
-    memcpy(new_s, s, len);
-    return new_s;
 }
 
 

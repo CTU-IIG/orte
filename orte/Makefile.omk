@@ -1,1 +1,3 @@
-SUBDIRS = include liborte manager examples
+SUBDIRS = include liborte manager examples libjorte java
+
+

@@ -36,9 +36,9 @@ sock_init_udp(sock_t *sock);
 extern void
 sock_cleanup(sock_t *sock);
 extern int
-sock_setsockopt(sock_t *sock,int optname,const char *optval, int optlen);
+sock_setsockopt(sock_t *sock,int level,int optname,const char *optval, int optlen);
 extern int
-sock_getsockopt(sock_t *sock,int optname,char *optval, int *optlen);
+sock_getsockopt(sock_t *sock,int level,int optname,char *optval, int *optlen);
 extern int
 sock_bind(sock_t *sock,uint16_t port);
 extern int
@@ -52,14 +52,6 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount);
 
 ///////////////////////////////////////////////////////////////////////////////
 // conv.c
-extern void 
-conv_u16(uint16_t *x,char ef);
-extern void 
-conv_u32(uint32_t *x,char ef);
-extern void 
-conv_sn(SequenceNumber *sn,char ef);
-extern void 
-conv_ntp(NtpTime *ntp,char ef);
 extern int
 getStringPart(char *string,char divChar,int *iterator,char *buff);
 
@@ -141,6 +133,9 @@ fnmatch(const char *__pattern,const char *__string,int __flags);
 
 ///////////////////////////////////////////////////////////////////////////////
 // objectEntry.c
+UL_LIST_CUST_DEC(ObjectEntryMulticast,
+                 ObjectEntryOID,CSTRemoteReader,
+		 multicastRemoteReaders,multicastNode);
 GAVL_CUST_NODE_INT_DEC(ObjectEntryHID, ObjectEntry, ObjectEntryHID, HostId,
     objRoot, hidNode, hid, gavl_cmp_int)
 GAVL_CUST_NODE_INT_DEC(ObjectEntryAID, ObjectEntryHID, ObjectEntryAID, AppId,
@@ -154,7 +149,7 @@ objectEntryFind(ORTEDomain *d,GUID_RTPS *guid);
 extern ObjectEntryOID *
 objectEntryAdd(ORTEDomain *d,GUID_RTPS *guid,void *params);
 extern int
-objectEntryDelete(ORTEDomain *d,ObjectEntryOID *objectEntryOID);
+objectEntryDelete(ORTEDomain *d,ObjectEntryOID *objectEntryOID,Boolean destroy);
 extern void
 objectEntryDeleteAll(ORTEDomain *d,ObjectEntry *objectEntry);
 extern void
@@ -177,6 +172,14 @@ getTypeApp(ORTEDomain *d,AppParams *ap,IPAddress senderIPAddress);
 extern void 
 appSelfParamChanged(ORTEDomain *d,Boolean lock,Boolean unlock,
    Boolean forWM,Boolean alive);
+extern Boolean
+matchMulticastAddresses(ObjectEntryOID *o1,ObjectEntryOID *o2);
+extern ObjectEntryOID *
+getAppO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
+    AppParams *ap);
+extern ObjectEntryOID *
+getSubsO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
+    ORTESubsProp *sp);
 
 ///////////////////////////////////////////////////////////////////////////////
 // event.c
@@ -196,13 +199,13 @@ UL_LIST_CUST_DEC(CSChangeAttributes,
                  CSChange,ParameterSequence,
                  attributes,node);
 extern int
+parameterGetDataLength(CSChange *csChange);
+extern int
 parameterDelete(CSChange *csChange);
 extern int
-parameterCodeStreamFromCSChange(CSChange *csChange,
-    uint8_t *rtps_msg,uint32_t max_msg_len);
+parameterCodeCodecFromCSChange(CSChange *csChange,CDR_Codec *cdrCodec);
 extern int
-parameterDecodeStreamToCSChange(CSChange *csChange,uint8_t *rtps_msg,
-    uint16_t submsg_len,uint8_t needByteSwap);
+parameterDecodeCodecToCSChange(CSChange *csChange,CDR_Codec *cdrCodec);
 extern int
 parameterUpdateCSChange(
      CSChange *csChange,AppParams *ap,Boolean Manager);
@@ -240,90 +243,91 @@ ORTEDomainWakeUpSendingThread(ObjectEntry *objectEntry);
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEAppRecvMetatrafficThread.c
 extern void 
-ORTEAppRecvMetatrafficThread(ORTEDomain *d);
+ORTEAppRecvThread(TaskProp *tp);
 
-///////////////////////////////////////////////////////////////////////////////
-// ORTEAppRecvUserdataThread.c
-extern void 
-ORTEAppRecvUserdataThread(ORTEDomain *d);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEAppSendThread.c
 extern void 
 ORTESendData(ORTEDomain *d,ObjectEntryAID *objectEntryAID,Boolean meta);
+extern void 
+ORTEAppSendThread(TaskProp *tp);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSHeader.c
-extern int16_t 
-RTPSHeaderCreate(uint8_t *msg,HostId hid,AppId aid);
-extern int16_t 
-RTPSHeaderCheck(uint8_t *msg,int32_t len,MessageInterpret *mi);
+extern int
+RTPSHeaderCreate(CDR_Codec *cdrCodec,HostId hid,AppId aid);
+extern int 
+RTPSHeaderCheck(CDR_Codec *cdrCodec,int32_t len,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSPad.c
 extern void 
-RTPSPad(uint8_t *rtps_msg,MessageInterpret *mi);
+RTPSPad(CDR_Codec *cdrCodec,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoDST.c
 extern void 
-RTPSInfoDST(uint8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoDST(CDR_Codec *cdrCodec,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoREPLY.c
-extern void 
-RTPSInfoREPLY(uint8_t *rtps_msg,MessageInterpret *mi);
+extern int 
+RTPSInfoREPLYCreate(CDR_Codec *cdrCodec,IPAddress ipaddress,Port port);
+void 
+RTPSInfoREPLY(CDR_Codec *cdrCodec,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
-// RTPSInfoREPLY.c
-extern int32_t 
-RTPSInfoREPLYCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
-    IPAddress ipaddress,Port port);
+// RTPSInfoSRC.c
 extern void 
-RTPSInfoSRC(uint8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoSRC(CDR_Codec *cdrCodec,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSInfoTS.c
-extern int32_t 
-RTPSInfoTSCreate(uint8_t *rtps_msg,uint32_t max_msg_len,NtpTime time);
+extern int
+RTPSInfoTSCreate(CDR_Codec *cdrCodec,NtpTime time);
 extern void 
-RTPSInfoTS(uint8_t *rtps_msg,MessageInterpret *mi);
+RTPSInfoTS(CDR_Codec *cdrCodec,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSVar.c
+extern int 
+RTPSVarCreate(CDR_Codec *cdrCodec,ObjectId roid,ObjectId woid,CSChange *csChange);
 extern void 
-RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSVar(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSAck.c
-extern int32_t 
-RTPSAckCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
+extern int
+RTPSAckCreate(CDR_Codec *cdrCodec,
     SequenceNumber *seqNumber,
     ObjectId roid,ObjectId woid,Boolean f_bit);
 extern void 
-RTPSAck(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSAck(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSHeardBeat.c
 extern int 
-RTPSHeardBeatCreate(uint8_t *rtps_msg,uint32_t max_msg_len,
-    SequenceNumber *firstSeqNumber,SequenceNumber *lastSeqNumber,
-    ObjectId woid,ObjectId roid,Boolean f_bit);
+RTPSHeartBeatCreate(CDR_Codec *cdrCodec,
+    SequenceNumber *fsn,SequenceNumber *lsn,
+    ObjectId roid,ObjectId woid,Boolean f_bit);
 extern void 
-RTPSHeardBeat(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi);
+RTPSHeartBeat(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSGap.c
-extern void 
-RTPSGap(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+extern int 
+RTPSGapCreate(CDR_Codec *cdrCodec,ObjectId roid,ObjectId woid,CSChange *csChange);
+void 
+RTPSGap(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSIssue.c
-extern int32_t
-RTPSIssueCreateHeader(uint8_t *rtps_msg,uint32_t max_msg_len,uint32_t length,
+extern int
+RTPSIssueCreateHeader(CDR_Codec *cdrCodec,uint32_t length,
     ObjectId roid,ObjectId woid,SequenceNumber sn);
 extern void 
-RTPSIssue(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPAddress);
+RTPSIssue(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderIPAddress);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSUtils.c
@@ -331,13 +335,15 @@ extern int gavl_cmp_ntp_time(const NtpTime *a,const NtpTime *b);
 extern int gavl_cmp_sn(const SequenceNumber *a, const SequenceNumber *b); 
 extern int gavl_cmp_guid(const GUID_RTPS *a, const GUID_RTPS *b); 
 extern int gavl_cmp_str(const char *const *a,const char *const *b);
-extern int getMaxMessageLength(ORTEDomain *d);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSCSTWriter.c
 UL_LIST_CUST_DEC(CSTWriterCSChange,
                  CSTWriter,CSChange,
                  csChanges,nodeList);
+UL_LIST_CUST_DEC(CSChangeParticipant,
+                 CSChange,CSChangeForReader,
+		 writerParticipants,participantNode);
 GAVL_CUST_NODE_INT_DEC(CSTWriter, 
                        CSTPublications, CSTWriter, GUID_RTPS,
                        cstWriter, node, guid, gavl_cmp_guid);
@@ -353,9 +359,9 @@ CSTWriterInit(ORTEDomain *d,CSTWriter *cstWriter,ObjectEntryOID *object,
     ObjectId oid,CSTWriterParams *params,ORTETypeRegister *typeRegister);
 extern void 
 CSTWriterDelete(ORTEDomain *d,CSTWriter *cstWriter);
-extern void
-CSTWriterAddRemoteReader(ORTEDomain *d,CSTWriter *cstWriter,ObjectEntryOID *object,
-    ObjectId oid);
+extern CSTRemoteReader *
+CSTWriterAddRemoteReader(ORTEDomain *d,CSTWriter *cstWriter,ObjectEntryOID *pobject,
+    ObjectId oid,ObjectEntryOID *sobject);
 extern void 
 CSTWriterDestroyRemoteReader(ORTEDomain *d,CSTRemoteReader *cstRemoteReader);
 extern void
@@ -363,17 +369,23 @@ CSTWriterMakeGAP(ORTEDomain *d,CSTWriter *cstWriter,GUID_RTPS *guid);
 extern void
 CSTWriterAddCSChange(ORTEDomain *d,CSTWriter *cstWriter,CSChange *csChange);
 extern void
-CSTWriterDestroyCSChangeForReader(CSTRemoteReader *cstRemoteReader,
-    CSChangeForReader   *csChangeForReader,Boolean destroyCSChange);
+CSTWriterDestroyCSChangeForReader(CSChangeForReader *csChangeForReader,
+   Boolean destroyCSChange);
 extern void 
 CSTWriterDestroyCSChange(ORTEDomain *d,CSTWriter *cstWriter,CSChange *csChange);
 extern Boolean
 CSTWriterTryDestroyBestEffortIssue(CSTWriter *cstWriter);
 extern void
 CSTWriterRefreshAllCSChanges(ORTEDomain *d,CSTRemoteReader *cstRemoteReader);
+extern int
+CSTWriterCSChangeForReaderNewState(CSChangeForReader *csChangeForReader);
+extern void
+CSTWriterMulticast(CSChangeForReader *csChangeForReader);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSCSTWriterTimer.c
+extern int 
+CSTWriterRegistrationTimer(ORTEDomain *d,void *vcstWriter);
 extern int
 CSTWriterRefreshTimer(ORTEDomain *d,void *vcstWriter);
 extern int 
@@ -441,6 +453,14 @@ extern int
 CSTReaderPersistenceTimer(ORTEDomain *d,void *vcstReader);
 
 ///////////////////////////////////////////////////////////////////////////////
+// ORTEDomain.c
+ORTEDomain * 
+ORTEDomainCreate(int domain, ORTEDomainProp *prop,
+               ORTEDomainAppEvents *events,Boolean manager);
+Boolean
+ORTEDomainDestroy(ORTEDomain *d,Boolean manager);
+
+///////////////////////////////////////////////////////////////////////////////
 // ORTEDomainApp.c
 UL_LIST_CUST_DEC(Pattern,
                  PatternEntry,PatternNode,
@@ -457,7 +477,8 @@ GAVL_CUST_NODE_INT_DEC(PublicationList,
                        PSEntry, ObjectEntryOID, GUID_RTPS,
                        publications, psNode, guid, gavl_cmp_guid);
 extern int
-ORTEPublicationSendLocked(ORTEPublication *cstWriter);
+ORTEPublicationSendLocked(ORTEPublication *cstWriter,
+    ORTEPublicationSendParam *psp);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTESubcription.c

@@ -4607,4 +4607,7 @@ fi
 INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
 AC_SUBST([INSTALL_STRIP_PROGRAM])])
 
+m4_include([admin/idl.m4])
+m4_include([admin/jorte.m4])
 m4_include([admin/linux.m4])
+m4_include([admin/pkg.m4])
