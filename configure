@@ -309,7 +309,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LINUX_DIR LINUX_ARCH LINUX_AFLAGS LINUX_LDFLAGS LINUX_ARFLAGS LINUX_CROSS_COMPILE LINUX_KERNELRELEASE LINUX_CFLAGS LINUX_CC LINUX_LD LINUX_AS LINUX_MODULE_EXT CONFIG_RTHAL_TRUE CONFIG_RTHAL_FALSE RTAI_CFLAGS CONFIG_RTLINUX_TRUE CONFIG_RTLINUX_FALSE RTLINUX_CFLAGS USE_RTAI_TRUE USE_RTAI_FALSE USE_RTLINUX_TRUE USE_RTLINUX_FALSE CONFIG_ORTE_RT_TRUE CONFIG_ORTE_RT_FALSE ORTE_MAJOR_VERSION ORTE_MINOR_VERSION ORTE_MICRO_VERSION ORTE_VERSION INCLUDES CONFIG_ORTE_WIN_TRUE CONFIG_ORTE_WIN_FALSE moduledir modulePROGRAMS_INSTALL CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE RANLIB ac_ct_RANLIB CPP EGREP LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT LINUX_DIR LINUX_ARCH LINUX_AFLAGS LINUX_LDFLAGS LINUX_ARFLAGS LINUX_CROSS_COMPILE LINUX_KERNELRELEASE LINUX_CFLAGS LINUX_CC LINUX_LD LINUX_AS LINUX_MODULE_EXT CONFIG_RTHAL_TRUE CONFIG_RTHAL_FALSE RTAI_CFLAGS CONFIG_RTLINUX_TRUE CONFIG_RTLINUX_FALSE RTLINUX_CFLAGS CONFIG_ORTE_RT USE_RTAI_TRUE USE_RTAI_FALSE USE_RTLINUX_TRUE USE_RTLINUX_FALSE CONFIG_ORTE_RT_TRUE CONFIG_ORTE_RT_FALSE ORTE_MAJOR_VERSION ORTE_MINOR_VERSION ORTE_MICRO_VERSION ORTE_VERSION moduledir modulePROGRAMS_INSTALL CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE RANLIB ac_ct_RANLIB CPP EGREP INCLUDES CONFIG_ORTE_WIN_TRUE CONFIG_ORTE_WIN_FALSE CONFIG_ORTE_UNIX_TRUE CONFIG_ORTE_UNIX_FALSE LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2175,7 +2175,9 @@ cat >>confdefs.h <<\_ACEOF
 #define CONFIG_ORTE_RT 1
 _ACEOF
 
-	fi
+		CONFIG_ORTE_RT="yes"
+        fi
+
 
 
 if test ${USE_RTAI} == "yes"; then
@@ -2220,37 +2222,10 @@ ORTE_VERSION=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION.$ORTE_MICRO_VERSION
 
 
 
-###############################
-# includes
-case "$target" in
-  *-cygwin* | *-mingw*)
-    INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/win32'
-    WIN_LIB='yes'
-    ;;
-  *)
-    # Assume Unix.
-    if test ${USE_RTLINUX} == "yes" ; then
-      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtl -I$(top_srcdir)/RTL_UDP/include'
-    else
-      INCLUDES='-I$(top_srcdir)/orte/include'
-    fi
-    ;;
-esac
-
-
-
-if test x$WIN_LIB = xyes; then
-  CONFIG_ORTE_WIN_TRUE=
-  CONFIG_ORTE_WIN_FALSE='#'
-else
-  CONFIG_ORTE_WIN_TRUE='#'
-  CONFIG_ORTE_WIN_FALSE=
-fi
-
 
 ###############################
 # modules
-moduledir="\$(libdir)/modules/\$(LINUX_KERNELRELEASE)/comedi"
+moduledir="\$(libdir)/modules/\$(LINUX_KERNELRELEASE)/orte"
 modulePROGRAMS_INSTALL="\$(top_builddir)/modtool --install"
 modulePROGRAMS_UNINSTALL="\$(top_builddir)/modtool --uninstall"
 
@@ -3351,7 +3326,7 @@ fi
 
 ###############################
 # Checks for libraries (no for RT)
-if test ${USE_RTLINUX} != "yes" ; then
+if test -z ${CONFIG_ORTE_RT} ; then
 
 
 echo "$as_me:$LINENO: checking for main in -lws2_32" >&5
@@ -3473,6 +3448,7 @@ fi
 
 ###############################
 # Checks for header files.
+if test -z ${CONFIG_ORTE_RT} ; then
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4113,6 +4089,57 @@ fi
 
 done
 
+fi
+###############################
+# includes
+case "$target" in
+  *-cygwin* | *-mingw*)
+    INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/win32'
+    WIN='yes'
+
+cat >>confdefs.h <<\_ACEOF
+#define CONFIG_ORTE_WIN 1
+_ACEOF
+
+    ;;
+  *)
+    # Assume Unix.
+    if test ${USE_RTLINUX} == "yes" ; then
+      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtl -I$(top_srcdir)/orte/contrib/RTL_UDP/include'
+    elif test ${USE_RTAI} == "yes" ; then
+      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtai'
+    else
+      INCLUDES='-I$(top_srcdir)/orte/include'
+      UNIX='yes'
+
+cat >>confdefs.h <<\_ACEOF
+#define CONFIG_ORTE_UNIX 1
+_ACEOF
+
+    fi
+    ;;
+esac
+
+
+
+if test x$WIN = xyes; then
+  CONFIG_ORTE_WIN_TRUE=
+  CONFIG_ORTE_WIN_FALSE='#'
+else
+  CONFIG_ORTE_WIN_TRUE='#'
+  CONFIG_ORTE_WIN_FALSE=
+fi
+
+
+
+if test x$UNIX = xyes; then
+  CONFIG_ORTE_UNIX_TRUE=
+  CONFIG_ORTE_UNIX_FALSE='#'
+else
+  CONFIG_ORTE_UNIX_TRUE='#'
+  CONFIG_ORTE_UNIX_FALSE=
+fi
+
 
 ###############################
 # Checks for typedefs, structures, and compiler characteristics.
@@ -4590,62 +4617,6 @@ _ACEOF
 
 fi
 
-echo "$as_me:$LINENO: checking whether time.h and sys/time.h may both be included" >&5
-echo $ECHO_N "checking whether time.h and sys/time.h may both be included... $ECHO_C" >&6
-if test "${ac_cv_header_time+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/time.h>
-#include <time.h>
-
-int
-main ()
-{
-if ((struct tm *) 0)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_header_time=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_header_time=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_header_time" >&5
-echo "${ECHO_T}$ac_cv_header_time" >&6
-if test $ac_cv_header_time = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define TIME_WITH_SYS_TIME 1
-_ACEOF
-
-fi
-
 
 ###############################
 # Checks for library functions.
@@ -4700,223 +4671,6 @@ echo "${ECHO_T}$ac_cv_prog_gcc_traditional" >&6
     CC="$CC -traditional"
   fi
 fi
-
-
-for ac_header in stdlib.h
-do
-as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
-if eval "test \"\${$as_ac_Header+set}\" = set"; then
-  echo "$as_me:$LINENO: checking for $ac_header" >&5
-echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
-if eval "test \"\${$as_ac_Header+set}\" = set"; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-fi
-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
-echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
-else
-  # Is the header compilable?
-echo "$as_me:$LINENO: checking $ac_header usability" >&5
-echo $ECHO_N "checking $ac_header usability... $ECHO_C" >&6
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-$ac_includes_default
-#include <$ac_header>
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_header_compiler=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_header_compiler=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
-echo "${ECHO_T}$ac_header_compiler" >&6
-
-# Is the header present?
-echo "$as_me:$LINENO: checking $ac_header presence" >&5
-echo $ECHO_N "checking $ac_header presence... $ECHO_C" >&6
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <$ac_header>
-_ACEOF
-if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
-  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } >/dev/null; then
-  if test -s conftest.err; then
-    ac_cpp_err=$ac_c_preproc_warn_flag
-  else
-    ac_cpp_err=
-  fi
-else
-  ac_cpp_err=yes
-fi
-if test -z "$ac_cpp_err"; then
-  ac_header_preproc=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-  ac_header_preproc=no
-fi
-rm -f conftest.err conftest.$ac_ext
-echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
-echo "${ECHO_T}$ac_header_preproc" >&6
-
-# So?  What about this header?
-case $ac_header_compiler:$ac_header_preproc in
-  yes:no )
-    { echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
-echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
-    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
-echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
-    (
-      cat <<\_ASBOX
-## ------------------------------------ ##
-## Report this to bug-autoconf@gnu.org. ##
-## ------------------------------------ ##
-_ASBOX
-    ) |
-      sed "s/^/$as_me: WARNING:     /" >&2
-    ;;
-  no:yes )
-    { echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
-echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
-    { echo "$as_me:$LINENO: WARNING: $ac_header: check for missing prerequisite headers?" >&5
-echo "$as_me: WARNING: $ac_header: check for missing prerequisite headers?" >&2;}
-    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
-echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
-    (
-      cat <<\_ASBOX
-## ------------------------------------ ##
-## Report this to bug-autoconf@gnu.org. ##
-## ------------------------------------ ##
-_ASBOX
-    ) |
-      sed "s/^/$as_me: WARNING:     /" >&2
-    ;;
-esac
-echo "$as_me:$LINENO: checking for $ac_header" >&5
-echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
-if eval "test \"\${$as_ac_Header+set}\" = set"; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  eval "$as_ac_Header=$ac_header_preproc"
-fi
-echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
-echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
-
-fi
-if test `eval echo '${'$as_ac_Header'}'` = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-
-done
-
-echo "$as_me:$LINENO: checking for GNU libc compatible malloc" >&5
-echo $ECHO_N "checking for GNU libc compatible malloc... $ECHO_C" >&6
-if test "${ac_cv_func_malloc_0_nonnull+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test "$cross_compiling" = yes; then
-  ac_cv_func_malloc_0_nonnull=no
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#if STDC_HEADERS || HAVE_STDLIB_H
-# include <stdlib.h>
-#else
-char *malloc ();
-#endif
-
-int
-main ()
-{
-exit (malloc (0) ? 0 : 1);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_func_malloc_0_nonnull=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-ac_cv_func_malloc_0_nonnull=no
-fi
-rm -f core core.* *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-fi
-echo "$as_me:$LINENO: result: $ac_cv_func_malloc_0_nonnull" >&5
-echo "${ECHO_T}$ac_cv_func_malloc_0_nonnull" >&6
-if test $ac_cv_func_malloc_0_nonnull = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_MALLOC 1
-_ACEOF
-
-else
-  cat >>confdefs.h <<\_ACEOF
-#define HAVE_MALLOC 0
-_ACEOF
-
-   LIBOBJS="$LIBOBJS malloc.$ac_objext"
-
-cat >>confdefs.h <<\_ACEOF
-#define malloc rpl_malloc
-_ACEOF
-
-fi
-
-
 
 
 for ac_func in strdup
@@ -5007,7 +4761,9 @@ done
 # Add obsolute directory for header files
 CFLAGS="$CFLAGS -Wall"
 
-                                                                                                                        ac_config_files="$ac_config_files Makefile orte/Makefile RTL_UDP/Makefile RTL_UDP/udp/Makefile orte/liborte/Makefile orte/liborte/rtl/Makefile orte/examples/Makefile orte/examples/hello/Makefile orte/examples/reliable/Makefile orte/examples/ORTEPing/Makefile orte/examples/ORTESpy/Makefile orte/manager/Makefile"
+                                                                                                    ac_config_files="$ac_config_files Makefile orte/Makefile orte/liborte/Makefile orte/liborte/rtl/Makefile orte/examples/Makefile orte/examples/hello/Makefile orte/examples/reliable/Makefile orte/examples/ORTEPing/Makefile orte/examples/ORTESpy/Makefile orte/manager/Makefile"
+
+
 
 
           ac_config_files="$ac_config_files modtool"
@@ -5144,6 +4900,13 @@ echo "$as_me: error: conditional \"CONFIG_ORTE_RT\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
+if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"AMDEP\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"AMDEP\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 if test -z "${CONFIG_ORTE_WIN_TRUE}" && test -z "${CONFIG_ORTE_WIN_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"CONFIG_ORTE_WIN\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
@@ -5151,10 +4914,10 @@ echo "$as_me: error: conditional \"CONFIG_ORTE_WIN\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
-if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
-  { { echo "$as_me:$LINENO: error: conditional \"AMDEP\" was never defined.
+if test -z "${CONFIG_ORTE_UNIX_TRUE}" && test -z "${CONFIG_ORTE_UNIX_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"CONFIG_ORTE_UNIX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
-echo "$as_me: error: conditional \"AMDEP\" was never defined.
+echo "$as_me: error: conditional \"CONFIG_ORTE_UNIX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -5603,8 +5366,6 @@ do
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "orte/Makefile" ) CONFIG_FILES="$CONFIG_FILES orte/Makefile" ;;
-  "RTL_UDP/Makefile" ) CONFIG_FILES="$CONFIG_FILES RTL_UDP/Makefile" ;;
-  "RTL_UDP/udp/Makefile" ) CONFIG_FILES="$CONFIG_FILES RTL_UDP/udp/Makefile" ;;
   "orte/liborte/Makefile" ) CONFIG_FILES="$CONFIG_FILES orte/liborte/Makefile" ;;
   "orte/liborte/rtl/Makefile" ) CONFIG_FILES="$CONFIG_FILES orte/liborte/rtl/Makefile" ;;
   "orte/examples/Makefile" ) CONFIG_FILES="$CONFIG_FILES orte/examples/Makefile" ;;
@@ -5751,6 +5512,7 @@ s,@RTAI_CFLAGS@,$RTAI_CFLAGS,;t t
 s,@CONFIG_RTLINUX_TRUE@,$CONFIG_RTLINUX_TRUE,;t t
 s,@CONFIG_RTLINUX_FALSE@,$CONFIG_RTLINUX_FALSE,;t t
 s,@RTLINUX_CFLAGS@,$RTLINUX_CFLAGS,;t t
+s,@CONFIG_ORTE_RT@,$CONFIG_ORTE_RT,;t t
 s,@USE_RTAI_TRUE@,$USE_RTAI_TRUE,;t t
 s,@USE_RTAI_FALSE@,$USE_RTAI_FALSE,;t t
 s,@USE_RTLINUX_TRUE@,$USE_RTLINUX_TRUE,;t t
@@ -5761,9 +5523,6 @@ s,@ORTE_MAJOR_VERSION@,$ORTE_MAJOR_VERSION,;t t
 s,@ORTE_MINOR_VERSION@,$ORTE_MINOR_VERSION,;t t
 s,@ORTE_MICRO_VERSION@,$ORTE_MICRO_VERSION,;t t
 s,@ORTE_VERSION@,$ORTE_VERSION,;t t
-s,@INCLUDES@,$INCLUDES,;t t
-s,@CONFIG_ORTE_WIN_TRUE@,$CONFIG_ORTE_WIN_TRUE,;t t
-s,@CONFIG_ORTE_WIN_FALSE@,$CONFIG_ORTE_WIN_FALSE,;t t
 s,@moduledir@,$moduledir,;t t
 s,@modulePROGRAMS_INSTALL@,$modulePROGRAMS_INSTALL,;t t
 s,@CC@,$CC,;t t
@@ -5784,6 +5543,11 @@ s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
 s,@CPP@,$CPP,;t t
 s,@EGREP@,$EGREP,;t t
+s,@INCLUDES@,$INCLUDES,;t t
+s,@CONFIG_ORTE_WIN_TRUE@,$CONFIG_ORTE_WIN_TRUE,;t t
+s,@CONFIG_ORTE_WIN_FALSE@,$CONFIG_ORTE_WIN_FALSE,;t t
+s,@CONFIG_ORTE_UNIX_TRUE@,$CONFIG_ORTE_UNIX_TRUE,;t t
+s,@CONFIG_ORTE_UNIX_FALSE@,$CONFIG_ORTE_UNIX_FALSE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
@@ -6400,6 +6164,23 @@ if test "$no_create" != yes; then
 fi
 
 chmod +x modtool
+
+
+# ======================================================================
+#		generate orte/include/orte_config.h
+# ======================================================================
+
+{ echo "$as_me:$LINENO: creating orte/include/orte_config.h" >&5
+echo "$as_me: creating orte/include/orte_config.h" >&6;}
+sed -e "s/ PACKAGE/ ORTE_PACKAGE/" -e "s/ VERSION/ ORTE_VERSION/" \
+    orte/include/config.h >orte/include/orte_config.h.new
+if cmp -s orte/include/orte_config.h.new orte/include/orte_config.h; then
+	rm orte/include/orte_config.h.new
+	{ echo "$as_me:$LINENO: orte/include/orte_config.h is unchanged" >&5
+echo "$as_me: orte/include/orte_config.h is unchanged" >&6;}
+else
+	mv orte/include/orte_config.h.new orte/include/orte_config.h
+fi
 
 echo \
 "------------------------------------------------------------------------

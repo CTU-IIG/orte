@@ -21,6 +21,10 @@
 
 #include "orte.h"
 
+#ifdef CONFIG_ORTE_RT
+MODULE_LICENSE("GPL");
+#endif
+
 /*****************************************************************************/
 void
 ORTEInit(void) {

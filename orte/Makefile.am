@@ -6,8 +6,4 @@
 #  Uncomment and customize the following to ORTE your needs:
 #
 
-if CONFIG_ORTE_RT
-SUBDIRS = liborte examples
-else
 SUBDIRS	= liborte manager examples
-endif

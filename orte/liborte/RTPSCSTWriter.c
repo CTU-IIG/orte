@@ -337,7 +337,7 @@ CSTWriterAddCSChange(ORTEDomain *d,CSTWriter *cstWriter,CSChange *csChange) {
               //direct sent issue, for case zero time
               CSTWriterSendBestEffortTimer(d,(void*)cstRemoteReader);
             } else {
-              //shedule sent issue (future)
+              //schedule sent issue (future)
               eventAdd(d,
                   cstRemoteReader->objectEntryOID->objectEntryAID,
                   &cstRemoteReader->delayResponceTimer,

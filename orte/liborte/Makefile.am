@@ -50,12 +50,14 @@ ul_gavl.c \
 ul_gavlprim.c
 
 if CONFIG_ORTE_RT
-module_PROGRAMS = orte.ko
-orte_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-orte_ko_SOURCES = $(LIBORTE_SOURCES)
-orte_ko_LINK = $(top_builddir)/modtool --link -o $@
+module_PROGRAMS = rt_orte.ko
+rt_orte_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+rt_orte_ko_SOURCES = $(LIBORTE_SOURCES)
+rt_orte_ko_LINK = $(top_builddir)/modtool --link -o $@
 
+if USE_RTLINUX
 SUBDIRS = rtl
+endif
 else
 lib_LIBRARIES = liborte.a
 liborte_a_SOURCES = $(LIBORTE_SOURCES)

@@ -28,9 +28,7 @@
 # Hack to check RT-Linux rules
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTLINUX_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
-LINUX_DIR := /usr/src/linux-2.4.18rt
-RTLINUX_DIR := /usr/rtlinux
-KERN_EXE_SUFFIX := .o
+OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
 
 # We need to ensure definition of sources directory first
 ifndef SOURCES_DIR
@@ -45,29 +43,45 @@ include $(SOURCES_DIR)/Makefile.omk
 OMK_INCLUDED := 1
 endif
 
+BUILD_DIR_NAME = _build
+COMPILED_DIR_NAME = _compiled
+
 ifdef OCERA_DIR
-KERN_INCLUDE_DIR := $(OCERA_DIR)/compiled/kernel/include
-KERN_LIB_DIR     := $(OCERA_DIR)/compiled/kernel/lib
-KERN_MODULES_DIR := $(OCERA_DIR)/compiled/kernel/modules
-KERN_BUILD_DIR   := $(OCERA_DIR)/build/kern
-USER_INCLUDE_DIR := $(OCERA_DIR)/compiled/user/include
-USER_LIB_DIR     := $(OCERA_DIR)/compiled/user/lib
-USER_UTILS_DIR   := $(OCERA_DIR)/compiled/user/utils
-USER_BIN_DIR     := $(OCERA_DIR)/compiled/user/bin
-USER_BUILD_DIR   := $(OCERA_DIR)/build/user
+ifeq ($(wildcard $(OCERA_DIR)/ocera.mk),)
+$(warning ocera.mk file does not exist. Adapt Makefile.rules for standalone compilation or)
+$(error go to the ocera/ directory and do 'make' to generate the ocera.mk file first, please)
+endif
+KERN_INCLUDE_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/include
+KERN_LIB_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/lib
+KERN_MODULES_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/kernel/modules
+KERN_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/kern/orte
+USER_INCLUDE_DIR := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/include
+USER_LIB_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/lib
+USER_UTILS_DIR   := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/utils
+USER_BIN_DIR     := $(OCERA_DIR)/$(COMPILED_DIR_NAME)/user/bin
+USER_BUILD_DIR   := $(OCERA_DIR)/$(BUILD_DIR_NAME)/user/orte
+LINUX_DIR        := $(OCERA_DIR)/kernel/linux
+#RTLINUX_DIR      := $(OCERA_DIR)/kernel/rtlinux
+CONFIG_FILE      := $(OCERA_DIR)/emdebsys/.config 
 else 
-KERN_INCLUDE_DIR := $(MAKERULES_DIR)/compiled/include-kern
-KERN_LIB_DIR     := $(MAKERULES_DIR)/compiled/lib-kern
-KERN_MODULES_DIR := $(MAKERULES_DIR)/compiled/modules
-KERN_BUILD_DIR   := $(MAKERULES_DIR)/build/kern
-USER_INCLUDE_DIR := $(MAKERULES_DIR)/compiled/include
-USER_LIB_DIR     := $(MAKERULES_DIR)/compiled/lib
-USER_UTILS_DIR   := $(MAKERULES_DIR)/compiled/bin-utils
-USER_BIN_DIR     := $(MAKERULES_DIR)/compiled/bin
-USER_BUILD_DIR   := $(MAKERULES_DIR)/build/user
+KERN_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include-kern
+KERN_LIB_DIR     := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/lib-kern
+KERN_MODULES_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/modules
+KERN_BUILD_DIR   := $(MAKERULES_DIR)/$(BUILD_DIR_NAME)/kern
+USER_INCLUDE_DIR := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/include
+USER_LIB_DIR     := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/lib
+USER_UTILS_DIR   := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/bin-utils
+USER_BIN_DIR     := $(MAKERULES_DIR)/$(COMPILED_DIR_NAME)/bin
+USER_BUILD_DIR   := $(MAKERULES_DIR)/$(BUILD_DIR_NAME)/user
+ifndef LINUX_VERSION
+LINUX_VERSION=$(shell uname -r)
+endif
+ifndef LINUX_DIR
+LINUX_DIR=/lib/modules/$(LINUX_VERSION)/build
+endif
 endif
 
-export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR RTLINUX_DIR
+export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTLINUX_DIR
 
 CFLAGS = -O2 -ggdb
 
@@ -132,7 +146,7 @@ cc_o_COMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 
 
 # Check GCC version for user build
-ifndef CC_VERSION
+ifndef CC_MAJOR_VERSION
 CC_MAJOR_VERSION := $(shell $(CC) -dumpversion | sed -e 's/\([^.]\)\..*/\1/')
 endif
 # Prepare suitable define for dependency building
@@ -219,8 +233,44 @@ endif
 
 ifdef KERN_RULE_TEMPLATES
 
+$(KERN_MODULES_DIR)/kernel.mk: $(LINUX_DIR)/.config $(MAKERULES_DIR)/kernelcfg2mk
+	$(MAKERULES_DIR)/kernelcfg2mk $(LINUX_DIR) $(KERN_MODULES_DIR)
+
 ifdef RTLINUX_DIR
 include $(RTLINUX_DIR)/rtl.mk
+
+KERN_CC = $(CC)
+INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES) $(kernel_INCLUDES)
+#-DEXPORT_NO_SYMBOLS
+c_o_kern_COMPILE = $(KERN_CC) $(INCLUDES) $(CFLAGS) -DEXPORT_SYMTAB 
+cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DEXPORT_SYMTAB
+KERN_EXE_SUFFIX := .o
+KERN_ARCH = $(ARCH)
+KERN_LD = ld -m elf_$(KERN_ARCH)
+
+else # RTLINUX_DIR
+
+include $(KERN_MODULES_DIR)/kernel.mk
+
+ifdef LINUX_CC
+KERN_CC = $(LINUX_CC)
+else
+KERN_CC = echo KERN_CC not defined - compilation skipped
+endif
+c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) $(LINUX_CFLAGS) -DEXPORT_SYMTAB 
+cc_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) $(LINUX_CFLAGS) -DEXPORT_SYMTAB
+KERN_EXE_SUFFIX := $(LINUX_MODULE_EXT)
+KERN_LDFLAGS = $(LINUX_LDFLAGS)
+ifdef LINUX_ARCH
+KERN_ARCH = $(LINUX_ARCH)
+else
+KERN_ARCH = echo KERN_ARCH not defined - skipped
+endif
+ifdef LINUX_LD
+KERN_LD = $(LINUX_LD)
+else
+KERN_LD = echo KERN_LD  not defined - skipped
+endif
 endif
 
 KERN_LOADLIBES += -L$(KERN_LIB_DIR) 
@@ -228,18 +278,11 @@ KERN_LOADLIBES += -L$(KERN_LIB_DIR)
 KERN_LOADLIBES += $(rtlinux_LOADLIBES:%=-l%)
 KERN_LOADLIBES += $(kernel_LOADLIBES:%=-l%)
 
-INCLUDES := -I $(KERN_INCLUDE_DIR) $(INCLUDE) $(rtlinux_INCLUDES)
-
-#-DEXPORT_NO_SYMBOLS
-
-c_o_kern_COMPILE = $(CC) $(INCLUDES) $(CFLAGS) -DEXPORT_SYMTAB 
-
-cc_o_kern_COMPILE = $(CXX) $(INCLUDES) $(CXXFLAGS) -DEXPORT_SYMTAB
 
 
 # Check GCC version for kernel part of build
-ifndef CC_VERSION
-kern_CC_MAJOR_VERSION := $(shell $(CC) -dumpversion | sed -e 's/\([^.]\)\..*/\1/')
+ifndef kern_CC_MAJOR_VERSION
+kern_CC_MAJOR_VERSION := $(shell $(KERN_CC) -dumpversion | sed -e 's/\([^.]\)\..*/\1/')
 endif
 # Prepare suitable define for dependency building
 ifeq ($(kern_CC_MAJOR_VERSION),2)
@@ -281,7 +324,7 @@ KERN_OBJS  += $$($(1)_OBJS)
 KERN_SOURCES += $$($(1)_SOURCES)
 
 $(2)/$(1)$(KERN_EXE_SUFFIX): $$($(1)_OBJS) 
-	ld -m elf_$(ARCH) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $(2)/$(1)$(KERN_EXE_SUFFIX)
+	$$(KERN_LD) $$(KERN_LDFLAGS) -r $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(KERN_LOADLIBES) -Map $(KERN_OBJS_DIR)/$(1).mod.map -o $(2)/$(1)$(KERN_EXE_SUFFIX)
 	@echo "$(2)/$(1)$(KERN_EXE_SUFFIX): \\" >$(KERN_OBJS_DIR)/$(1).mod.d
 	@sed -n -e 's/^LOAD \(.*\)$$$$/  \1  \\/p' $(KERN_OBJS_DIR)/$(1).mod.map  >>$(KERN_OBJS_DIR)/$(1).mod.d
 	@echo >>$(KERN_OBJS_DIR)/$(1).mod.d
@@ -302,9 +345,19 @@ $(KERN_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
 	ranlib $$@
 endef
 
+
+ifdef LINUX_DIR
+
 kernel-lib-pass-local: $(kernel_LIBRARIES:%=$(KERN_LIB_DIR)/lib%.a)
 
 kernel-pass-local: $(kernel_MODULES:%=$(KERN_MODULES_DIR)/%$(KERN_EXE_SUFFIX))
+
+$(foreach module,$(kernel_MODULES),$(eval $(call MODULE_kern_template,$(module),$(KERN_MODULES_DIR))))
+
+$(foreach lib,$(kernel_LIBRARIES),$(eval $(call LIBRARY_kern_template,$(lib))))
+
+endif
+
 
 ifdef RTLINUX_DIR
 
@@ -325,14 +378,29 @@ endif
 #=====================================================================
 
 
-kernel-lib-pass kernel-pass:
+kernel-lib-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(KERN_OBJS_DIR)/$(dir)) ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
 		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
 	+@$(call mkdir_def,$(KERN_OBJS_DIR))
-	@$(MAKE) --no-print-directory -C $(KERN_OBJS_DIR) \
-		-f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y $(@:%=%-local)
+	+@if [ -n "$(kernel_LIBRARIES)$(rtlinux_LIBRARIES)" ] ; \
+	then \
+	    $(MAKE) --no-print-directory -C $(KERN_OBJS_DIR) \
+		-f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y $(@:%=%-local) ; \
+	fi
+
+kernel-pass:
+	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(KERN_OBJS_DIR)/$(dir)) ; \
+		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
+		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
+	+@$(call mkdir_def,$(KERN_OBJS_DIR))
+	+@if [ -n "$(kernel_MODULES)$(rtlinux_MODULES)" ] ; \
+	then \
+	    $(MAKE) --no-print-directory -C $(KERN_OBJS_DIR) \
+		-f $(SOURCES_DIR)/Makefile KERN_RULE_TEMPLATES=y $(@:%=%-local) ; \
+	fi
 
 library-pass binary-pass utils-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
@@ -409,5 +477,6 @@ endif
 
 clean-local:
 	@echo Cleaning in $(KERN_OBJS_DIR) and $(USER_OBJS_DIR)
-	@rm -f $(KERN_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.lo $(USER_OBJS_DIR)/*.d $(USER_OBJS_DIR)/*.map 
+	@rm -f $(KERN_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.o $(USER_OBJS_DIR)/*.lo \
+	       $(KERN_OBJS_DIR)/*.d $(USER_OBJS_DIR)/*.d $(KERN_OBJS_DIR)/*.map $(USER_OBJS_DIR)/*.map 
 

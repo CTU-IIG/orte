@@ -1,5 +1,5 @@
 /*
- *  $Id: HelloWorldPublisher.c,v 0.0.0.1 2003/12/26 
+ *  $Id: HelloWorldPublisher.c,v 0.0.0.1 2003/12/26
  *
  *  DEBUG:  section                     HelloWorldPublisher
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
@@ -11,40 +11,75 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
- */ 
+ *
+ */
 
-#include <stdio.h>
-#ifdef __RTL__
+#ifdef HAVE_CONFIG_H
+  #include <orte_config.h>
+#endif
+#if defined(CONFIG_ORTE_RTL)
+  #include <stdio.h>
   #include <posix/pthread.h>
   #define printf rtl_printf
+#elif defined(CONFIG_ORTE_RTAI)
+  #include <linux/module.h>
+  #include <rtai.h>
+  #include <rtai_sched.h>
+  #include <rtai_sem.h>
+  #define printf rt_printk
+#else
+  #include <stdio.h>
 #endif
 #include "orte_api.h"
 
 ORTEDomain        *d;
 char              instance2Send[64];
 char              terminate=0;
+int               counter=0;
+#ifdef CONFIG_ORTE_RTAI
+int               terminated = 0;
+SEM               term_sem;
+#endif
 
-void * 
+void
+sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
+  char *instance=(char*)vinstance;
+
+  switch (info->status) {
+    case NEED_DATA:
+      printf("Sampling publication, count %d\n", counter);
+      sprintf(instance,"Hello Universe! (%d)",counter++);
+      break;
+    case CQL:  //criticalQueueLevel
+      break;
+  }
+}
+
+void *
 publisher(void *arg) {
   ORTEPublication     *p;
-  ORTEDomainProp	    dp; 
-  NtpTime             persistence;
-  int                 i=1;            
+  ORTEDomainProp      dp;
+  NtpTime             persistence, delay;
 
   ORTEInit();
+//  ORTEVerbositySetOptions("ALL,5");
   ORTEDomainPropDefaultGet(&dp);
-  #ifdef __RTL__
-  dp.appLocalManager=StringToIPAddress("192.168.0.4");
+  #ifdef CONFIG_ORTE_RTL
+  dp.appLocalManager=StringToIPAddress("192.168.4.1");
   #endif
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL);
+  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
+  if (!d) {
+    printf("ORTEDomainAppCreate failed!\n");
+    return 0;
+  }
   ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,64);
-  NTPTIME_BUILD(persistence,3); 
+  NTPTIME_BUILD(persistence,3);
+  NTPTIME_BUILD(delay,10); //10s
   p=ORTEPublicationCreate(
        d,
       "Example HelloMsg",
@@ -52,39 +87,30 @@ publisher(void *arg) {
       &instance2Send,
       &persistence,
       1,
+      sendCallBack,
       NULL,
-      NULL,
-      NULL);
-  while (!terminate) {
-    ORTESleepMs(1000);
-    printf("Sampling publication, count %d\n", i);
-    sprintf(instance2Send,"Hello Universe! (%d)",i++);
-    ORTEPublicationSend(p);
-  }
-  #ifdef __RTL__
-    pthread_exit(arg);
-  #endif
+      &delay);
   return 0;
 }
 
-#ifndef __RTL__
-int 
+#ifndef CONFIG_ORTE_RT
+int
 main(int argc, char *args[]) {
   publisher(NULL);
+  while(1) {
+    ORTESleepMs(1000);
+  }
   return 0;
 }
 #else
-pthread_t t;
-int 
+MODULE_LICENSE("GPL");
+int
 init_module(void) {
-  pthread_create (&t, NULL, publisher, 0);
+  publisher(NULL);
   return 0;
 }
-void 
+void
 cleanup_module(void) {
-  int result;
-  terminate=1;
-  pthread_join(t,(void **) &result);
   ORTEDomainAppDestroy(d);
 }
 #endif

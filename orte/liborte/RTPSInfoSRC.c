@@ -29,6 +29,7 @@ void RTPSInfoSRC(u_int8_t *rtps_msg,MessageInterpret *mi) {
   HostId             hid;
   AppId              aid;
   int8_t             e_bit;
+  char               sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
 
   //Parsing
   e_bit=rtps_msg[1] & 0x01;
@@ -42,7 +43,7 @@ void RTPSInfoSRC(u_int8_t *rtps_msg,MessageInterpret *mi) {
   conv_u32(&aid,0);
 
   debug(44,3) ("  RTPSInfoSRC: \n");
-  debug(44,4) ("    appIPAddress:%s\n",IPAddressToString(ipa));
+  debug(44,4) ("    appIPAddress:%s\n",IPAddressToString(ipa,sIPAddress));
   debug(44,4) ("    pv:%lu,%lu vid:%lu,%lu hid:0x%x aid:0x%x\n",
                              protocol.major,protocol.minor,vid.major,vid.minor,hid,aid);
 

@@ -22,6 +22,28 @@
 #include "orte.h"
 
 /*****************************************************************************/
+void
+ORTEDomainStart(ORTEDomain *d,
+    Boolean recvMetatrafficThread,Boolean recvUserDataThread,Boolean sendThread) {
+  if(!d) return;
+  if ((recvMetatrafficThread) && (d->taskRecvMetatraffic.terminate)) {
+    d->taskRecvMetatraffic.terminate=ORTE_FALSE;
+    pthread_create(&d->taskRecvMetatraffic.thread, NULL,
+                  (void*)&ORTEAppRecvMetatrafficThread, (void *)d); 
+  }
+  if ((recvUserDataThread) && (d->taskRecvUserdata.terminate)) {
+    d->taskRecvUserdata.terminate=ORTE_FALSE;
+    pthread_create(&d->taskRecvUserdata.thread, NULL,
+                  (void*)&ORTEAppRecvUserdataThread, (void *)d); 
+  }
+  if ((sendThread) && (d->taskSend.terminate)) {
+    d->taskSend.terminate=ORTE_FALSE;
+    pthread_create(&d->taskSend.thread, NULL,
+                  (void*)&ORTEAppSendThread, (void *)d); 
+  }
+}
+
+/*****************************************************************************/
 Boolean
 ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
   sock_t        sock;
@@ -41,7 +63,7 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
   prop->mgrs=NULL;
   prop->appLocalManager=StringToIPAddress("127.0.0.1");
   prop->mgrAddKey=0;
-  sprintf(prop->version,PACKAGE_STRING\
+  sprintf(prop->version,ORTE_PACKAGE_STRING\
                         ", compiled: "\
                         __DATE__\
                         " "\

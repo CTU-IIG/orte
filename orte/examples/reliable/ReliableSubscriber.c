@@ -50,7 +50,7 @@ main(int argc, char *args[]) {
 
   ORTEInit();
   //ORTEVerbositySetOptions("ALL,10");
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL);
+  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
   ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,64);
   NTPTIME_BUILD(deadline,3); 
   NTPTIME_BUILD(minimumSeparation,0); 

@@ -24,13 +24,14 @@
 /*****************************************************************************/
 ORTEDomain *
 ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
-                    ORTEDomainAppEvents *events,Boolean startSendingThread) {
+                    ORTEDomainAppEvents *events,Boolean suspended) {
   ORTEDomain        *d;
   ObjectEntryOID    *objectEntryOID;
   AppParams         *appParams;
   CSTWriterParams   cstWriterParams;
   CSTReaderParams   cstReaderParams;
   char              iflocal[MAX_INTERFACES*MAX_STRING_IPADDRESS_LENGTH];
+  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   int               i;
   u_int16_t         port=0;
 
@@ -40,8 +41,8 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   if (!d) return NULL;  //no memory
   //initialization local values
   d->domain=domain;
-  d->taskRecvMetatraffic.terminate=ORTE_FALSE;
-  d->taskSend.terminate=ORTE_FALSE;
+  d->taskRecvMetatraffic.terminate=ORTE_TRUE;
+  d->taskSend.terminate=ORTE_TRUE;
   d->taskRecvMetatraffic.sock.port=0;
   d->taskSend.sock.port=0;
   //init structure objectEntry
@@ -62,7 +63,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   iflocal[0]=0;
   if (d->domainProp.IFCount) {
     for(i=0;i<d->domainProp.IFCount;i++) 
-      strcat(iflocal,IPAddressToString(d->domainProp.IFProp[i].ipAddress));
+      strcat(iflocal,IPAddressToString(d->domainProp.IFProp[i].ipAddress,sIPAddress));
     debug(29,2) ("ORTEDomainMgrCreate: localIPAddres(es) %s\n",iflocal);
   } else{
     debug(29,2) ("ORTEDomainMgrCreate: no activ interface card\n");
@@ -123,7 +124,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
     if(sock_setsockopt(&d->taskRecvUserdata.sock,IP_ADD_MEMBERSHIP,
         (void *) &mreq, sizeof(mreq))>=0) {
       debug(29,2) ("ORTEDomainAppCreate: listening to mgroup %s\n",
-           IPAddressToString(d->domainProp.multicast.ipAddress));
+           IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
     }
   }
   if ((d->taskRecvMetatraffic.sock.fd<0) || (d->taskSend.sock.fd<0) ||
@@ -189,7 +190,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
     appParams->managerKeyList[appParams->managerKeyCount]=d->domainProp.mgrAddKey;
     appParams->managerKeyCount++;
     debug(29,4) ("ORTEDomainMgrCreate: additional manager key accepted (%s)\n",
-                  IPAddressToString(d->domainProp.mgrAddKey));
+                  IPAddressToString(d->domainProp.mgrAddKey,sIPAddress));
 
   }
   d->appParams=appParams;
@@ -211,7 +212,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   if (d->domainProp.mgrs) {
     int8_t *cp=d->domainProp.mgrs;
     while (cp[0]!=0) {  //till is length>0
-#ifndef __RTL__
+#ifndef CONFIG_ORTE_RT
       struct hostent *hostname; 
 #endif
       int8_t         *dcp,tcp; 
@@ -219,7 +220,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
       if (!dcp) dcp=cp+strlen(cp);
       tcp=*dcp;  //save ending value
       *dcp=0;    //temporary end of string
-#ifdef __RTL__
+#ifdef CONFIG_ORTE_RT
       if (1) {
         GUID_RTPS guid;
         IPAddress ipAddress=StringToIPAddress(cp);
@@ -244,7 +245,7 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
           CSTWriterAddRemoteReader(d,&d->writerApplicationSelf,objectEntryOID,
               OID_READ_MGR);
           debug(29,2) ("ORTEDomainAppCreate: add fellow manager (%s)\n",
-                      IPAddressToString(ipAddress));
+                      IPAddressToString(ipAddress,sIPAddress));
         }
       }
       *dcp=tcp;                   //restore value
@@ -291,12 +292,8 @@ ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
   appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE);
   
   //Start threads
-  pthread_mutex_lock(&d->objectEntry.htimSendMutex);
-  pthread_create(&d->taskRecvMetatraffic.thread, NULL,
-      (void*)&ORTEAppRecvMetatrafficThread, (void *)d); 
-  if (startSendingThread) {
-    pthread_create(&d->taskSend.thread, NULL,
-        (void*)&ORTEAppSendThread, (void *)d); 
+  if (!suspended) {
+    ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE);
   }
 
   debug(29,10) ("ORTEDomainMgrCreate: finished\n");
@@ -309,13 +306,17 @@ ORTEDomainMgrDestroy(ORTEDomain *d) {
 
   debug(29,10) ("ORTEDomainMgrDestroy: start\n");
   //Stoping threads
-  d->taskRecvMetatraffic.terminate=ORTE_TRUE;
-  d->taskSend.terminate=ORTE_TRUE;
-  ORTEDomainWakeUpReceivingThread(d,
-      &d->taskSend.sock,d->taskRecvMetatraffic.sock.port); 
-  pthread_join(d->taskRecvMetatraffic.thread,NULL); 
-  ORTEDomainWakeUpSendingThread(&d->objectEntry); 
-  pthread_join(d->taskSend.thread,NULL); 
+  if(!d->taskRecvMetatraffic.terminate) {
+    d->taskRecvMetatraffic.terminate=ORTE_TRUE;
+    ORTEDomainWakeUpReceivingThread(d,
+        &d->taskSend.sock,d->taskRecvMetatraffic.sock.port); 
+    pthread_join(d->taskRecvMetatraffic.thread,NULL); 
+  }
+  if (!d->taskSend.terminate) {
+    d->taskSend.terminate=ORTE_TRUE;
+    ORTEDomainWakeUpSendingThread(&d->objectEntry); 
+    pthread_join(d->taskSend.thread,NULL); 
+  }
   debug(29,8) ("ORTEDomainMgrDestroy: threads stoped and destroyed\n");
 
   objectEntryDump(&d->objectEntry);  
@@ -330,7 +331,6 @@ ORTEDomainMgrDestroy(ORTEDomain *d) {
   //rwLocks
   pthread_rwlock_destroy(&d->objectEntry.objRootLock);
   pthread_rwlock_destroy(&d->objectEntry.htimRootLock);
-
 
   //CSTReaders and CSTWriters
   CSTReaderDelete(d,&d->readerManagers);

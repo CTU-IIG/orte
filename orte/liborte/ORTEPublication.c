@@ -27,7 +27,7 @@ GAVL_CUST_NODE_INT_IMP(PublicationList,
 
 /*****************************************************************************/
 ORTEPublication * 
-ORTEPublicationCreate(ORTEDomain *d,char *topic,char *typeName,
+ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
     void *instance,NtpTime *persistence,int strength,
     ORTESendCallBack sendCallBack,void *sendCallBackParam,
     NtpTime *sendCallBackDelay) {

@@ -28,7 +28,7 @@ GAVL_CUST_NODE_INT_IMP(SubscriptionList,
 /*****************************************************************************/
 ORTESubscription * 
 ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sType,
-    char *topic,char *typeName,void *instance,NtpTime *deadline,
+    const char *topic,const char *typeName,void *instance,NtpTime *deadline,
     NtpTime *minimumSeparation,ORTERecvCallBack recvCallBack,
     void *recvCallBackParam) {
   GUID_RTPS             guid;
@@ -41,17 +41,15 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
   
   cstReader=(CSTReader*)MALLOC(sizeof(CSTReader));
   if (!cstReader) return NULL;
-  pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
-  pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
   pthread_rwlock_rdlock(&d->typeEntry.lock);    
   if (!(typeNode=ORTEType_find(&d->typeEntry,&typeName))) {
     pthread_rwlock_unlock(&d->typeEntry.lock);    
-    pthread_rwlock_unlock(&d->objectEntry.objRootLock);
-    pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
     printf("before call ORTESubscriptionCreateBestEffort is necessary to register \n\
             ser./deser. function for a given typeName!!!\n");
     return NULL;
   }  
+  pthread_rwlock_wrlock(&d->objectEntry.objRootLock);
+  pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
   pthread_rwlock_wrlock(&d->subscriptions.lock);
   //generate new guid of publisher
   d->subscriptions.counter++;
@@ -106,13 +104,9 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
 
 /*****************************************************************************/
 int
-ORTESubscriptionDestroy(ORTESubscription *cstReader) {
+ORTESubscriptionDestroyLocked(ORTESubscription *cstReader) {
   CSChange              *csChange;
-
-  if (!cstReader) return -1;
-  //generate csChange for writerSubscriptions
-  pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
-  pthread_rwlock_wrlock(&cstReader->domain->objectEntry.htimRootLock);
+  
   pthread_rwlock_wrlock(&cstReader->domain->writerSubscriptions.lock);
   csChange=(CSChange*)MALLOC(sizeof(CSChange));
   CSChangeAttributes_init_head(csChange);
@@ -123,9 +117,21 @@ ORTESubscriptionDestroy(ORTESubscription *cstReader) {
                        &cstReader->domain->writerSubscriptions,
                        csChange);
   pthread_rwlock_unlock(&cstReader->domain->writerSubscriptions.lock);
+  return 0;
+}
+
+/*****************************************************************************/
+int
+ORTESubscriptionDestroy(ORTESubscription *cstReader) {
+  int r;
+  if (!cstReader) return -1;
+  //generate csChange for writerSubscriptions
+  pthread_rwlock_rdlock(&cstReader->domain->objectEntry.objRootLock);
+  pthread_rwlock_wrlock(&cstReader->domain->objectEntry.htimRootLock);
+  r=ORTESubscriptionDestroyLocked(cstReader);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.htimRootLock);
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
-  return 0;
+  return r;
 }
 
 

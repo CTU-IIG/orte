@@ -223,15 +223,15 @@ htimerUnicastSendUserData_run_expired(ORTEDomain *d,
   if (d->mbSend.cdrStream.length>RTPS_HEADER_LENGTH) {
       ORTESendData(d,objectEntryAID,ORTE_FALSE);
   }
-} 
+}
 
 /*********************************************************************/
 NtpTime
 getActualNtpTime(void) {
   NtpTime               result;
-#ifndef __RTL__
+#ifndef CONFIG_ORTE_RT
   struct timeval        time;
-  
+
   gettimeofday(&time,NULL);
   NtpTimeAssembFromUs(result,time.tv_sec,time.tv_usec);
   NtpTimeAssembFromUs(result,time.tv_sec,time.tv_usec);

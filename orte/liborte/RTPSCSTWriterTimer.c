@@ -153,7 +153,7 @@ CSTWriterSendBestEffortTimer(ORTEDomain *d,void *vcstRemoteReader) {
 /**********************************************************************************/
 int
 CSTWriterSendStrictTimer(ORTEDomain *d,void *vcstRemoteReader) {
-/*  CSTRemoteReader   *cstRemoteReader=(CSTRemoteReader*)vcstRemoteReader;
+  CSTRemoteReader   *cstRemoteReader=(CSTRemoteReader*)vcstRemoteReader;
   CSChangeForReader *csChangeForReader=NULL;
   unsigned int      max_msg_len;
   CSChange          *csChange;
@@ -186,7 +186,7 @@ CSTWriterSendStrictTimer(ORTEDomain *d,void *vcstRemoteReader) {
                        cstRemoteReader->guid.hid,
                        cstRemoteReader->guid.aid);
         }
-        if (max_msg_len<20+cstWriter->typeRegister->getMaxSize) {
+        if (max_msg_len<20+cstRemoteReader->cstWriter->typeRegister->getMaxSize) {
           d->mbSend.needSend=ORTE_TRUE;
           return 1;
         }
@@ -194,21 +194,11 @@ CSTWriterSendStrictTimer(ORTEDomain *d,void *vcstRemoteReader) {
                     cstRemoteReader->cstWriter->guid.oid,
                     cstRemoteReader->guid.hid,
                     cstRemoteReader->guid.aid);
-                    
-                    
-                    
-        RTPSIssueCreateHeader(d->mbSend.cdrStream.bufferPtr,
-                    max_msg_len,16+cstWriter->typeRegister->getMaxSize,
-                    OID_UNKNOWN,cstWriter->guid.oid,snNext);
-        
-                    
-                    
-                    
       }
     }
   }
   cstRemoteReader->commStateSend=NOTHNIGTOSEND;
-  debug(52,10) ("CSTWriterSendStrictTimer: finished\n");*/
+  debug(52,10) ("CSTWriterSendStrictTimer: finished\n");
   return 0;
 }
 

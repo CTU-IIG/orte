@@ -29,7 +29,6 @@ extern "C" {
 
 #define MAX_PARAMETER_LOCAL_LENGTH  8     //min 8 bytes !!!
 
-#define MAX_STRING_IPADDRESS_LENGTH 4*3+3+1
 
 //#define ENABLE_MEM_CHECK
 

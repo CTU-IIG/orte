@@ -1,5 +1,5 @@
 /*
- *  $Id: debug.c,v 0.0.0.1              2003/08/21 
+ *  $Id: debug.c,v 0.0.0.1              2003/08/21
  *
  *  DEBUG:  section 1                   Debug
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
@@ -11,13 +11,13 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
- */ 
+ *
+ */
 
 #include "orte.h"
 
@@ -36,14 +36,14 @@ db_print_output(const char *format);
 /*********************************************************************/
 /* globals */
 
-#ifndef __RTL__
+#ifndef CONFIG_ORTE_RT
 FILE *debug_log=NULL;       /* NULL */
 #endif
 
 /*********************************************************************/
 /* functions */
 
-#ifdef __RTL__
+#ifdef CONFIG_ORTE_RT
 static const char *
 debug_log_time(void) {
   struct timespec        time;
@@ -63,7 +63,7 @@ debug_log_time(void) {
   sprintf(buf, "%li.%03li", time.tv_sec,time.tv_usec/1000);
   return buf;
 }
-#endif /* __RTL__ */
+#endif /* CONFIG_ORTE_RT */
 
 void
 db_print(const char *format,...) {
@@ -79,7 +79,7 @@ db_print(const char *format,...) {
 
 void
 db_print_output(const char *format) {
-#ifndef __RTL__
+#ifndef CONFIG_ORTE_RT
   if (debug_log == NULL) return;
   fprintf(debug_log, format);
   fflush(debug_log);
@@ -125,7 +125,7 @@ debug_options(const char *options) {
 
 void
 debug_open_log(const char *logfile) {
-#ifndef __RTL__
+#ifndef CONFIG_ORTE_RT
   if (logfile == NULL) {
     debug_log = stderr;
     return;

@@ -74,6 +74,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -152,12 +153,12 @@ ul_gavl.c \
 ul_gavlprim.c
 
 
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = orte.ko
-@CONFIG_ORTE_RT_TRUE@orte_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-@CONFIG_ORTE_RT_TRUE@orte_ko_SOURCES = $(LIBORTE_SOURCES)
-@CONFIG_ORTE_RT_TRUE@orte_ko_LINK = $(top_builddir)/modtool --link -o $@
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_orte.ko
+@CONFIG_ORTE_RT_TRUE@rt_orte_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+@CONFIG_ORTE_RT_TRUE@rt_orte_ko_SOURCES = $(LIBORTE_SOURCES)
+@CONFIG_ORTE_RT_TRUE@rt_orte_ko_LINK = $(top_builddir)/modtool --link -o $@
 
-@CONFIG_ORTE_RT_TRUE@SUBDIRS = rtl
+@CONFIG_ORTE_RT_TRUE@@USE_RTLINUX_TRUE@SUBDIRS = rtl
 @CONFIG_ORTE_RT_FALSE@lib_LIBRARIES = liborte.a
 @CONFIG_ORTE_RT_FALSE@liborte_a_SOURCES = $(LIBORTE_SOURCES)
 
@@ -190,44 +191,48 @@ am__objects_1 = conv.$(OBJEXT) debug.$(OBJEXT) event.$(OBJEXT) \
 	sock.$(OBJEXT) ul_gavl.$(OBJEXT) ul_gavlprim.$(OBJEXT)
 @CONFIG_ORTE_RT_FALSE@am_liborte_a_OBJECTS = $(am__objects_1)
 liborte_a_OBJECTS = $(am_liborte_a_OBJECTS)
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = orte.ko$(EXEEXT)
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_orte.ko$(EXEEXT)
 @CONFIG_ORTE_RT_FALSE@module_PROGRAMS =
 PROGRAMS = $(module_PROGRAMS)
 
-am__objects_2 = orte_ko-conv.$(OBJEXT) orte_ko-debug.$(OBJEXT) \
-	orte_ko-event.$(OBJEXT) orte_ko-fnmatch.$(OBJEXT) \
-	orte_ko-htimerNtp.$(OBJEXT) orte_ko-objectEntry.$(OBJEXT) \
-	orte_ko-objectEntryTimer.$(OBJEXT) \
-	orte_ko-objectUtils.$(OBJEXT) \
-	orte_ko-ORTEAppRecvMetatrafficThread.$(OBJEXT) \
-	orte_ko-ORTEAppRecvUserdataThread.$(OBJEXT) \
-	orte_ko-ORTEAppSendThread.$(OBJEXT) \
-	orte_ko-ORTEDomainApp.$(OBJEXT) \
-	orte_ko-ORTEPublication.$(OBJEXT) \
-	orte_ko-ORTEPublicationTimer.$(OBJEXT) \
-	orte_ko-ORTESubscription.$(OBJEXT) orte_ko-ORTEDomain.$(OBJEXT) \
-	orte_ko-ORTEDomainMgr.$(OBJEXT) orte_ko-ORTEInit.$(OBJEXT) \
-	orte_ko-ORTEThreadUtils.$(OBJEXT) \
-	orte_ko-ORTETypeRegister.$(OBJEXT) \
-	orte_ko-ORTEVerbosity.$(OBJEXT) orte_ko-ORTEPattern.$(OBJEXT) \
-	orte_ko-parameter.$(OBJEXT) orte_ko-RTPSAck.$(OBJEXT) \
-	orte_ko-RTPSCSTReader.$(OBJEXT) \
-	orte_ko-RTPSCSTReaderTimer.$(OBJEXT) \
-	orte_ko-RTPSCSTReaderProc.$(OBJEXT) \
-	orte_ko-RTPSCSTWriter.$(OBJEXT) \
-	orte_ko-RTPSCSTWriterTimer.$(OBJEXT) orte_ko-RTPSGap.$(OBJEXT) \
-	orte_ko-RTPSHeader.$(OBJEXT) orte_ko-RTPSHeardBeat.$(OBJEXT) \
-	orte_ko-RTPSInfoDST.$(OBJEXT) orte_ko-RTPSInfoREPLY.$(OBJEXT) \
-	orte_ko-RTPSInfoSRC.$(OBJEXT) orte_ko-RTPSInfoTS.$(OBJEXT) \
-	orte_ko-RTPSPad.$(OBJEXT) orte_ko-RTPSUtils.$(OBJEXT) \
-	orte_ko-RTPSVar.$(OBJEXT) orte_ko-RTPSIssue.$(OBJEXT) \
-	orte_ko-sock.$(OBJEXT) orte_ko-ul_gavl.$(OBJEXT) \
-	orte_ko-ul_gavlprim.$(OBJEXT)
-@CONFIG_ORTE_RT_TRUE@am_orte_ko_OBJECTS = $(am__objects_2)
-orte_ko_OBJECTS = $(am_orte_ko_OBJECTS)
-orte_ko_LDADD = $(LDADD)
-orte_ko_DEPENDENCIES =
-orte_ko_LDFLAGS =
+am__objects_2 = rt_orte_ko-conv.$(OBJEXT) rt_orte_ko-debug.$(OBJEXT) \
+	rt_orte_ko-event.$(OBJEXT) rt_orte_ko-fnmatch.$(OBJEXT) \
+	rt_orte_ko-htimerNtp.$(OBJEXT) rt_orte_ko-objectEntry.$(OBJEXT) \
+	rt_orte_ko-objectEntryTimer.$(OBJEXT) \
+	rt_orte_ko-objectUtils.$(OBJEXT) \
+	rt_orte_ko-ORTEAppRecvMetatrafficThread.$(OBJEXT) \
+	rt_orte_ko-ORTEAppRecvUserdataThread.$(OBJEXT) \
+	rt_orte_ko-ORTEAppSendThread.$(OBJEXT) \
+	rt_orte_ko-ORTEDomainApp.$(OBJEXT) \
+	rt_orte_ko-ORTEPublication.$(OBJEXT) \
+	rt_orte_ko-ORTEPublicationTimer.$(OBJEXT) \
+	rt_orte_ko-ORTESubscription.$(OBJEXT) \
+	rt_orte_ko-ORTEDomain.$(OBJEXT) \
+	rt_orte_ko-ORTEDomainMgr.$(OBJEXT) \
+	rt_orte_ko-ORTEInit.$(OBJEXT) \
+	rt_orte_ko-ORTEThreadUtils.$(OBJEXT) \
+	rt_orte_ko-ORTETypeRegister.$(OBJEXT) \
+	rt_orte_ko-ORTEVerbosity.$(OBJEXT) \
+	rt_orte_ko-ORTEPattern.$(OBJEXT) rt_orte_ko-parameter.$(OBJEXT) \
+	rt_orte_ko-RTPSAck.$(OBJEXT) rt_orte_ko-RTPSCSTReader.$(OBJEXT) \
+	rt_orte_ko-RTPSCSTReaderTimer.$(OBJEXT) \
+	rt_orte_ko-RTPSCSTReaderProc.$(OBJEXT) \
+	rt_orte_ko-RTPSCSTWriter.$(OBJEXT) \
+	rt_orte_ko-RTPSCSTWriterTimer.$(OBJEXT) \
+	rt_orte_ko-RTPSGap.$(OBJEXT) rt_orte_ko-RTPSHeader.$(OBJEXT) \
+	rt_orte_ko-RTPSHeardBeat.$(OBJEXT) \
+	rt_orte_ko-RTPSInfoDST.$(OBJEXT) \
+	rt_orte_ko-RTPSInfoREPLY.$(OBJEXT) \
+	rt_orte_ko-RTPSInfoSRC.$(OBJEXT) \
+	rt_orte_ko-RTPSInfoTS.$(OBJEXT) rt_orte_ko-RTPSPad.$(OBJEXT) \
+	rt_orte_ko-RTPSUtils.$(OBJEXT) rt_orte_ko-RTPSVar.$(OBJEXT) \
+	rt_orte_ko-RTPSIssue.$(OBJEXT) rt_orte_ko-sock.$(OBJEXT) \
+	rt_orte_ko-ul_gavl.$(OBJEXT) rt_orte_ko-ul_gavlprim.$(OBJEXT)
+@CONFIG_ORTE_RT_TRUE@am_rt_orte_ko_OBJECTS = $(am__objects_2)
+rt_orte_ko_OBJECTS = $(am_rt_orte_ko_OBJECTS)
+rt_orte_ko_LDADD = $(LDADD)
+rt_orte_ko_DEPENDENCIES =
+rt_orte_ko_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/orte/include
@@ -266,58 +271,58 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/fnmatch.Po ./$(DEPDIR)/htimerNtp.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/objectEntry.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/objectEntryTimer.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/objectUtils.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEAppRecvMetatrafficThread.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEAppRecvUserdataThread.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEAppSendThread.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEDomain.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEDomainApp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEDomainMgr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEInit.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEPattern.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEPublication.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEPublicationTimer.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTESubscription.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEThreadUtils.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTETypeRegister.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ORTEVerbosity.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSAck.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSCSTReader.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSCSTReaderProc.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSCSTReaderTimer.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSCSTWriter.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSCSTWriterTimer.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSGap.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSHeader.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSHeardBeat.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSInfoDST.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSInfoREPLY.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSInfoSRC.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSInfoTS.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSIssue.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSPad.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSUtils.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-RTPSVar.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-conv.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-debug.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-event.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-fnmatch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-htimerNtp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-objectEntry.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-objectEntryTimer.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-objectUtils.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-parameter.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-sock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ul_gavl.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/orte_ko-ul_gavlprim.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/parameter.Po ./$(DEPDIR)/sock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ul_gavl.Po ./$(DEPDIR)/ul_gavlprim.Po
+@AMDEP_TRUE@	./$(DEPDIR)/objectUtils.Po ./$(DEPDIR)/parameter.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEAppRecvMetatrafficThread.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEAppRecvUserdataThread.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEAppSendThread.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEDomain.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEDomainApp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEDomainMgr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEInit.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEPattern.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEPublication.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEPublicationTimer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTESubscription.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEThreadUtils.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTETypeRegister.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ORTEVerbosity.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSAck.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSCSTReader.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSCSTReaderProc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSCSTReaderTimer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSCSTWriter.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSCSTWriterTimer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSGap.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSHeader.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSHeardBeat.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSInfoDST.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSInfoREPLY.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSInfoSRC.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSInfoTS.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSIssue.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSPad.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSUtils.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-RTPSVar.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-conv.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-debug.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-event.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-fnmatch.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-htimerNtp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-objectEntry.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-objectEntryTimer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-objectUtils.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-parameter.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-sock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ul_gavl.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_orte_ko-ul_gavlprim.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sock.Po ./$(DEPDIR)/ul_gavl.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/ul_gavlprim.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(liborte_a_SOURCES) $(orte_ko_SOURCES)
+DIST_SOURCES = $(liborte_a_SOURCES) $(rt_orte_ko_SOURCES)
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
@@ -325,7 +330,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = rtl
-SOURCES = $(liborte_a_SOURCES) $(orte_ko_SOURCES)
+SOURCES = $(liborte_a_SOURCES) $(rt_orte_ko_SOURCES)
 
 all: all-recursive
 
@@ -395,53 +400,54 @@ uninstall-modulePROGRAMS:
 
 clean-modulePROGRAMS:
 	-test -z "$(module_PROGRAMS)" || rm -f $(module_PROGRAMS)
-orte_ko-conv.$(OBJEXT): conv.c
-orte_ko-debug.$(OBJEXT): debug.c
-orte_ko-event.$(OBJEXT): event.c
-orte_ko-fnmatch.$(OBJEXT): fnmatch.c
-orte_ko-htimerNtp.$(OBJEXT): htimerNtp.c
-orte_ko-objectEntry.$(OBJEXT): objectEntry.c
-orte_ko-objectEntryTimer.$(OBJEXT): objectEntryTimer.c
-orte_ko-objectUtils.$(OBJEXT): objectUtils.c
-orte_ko-ORTEAppRecvMetatrafficThread.$(OBJEXT): \
+rt_orte_ko-conv.$(OBJEXT): conv.c
+rt_orte_ko-debug.$(OBJEXT): debug.c
+rt_orte_ko-event.$(OBJEXT): event.c
+rt_orte_ko-fnmatch.$(OBJEXT): fnmatch.c
+rt_orte_ko-htimerNtp.$(OBJEXT): htimerNtp.c
+rt_orte_ko-objectEntry.$(OBJEXT): objectEntry.c
+rt_orte_ko-objectEntryTimer.$(OBJEXT): objectEntryTimer.c
+rt_orte_ko-objectUtils.$(OBJEXT): objectUtils.c
+rt_orte_ko-ORTEAppRecvMetatrafficThread.$(OBJEXT): \
 	ORTEAppRecvMetatrafficThread.c
-orte_ko-ORTEAppRecvUserdataThread.$(OBJEXT): ORTEAppRecvUserdataThread.c
-orte_ko-ORTEAppSendThread.$(OBJEXT): ORTEAppSendThread.c
-orte_ko-ORTEDomainApp.$(OBJEXT): ORTEDomainApp.c
-orte_ko-ORTEPublication.$(OBJEXT): ORTEPublication.c
-orte_ko-ORTEPublicationTimer.$(OBJEXT): ORTEPublicationTimer.c
-orte_ko-ORTESubscription.$(OBJEXT): ORTESubscription.c
-orte_ko-ORTEDomain.$(OBJEXT): ORTEDomain.c
-orte_ko-ORTEDomainMgr.$(OBJEXT): ORTEDomainMgr.c
-orte_ko-ORTEInit.$(OBJEXT): ORTEInit.c
-orte_ko-ORTEThreadUtils.$(OBJEXT): ORTEThreadUtils.c
-orte_ko-ORTETypeRegister.$(OBJEXT): ORTETypeRegister.c
-orte_ko-ORTEVerbosity.$(OBJEXT): ORTEVerbosity.c
-orte_ko-ORTEPattern.$(OBJEXT): ORTEPattern.c
-orte_ko-parameter.$(OBJEXT): parameter.c
-orte_ko-RTPSAck.$(OBJEXT): RTPSAck.c
-orte_ko-RTPSCSTReader.$(OBJEXT): RTPSCSTReader.c
-orte_ko-RTPSCSTReaderTimer.$(OBJEXT): RTPSCSTReaderTimer.c
-orte_ko-RTPSCSTReaderProc.$(OBJEXT): RTPSCSTReaderProc.c
-orte_ko-RTPSCSTWriter.$(OBJEXT): RTPSCSTWriter.c
-orte_ko-RTPSCSTWriterTimer.$(OBJEXT): RTPSCSTWriterTimer.c
-orte_ko-RTPSGap.$(OBJEXT): RTPSGap.c
-orte_ko-RTPSHeader.$(OBJEXT): RTPSHeader.c
-orte_ko-RTPSHeardBeat.$(OBJEXT): RTPSHeardBeat.c
-orte_ko-RTPSInfoDST.$(OBJEXT): RTPSInfoDST.c
-orte_ko-RTPSInfoREPLY.$(OBJEXT): RTPSInfoREPLY.c
-orte_ko-RTPSInfoSRC.$(OBJEXT): RTPSInfoSRC.c
-orte_ko-RTPSInfoTS.$(OBJEXT): RTPSInfoTS.c
-orte_ko-RTPSPad.$(OBJEXT): RTPSPad.c
-orte_ko-RTPSUtils.$(OBJEXT): RTPSUtils.c
-orte_ko-RTPSVar.$(OBJEXT): RTPSVar.c
-orte_ko-RTPSIssue.$(OBJEXT): RTPSIssue.c
-orte_ko-sock.$(OBJEXT): sock.c
-orte_ko-ul_gavl.$(OBJEXT): ul_gavl.c
-orte_ko-ul_gavlprim.$(OBJEXT): ul_gavlprim.c
-orte.ko$(EXEEXT): $(orte_ko_OBJECTS) $(orte_ko_DEPENDENCIES) 
-	@rm -f orte.ko$(EXEEXT)
-	$(orte_ko_LINK) $(orte_ko_LDFLAGS) $(orte_ko_OBJECTS) $(orte_ko_LDADD) $(LIBS)
+rt_orte_ko-ORTEAppRecvUserdataThread.$(OBJEXT): \
+	ORTEAppRecvUserdataThread.c
+rt_orte_ko-ORTEAppSendThread.$(OBJEXT): ORTEAppSendThread.c
+rt_orte_ko-ORTEDomainApp.$(OBJEXT): ORTEDomainApp.c
+rt_orte_ko-ORTEPublication.$(OBJEXT): ORTEPublication.c
+rt_orte_ko-ORTEPublicationTimer.$(OBJEXT): ORTEPublicationTimer.c
+rt_orte_ko-ORTESubscription.$(OBJEXT): ORTESubscription.c
+rt_orte_ko-ORTEDomain.$(OBJEXT): ORTEDomain.c
+rt_orte_ko-ORTEDomainMgr.$(OBJEXT): ORTEDomainMgr.c
+rt_orte_ko-ORTEInit.$(OBJEXT): ORTEInit.c
+rt_orte_ko-ORTEThreadUtils.$(OBJEXT): ORTEThreadUtils.c
+rt_orte_ko-ORTETypeRegister.$(OBJEXT): ORTETypeRegister.c
+rt_orte_ko-ORTEVerbosity.$(OBJEXT): ORTEVerbosity.c
+rt_orte_ko-ORTEPattern.$(OBJEXT): ORTEPattern.c
+rt_orte_ko-parameter.$(OBJEXT): parameter.c
+rt_orte_ko-RTPSAck.$(OBJEXT): RTPSAck.c
+rt_orte_ko-RTPSCSTReader.$(OBJEXT): RTPSCSTReader.c
+rt_orte_ko-RTPSCSTReaderTimer.$(OBJEXT): RTPSCSTReaderTimer.c
+rt_orte_ko-RTPSCSTReaderProc.$(OBJEXT): RTPSCSTReaderProc.c
+rt_orte_ko-RTPSCSTWriter.$(OBJEXT): RTPSCSTWriter.c
+rt_orte_ko-RTPSCSTWriterTimer.$(OBJEXT): RTPSCSTWriterTimer.c
+rt_orte_ko-RTPSGap.$(OBJEXT): RTPSGap.c
+rt_orte_ko-RTPSHeader.$(OBJEXT): RTPSHeader.c
+rt_orte_ko-RTPSHeardBeat.$(OBJEXT): RTPSHeardBeat.c
+rt_orte_ko-RTPSInfoDST.$(OBJEXT): RTPSInfoDST.c
+rt_orte_ko-RTPSInfoREPLY.$(OBJEXT): RTPSInfoREPLY.c
+rt_orte_ko-RTPSInfoSRC.$(OBJEXT): RTPSInfoSRC.c
+rt_orte_ko-RTPSInfoTS.$(OBJEXT): RTPSInfoTS.c
+rt_orte_ko-RTPSPad.$(OBJEXT): RTPSPad.c
+rt_orte_ko-RTPSUtils.$(OBJEXT): RTPSUtils.c
+rt_orte_ko-RTPSVar.$(OBJEXT): RTPSVar.c
+rt_orte_ko-RTPSIssue.$(OBJEXT): RTPSIssue.c
+rt_orte_ko-sock.$(OBJEXT): sock.c
+rt_orte_ko-ul_gavl.$(OBJEXT): ul_gavl.c
+rt_orte_ko-ul_gavlprim.$(OBJEXT): ul_gavlprim.c
+rt_orte.ko$(EXEEXT): $(rt_orte_ko_OBJECTS) $(rt_orte_ko_DEPENDENCIES) 
+	@rm -f rt_orte.ko$(EXEEXT)
+	$(rt_orte_ko_LINK) $(rt_orte_ko_LDFLAGS) $(rt_orte_ko_OBJECTS) $(rt_orte_ko_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -488,50 +494,50 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objectEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objectEntryTimer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objectUtils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEAppRecvMetatrafficThread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEAppRecvUserdataThread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEAppSendThread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEDomain.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEDomainApp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEDomainMgr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEInit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEPattern.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEPublication.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEPublicationTimer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTESubscription.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEThreadUtils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTETypeRegister.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ORTEVerbosity.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSAck.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSCSTReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSCSTReaderProc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSCSTReaderTimer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSCSTWriter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSCSTWriterTimer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSGap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSHeader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSHeardBeat.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSInfoDST.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSInfoREPLY.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSInfoSRC.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSInfoTS.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSIssue.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSPad.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSUtils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-RTPSVar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-conv.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-debug.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-event.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-fnmatch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-htimerNtp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-objectEntry.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-objectEntryTimer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-objectUtils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-parameter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-sock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ul_gavl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orte_ko-ul_gavlprim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parameter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEAppRecvMetatrafficThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEAppRecvUserdataThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEAppSendThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEDomain.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEDomainApp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEDomainMgr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEInit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEPattern.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEPublication.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEPublicationTimer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTESubscription.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEThreadUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTETypeRegister.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ORTEVerbosity.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSAck.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSCSTReader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSCSTReaderProc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSCSTReaderTimer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSCSTWriter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSCSTWriterTimer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSGap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSHeader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSHeardBeat.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSInfoDST.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSInfoREPLY.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSInfoSRC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSInfoTS.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSIssue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSPad.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-RTPSVar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-conv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-debug.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-event.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-fnmatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-htimerNtp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-objectEntry.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-objectEntryTimer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-objectUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-parameter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-sock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ul_gavl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_orte_ko-ul_gavlprim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ul_gavl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ul_gavlprim.Po@am__quote@
@@ -551,521 +557,521 @@ distclean-depend:
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c `cygpath -w $<`
 
-orte_ko-conv.o: conv.c
-@AMDEP_TRUE@	source='conv.c' object='orte_ko-conv.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-conv.Po' tmpdepfile='$(DEPDIR)/orte_ko-conv.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-conv.o: conv.c
+@AMDEP_TRUE@	source='conv.c' object='rt_orte_ko-conv.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-conv.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-conv.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-conv.o `test -f 'conv.c' || echo '$(srcdir)/'`conv.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-conv.o `test -f 'conv.c' || echo '$(srcdir)/'`conv.c
 
-orte_ko-conv.obj: conv.c
-@AMDEP_TRUE@	source='conv.c' object='orte_ko-conv.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-conv.Po' tmpdepfile='$(DEPDIR)/orte_ko-conv.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-conv.obj: conv.c
+@AMDEP_TRUE@	source='conv.c' object='rt_orte_ko-conv.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-conv.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-conv.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-conv.obj `cygpath -w conv.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-conv.obj `cygpath -w conv.c`
 
-orte_ko-debug.o: debug.c
-@AMDEP_TRUE@	source='debug.c' object='orte_ko-debug.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-debug.Po' tmpdepfile='$(DEPDIR)/orte_ko-debug.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-debug.o: debug.c
+@AMDEP_TRUE@	source='debug.c' object='rt_orte_ko-debug.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-debug.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-debug.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-debug.o `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-debug.o `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
 
-orte_ko-debug.obj: debug.c
-@AMDEP_TRUE@	source='debug.c' object='orte_ko-debug.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-debug.Po' tmpdepfile='$(DEPDIR)/orte_ko-debug.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-debug.obj: debug.c
+@AMDEP_TRUE@	source='debug.c' object='rt_orte_ko-debug.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-debug.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-debug.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-debug.obj `cygpath -w debug.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-debug.obj `cygpath -w debug.c`
 
-orte_ko-event.o: event.c
-@AMDEP_TRUE@	source='event.c' object='orte_ko-event.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-event.Po' tmpdepfile='$(DEPDIR)/orte_ko-event.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-event.o: event.c
+@AMDEP_TRUE@	source='event.c' object='rt_orte_ko-event.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-event.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-event.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-event.o `test -f 'event.c' || echo '$(srcdir)/'`event.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-event.o `test -f 'event.c' || echo '$(srcdir)/'`event.c
 
-orte_ko-event.obj: event.c
-@AMDEP_TRUE@	source='event.c' object='orte_ko-event.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-event.Po' tmpdepfile='$(DEPDIR)/orte_ko-event.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-event.obj: event.c
+@AMDEP_TRUE@	source='event.c' object='rt_orte_ko-event.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-event.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-event.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-event.obj `cygpath -w event.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-event.obj `cygpath -w event.c`
 
-orte_ko-fnmatch.o: fnmatch.c
-@AMDEP_TRUE@	source='fnmatch.c' object='orte_ko-fnmatch.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-fnmatch.Po' tmpdepfile='$(DEPDIR)/orte_ko-fnmatch.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-fnmatch.o: fnmatch.c
+@AMDEP_TRUE@	source='fnmatch.c' object='rt_orte_ko-fnmatch.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-fnmatch.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-fnmatch.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-fnmatch.o `test -f 'fnmatch.c' || echo '$(srcdir)/'`fnmatch.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-fnmatch.o `test -f 'fnmatch.c' || echo '$(srcdir)/'`fnmatch.c
 
-orte_ko-fnmatch.obj: fnmatch.c
-@AMDEP_TRUE@	source='fnmatch.c' object='orte_ko-fnmatch.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-fnmatch.Po' tmpdepfile='$(DEPDIR)/orte_ko-fnmatch.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-fnmatch.obj: fnmatch.c
+@AMDEP_TRUE@	source='fnmatch.c' object='rt_orte_ko-fnmatch.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-fnmatch.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-fnmatch.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-fnmatch.obj `cygpath -w fnmatch.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-fnmatch.obj `cygpath -w fnmatch.c`
 
-orte_ko-htimerNtp.o: htimerNtp.c
-@AMDEP_TRUE@	source='htimerNtp.c' object='orte_ko-htimerNtp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-htimerNtp.Po' tmpdepfile='$(DEPDIR)/orte_ko-htimerNtp.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-htimerNtp.o: htimerNtp.c
+@AMDEP_TRUE@	source='htimerNtp.c' object='rt_orte_ko-htimerNtp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-htimerNtp.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-htimerNtp.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-htimerNtp.o `test -f 'htimerNtp.c' || echo '$(srcdir)/'`htimerNtp.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-htimerNtp.o `test -f 'htimerNtp.c' || echo '$(srcdir)/'`htimerNtp.c
 
-orte_ko-htimerNtp.obj: htimerNtp.c
-@AMDEP_TRUE@	source='htimerNtp.c' object='orte_ko-htimerNtp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-htimerNtp.Po' tmpdepfile='$(DEPDIR)/orte_ko-htimerNtp.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-htimerNtp.obj: htimerNtp.c
+@AMDEP_TRUE@	source='htimerNtp.c' object='rt_orte_ko-htimerNtp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-htimerNtp.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-htimerNtp.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-htimerNtp.obj `cygpath -w htimerNtp.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-htimerNtp.obj `cygpath -w htimerNtp.c`
 
-orte_ko-objectEntry.o: objectEntry.c
-@AMDEP_TRUE@	source='objectEntry.c' object='orte_ko-objectEntry.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-objectEntry.Po' tmpdepfile='$(DEPDIR)/orte_ko-objectEntry.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-objectEntry.o: objectEntry.c
+@AMDEP_TRUE@	source='objectEntry.c' object='rt_orte_ko-objectEntry.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-objectEntry.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-objectEntry.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-objectEntry.o `test -f 'objectEntry.c' || echo '$(srcdir)/'`objectEntry.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-objectEntry.o `test -f 'objectEntry.c' || echo '$(srcdir)/'`objectEntry.c
 
-orte_ko-objectEntry.obj: objectEntry.c
-@AMDEP_TRUE@	source='objectEntry.c' object='orte_ko-objectEntry.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-objectEntry.Po' tmpdepfile='$(DEPDIR)/orte_ko-objectEntry.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-objectEntry.obj: objectEntry.c
+@AMDEP_TRUE@	source='objectEntry.c' object='rt_orte_ko-objectEntry.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-objectEntry.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-objectEntry.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-objectEntry.obj `cygpath -w objectEntry.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-objectEntry.obj `cygpath -w objectEntry.c`
 
-orte_ko-objectEntryTimer.o: objectEntryTimer.c
-@AMDEP_TRUE@	source='objectEntryTimer.c' object='orte_ko-objectEntryTimer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-objectEntryTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-objectEntryTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-objectEntryTimer.o: objectEntryTimer.c
+@AMDEP_TRUE@	source='objectEntryTimer.c' object='rt_orte_ko-objectEntryTimer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-objectEntryTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-objectEntryTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-objectEntryTimer.o `test -f 'objectEntryTimer.c' || echo '$(srcdir)/'`objectEntryTimer.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-objectEntryTimer.o `test -f 'objectEntryTimer.c' || echo '$(srcdir)/'`objectEntryTimer.c
 
-orte_ko-objectEntryTimer.obj: objectEntryTimer.c
-@AMDEP_TRUE@	source='objectEntryTimer.c' object='orte_ko-objectEntryTimer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-objectEntryTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-objectEntryTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-objectEntryTimer.obj: objectEntryTimer.c
+@AMDEP_TRUE@	source='objectEntryTimer.c' object='rt_orte_ko-objectEntryTimer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-objectEntryTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-objectEntryTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-objectEntryTimer.obj `cygpath -w objectEntryTimer.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-objectEntryTimer.obj `cygpath -w objectEntryTimer.c`
 
-orte_ko-objectUtils.o: objectUtils.c
-@AMDEP_TRUE@	source='objectUtils.c' object='orte_ko-objectUtils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-objectUtils.Po' tmpdepfile='$(DEPDIR)/orte_ko-objectUtils.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-objectUtils.o: objectUtils.c
+@AMDEP_TRUE@	source='objectUtils.c' object='rt_orte_ko-objectUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-objectUtils.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-objectUtils.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-objectUtils.o `test -f 'objectUtils.c' || echo '$(srcdir)/'`objectUtils.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-objectUtils.o `test -f 'objectUtils.c' || echo '$(srcdir)/'`objectUtils.c
 
-orte_ko-objectUtils.obj: objectUtils.c
-@AMDEP_TRUE@	source='objectUtils.c' object='orte_ko-objectUtils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-objectUtils.Po' tmpdepfile='$(DEPDIR)/orte_ko-objectUtils.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-objectUtils.obj: objectUtils.c
+@AMDEP_TRUE@	source='objectUtils.c' object='rt_orte_ko-objectUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-objectUtils.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-objectUtils.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-objectUtils.obj `cygpath -w objectUtils.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-objectUtils.obj `cygpath -w objectUtils.c`
 
-orte_ko-ORTEAppRecvMetatrafficThread.o: ORTEAppRecvMetatrafficThread.c
-@AMDEP_TRUE@	source='ORTEAppRecvMetatrafficThread.c' object='orte_ko-ORTEAppRecvMetatrafficThread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEAppRecvMetatrafficThread.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEAppRecvMetatrafficThread.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEAppRecvMetatrafficThread.o: ORTEAppRecvMetatrafficThread.c
+@AMDEP_TRUE@	source='ORTEAppRecvMetatrafficThread.c' object='rt_orte_ko-ORTEAppRecvMetatrafficThread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvMetatrafficThread.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvMetatrafficThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEAppRecvMetatrafficThread.o `test -f 'ORTEAppRecvMetatrafficThread.c' || echo '$(srcdir)/'`ORTEAppRecvMetatrafficThread.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEAppRecvMetatrafficThread.o `test -f 'ORTEAppRecvMetatrafficThread.c' || echo '$(srcdir)/'`ORTEAppRecvMetatrafficThread.c
 
-orte_ko-ORTEAppRecvMetatrafficThread.obj: ORTEAppRecvMetatrafficThread.c
-@AMDEP_TRUE@	source='ORTEAppRecvMetatrafficThread.c' object='orte_ko-ORTEAppRecvMetatrafficThread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEAppRecvMetatrafficThread.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEAppRecvMetatrafficThread.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEAppRecvMetatrafficThread.obj: ORTEAppRecvMetatrafficThread.c
+@AMDEP_TRUE@	source='ORTEAppRecvMetatrafficThread.c' object='rt_orte_ko-ORTEAppRecvMetatrafficThread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvMetatrafficThread.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvMetatrafficThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEAppRecvMetatrafficThread.obj `cygpath -w ORTEAppRecvMetatrafficThread.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEAppRecvMetatrafficThread.obj `cygpath -w ORTEAppRecvMetatrafficThread.c`
 
-orte_ko-ORTEAppRecvUserdataThread.o: ORTEAppRecvUserdataThread.c
-@AMDEP_TRUE@	source='ORTEAppRecvUserdataThread.c' object='orte_ko-ORTEAppRecvUserdataThread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEAppRecvUserdataThread.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEAppRecvUserdataThread.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEAppRecvUserdataThread.o: ORTEAppRecvUserdataThread.c
+@AMDEP_TRUE@	source='ORTEAppRecvUserdataThread.c' object='rt_orte_ko-ORTEAppRecvUserdataThread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvUserdataThread.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvUserdataThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEAppRecvUserdataThread.o `test -f 'ORTEAppRecvUserdataThread.c' || echo '$(srcdir)/'`ORTEAppRecvUserdataThread.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEAppRecvUserdataThread.o `test -f 'ORTEAppRecvUserdataThread.c' || echo '$(srcdir)/'`ORTEAppRecvUserdataThread.c
 
-orte_ko-ORTEAppRecvUserdataThread.obj: ORTEAppRecvUserdataThread.c
-@AMDEP_TRUE@	source='ORTEAppRecvUserdataThread.c' object='orte_ko-ORTEAppRecvUserdataThread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEAppRecvUserdataThread.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEAppRecvUserdataThread.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEAppRecvUserdataThread.obj: ORTEAppRecvUserdataThread.c
+@AMDEP_TRUE@	source='ORTEAppRecvUserdataThread.c' object='rt_orte_ko-ORTEAppRecvUserdataThread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvUserdataThread.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEAppRecvUserdataThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEAppRecvUserdataThread.obj `cygpath -w ORTEAppRecvUserdataThread.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEAppRecvUserdataThread.obj `cygpath -w ORTEAppRecvUserdataThread.c`
 
-orte_ko-ORTEAppSendThread.o: ORTEAppSendThread.c
-@AMDEP_TRUE@	source='ORTEAppSendThread.c' object='orte_ko-ORTEAppSendThread.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEAppSendThread.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEAppSendThread.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEAppSendThread.o: ORTEAppSendThread.c
+@AMDEP_TRUE@	source='ORTEAppSendThread.c' object='rt_orte_ko-ORTEAppSendThread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEAppSendThread.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEAppSendThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEAppSendThread.o `test -f 'ORTEAppSendThread.c' || echo '$(srcdir)/'`ORTEAppSendThread.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEAppSendThread.o `test -f 'ORTEAppSendThread.c' || echo '$(srcdir)/'`ORTEAppSendThread.c
 
-orte_ko-ORTEAppSendThread.obj: ORTEAppSendThread.c
-@AMDEP_TRUE@	source='ORTEAppSendThread.c' object='orte_ko-ORTEAppSendThread.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEAppSendThread.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEAppSendThread.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEAppSendThread.obj: ORTEAppSendThread.c
+@AMDEP_TRUE@	source='ORTEAppSendThread.c' object='rt_orte_ko-ORTEAppSendThread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEAppSendThread.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEAppSendThread.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEAppSendThread.obj `cygpath -w ORTEAppSendThread.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEAppSendThread.obj `cygpath -w ORTEAppSendThread.c`
 
-orte_ko-ORTEDomainApp.o: ORTEDomainApp.c
-@AMDEP_TRUE@	source='ORTEDomainApp.c' object='orte_ko-ORTEDomainApp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEDomainApp.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEDomainApp.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEDomainApp.o: ORTEDomainApp.c
+@AMDEP_TRUE@	source='ORTEDomainApp.c' object='rt_orte_ko-ORTEDomainApp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEDomainApp.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEDomainApp.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEDomainApp.o `test -f 'ORTEDomainApp.c' || echo '$(srcdir)/'`ORTEDomainApp.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEDomainApp.o `test -f 'ORTEDomainApp.c' || echo '$(srcdir)/'`ORTEDomainApp.c
 
-orte_ko-ORTEDomainApp.obj: ORTEDomainApp.c
-@AMDEP_TRUE@	source='ORTEDomainApp.c' object='orte_ko-ORTEDomainApp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEDomainApp.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEDomainApp.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEDomainApp.obj: ORTEDomainApp.c
+@AMDEP_TRUE@	source='ORTEDomainApp.c' object='rt_orte_ko-ORTEDomainApp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEDomainApp.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEDomainApp.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEDomainApp.obj `cygpath -w ORTEDomainApp.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEDomainApp.obj `cygpath -w ORTEDomainApp.c`
 
-orte_ko-ORTEPublication.o: ORTEPublication.c
-@AMDEP_TRUE@	source='ORTEPublication.c' object='orte_ko-ORTEPublication.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEPublication.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEPublication.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEPublication.o: ORTEPublication.c
+@AMDEP_TRUE@	source='ORTEPublication.c' object='rt_orte_ko-ORTEPublication.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEPublication.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEPublication.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEPublication.o `test -f 'ORTEPublication.c' || echo '$(srcdir)/'`ORTEPublication.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEPublication.o `test -f 'ORTEPublication.c' || echo '$(srcdir)/'`ORTEPublication.c
 
-orte_ko-ORTEPublication.obj: ORTEPublication.c
-@AMDEP_TRUE@	source='ORTEPublication.c' object='orte_ko-ORTEPublication.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEPublication.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEPublication.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEPublication.obj: ORTEPublication.c
+@AMDEP_TRUE@	source='ORTEPublication.c' object='rt_orte_ko-ORTEPublication.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEPublication.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEPublication.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEPublication.obj `cygpath -w ORTEPublication.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEPublication.obj `cygpath -w ORTEPublication.c`
 
-orte_ko-ORTEPublicationTimer.o: ORTEPublicationTimer.c
-@AMDEP_TRUE@	source='ORTEPublicationTimer.c' object='orte_ko-ORTEPublicationTimer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEPublicationTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEPublicationTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEPublicationTimer.o: ORTEPublicationTimer.c
+@AMDEP_TRUE@	source='ORTEPublicationTimer.c' object='rt_orte_ko-ORTEPublicationTimer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEPublicationTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEPublicationTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEPublicationTimer.o `test -f 'ORTEPublicationTimer.c' || echo '$(srcdir)/'`ORTEPublicationTimer.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEPublicationTimer.o `test -f 'ORTEPublicationTimer.c' || echo '$(srcdir)/'`ORTEPublicationTimer.c
 
-orte_ko-ORTEPublicationTimer.obj: ORTEPublicationTimer.c
-@AMDEP_TRUE@	source='ORTEPublicationTimer.c' object='orte_ko-ORTEPublicationTimer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEPublicationTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEPublicationTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEPublicationTimer.obj: ORTEPublicationTimer.c
+@AMDEP_TRUE@	source='ORTEPublicationTimer.c' object='rt_orte_ko-ORTEPublicationTimer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEPublicationTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEPublicationTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEPublicationTimer.obj `cygpath -w ORTEPublicationTimer.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEPublicationTimer.obj `cygpath -w ORTEPublicationTimer.c`
 
-orte_ko-ORTESubscription.o: ORTESubscription.c
-@AMDEP_TRUE@	source='ORTESubscription.c' object='orte_ko-ORTESubscription.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTESubscription.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTESubscription.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTESubscription.o: ORTESubscription.c
+@AMDEP_TRUE@	source='ORTESubscription.c' object='rt_orte_ko-ORTESubscription.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTESubscription.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTESubscription.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTESubscription.o `test -f 'ORTESubscription.c' || echo '$(srcdir)/'`ORTESubscription.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTESubscription.o `test -f 'ORTESubscription.c' || echo '$(srcdir)/'`ORTESubscription.c
 
-orte_ko-ORTESubscription.obj: ORTESubscription.c
-@AMDEP_TRUE@	source='ORTESubscription.c' object='orte_ko-ORTESubscription.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTESubscription.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTESubscription.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTESubscription.obj: ORTESubscription.c
+@AMDEP_TRUE@	source='ORTESubscription.c' object='rt_orte_ko-ORTESubscription.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTESubscription.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTESubscription.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTESubscription.obj `cygpath -w ORTESubscription.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTESubscription.obj `cygpath -w ORTESubscription.c`
 
-orte_ko-ORTEDomain.o: ORTEDomain.c
-@AMDEP_TRUE@	source='ORTEDomain.c' object='orte_ko-ORTEDomain.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEDomain.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEDomain.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEDomain.o: ORTEDomain.c
+@AMDEP_TRUE@	source='ORTEDomain.c' object='rt_orte_ko-ORTEDomain.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEDomain.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEDomain.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEDomain.o `test -f 'ORTEDomain.c' || echo '$(srcdir)/'`ORTEDomain.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEDomain.o `test -f 'ORTEDomain.c' || echo '$(srcdir)/'`ORTEDomain.c
 
-orte_ko-ORTEDomain.obj: ORTEDomain.c
-@AMDEP_TRUE@	source='ORTEDomain.c' object='orte_ko-ORTEDomain.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEDomain.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEDomain.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEDomain.obj: ORTEDomain.c
+@AMDEP_TRUE@	source='ORTEDomain.c' object='rt_orte_ko-ORTEDomain.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEDomain.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEDomain.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEDomain.obj `cygpath -w ORTEDomain.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEDomain.obj `cygpath -w ORTEDomain.c`
 
-orte_ko-ORTEDomainMgr.o: ORTEDomainMgr.c
-@AMDEP_TRUE@	source='ORTEDomainMgr.c' object='orte_ko-ORTEDomainMgr.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEDomainMgr.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEDomainMgr.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEDomainMgr.o: ORTEDomainMgr.c
+@AMDEP_TRUE@	source='ORTEDomainMgr.c' object='rt_orte_ko-ORTEDomainMgr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEDomainMgr.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEDomainMgr.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEDomainMgr.o `test -f 'ORTEDomainMgr.c' || echo '$(srcdir)/'`ORTEDomainMgr.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEDomainMgr.o `test -f 'ORTEDomainMgr.c' || echo '$(srcdir)/'`ORTEDomainMgr.c
 
-orte_ko-ORTEDomainMgr.obj: ORTEDomainMgr.c
-@AMDEP_TRUE@	source='ORTEDomainMgr.c' object='orte_ko-ORTEDomainMgr.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEDomainMgr.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEDomainMgr.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEDomainMgr.obj: ORTEDomainMgr.c
+@AMDEP_TRUE@	source='ORTEDomainMgr.c' object='rt_orte_ko-ORTEDomainMgr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEDomainMgr.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEDomainMgr.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEDomainMgr.obj `cygpath -w ORTEDomainMgr.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEDomainMgr.obj `cygpath -w ORTEDomainMgr.c`
 
-orte_ko-ORTEInit.o: ORTEInit.c
-@AMDEP_TRUE@	source='ORTEInit.c' object='orte_ko-ORTEInit.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEInit.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEInit.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEInit.o: ORTEInit.c
+@AMDEP_TRUE@	source='ORTEInit.c' object='rt_orte_ko-ORTEInit.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEInit.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEInit.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEInit.o `test -f 'ORTEInit.c' || echo '$(srcdir)/'`ORTEInit.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEInit.o `test -f 'ORTEInit.c' || echo '$(srcdir)/'`ORTEInit.c
 
-orte_ko-ORTEInit.obj: ORTEInit.c
-@AMDEP_TRUE@	source='ORTEInit.c' object='orte_ko-ORTEInit.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEInit.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEInit.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEInit.obj: ORTEInit.c
+@AMDEP_TRUE@	source='ORTEInit.c' object='rt_orte_ko-ORTEInit.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEInit.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEInit.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEInit.obj `cygpath -w ORTEInit.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEInit.obj `cygpath -w ORTEInit.c`
 
-orte_ko-ORTEThreadUtils.o: ORTEThreadUtils.c
-@AMDEP_TRUE@	source='ORTEThreadUtils.c' object='orte_ko-ORTEThreadUtils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEThreadUtils.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEThreadUtils.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEThreadUtils.o: ORTEThreadUtils.c
+@AMDEP_TRUE@	source='ORTEThreadUtils.c' object='rt_orte_ko-ORTEThreadUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEThreadUtils.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEThreadUtils.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEThreadUtils.o `test -f 'ORTEThreadUtils.c' || echo '$(srcdir)/'`ORTEThreadUtils.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEThreadUtils.o `test -f 'ORTEThreadUtils.c' || echo '$(srcdir)/'`ORTEThreadUtils.c
 
-orte_ko-ORTEThreadUtils.obj: ORTEThreadUtils.c
-@AMDEP_TRUE@	source='ORTEThreadUtils.c' object='orte_ko-ORTEThreadUtils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEThreadUtils.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEThreadUtils.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEThreadUtils.obj: ORTEThreadUtils.c
+@AMDEP_TRUE@	source='ORTEThreadUtils.c' object='rt_orte_ko-ORTEThreadUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEThreadUtils.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEThreadUtils.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEThreadUtils.obj `cygpath -w ORTEThreadUtils.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEThreadUtils.obj `cygpath -w ORTEThreadUtils.c`
 
-orte_ko-ORTETypeRegister.o: ORTETypeRegister.c
-@AMDEP_TRUE@	source='ORTETypeRegister.c' object='orte_ko-ORTETypeRegister.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTETypeRegister.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTETypeRegister.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTETypeRegister.o: ORTETypeRegister.c
+@AMDEP_TRUE@	source='ORTETypeRegister.c' object='rt_orte_ko-ORTETypeRegister.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTETypeRegister.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTETypeRegister.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTETypeRegister.o `test -f 'ORTETypeRegister.c' || echo '$(srcdir)/'`ORTETypeRegister.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTETypeRegister.o `test -f 'ORTETypeRegister.c' || echo '$(srcdir)/'`ORTETypeRegister.c
 
-orte_ko-ORTETypeRegister.obj: ORTETypeRegister.c
-@AMDEP_TRUE@	source='ORTETypeRegister.c' object='orte_ko-ORTETypeRegister.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTETypeRegister.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTETypeRegister.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTETypeRegister.obj: ORTETypeRegister.c
+@AMDEP_TRUE@	source='ORTETypeRegister.c' object='rt_orte_ko-ORTETypeRegister.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTETypeRegister.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTETypeRegister.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTETypeRegister.obj `cygpath -w ORTETypeRegister.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTETypeRegister.obj `cygpath -w ORTETypeRegister.c`
 
-orte_ko-ORTEVerbosity.o: ORTEVerbosity.c
-@AMDEP_TRUE@	source='ORTEVerbosity.c' object='orte_ko-ORTEVerbosity.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEVerbosity.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEVerbosity.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEVerbosity.o: ORTEVerbosity.c
+@AMDEP_TRUE@	source='ORTEVerbosity.c' object='rt_orte_ko-ORTEVerbosity.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEVerbosity.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEVerbosity.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEVerbosity.o `test -f 'ORTEVerbosity.c' || echo '$(srcdir)/'`ORTEVerbosity.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEVerbosity.o `test -f 'ORTEVerbosity.c' || echo '$(srcdir)/'`ORTEVerbosity.c
 
-orte_ko-ORTEVerbosity.obj: ORTEVerbosity.c
-@AMDEP_TRUE@	source='ORTEVerbosity.c' object='orte_ko-ORTEVerbosity.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEVerbosity.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEVerbosity.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEVerbosity.obj: ORTEVerbosity.c
+@AMDEP_TRUE@	source='ORTEVerbosity.c' object='rt_orte_ko-ORTEVerbosity.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEVerbosity.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEVerbosity.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEVerbosity.obj `cygpath -w ORTEVerbosity.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEVerbosity.obj `cygpath -w ORTEVerbosity.c`
 
-orte_ko-ORTEPattern.o: ORTEPattern.c
-@AMDEP_TRUE@	source='ORTEPattern.c' object='orte_ko-ORTEPattern.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEPattern.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEPattern.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEPattern.o: ORTEPattern.c
+@AMDEP_TRUE@	source='ORTEPattern.c' object='rt_orte_ko-ORTEPattern.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEPattern.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEPattern.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEPattern.o `test -f 'ORTEPattern.c' || echo '$(srcdir)/'`ORTEPattern.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEPattern.o `test -f 'ORTEPattern.c' || echo '$(srcdir)/'`ORTEPattern.c
 
-orte_ko-ORTEPattern.obj: ORTEPattern.c
-@AMDEP_TRUE@	source='ORTEPattern.c' object='orte_ko-ORTEPattern.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ORTEPattern.Po' tmpdepfile='$(DEPDIR)/orte_ko-ORTEPattern.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ORTEPattern.obj: ORTEPattern.c
+@AMDEP_TRUE@	source='ORTEPattern.c' object='rt_orte_ko-ORTEPattern.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ORTEPattern.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ORTEPattern.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ORTEPattern.obj `cygpath -w ORTEPattern.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ORTEPattern.obj `cygpath -w ORTEPattern.c`
 
-orte_ko-parameter.o: parameter.c
-@AMDEP_TRUE@	source='parameter.c' object='orte_ko-parameter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-parameter.Po' tmpdepfile='$(DEPDIR)/orte_ko-parameter.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-parameter.o: parameter.c
+@AMDEP_TRUE@	source='parameter.c' object='rt_orte_ko-parameter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-parameter.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-parameter.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-parameter.o `test -f 'parameter.c' || echo '$(srcdir)/'`parameter.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-parameter.o `test -f 'parameter.c' || echo '$(srcdir)/'`parameter.c
 
-orte_ko-parameter.obj: parameter.c
-@AMDEP_TRUE@	source='parameter.c' object='orte_ko-parameter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-parameter.Po' tmpdepfile='$(DEPDIR)/orte_ko-parameter.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-parameter.obj: parameter.c
+@AMDEP_TRUE@	source='parameter.c' object='rt_orte_ko-parameter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-parameter.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-parameter.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-parameter.obj `cygpath -w parameter.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-parameter.obj `cygpath -w parameter.c`
 
-orte_ko-RTPSAck.o: RTPSAck.c
-@AMDEP_TRUE@	source='RTPSAck.c' object='orte_ko-RTPSAck.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSAck.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSAck.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSAck.o: RTPSAck.c
+@AMDEP_TRUE@	source='RTPSAck.c' object='rt_orte_ko-RTPSAck.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSAck.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSAck.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSAck.o `test -f 'RTPSAck.c' || echo '$(srcdir)/'`RTPSAck.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSAck.o `test -f 'RTPSAck.c' || echo '$(srcdir)/'`RTPSAck.c
 
-orte_ko-RTPSAck.obj: RTPSAck.c
-@AMDEP_TRUE@	source='RTPSAck.c' object='orte_ko-RTPSAck.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSAck.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSAck.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSAck.obj: RTPSAck.c
+@AMDEP_TRUE@	source='RTPSAck.c' object='rt_orte_ko-RTPSAck.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSAck.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSAck.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSAck.obj `cygpath -w RTPSAck.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSAck.obj `cygpath -w RTPSAck.c`
 
-orte_ko-RTPSCSTReader.o: RTPSCSTReader.c
-@AMDEP_TRUE@	source='RTPSCSTReader.c' object='orte_ko-RTPSCSTReader.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTReader.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTReader.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTReader.o: RTPSCSTReader.c
+@AMDEP_TRUE@	source='RTPSCSTReader.c' object='rt_orte_ko-RTPSCSTReader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReader.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReader.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTReader.o `test -f 'RTPSCSTReader.c' || echo '$(srcdir)/'`RTPSCSTReader.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTReader.o `test -f 'RTPSCSTReader.c' || echo '$(srcdir)/'`RTPSCSTReader.c
 
-orte_ko-RTPSCSTReader.obj: RTPSCSTReader.c
-@AMDEP_TRUE@	source='RTPSCSTReader.c' object='orte_ko-RTPSCSTReader.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTReader.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTReader.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTReader.obj: RTPSCSTReader.c
+@AMDEP_TRUE@	source='RTPSCSTReader.c' object='rt_orte_ko-RTPSCSTReader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReader.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReader.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTReader.obj `cygpath -w RTPSCSTReader.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTReader.obj `cygpath -w RTPSCSTReader.c`
 
-orte_ko-RTPSCSTReaderTimer.o: RTPSCSTReaderTimer.c
-@AMDEP_TRUE@	source='RTPSCSTReaderTimer.c' object='orte_ko-RTPSCSTReaderTimer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTReaderTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTReaderTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTReaderTimer.o: RTPSCSTReaderTimer.c
+@AMDEP_TRUE@	source='RTPSCSTReaderTimer.c' object='rt_orte_ko-RTPSCSTReaderTimer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTReaderTimer.o `test -f 'RTPSCSTReaderTimer.c' || echo '$(srcdir)/'`RTPSCSTReaderTimer.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTReaderTimer.o `test -f 'RTPSCSTReaderTimer.c' || echo '$(srcdir)/'`RTPSCSTReaderTimer.c
 
-orte_ko-RTPSCSTReaderTimer.obj: RTPSCSTReaderTimer.c
-@AMDEP_TRUE@	source='RTPSCSTReaderTimer.c' object='orte_ko-RTPSCSTReaderTimer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTReaderTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTReaderTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTReaderTimer.obj: RTPSCSTReaderTimer.c
+@AMDEP_TRUE@	source='RTPSCSTReaderTimer.c' object='rt_orte_ko-RTPSCSTReaderTimer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTReaderTimer.obj `cygpath -w RTPSCSTReaderTimer.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTReaderTimer.obj `cygpath -w RTPSCSTReaderTimer.c`
 
-orte_ko-RTPSCSTReaderProc.o: RTPSCSTReaderProc.c
-@AMDEP_TRUE@	source='RTPSCSTReaderProc.c' object='orte_ko-RTPSCSTReaderProc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTReaderProc.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTReaderProc.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTReaderProc.o: RTPSCSTReaderProc.c
+@AMDEP_TRUE@	source='RTPSCSTReaderProc.c' object='rt_orte_ko-RTPSCSTReaderProc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderProc.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderProc.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTReaderProc.o `test -f 'RTPSCSTReaderProc.c' || echo '$(srcdir)/'`RTPSCSTReaderProc.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTReaderProc.o `test -f 'RTPSCSTReaderProc.c' || echo '$(srcdir)/'`RTPSCSTReaderProc.c
 
-orte_ko-RTPSCSTReaderProc.obj: RTPSCSTReaderProc.c
-@AMDEP_TRUE@	source='RTPSCSTReaderProc.c' object='orte_ko-RTPSCSTReaderProc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTReaderProc.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTReaderProc.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTReaderProc.obj: RTPSCSTReaderProc.c
+@AMDEP_TRUE@	source='RTPSCSTReaderProc.c' object='rt_orte_ko-RTPSCSTReaderProc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderProc.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTReaderProc.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTReaderProc.obj `cygpath -w RTPSCSTReaderProc.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTReaderProc.obj `cygpath -w RTPSCSTReaderProc.c`
 
-orte_ko-RTPSCSTWriter.o: RTPSCSTWriter.c
-@AMDEP_TRUE@	source='RTPSCSTWriter.c' object='orte_ko-RTPSCSTWriter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTWriter.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTWriter.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTWriter.o: RTPSCSTWriter.c
+@AMDEP_TRUE@	source='RTPSCSTWriter.c' object='rt_orte_ko-RTPSCSTWriter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriter.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriter.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTWriter.o `test -f 'RTPSCSTWriter.c' || echo '$(srcdir)/'`RTPSCSTWriter.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTWriter.o `test -f 'RTPSCSTWriter.c' || echo '$(srcdir)/'`RTPSCSTWriter.c
 
-orte_ko-RTPSCSTWriter.obj: RTPSCSTWriter.c
-@AMDEP_TRUE@	source='RTPSCSTWriter.c' object='orte_ko-RTPSCSTWriter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTWriter.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTWriter.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTWriter.obj: RTPSCSTWriter.c
+@AMDEP_TRUE@	source='RTPSCSTWriter.c' object='rt_orte_ko-RTPSCSTWriter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriter.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriter.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTWriter.obj `cygpath -w RTPSCSTWriter.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTWriter.obj `cygpath -w RTPSCSTWriter.c`
 
-orte_ko-RTPSCSTWriterTimer.o: RTPSCSTWriterTimer.c
-@AMDEP_TRUE@	source='RTPSCSTWriterTimer.c' object='orte_ko-RTPSCSTWriterTimer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTWriterTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTWriterTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTWriterTimer.o: RTPSCSTWriterTimer.c
+@AMDEP_TRUE@	source='RTPSCSTWriterTimer.c' object='rt_orte_ko-RTPSCSTWriterTimer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriterTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriterTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTWriterTimer.o `test -f 'RTPSCSTWriterTimer.c' || echo '$(srcdir)/'`RTPSCSTWriterTimer.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTWriterTimer.o `test -f 'RTPSCSTWriterTimer.c' || echo '$(srcdir)/'`RTPSCSTWriterTimer.c
 
-orte_ko-RTPSCSTWriterTimer.obj: RTPSCSTWriterTimer.c
-@AMDEP_TRUE@	source='RTPSCSTWriterTimer.c' object='orte_ko-RTPSCSTWriterTimer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSCSTWriterTimer.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSCSTWriterTimer.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSCSTWriterTimer.obj: RTPSCSTWriterTimer.c
+@AMDEP_TRUE@	source='RTPSCSTWriterTimer.c' object='rt_orte_ko-RTPSCSTWriterTimer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriterTimer.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSCSTWriterTimer.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSCSTWriterTimer.obj `cygpath -w RTPSCSTWriterTimer.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSCSTWriterTimer.obj `cygpath -w RTPSCSTWriterTimer.c`
 
-orte_ko-RTPSGap.o: RTPSGap.c
-@AMDEP_TRUE@	source='RTPSGap.c' object='orte_ko-RTPSGap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSGap.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSGap.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSGap.o: RTPSGap.c
+@AMDEP_TRUE@	source='RTPSGap.c' object='rt_orte_ko-RTPSGap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSGap.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSGap.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSGap.o `test -f 'RTPSGap.c' || echo '$(srcdir)/'`RTPSGap.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSGap.o `test -f 'RTPSGap.c' || echo '$(srcdir)/'`RTPSGap.c
 
-orte_ko-RTPSGap.obj: RTPSGap.c
-@AMDEP_TRUE@	source='RTPSGap.c' object='orte_ko-RTPSGap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSGap.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSGap.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSGap.obj: RTPSGap.c
+@AMDEP_TRUE@	source='RTPSGap.c' object='rt_orte_ko-RTPSGap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSGap.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSGap.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSGap.obj `cygpath -w RTPSGap.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSGap.obj `cygpath -w RTPSGap.c`
 
-orte_ko-RTPSHeader.o: RTPSHeader.c
-@AMDEP_TRUE@	source='RTPSHeader.c' object='orte_ko-RTPSHeader.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSHeader.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSHeader.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSHeader.o: RTPSHeader.c
+@AMDEP_TRUE@	source='RTPSHeader.c' object='rt_orte_ko-RTPSHeader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSHeader.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSHeader.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSHeader.o `test -f 'RTPSHeader.c' || echo '$(srcdir)/'`RTPSHeader.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSHeader.o `test -f 'RTPSHeader.c' || echo '$(srcdir)/'`RTPSHeader.c
 
-orte_ko-RTPSHeader.obj: RTPSHeader.c
-@AMDEP_TRUE@	source='RTPSHeader.c' object='orte_ko-RTPSHeader.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSHeader.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSHeader.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSHeader.obj: RTPSHeader.c
+@AMDEP_TRUE@	source='RTPSHeader.c' object='rt_orte_ko-RTPSHeader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSHeader.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSHeader.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSHeader.obj `cygpath -w RTPSHeader.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSHeader.obj `cygpath -w RTPSHeader.c`
 
-orte_ko-RTPSHeardBeat.o: RTPSHeardBeat.c
-@AMDEP_TRUE@	source='RTPSHeardBeat.c' object='orte_ko-RTPSHeardBeat.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSHeardBeat.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSHeardBeat.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSHeardBeat.o: RTPSHeardBeat.c
+@AMDEP_TRUE@	source='RTPSHeardBeat.c' object='rt_orte_ko-RTPSHeardBeat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSHeardBeat.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSHeardBeat.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSHeardBeat.o `test -f 'RTPSHeardBeat.c' || echo '$(srcdir)/'`RTPSHeardBeat.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSHeardBeat.o `test -f 'RTPSHeardBeat.c' || echo '$(srcdir)/'`RTPSHeardBeat.c
 
-orte_ko-RTPSHeardBeat.obj: RTPSHeardBeat.c
-@AMDEP_TRUE@	source='RTPSHeardBeat.c' object='orte_ko-RTPSHeardBeat.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSHeardBeat.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSHeardBeat.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSHeardBeat.obj: RTPSHeardBeat.c
+@AMDEP_TRUE@	source='RTPSHeardBeat.c' object='rt_orte_ko-RTPSHeardBeat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSHeardBeat.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSHeardBeat.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSHeardBeat.obj `cygpath -w RTPSHeardBeat.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSHeardBeat.obj `cygpath -w RTPSHeardBeat.c`
 
-orte_ko-RTPSInfoDST.o: RTPSInfoDST.c
-@AMDEP_TRUE@	source='RTPSInfoDST.c' object='orte_ko-RTPSInfoDST.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoDST.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoDST.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoDST.o: RTPSInfoDST.c
+@AMDEP_TRUE@	source='RTPSInfoDST.c' object='rt_orte_ko-RTPSInfoDST.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoDST.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoDST.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoDST.o `test -f 'RTPSInfoDST.c' || echo '$(srcdir)/'`RTPSInfoDST.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoDST.o `test -f 'RTPSInfoDST.c' || echo '$(srcdir)/'`RTPSInfoDST.c
 
-orte_ko-RTPSInfoDST.obj: RTPSInfoDST.c
-@AMDEP_TRUE@	source='RTPSInfoDST.c' object='orte_ko-RTPSInfoDST.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoDST.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoDST.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoDST.obj: RTPSInfoDST.c
+@AMDEP_TRUE@	source='RTPSInfoDST.c' object='rt_orte_ko-RTPSInfoDST.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoDST.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoDST.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoDST.obj `cygpath -w RTPSInfoDST.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoDST.obj `cygpath -w RTPSInfoDST.c`
 
-orte_ko-RTPSInfoREPLY.o: RTPSInfoREPLY.c
-@AMDEP_TRUE@	source='RTPSInfoREPLY.c' object='orte_ko-RTPSInfoREPLY.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoREPLY.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoREPLY.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoREPLY.o: RTPSInfoREPLY.c
+@AMDEP_TRUE@	source='RTPSInfoREPLY.c' object='rt_orte_ko-RTPSInfoREPLY.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoREPLY.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoREPLY.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoREPLY.o `test -f 'RTPSInfoREPLY.c' || echo '$(srcdir)/'`RTPSInfoREPLY.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoREPLY.o `test -f 'RTPSInfoREPLY.c' || echo '$(srcdir)/'`RTPSInfoREPLY.c
 
-orte_ko-RTPSInfoREPLY.obj: RTPSInfoREPLY.c
-@AMDEP_TRUE@	source='RTPSInfoREPLY.c' object='orte_ko-RTPSInfoREPLY.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoREPLY.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoREPLY.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoREPLY.obj: RTPSInfoREPLY.c
+@AMDEP_TRUE@	source='RTPSInfoREPLY.c' object='rt_orte_ko-RTPSInfoREPLY.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoREPLY.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoREPLY.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoREPLY.obj `cygpath -w RTPSInfoREPLY.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoREPLY.obj `cygpath -w RTPSInfoREPLY.c`
 
-orte_ko-RTPSInfoSRC.o: RTPSInfoSRC.c
-@AMDEP_TRUE@	source='RTPSInfoSRC.c' object='orte_ko-RTPSInfoSRC.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoSRC.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoSRC.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoSRC.o: RTPSInfoSRC.c
+@AMDEP_TRUE@	source='RTPSInfoSRC.c' object='rt_orte_ko-RTPSInfoSRC.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoSRC.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoSRC.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoSRC.o `test -f 'RTPSInfoSRC.c' || echo '$(srcdir)/'`RTPSInfoSRC.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoSRC.o `test -f 'RTPSInfoSRC.c' || echo '$(srcdir)/'`RTPSInfoSRC.c
 
-orte_ko-RTPSInfoSRC.obj: RTPSInfoSRC.c
-@AMDEP_TRUE@	source='RTPSInfoSRC.c' object='orte_ko-RTPSInfoSRC.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoSRC.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoSRC.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoSRC.obj: RTPSInfoSRC.c
+@AMDEP_TRUE@	source='RTPSInfoSRC.c' object='rt_orte_ko-RTPSInfoSRC.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoSRC.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoSRC.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoSRC.obj `cygpath -w RTPSInfoSRC.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoSRC.obj `cygpath -w RTPSInfoSRC.c`
 
-orte_ko-RTPSInfoTS.o: RTPSInfoTS.c
-@AMDEP_TRUE@	source='RTPSInfoTS.c' object='orte_ko-RTPSInfoTS.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoTS.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoTS.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoTS.o: RTPSInfoTS.c
+@AMDEP_TRUE@	source='RTPSInfoTS.c' object='rt_orte_ko-RTPSInfoTS.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoTS.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoTS.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoTS.o `test -f 'RTPSInfoTS.c' || echo '$(srcdir)/'`RTPSInfoTS.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoTS.o `test -f 'RTPSInfoTS.c' || echo '$(srcdir)/'`RTPSInfoTS.c
 
-orte_ko-RTPSInfoTS.obj: RTPSInfoTS.c
-@AMDEP_TRUE@	source='RTPSInfoTS.c' object='orte_ko-RTPSInfoTS.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSInfoTS.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSInfoTS.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSInfoTS.obj: RTPSInfoTS.c
+@AMDEP_TRUE@	source='RTPSInfoTS.c' object='rt_orte_ko-RTPSInfoTS.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSInfoTS.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSInfoTS.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSInfoTS.obj `cygpath -w RTPSInfoTS.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSInfoTS.obj `cygpath -w RTPSInfoTS.c`
 
-orte_ko-RTPSPad.o: RTPSPad.c
-@AMDEP_TRUE@	source='RTPSPad.c' object='orte_ko-RTPSPad.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSPad.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSPad.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSPad.o: RTPSPad.c
+@AMDEP_TRUE@	source='RTPSPad.c' object='rt_orte_ko-RTPSPad.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSPad.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSPad.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSPad.o `test -f 'RTPSPad.c' || echo '$(srcdir)/'`RTPSPad.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSPad.o `test -f 'RTPSPad.c' || echo '$(srcdir)/'`RTPSPad.c
 
-orte_ko-RTPSPad.obj: RTPSPad.c
-@AMDEP_TRUE@	source='RTPSPad.c' object='orte_ko-RTPSPad.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSPad.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSPad.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSPad.obj: RTPSPad.c
+@AMDEP_TRUE@	source='RTPSPad.c' object='rt_orte_ko-RTPSPad.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSPad.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSPad.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSPad.obj `cygpath -w RTPSPad.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSPad.obj `cygpath -w RTPSPad.c`
 
-orte_ko-RTPSUtils.o: RTPSUtils.c
-@AMDEP_TRUE@	source='RTPSUtils.c' object='orte_ko-RTPSUtils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSUtils.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSUtils.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSUtils.o: RTPSUtils.c
+@AMDEP_TRUE@	source='RTPSUtils.c' object='rt_orte_ko-RTPSUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSUtils.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSUtils.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSUtils.o `test -f 'RTPSUtils.c' || echo '$(srcdir)/'`RTPSUtils.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSUtils.o `test -f 'RTPSUtils.c' || echo '$(srcdir)/'`RTPSUtils.c
 
-orte_ko-RTPSUtils.obj: RTPSUtils.c
-@AMDEP_TRUE@	source='RTPSUtils.c' object='orte_ko-RTPSUtils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSUtils.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSUtils.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSUtils.obj: RTPSUtils.c
+@AMDEP_TRUE@	source='RTPSUtils.c' object='rt_orte_ko-RTPSUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSUtils.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSUtils.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSUtils.obj `cygpath -w RTPSUtils.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSUtils.obj `cygpath -w RTPSUtils.c`
 
-orte_ko-RTPSVar.o: RTPSVar.c
-@AMDEP_TRUE@	source='RTPSVar.c' object='orte_ko-RTPSVar.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSVar.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSVar.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSVar.o: RTPSVar.c
+@AMDEP_TRUE@	source='RTPSVar.c' object='rt_orte_ko-RTPSVar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSVar.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSVar.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSVar.o `test -f 'RTPSVar.c' || echo '$(srcdir)/'`RTPSVar.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSVar.o `test -f 'RTPSVar.c' || echo '$(srcdir)/'`RTPSVar.c
 
-orte_ko-RTPSVar.obj: RTPSVar.c
-@AMDEP_TRUE@	source='RTPSVar.c' object='orte_ko-RTPSVar.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSVar.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSVar.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSVar.obj: RTPSVar.c
+@AMDEP_TRUE@	source='RTPSVar.c' object='rt_orte_ko-RTPSVar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSVar.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSVar.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSVar.obj `cygpath -w RTPSVar.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSVar.obj `cygpath -w RTPSVar.c`
 
-orte_ko-RTPSIssue.o: RTPSIssue.c
-@AMDEP_TRUE@	source='RTPSIssue.c' object='orte_ko-RTPSIssue.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSIssue.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSIssue.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSIssue.o: RTPSIssue.c
+@AMDEP_TRUE@	source='RTPSIssue.c' object='rt_orte_ko-RTPSIssue.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSIssue.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSIssue.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSIssue.o `test -f 'RTPSIssue.c' || echo '$(srcdir)/'`RTPSIssue.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSIssue.o `test -f 'RTPSIssue.c' || echo '$(srcdir)/'`RTPSIssue.c
 
-orte_ko-RTPSIssue.obj: RTPSIssue.c
-@AMDEP_TRUE@	source='RTPSIssue.c' object='orte_ko-RTPSIssue.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-RTPSIssue.Po' tmpdepfile='$(DEPDIR)/orte_ko-RTPSIssue.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-RTPSIssue.obj: RTPSIssue.c
+@AMDEP_TRUE@	source='RTPSIssue.c' object='rt_orte_ko-RTPSIssue.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-RTPSIssue.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-RTPSIssue.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-RTPSIssue.obj `cygpath -w RTPSIssue.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-RTPSIssue.obj `cygpath -w RTPSIssue.c`
 
-orte_ko-sock.o: sock.c
-@AMDEP_TRUE@	source='sock.c' object='orte_ko-sock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-sock.Po' tmpdepfile='$(DEPDIR)/orte_ko-sock.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-sock.o: sock.c
+@AMDEP_TRUE@	source='sock.c' object='rt_orte_ko-sock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-sock.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-sock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-sock.o `test -f 'sock.c' || echo '$(srcdir)/'`sock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-sock.o `test -f 'sock.c' || echo '$(srcdir)/'`sock.c
 
-orte_ko-sock.obj: sock.c
-@AMDEP_TRUE@	source='sock.c' object='orte_ko-sock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-sock.Po' tmpdepfile='$(DEPDIR)/orte_ko-sock.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-sock.obj: sock.c
+@AMDEP_TRUE@	source='sock.c' object='rt_orte_ko-sock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-sock.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-sock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-sock.obj `cygpath -w sock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-sock.obj `cygpath -w sock.c`
 
-orte_ko-ul_gavl.o: ul_gavl.c
-@AMDEP_TRUE@	source='ul_gavl.c' object='orte_ko-ul_gavl.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ul_gavl.Po' tmpdepfile='$(DEPDIR)/orte_ko-ul_gavl.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ul_gavl.o: ul_gavl.c
+@AMDEP_TRUE@	source='ul_gavl.c' object='rt_orte_ko-ul_gavl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ul_gavl.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ul_gavl.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ul_gavl.o `test -f 'ul_gavl.c' || echo '$(srcdir)/'`ul_gavl.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ul_gavl.o `test -f 'ul_gavl.c' || echo '$(srcdir)/'`ul_gavl.c
 
-orte_ko-ul_gavl.obj: ul_gavl.c
-@AMDEP_TRUE@	source='ul_gavl.c' object='orte_ko-ul_gavl.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ul_gavl.Po' tmpdepfile='$(DEPDIR)/orte_ko-ul_gavl.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ul_gavl.obj: ul_gavl.c
+@AMDEP_TRUE@	source='ul_gavl.c' object='rt_orte_ko-ul_gavl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ul_gavl.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ul_gavl.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ul_gavl.obj `cygpath -w ul_gavl.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ul_gavl.obj `cygpath -w ul_gavl.c`
 
-orte_ko-ul_gavlprim.o: ul_gavlprim.c
-@AMDEP_TRUE@	source='ul_gavlprim.c' object='orte_ko-ul_gavlprim.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ul_gavlprim.Po' tmpdepfile='$(DEPDIR)/orte_ko-ul_gavlprim.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ul_gavlprim.o: ul_gavlprim.c
+@AMDEP_TRUE@	source='ul_gavlprim.c' object='rt_orte_ko-ul_gavlprim.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ul_gavlprim.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ul_gavlprim.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ul_gavlprim.o `test -f 'ul_gavlprim.c' || echo '$(srcdir)/'`ul_gavlprim.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ul_gavlprim.o `test -f 'ul_gavlprim.c' || echo '$(srcdir)/'`ul_gavlprim.c
 
-orte_ko-ul_gavlprim.obj: ul_gavlprim.c
-@AMDEP_TRUE@	source='ul_gavlprim.c' object='orte_ko-ul_gavlprim.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/orte_ko-ul_gavlprim.Po' tmpdepfile='$(DEPDIR)/orte_ko-ul_gavlprim.TPo' @AMDEPBACKSLASH@
+rt_orte_ko-ul_gavlprim.obj: ul_gavlprim.c
+@AMDEP_TRUE@	source='ul_gavlprim.c' object='rt_orte_ko-ul_gavlprim.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_orte_ko-ul_gavlprim.Po' tmpdepfile='$(DEPDIR)/rt_orte_ko-ul_gavlprim.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orte_ko_CFLAGS) $(CFLAGS) -c -o orte_ko-ul_gavlprim.obj `cygpath -w ul_gavlprim.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_orte_ko_CFLAGS) $(CFLAGS) -c -o rt_orte_ko-ul_gavlprim.obj `cygpath -w ul_gavlprim.c`
 CCDEPMODE = @CCDEPMODE@
 uninstall-info-am:
 

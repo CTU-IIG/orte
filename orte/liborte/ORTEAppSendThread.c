@@ -99,7 +99,7 @@ void ORTEAppSendThread(ORTEDomain *d) {
     pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
     pthread_rwlock_unlock(&d->objectEntry.objRootLock);
   }
-  pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
   debug(24,10) ("ORTEAppSendThread: finished\n");
+  pthread_exit(NULL);
 }
 

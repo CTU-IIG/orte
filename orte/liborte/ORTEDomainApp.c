@@ -21,16 +21,18 @@
 
 #include "orte.h"
 
+
 /*****************************************************************************/
 ORTEDomain * 
 ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
-                    ORTEDomainAppEvents *events) {
+                    ORTEDomainAppEvents *events,Boolean suspended) {
   ORTEDomain        *d;
   ObjectEntryOID    *objectEntryOID;
   AppParams         *appParams;
   CSTWriterParams   cstWriterParams;
   CSTReaderParams   cstReaderParams;
   char              iflocal[MAX_INTERFACES*MAX_STRING_IPADDRESS_LENGTH];
+  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   int               i;
   u_int16_t         port=0;
 
@@ -40,9 +42,9 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   if (!d) return NULL;  //no memory
   //initialization local values
   d->domain=domain;
-  d->taskRecvMetatraffic.terminate=ORTE_FALSE;
-  d->taskRecvUserdata.terminate=ORTE_FALSE;
-  d->taskSend.terminate=ORTE_FALSE;
+  d->taskRecvMetatraffic.terminate=ORTE_TRUE;
+  d->taskRecvUserdata.terminate=ORTE_TRUE;
+  d->taskSend.terminate=ORTE_TRUE;
   d->taskRecvMetatraffic.sock.port=0;
   d->taskRecvUserdata.sock.port=0;
   d->taskSend.sock.port=0;
@@ -67,8 +69,9 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   pthread_rwlock_init(&d->psEntry.subscriptionsLock,NULL);
   
   //pattern
+  pthread_rwlock_init(&d->patternEntry.lock,NULL);
   ORTEPatternRegister(d,ORTEPatternCheckDefault,ORTEPatternMatchDefault,NULL);
-  SubscriptionPattern_init_head(&d->patternEntry);
+  Pattern_init_head(&d->patternEntry);
     
   //create domainProp 
   if (prop!=NULL) {
@@ -81,7 +84,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   iflocal[0]=0;
   if (d->domainProp.IFCount) {
     for(i=0;i<d->domainProp.IFCount;i++)
-      strcat(iflocal,IPAddressToString(d->domainProp.IFProp[i].ipAddress));
+      strcat(iflocal,IPAddressToString(d->domainProp.IFProp[i].ipAddress,sIPAddress));
     debug(21,2) ("ORTEDomainAppCreate: localIPAddres(es) %s\n",iflocal);
   } else{
     debug(21,2) ("ORTEDomainAppCreate: no activ interface card\n");
@@ -166,7 +169,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
     if(sock_setsockopt(&d->taskRecvUserdata.sock,IP_ADD_MEMBERSHIP,
         (void *) &mreq, sizeof(mreq))>=0) {
       debug(21,2) ("ORTEDomainAppCreate: listening to mgroup %s\n",
-           IPAddressToString(d->domainProp.multicast.ipAddress));
+           IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
     }
   }
 
@@ -252,7 +255,7 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
       CSTWriterAddRemoteReader(d,&d->writerApplicationSelf,objectEntryOID,
           OID_READ_MGR);
       debug(21,2) ("ORTEDomainAppCreate: add fellow manager (%s)\n",
-                  IPAddressToString(d->domainProp.appLocalManager));
+                  IPAddressToString(d->domainProp.appLocalManager,sIPAddress));
     }
   }
   //  readerManagers
@@ -310,14 +313,9 @@ ORTEDomainAppCreate(int domain, ORTEDomainProp *prop,
   appSelfParamChanged(d,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE);
   
   //Start threads
-  pthread_mutex_lock(&d->objectEntry.htimSendMutex);
-  pthread_create(&d->taskRecvMetatraffic.thread, NULL,
-                 (void*)&ORTEAppRecvMetatrafficThread, (void *)d); 
-  pthread_create(&d->taskRecvUserdata.thread, NULL,
-                 (void*)&ORTEAppRecvUserdataThread, (void *)d); 
-  pthread_create(&d->taskSend.thread, NULL,
-                 (void*)&ORTEAppSendThread, (void *)d); 
-
+  if (!suspended) {
+    ORTEDomainStart(d,ORTE_TRUE,ORTE_TRUE,ORTE_TRUE);
+  }
   debug(21,10) ("ORTEDomainAppCreate: finished\n");
   return d;
 }
@@ -331,17 +329,23 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
   debug(21,10) ("ORTEDomainAppDestroy: start\n");
   if (!d) return ORTE_FALSE;
   //Stoping threads
-  d->taskRecvMetatraffic.terminate=ORTE_TRUE;
-  d->taskRecvUserdata.terminate=ORTE_TRUE;
-  d->taskSend.terminate=ORTE_TRUE;
-  ORTEDomainWakeUpReceivingThread(d,
-      &d->taskSend.sock,d->taskRecvMetatraffic.sock.port); 
-  pthread_join(d->taskRecvMetatraffic.thread,NULL); 
-  ORTEDomainWakeUpReceivingThread(d,
-      &d->taskSend.sock,d->taskRecvUserdata.sock.port); 
-  pthread_join(d->taskRecvUserdata.thread,NULL); 
-  ORTEDomainWakeUpSendingThread(&d->objectEntry); 
-  pthread_join(d->taskSend.thread,NULL); 
+  if (!d->taskRecvMetatraffic.terminate) {
+    d->taskRecvMetatraffic.terminate=ORTE_TRUE;
+    ORTEDomainWakeUpReceivingThread(d,
+        &d->taskSend.sock,d->taskRecvMetatraffic.sock.port); 
+    pthread_join(d->taskRecvMetatraffic.thread,NULL); 
+  }
+  if (!d->taskRecvUserdata.terminate) {
+    d->taskRecvUserdata.terminate=ORTE_TRUE;
+    ORTEDomainWakeUpReceivingThread(d,
+        &d->taskSend.sock,d->taskRecvUserdata.sock.port); 
+    pthread_join(d->taskRecvUserdata.thread,NULL); 
+  }
+  if (!d->taskSend.terminate) {
+    d->taskSend.terminate=ORTE_TRUE;
+    ORTEDomainWakeUpSendingThread(&d->objectEntry); 
+    pthread_join(d->taskSend.thread,NULL); 
+  }
   debug(21,3) ("ORTEDomainAppDestroy: threads stoped\n");
   
   //Sockets
@@ -366,6 +370,8 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
   
   //Pattern
   ORTEDomainAppSubscriptionPatternDestroyAll(d);
+  pthread_rwlock_unlock(&d->typeEntry.lock);    
+  pthread_rwlock_destroy(&d->patternEntry.lock);
   
   //CSTReaders and CSTWriters
   CSTWriterDelete(d,&d->writerApplicationSelf);
@@ -375,11 +381,12 @@ ORTEDomainAppDestroy(ORTEDomain *d) {
   CSTWriterDelete(d,&d->writerSubscriptions);
   CSTReaderDelete(d,&d->readerPublications);
   CSTReaderDelete(d,&d->readerSubscriptions);
-  gavl_cust_for_each(CSTWriter,&d->publications,cstWriter) {
+
+  while ((cstWriter = CSTWriter_cut_first(&d->publications))) {
     CSTWriterDelete(d,cstWriter);
     FREE(cstWriter);
   }  
-  gavl_cust_for_each(CSTReader,&d->subscriptions,cstReader) {
+  while ((cstReader = CSTReader_cut_first(&d->subscriptions))) {
     CSTReaderDelete(d,cstReader);
     FREE(cstReader);
   }  
@@ -400,15 +407,17 @@ Boolean
 ORTEDomainAppSubscriptionPatternAdd(ORTEDomain *d,const char *topic,
     const char *type,ORTESubscriptionPatternCallBack subscriptionCallBack, 
     void *param) {
-  SubscriptionPatternNode *psnode;
+  PatternNode *pnode;
   
   if (!d) return ORTE_FALSE;
-  psnode=(SubscriptionPatternNode*)MALLOC(sizeof(SubscriptionPatternNode));
-  strcpy(psnode->topic,topic);
-  strcpy(psnode->type,type);
-  psnode->subscriptionCallBack=subscriptionCallBack;
-  psnode->param=param;
-  SubscriptionPattern_insert(&d->patternEntry,psnode);
+  pnode=(PatternNode*)MALLOC(sizeof(PatternNode));
+  strcpy(pnode->topic,topic);
+  strcpy(pnode->type,type);
+  pnode->subscriptionCallBack=subscriptionCallBack;
+  pnode->param=param;
+  pthread_rwlock_wrlock(&d->patternEntry.lock);
+  Pattern_insert(&d->patternEntry,pnode);
+  pthread_rwlock_unlock(&d->patternEntry.lock);
   return ORTE_TRUE;
 }
 
@@ -416,28 +425,32 @@ ORTEDomainAppSubscriptionPatternAdd(ORTEDomain *d,const char *topic,
 Boolean 
 ORTEDomainAppSubscriptionPatternRemove(ORTEDomain *d,const char *topic,
     const char *type) {
-  SubscriptionPatternNode *psnode;
+  PatternNode *pnode;
   
   if (!d) return ORTE_FALSE;
-  ul_list_for_each(SubscriptionPattern,&d->patternEntry,psnode) {
-    if ((strcmp(psnode->topic,topic)==0) &&
-        (strcmp(psnode->type,type)==0)) {
-      SubscriptionPattern_delete(&d->patternEntry,psnode);
-      FREE(psnode);
+  pthread_rwlock_wrlock(&d->patternEntry.lock);
+  ul_list_for_each(Pattern,&d->patternEntry,pnode) {
+    if ((strcmp(pnode->topic,topic)==0) &&
+        (strcmp(pnode->type,type)==0)) {
+      Pattern_delete(&d->patternEntry,pnode);
+      FREE(pnode);
       return ORTE_TRUE;
     }
   }
+  pthread_rwlock_unlock(&d->patternEntry.lock);
   return ORTE_FALSE;
 }
 
 /*****************************************************************************/
 Boolean 
 ORTEDomainAppSubscriptionPatternDestroyAll(ORTEDomain *d) {
-  SubscriptionPatternNode *psnode;
+  PatternNode *pnode;
   
   if (!d) return ORTE_FALSE;
-  while((psnode=SubscriptionPattern_cut_first(&d->patternEntry))) {
-    FREE(psnode);
+  pthread_rwlock_wrlock(&d->patternEntry.lock);
+  while((pnode=Pattern_cut_first(&d->patternEntry))) {
+    FREE(pnode);
   }
+  pthread_rwlock_unlock(&d->patternEntry.lock);
   return ORTE_TRUE;
 }

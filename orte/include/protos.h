@@ -223,7 +223,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTETypeRegister.c
-GAVL_CUST_NODE_INT_DEC(ORTEType, TypeEntry, TypeNode, char *,
+GAVL_CUST_NODE_INT_DEC(ORTEType, TypeEntry, TypeNode, const char *,
     types, node, typeRegister.typeName, gavl_cmp_str)
 
 
@@ -327,7 +327,7 @@ RTPSIssue(ORTEDomain *d,u_int8_t *rtps_msg,MessageInterpret *mi,IPAddress sender
 extern int gavl_cmp_ntp_time(const NtpTime *a,const NtpTime *b);
 extern int gavl_cmp_sn(const SequenceNumber *a, const SequenceNumber *b); 
 extern int gavl_cmp_guid(const GUID_RTPS *a, const GUID_RTPS *b); 
-extern int gavl_cmp_str(char *const *a,char *const *b);
+extern int gavl_cmp_str(const char *const *a,const char *const *b);
 extern int getMaxMessageLength(ORTEDomain *d);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -439,15 +439,14 @@ CSTReaderPersistenceTimer(ORTEDomain *d,void *vcstReader);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEDomainApp.c
-UL_LIST_CUST_DEC(SubscriptionPattern,
-                 PatternEntry,SubscriptionPatternNode,
-                 subscription,node);
-
-
+UL_LIST_CUST_DEC(Pattern,
+                 PatternEntry,PatternNode,
+                 patterns,node);
+                                                   
 ///////////////////////////////////////////////////////////////////////////////
 // ORTETypeRegister.c
 extern Boolean
-ORTETypeRegisterFind(ORTEDomain *d,char *typeName);
+ORTETypeRegisterFind(ORTEDomain *d,const char *typeName);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEPublication.c
@@ -456,6 +455,11 @@ GAVL_CUST_NODE_INT_DEC(PublicationList,
                        publications, psNode, guid, gavl_cmp_guid);
 extern int
 ORTEPublicationSendLocked(ORTEPublication *cstWriter);
+
+///////////////////////////////////////////////////////////////////////////////
+// ORTESubcription.c
+extern int
+ORTESubscriptionDestroyLocked(ORTESubscription *cstReader);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEPublicationTimer.c

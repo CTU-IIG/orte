@@ -25,12 +25,12 @@
 extern "C" {
 #endif
 
-#ifndef __RTL__
+#define _GNU_SOURCE
+
 #ifdef HAVE_CONFIG_H
-  #define _GNU_SOURCE
-  #define SOCK_BSD
-  #include "config.h"
+  #include "orte_config.h"
 #endif
+
 #ifdef HAVE_UNISTD_H
   #include <unistd.h>
 #endif
@@ -88,10 +88,10 @@ extern "C" {
 #ifdef HAVE_WS2TCPIP_H
   #include <ws2tcpip.h>
 #endif
-#endif
 
-
-#ifdef _WIN32
+#ifdef CONFIG_ORTE_UNIX
+  #define SOCK_BSD       
+#elif defined _WIN32
   #ifndef HAVE_CONFIG_H
     #include "config.h.undef"
     #if defined(_MSC_VER) || defined (_OMK_UNIX) 
@@ -110,10 +110,11 @@ extern "C" {
   #include <timeval.h>
   #include <ew_types.h>
   #define ioctl ioctlsocket
-  #undef SOCK_BSD
   #define SOCK_WIN
 #elif defined __RTL__
-  #include "config.h.undef"
+  #ifndef HAVE_CONFIG_H
+    #include "config.h.undef"
+  #endif
   #include <rtl.h>
   #include <posix/pthread.h>
   #include <posix/time.h>
@@ -127,8 +128,28 @@ extern "C" {
   #include <rtl/compat.h>
   #include <rtl/rwlock.h>
   #define SOCK_RTL
+#elif defined CONFIG_ORTE_RTAI
+  #undef PACKAGE_NAME
+  #undef PACKAGE_BUGREPORT
+  #undef PACKAGE_STRING
+  #undef PACKAGE
+  #undef PACKAGE_TARNAME
+  #undef PACKAGE_VERSION
+  #undef VERSION
+//  #include "config.h.undef"
+  #include <linux/module.h>
+  #include <rtai_posix.h.patched>
+  #include <byteswap.h>
+  #include <rtnet.h>
+  #include <linux/if.h>
+  #include <linux/in.h>
+  #include <linux/ctype.h>
+  #include <rtai/compat.h>
+  #define SOCK_BSD
+  
+//  #define SOCK_RTAI
 #elif defined _OMK_UNIX
-  #define _GNU_SOURCE
+  #define SOCK_BSD       
   #include "config.h.undef"
   #include <unistd.h>
   #include <stdio.h>
@@ -147,7 +168,6 @@ extern "C" {
   #include <byteswap.h>
   #include <stdarg.h>
   #include <ctype.h>
-  #define SOCK_BSD
 #endif
 
 #ifdef __cplusplus

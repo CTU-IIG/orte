@@ -70,11 +70,62 @@ objectEntryPurgeTimer(ORTEDomain *d,void *vobjectEntryOID) {
 
 /*****************************************************************************/
 void
+removePublications(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
+  CSTWriter       *cstWriter;
+  CSTRemoteReader *cstRemoteReader;
+  ObjectEntryOID  *objectEntryOID;
+    
+  if ((!d) || (!robjectEntryOID)) return;
+  pthread_rwlock_wrlock(&d->publications.lock);
+  gavl_cust_for_each(CSTWriter,
+                     &d->publications,cstWriter) {
+    pthread_rwlock_wrlock(&cstWriter->lock);
+    gavl_cust_for_each(ObjectEntryOID,
+                       robjectEntryOID->objectEntryAID,
+                       objectEntryOID) {
+      cstRemoteReader=CSTRemoteReader_find(cstWriter,&objectEntryOID->guid);
+      CSTWriterDestroyRemoteReader(d,cstRemoteReader);
+    }
+    pthread_rwlock_unlock(&cstWriter->lock);
+  }
+  pthread_rwlock_unlock(&d->publications.lock);
+}
+
+/*****************************************************************************/
+void
+removeSubscriptions(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
+  CSTReader       *cstReader;
+  CSTRemoteWriter *cstRemoteWriter;
+  ObjectEntryOID  *objectEntryOID;
+  
+  if ((!d) || (!robjectEntryOID)) return;
+  pthread_rwlock_wrlock(&d->subscriptions.lock);
+  gavl_cust_for_each(CSTReader,
+                     &d->subscriptions,cstReader) {
+    pthread_rwlock_wrlock(&cstReader->lock);
+    gavl_cust_for_each(ObjectEntryOID,
+                       robjectEntryOID->objectEntryAID,
+                       objectEntryOID) {
+      cstRemoteWriter=CSTRemoteWriter_find(cstReader,&objectEntryOID->guid);
+      if (cstRemoteWriter) {
+        CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
+        if ((cstReader->cstRemoteWriterCounter==0) && (cstReader->createdByPattern)) {
+          debug(12,2) ("scheduled: 0x%x-0x%x-0x%x for remove (patternSubscription)\n",
+                      cstReader->guid.hid,cstReader->guid.aid,cstReader->guid.oid);               
+          ORTESubscriptionDestroyLocked(cstReader);
+        }
+      }
+    }
+    pthread_rwlock_unlock(&cstReader->lock);
+  }
+  pthread_rwlock_unlock(&d->subscriptions.lock);
+}
+
+/*****************************************************************************/
+void
 removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   GUID_RTPS        guid;
   ObjectEntryOID   *objectEntryOID;
-  CSTWriter        *cstWriter;
-  CSTReader        *cstReader;
   CSTRemoteWriter  *cstRemoteWriter;
   CSTRemoteReader  *cstRemoteReader;
   
@@ -105,34 +156,8 @@ removeApplication(ORTEDomain *d,ObjectEntryOID *robjectEntryOID) {
   CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
   pthread_rwlock_unlock(&d->readerSubscriptions.lock);
   //destroy all services
-  //from publisheres
-  pthread_rwlock_wrlock(&d->publications.lock);
-  gavl_cust_for_each(CSTWriter,
-                     &d->publications,cstWriter) {
-    pthread_rwlock_wrlock(&cstWriter->lock);
-    gavl_cust_for_each(ObjectEntryOID,
-                       robjectEntryOID->objectEntryAID,
-                       objectEntryOID) {
-      cstRemoteReader=CSTRemoteReader_find(cstWriter,&objectEntryOID->guid);
-      CSTWriterDestroyRemoteReader(d,cstRemoteReader);
-    }
-    pthread_rwlock_unlock(&cstWriter->lock);
-  }
-  pthread_rwlock_unlock(&d->publications.lock);
-  //from subscriberes
-  pthread_rwlock_wrlock(&d->subscriptions.lock);
-  gavl_cust_for_each(CSTReader,
-                     &d->subscriptions,cstReader) {
-    pthread_rwlock_wrlock(&cstReader->lock);
-    gavl_cust_for_each(ObjectEntryOID,
-                       robjectEntryOID->objectEntryAID,
-                       objectEntryOID) {
-      cstRemoteWriter=CSTRemoteWriter_find(cstReader,&objectEntryOID->guid);
-      CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
-    }
-    pthread_rwlock_unlock(&cstReader->lock);
-  }
-  pthread_rwlock_unlock(&d->subscriptions.lock);
+  removePublications(d,robjectEntryOID);
+  removeSubscriptions(d,robjectEntryOID);
   //destroy all object - the object will be disconneced in objectEntryDelete
   while((objectEntryOID=ObjectEntryOID_first(robjectEntryOID->objectEntryAID))) {
     switch (objectEntryOID->oid & 0x07) {
@@ -216,9 +241,10 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
   guid=objectEntryOID->guid;
   //Event
   generateEvent(d,&guid,objectEntryOID->attributes,ORTE_FALSE);
-  debug(12,3) ("expired: 0x%x-0x%x removed\n",
-               objectEntryOID->objectEntryHID->hid,
-               objectEntryOID->objectEntryAID->aid);               
+  debug(12,3) ("expired: 0x%x-0x%x-0x%x removed\n",
+               objectEntryOID->guid.hid,
+               objectEntryOID->guid.aid,
+               objectEntryOID->guid.oid);               
   if (((d->guid.aid & 3) == MANAGER) && 
       ((guid.aid & 0x03) == MANAGER)) {
     pthread_rwlock_wrlock(&d->readerManagers.lock);
@@ -253,6 +279,10 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
                          objectEntryOID->objectEntryHID,objectEntryAID) {
         if ((objectEntryAID->aid & 0x03) == MANAGEDAPPLICATION) {
           if ((objectEntryOID1=ObjectEntryOID_find(objectEntryAID,&guid.oid))) { 
+            eventDetach(d,
+                objectEntryOID1->objectEntryAID,
+                &objectEntryOID1->expirationPurgeTimer,
+                0);
             eventAdd(d,
                 objectEntryOID1->objectEntryAID,
                 &objectEntryOID1->expirationPurgeTimer,
@@ -328,7 +358,14 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         pthread_rwlock_wrlock(&d->subscriptions.lock);
         gavl_cust_for_each(CSTReader,&d->subscriptions,cstReader) {
           cstRemoteWriter=CSTRemoteWriter_find(cstReader,&guid);
-          CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
+          if (cstRemoteWriter) {
+            CSTReaderDestroyRemoteWriter(d,cstRemoteWriter);
+            if ((cstReader->cstRemoteWriterCounter==0) && (cstReader->createdByPattern)) {
+              debug(12,2) ("scheduled: 0x%x-0x%x-0x%x for remove (patternSubscription)\n",
+                          cstReader->guid.hid,cstReader->guid.aid,cstReader->guid.oid);               
+              ORTESubscriptionDestroyLocked(cstReader);
+            }
+          }
         }
         pthread_rwlock_unlock(&d->subscriptions.lock);
         pthread_rwlock_wrlock(&d->publications.lock);
@@ -365,7 +402,7 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
         pthread_rwlock_wrlock(&d->psEntry.subscriptionsLock);
         SubscriptionList_delete(&d->psEntry,objectEntryOID);
         pthread_rwlock_unlock(&d->psEntry.subscriptionsLock);
-        if (!objectEntryOID->private) { //local object cann't be purged
+        if (!objectEntryOID->private) { //local object cann't be purged immediately
           objectEntryDelete(d,objectEntryOID);
           objectEntryOID=NULL;
         }

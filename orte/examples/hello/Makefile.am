@@ -1,11 +1,11 @@
 if CONFIG_ORTE_RT
-  module_PROGRAMS = helloSubscriber.ko helloPublisher.ko
-  helloSubscriber_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-  helloSubscriber_ko_SOURCES = HelloWorldSubscriber.c  
-  helloSubscriber_ko_LINK = $(top_builddir)/modtool --link -o $@
-  helloPublisher_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-  helloPublisher_ko_SOURCES = HelloWorldPublisher.c  
-  helloPublisher_ko_LINK = $(top_builddir)/modtool --link -o $@
+  module_PROGRAMS = rt_HelloWorldSubscriber.ko rt_HelloWorldPublisher.ko
+  rt_HelloWorldSubscriber_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+  rt_HelloWorldSubscriber_ko_SOURCES = HelloWorldSubscriber.c  
+  rt_HelloWorldSubscriber_ko_LINK = $(top_builddir)/modtool --link -o $@
+  rt_HelloWorldPublisher_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+  rt_HelloWorldPublisher_ko_SOURCES = HelloWorldPublisher.c  
+  rt_HelloWorldPublisher_ko_LINK = $(top_builddir)/modtool --link -o $@
 else
   noinst_PROGRAMS = HelloWorldPublisher HelloWorldSubscriber
 if CONFIG_ORTE_WIN

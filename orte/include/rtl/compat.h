@@ -21,8 +21,6 @@
 #ifndef _COMPAT_H
 #define _COMPAT_H
 
-#include "defines.h"  //macro MALLOC
-
 #define printf rtl_printf
 #define gettimeofday(tv, tz) do_gettimeofday(tv)
 #define setsockopt(a, b, c, d, e) (-1)
@@ -33,7 +31,7 @@ static inline
 char *strdup(char *str) {
   char *tmp;
   
-  tmp = MALLOC(strlen(str) + 1);
+  tmp = malloc(strlen(str) + 1);
   if (tmp)
     memcpy(tmp, str, strlen(str) + 1);
   return tmp;

@@ -76,17 +76,36 @@ void conv_ntp(NtpTime *ntp,char ef) {
 
 /**********************************************************************************/
 char* 
-IPAddressToString(IPAddress ipAddress) {
+IPAddressToString(IPAddress ipAddress,char *buff) {
   struct in_addr addr;
-  static char result[MAX_STRING_IPADDRESS_LENGTH];
   
   addr.s_addr=htonl(ipAddress);
-  sprintf(result,"%s",inet_ntoa(addr));
-  return result;
+  sprintf(buff,"%s",inet_ntoa(addr));
+  return buff;
 }
 
 /**********************************************************************************/
 IPAddress 
 StringToIPAddress(const char *string) {
-  return ntohl(inet_addr((char *)string));
+  return ntohl(inet_addr(string));
+}
+
+/**********************************************************************************/
+char *
+NtpTimeToStringMs(NtpTime time,char *buff) {
+  int s,msec;
+  
+  NtpTimeDisAssembToMs(s, msec, time);
+  sprintf(buff,"%d.%03d",s,msec);
+  return buff;
+}
+
+/**********************************************************************************/
+char *
+NtpTimeToStringUs(NtpTime time,char *buff) {
+  int s,usec;
+  
+  NtpTimeDisAssembToUs(s, usec, time);
+  sprintf(buff,"%d.%06d",s,usec);
+  return buff;
 }

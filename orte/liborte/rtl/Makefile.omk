@@ -21,3 +21,7 @@ pthread_rwlock_timedwrlock.c \
 pthread_rwlock_unlock.c \
 pthread_rwlock_tryrdlock.c \
 pthread_rwlock_trywrlock.c
+
+rtlinux_MODULES = rtl_pthread_rwlock
+
+rtl_pthread_rwlock_SOURCES = $(pthread_rwlock_SOURCES)

@@ -25,6 +25,7 @@
 void
 ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,u_int16_t port) {
   struct sockaddr_in    des;
+  char                  sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   int                   i;
 
   des.sin_family = AF_INET;
@@ -34,14 +35,14 @@ ORTEDomainWakeUpReceivingThread(ORTEDomain *d,sock_t *sock,u_int16_t port) {
       des.sin_addr.s_addr=htonl(d->domainProp.IFProp[i].ipAddress);
       sock_sendto(sock,&i,1,&des,sizeof(des));
       debug(25,2) ("Sent wake up signal to: %s.%d\n",
-                    IPAddressToString(ntohl(des.sin_addr.s_addr)),
+                    IPAddressToString(ntohl(des.sin_addr.s_addr),sIPAddress),
       port);
     }
   } else {
     des.sin_addr.s_addr = inet_addr("127.0.0.1"); //local IPAddress
     sock_sendto(sock,NULL,0,&des,sizeof(des));
     debug(25,2) ("Sent wake up signal to: %s.%d\n",
-                  IPAddressToString(ntohl(des.sin_addr.s_addr)),
+                  IPAddressToString(ntohl(des.sin_addr.s_addr),sIPAddress),
                   port);
   }
 }

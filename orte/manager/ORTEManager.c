@@ -1,5 +1,5 @@
 /*
- *  $Id: ORTEManager.c,v 0.0.0.1        2003/10/07 
+ *  $Id: ORTEManager.c,v 0.0.0.1        2003/10/07
  *
  *  DEBUG:  section                     Manager
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
@@ -11,30 +11,42 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
- */ 
+ *
+ */
+#ifdef HAVE_CONFIG_H
+  #include <orte_config.h>
+#endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#ifdef _WIN32
-  #include <getopt.h>
-#elif defined __RTL__
+#ifdef CONFIG_ORTE_RTAI
+  #include <linux/module.h>
+  #include <rtai.h>
+  #include <rtai_sched.h>
+  #include <rtai_sem.h>
 #else
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <pthread.h>
-  #include <getopt.h>
-  #include <signal.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #ifdef _WIN32
+    #include <getopt.h>
+  #elif defined __RTL__
+  #else
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <pthread.h>
+    #include <getopt.h>
+    #include <signal.h>
+    #define _UNIX
+  #endif
 #endif
 
 #include "orte_api.h"
 
+#ifndef CONFIG_ORTE_RT
 Boolean
 onMgrAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param) {
   printf("%s 0x%x-0x%x was accepted\n",
@@ -69,7 +81,7 @@ static int daemon_init(void) {
 
   if ((pid = fork()) < 0) {
     return -1;
-  } else 
+  } else
     if (pid != 0) {
       exit(0);	/* parent vanishes */
     }
@@ -82,7 +94,7 @@ static int daemon_init(void) {
   return 0;
 }
 #endif
-                     
+
 static void usage(void) {
   printf("usage: ORTEManager <parameters> \n");
   printf("  -p, --peer <IPAdd:IPAdd:...>  possible locations of fellow managers\n");
@@ -122,18 +134,18 @@ int main(int argc,char *argv[]) {
     { 0, 0, 0, 0}
   };
   ORTEDomain		      *d;
-  ORTEDomainProp	    dp; 
+  ORTEDomainProp	    dp;
   int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
   Boolean		          daemon=ORTE_FALSE,start_sending_thread=ORTE_FALSE;
   ORTEDomainAppEvents *events=NULL;
-  
+
   #ifdef _UNIX
   start_sending_thread=ORTE_TRUE;
   #endif
 
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
- 
+
   while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:l:VhDe",&long_opts[0], NULL)) != EOF) {
     switch (opt) {
       case 'p':
@@ -167,6 +179,7 @@ int main(int argc,char *argv[]) {
         break;
       case 'l':
         ORTEVerbositySetLogFile(optarg);
+        break;
       case 'V':
         printf("Ocera Real-Time Ethernet (%s).\n",dp.version);
         exit(0);
@@ -181,24 +194,49 @@ int main(int argc,char *argv[]) {
     }
   }
 
-  d=ORTEDomainMgrCreate(domain,&dp,events,start_sending_thread);
-  if (!d) 
+  d=ORTEDomainMgrCreate(domain,&dp,events,ORTE_TRUE);
+  if (!d)
     exit(1);
 
   #ifdef _UNIX
-  if (daemon) 
+  if (daemon)
     daemon_init();
   #endif
 
-  if (!start_sending_thread) 
-    ORTEAppSendThread(d); 
+  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE);
+  if (!start_sending_thread) {
+    ORTEAppSendThread(d);
+  }
+  ORTEDomainStart(d,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
 
   #ifdef _UNIX
-  waitForEndingCommand();    
+  waitForEndingCommand();
   ORTEDomainMgrDestroy(d);
-  if (events) 
+  if (events)
     free(events);
   #endif
 
   exit(0);
 }
+#else
+MODULE_LICENSE("GPL");
+ORTEDomain          *d;
+
+void
+createManager(void) {
+  ORTEInit();
+  ORTEVerbositySetOptions("ALL,2");
+  d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+}
+
+int
+init_module(void) {
+  createManager();
+  return 0;
+}
+void
+cleanup_module(void) {
+  if (d)
+    ORTEDomainMgrDestroy(d);
+}
+#endif

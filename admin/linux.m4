@@ -297,8 +297,10 @@ AC_DEFUN(DS_RT,
 	DS_RTAI([USE_RTAI=yes],[USE_RTAI=no])
 	DS_RTLINUX([USE_RTLINUX=yes],[USE_RTLINUX=no])
 	if test ${USE_RTAI} == "yes" -o ${USE_RTLINUX} == "yes" ; then
-		AC_DEFINE([CONFIG_ORTE_RT],[1],[Define to enable comedi's RT support])
-	fi
+ 	        AC_DEFINE([CONFIG_ORTE_RT],[1],[Define to enable ORTE's RT support])
+		CONFIG_ORTE_RT="yes"
+        fi
+	AC_SUBST(CONFIG_ORTE_RT)	
 	AM_CONDITIONAL([USE_RTAI],[test ${USE_RTAI} == "yes"])
 	AM_CONDITIONAL([USE_RTLINUX],[test ${USE_RTLINUX} == "yes"])
 	AM_CONDITIONAL([CONFIG_ORTE_RT],[test ${USE_RTAI} == "yes" -o ${USE_RTLINUX} == "yes"])

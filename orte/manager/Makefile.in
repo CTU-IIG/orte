@@ -68,6 +68,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -99,24 +100,40 @@ am__quote = @am__quote@
 install_sh = @install_sh@
 modulePROGRAMS_INSTALL = @modulePROGRAMS_INSTALL@
 moduledir = @moduledir@
-bin_PROGRAMS = ORTEManager
-
-ORTEManager_SOURCES = ORTEManager.c
-@CONFIG_ORTE_WIN_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
-ORTEManager_LDADD = ../liborte/liborte.a $(win_libs)
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_ORTEManager.ko 
+@CONFIG_ORTE_RT_TRUE@rt_ORTEManager_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+@CONFIG_ORTE_RT_TRUE@rt_ORTEManager_ko_SOURCES = ORTEManager.c  
+@CONFIG_ORTE_RT_TRUE@rt_ORTEManager_ko_LINK = $(top_builddir)/modtool --link -o $@
+@CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ORTEManager
+@CONFIG_ORTE_RT_FALSE@ORTEManager_SOURCES = ORTEManager.c
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@win_libs = $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a 
+@CONFIG_ORTE_RT_FALSE@ORTEManager_LDADD = ../liborte/liborte.a $(win_libs)
 subdir = orte/manager
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/orte/include/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = ORTEManager$(EXEEXT)
-PROGRAMS = $(bin_PROGRAMS)
+@CONFIG_ORTE_RT_TRUE@bin_PROGRAMS =
+@CONFIG_ORTE_RT_FALSE@bin_PROGRAMS = ORTEManager$(EXEEXT)
+@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = rt_ORTEManager.ko$(EXEEXT)
+@CONFIG_ORTE_RT_FALSE@module_PROGRAMS =
+PROGRAMS = $(bin_PROGRAMS) $(module_PROGRAMS)
 
-am_ORTEManager_OBJECTS = ORTEManager.$(OBJEXT)
+@CONFIG_ORTE_RT_FALSE@am_ORTEManager_OBJECTS = ORTEManager.$(OBJEXT)
 ORTEManager_OBJECTS = $(am_ORTEManager_OBJECTS)
-@CONFIG_ORTE_WIN_TRUE@ORTEManager_DEPENDENCIES = ../liborte/liborte.a \
-@CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
-@CONFIG_ORTE_WIN_FALSE@ORTEManager_DEPENDENCIES = ../liborte/liborte.a
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@ORTEManager_DEPENDENCIES = \
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@	../liborte/liborte.a \
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_TRUE@	$(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_FALSE@ORTEManager_DEPENDENCIES = \
+@CONFIG_ORTE_RT_FALSE@@CONFIG_ORTE_WIN_FALSE@	../liborte/liborte.a
+@CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_TRUE@ORTEManager_DEPENDENCIES =
+@CONFIG_ORTE_RT_TRUE@@CONFIG_ORTE_WIN_FALSE@ORTEManager_DEPENDENCIES =
 ORTEManager_LDFLAGS =
+@CONFIG_ORTE_RT_TRUE@am_rt_ORTEManager_ko_OBJECTS = \
+@CONFIG_ORTE_RT_TRUE@	rt_ORTEManager_ko-ORTEManager.$(OBJEXT)
+rt_ORTEManager_ko_OBJECTS = $(am_rt_ORTEManager_ko_OBJECTS)
+rt_ORTEManager_ko_LDADD = $(LDADD)
+rt_ORTEManager_ko_DEPENDENCIES =
+rt_ORTEManager_ko_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/orte/include
@@ -125,15 +142,16 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ORTEManager.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ORTEManager.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(ORTEManager_SOURCES)
+DIST_SOURCES = $(ORTEManager_SOURCES) $(rt_ORTEManager_ko_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(ORTEManager_SOURCES)
+SOURCES = $(ORTEManager_SOURCES) $(rt_ORTEManager_ko_SOURCES)
 
 all: all-am
 
@@ -168,9 +186,36 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+install-modulePROGRAMS: $(module_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(moduledir)
+	@list='$(module_PROGRAMS)'; for p in $$list; do \
+	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  if test -f $$p \
+	  ; then \
+	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(modulePROGRAMS_INSTALL) $$p $(DESTDIR)$(moduledir)/$$f"; \
+	   $(INSTALL_PROGRAM_ENV) $(modulePROGRAMS_INSTALL) $$p $(DESTDIR)$(moduledir)/$$f; \
+	  else :; fi; \
+	done
+
+uninstall-modulePROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(module_PROGRAMS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f $(DESTDIR)$(moduledir)/$$f"; \
+	  rm -f $(DESTDIR)$(moduledir)/$$f; \
+	done
+
+clean-modulePROGRAMS:
+	-test -z "$(module_PROGRAMS)" || rm -f $(module_PROGRAMS)
 ORTEManager$(EXEEXT): $(ORTEManager_OBJECTS) $(ORTEManager_DEPENDENCIES) 
 	@rm -f ORTEManager$(EXEEXT)
 	$(LINK) $(ORTEManager_LDFLAGS) $(ORTEManager_OBJECTS) $(ORTEManager_LDADD) $(LIBS)
+rt_ORTEManager_ko-ORTEManager.$(OBJEXT): ORTEManager.c
+rt_ORTEManager.ko$(EXEEXT): $(rt_ORTEManager_ko_OBJECTS) $(rt_ORTEManager_ko_DEPENDENCIES) 
+	@rm -f rt_ORTEManager.ko$(EXEEXT)
+	$(rt_ORTEManager_ko_LINK) $(rt_ORTEManager_ko_LDFLAGS) $(rt_ORTEManager_ko_OBJECTS) $(rt_ORTEManager_ko_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -179,6 +224,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ORTEManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -194,6 +240,18 @@ distclean-depend:
 @AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c `cygpath -w $<`
+
+rt_ORTEManager_ko-ORTEManager.o: ORTEManager.c
+@AMDEP_TRUE@	source='ORTEManager.c' object='rt_ORTEManager_ko-ORTEManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po' tmpdepfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_ORTEManager_ko_CFLAGS) $(CFLAGS) -c -o rt_ORTEManager_ko-ORTEManager.o `test -f 'ORTEManager.c' || echo '$(srcdir)/'`ORTEManager.c
+
+rt_ORTEManager_ko-ORTEManager.obj: ORTEManager.c
+@AMDEP_TRUE@	source='ORTEManager.c' object='rt_ORTEManager_ko-ORTEManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.Po' tmpdepfile='$(DEPDIR)/rt_ORTEManager_ko-ORTEManager.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rt_ORTEManager_ko_CFLAGS) $(CFLAGS) -c -o rt_ORTEManager_ko-ORTEManager.obj `cygpath -w ORTEManager.c`
 CCDEPMODE = @CCDEPMODE@
 uninstall-info-am:
 
@@ -263,7 +321,7 @@ check: check-am
 all-am: Makefile $(PROGRAMS)
 
 installdirs:
-	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	$(mkinstalldirs) $(DESTDIR)$(bindir) $(DESTDIR)$(moduledir)
 
 install: install-am
 install-exec: install-exec-am
@@ -291,7 +349,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-modulePROGRAMS \
+	mostlyclean-am
 
 distclean: distclean-am
 
@@ -306,7 +365,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-modulePROGRAMS
 
 install-exec-am: install-binPROGRAMS
 
@@ -324,18 +383,20 @@ mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
-uninstall-am: uninstall-binPROGRAMS uninstall-info-am
+uninstall-am: uninstall-binPROGRAMS uninstall-info-am \
+	uninstall-modulePROGRAMS
 
 .PHONY: GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic distclean distclean-compile distclean-depend \
-	distclean-generic distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-info-am
+	clean-generic clean-modulePROGRAMS distclean distclean-compile \
+	distclean-depend distclean-generic distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-exec install-exec-am \
+	install-info install-info-am install-man install-modulePROGRAMS \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
+	uninstall-modulePROGRAMS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

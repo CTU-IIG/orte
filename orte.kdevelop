@@ -20,10 +20,10 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>orte/examples/ORTEPing/ORTEPing</mainprogram>
+      <mainprogram>orte/examples/ORTESpy/ORTESpy</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>-p -s -m 10000 -v ALL,10</programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>

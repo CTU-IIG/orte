@@ -76,6 +76,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -108,8 +109,7 @@ install_sh = @install_sh@
 modulePROGRAMS_INSTALL = @modulePROGRAMS_INSTALL@
 moduledir = @moduledir@
 
-@CONFIG_ORTE_RT_TRUE@SUBDIRS = liborte examples
-@CONFIG_ORTE_RT_FALSE@SUBDIRS = liborte manager examples
+SUBDIRS = liborte manager examples
 subdir = orte
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/orte/include/config.h
@@ -121,7 +121,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = Makefile.am Makefile.in
-DIST_SUBDIRS = liborte manager examples
+DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
 .SUFFIXES:
@@ -253,7 +253,7 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  if test "$$subdir" = .; then :; else \
 	    test -d $(distdir)/$$subdir \
 	    || mkdir $(distdir)/$$subdir \

@@ -74,6 +74,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -124,38 +125,39 @@ pthread_rwlock_tryrdlock.c \
 pthread_rwlock_trywrlock.c
 
 
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = pthread_rwlock.o
-@CONFIG_ORTE_RT_TRUE@pthread_rwlock_o_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-@CONFIG_ORTE_RT_TRUE@pthread_rwlock_o_SOURCES = $(PTHREAD_RWLOCK_SOURCES)
-@CONFIG_ORTE_RT_TRUE@pthread_rwlock_o_LINK = $(top_builddir)/modtool --link -o $@
+@USE_RTLINUX_TRUE@module_PROGRAMS = rtl_pthread_rwlock.ko
+@USE_RTLINUX_TRUE@rtl_pthread_rwlock_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+@USE_RTLINUX_TRUE@rtl_pthread_rwlock_ko_SOURCES = $(PTHREAD_RWLOCK_SOURCES)
+@USE_RTLINUX_TRUE@rtl_pthread_rwlock_ko_LINK = $(top_builddir)/modtool --link -o $@
 subdir = orte/liborte/rtl
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/orte/include/config.h
 CONFIG_CLEAN_FILES =
-@CONFIG_ORTE_RT_TRUE@module_PROGRAMS = pthread_rwlock.o$(EXEEXT)
-@CONFIG_ORTE_RT_FALSE@module_PROGRAMS =
+@USE_RTLINUX_TRUE@module_PROGRAMS = rtl_pthread_rwlock.ko$(EXEEXT)
+@USE_RTLINUX_FALSE@module_PROGRAMS =
 PROGRAMS = $(module_PROGRAMS)
 
-am__objects_1 = pthread_rwlock_o-ptw32_rwlock_check_need_init.$(OBJEXT) \
-	pthread_rwlock_o-ptw32_rwlock_cancelwrwait.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_init.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_destroy.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlockattr_init.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlockattr_destroy.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlockattr_getpshared.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlockattr_setpshared.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_rdlock.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_timedrdlock.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_wrlock.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_timedwrlock.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_unlock.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_tryrdlock.$(OBJEXT) \
-	pthread_rwlock_o-pthread_rwlock_trywrlock.$(OBJEXT)
-@CONFIG_ORTE_RT_TRUE@am_pthread_rwlock_o_OBJECTS = $(am__objects_1)
-pthread_rwlock_o_OBJECTS = $(am_pthread_rwlock_o_OBJECTS)
-pthread_rwlock_o_LDADD = $(LDADD)
-pthread_rwlock_o_DEPENDENCIES =
-pthread_rwlock_o_LDFLAGS =
+am__objects_1 = \
+	rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_init.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_destroy.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlockattr_init.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_unlock.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.$(OBJEXT) \
+	rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.$(OBJEXT)
+@USE_RTLINUX_TRUE@am_rtl_pthread_rwlock_ko_OBJECTS = $(am__objects_1)
+rtl_pthread_rwlock_ko_OBJECTS = $(am_rtl_pthread_rwlock_ko_OBJECTS)
+rtl_pthread_rwlock_ko_LDADD = $(LDADD)
+rtl_pthread_rwlock_ko_DEPENDENCIES =
+rtl_pthread_rwlock_ko_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/orte/include
@@ -165,29 +167,29 @@ LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/admin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_destroy.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_init.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_rdlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedrdlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedwrlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_tryrdlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_trywrlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_unlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_wrlock.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_destroy.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_getpshared.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_init.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_setpshared.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_cancelwrwait.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_check_need_init.Po
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_destroy.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_init.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_unlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_init.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(pthread_rwlock_o_SOURCES)
+DIST_SOURCES = $(rtl_pthread_rwlock_ko_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(pthread_rwlock_o_SOURCES)
+SOURCES = $(rtl_pthread_rwlock_ko_SOURCES)
 
 all: all-am
 
@@ -221,38 +223,39 @@ uninstall-modulePROGRAMS:
 
 clean-modulePROGRAMS:
 	-test -z "$(module_PROGRAMS)" || rm -f $(module_PROGRAMS)
-pthread_rwlock_o-ptw32_rwlock_check_need_init.$(OBJEXT): \
+rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.$(OBJEXT): \
 	ptw32_rwlock_check_need_init.c
-pthread_rwlock_o-ptw32_rwlock_cancelwrwait.$(OBJEXT): \
+rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.$(OBJEXT): \
 	ptw32_rwlock_cancelwrwait.c
-pthread_rwlock_o-pthread_rwlock_init.$(OBJEXT): pthread_rwlock_init.c
-pthread_rwlock_o-pthread_rwlock_destroy.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_init.$(OBJEXT): \
+	pthread_rwlock_init.c
+rtl_pthread_rwlock_ko-pthread_rwlock_destroy.$(OBJEXT): \
 	pthread_rwlock_destroy.c
-pthread_rwlock_o-pthread_rwlockattr_init.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlockattr_init.$(OBJEXT): \
 	pthread_rwlockattr_init.c
-pthread_rwlock_o-pthread_rwlockattr_destroy.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.$(OBJEXT): \
 	pthread_rwlockattr_destroy.c
-pthread_rwlock_o-pthread_rwlockattr_getpshared.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.$(OBJEXT): \
 	pthread_rwlockattr_getpshared.c
-pthread_rwlock_o-pthread_rwlockattr_setpshared.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.$(OBJEXT): \
 	pthread_rwlockattr_setpshared.c
-pthread_rwlock_o-pthread_rwlock_rdlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.$(OBJEXT): \
 	pthread_rwlock_rdlock.c
-pthread_rwlock_o-pthread_rwlock_timedrdlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.$(OBJEXT): \
 	pthread_rwlock_timedrdlock.c
-pthread_rwlock_o-pthread_rwlock_wrlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.$(OBJEXT): \
 	pthread_rwlock_wrlock.c
-pthread_rwlock_o-pthread_rwlock_timedwrlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.$(OBJEXT): \
 	pthread_rwlock_timedwrlock.c
-pthread_rwlock_o-pthread_rwlock_unlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_unlock.$(OBJEXT): \
 	pthread_rwlock_unlock.c
-pthread_rwlock_o-pthread_rwlock_tryrdlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.$(OBJEXT): \
 	pthread_rwlock_tryrdlock.c
-pthread_rwlock_o-pthread_rwlock_trywrlock.$(OBJEXT): \
+rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.$(OBJEXT): \
 	pthread_rwlock_trywrlock.c
-pthread_rwlock.o$(EXEEXT): $(pthread_rwlock_o_OBJECTS) $(pthread_rwlock_o_DEPENDENCIES) 
-	@rm -f pthread_rwlock.o$(EXEEXT)
-	$(pthread_rwlock_o_LINK) $(pthread_rwlock_o_LDFLAGS) $(pthread_rwlock_o_OBJECTS) $(pthread_rwlock_o_LDADD) $(LIBS)
+rtl_pthread_rwlock.ko$(EXEEXT): $(rtl_pthread_rwlock_ko_OBJECTS) $(rtl_pthread_rwlock_ko_DEPENDENCIES) 
+	@rm -f rtl_pthread_rwlock.ko$(EXEEXT)
+	$(rtl_pthread_rwlock_ko_LINK) $(rtl_pthread_rwlock_ko_LDFLAGS) $(rtl_pthread_rwlock_ko_OBJECTS) $(rtl_pthread_rwlock_ko_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -260,21 +263,21 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_destroy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_init.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_rdlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedrdlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedwrlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_tryrdlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_trywrlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_unlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_wrlock.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_destroy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_getpshared.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_init.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_setpshared.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_cancelwrwait.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_check_need_init.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_destroy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_init.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_unlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_init.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -291,185 +294,185 @@ distclean-depend:
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c `cygpath -w $<`
 
-pthread_rwlock_o-ptw32_rwlock_check_need_init.o: ptw32_rwlock_check_need_init.c
-@AMDEP_TRUE@	source='ptw32_rwlock_check_need_init.c' object='pthread_rwlock_o-ptw32_rwlock_check_need_init.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_check_need_init.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_check_need_init.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.o: ptw32_rwlock_check_need_init.c
+@AMDEP_TRUE@	source='ptw32_rwlock_check_need_init.c' object='rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-ptw32_rwlock_check_need_init.o `test -f 'ptw32_rwlock_check_need_init.c' || echo '$(srcdir)/'`ptw32_rwlock_check_need_init.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.o `test -f 'ptw32_rwlock_check_need_init.c' || echo '$(srcdir)/'`ptw32_rwlock_check_need_init.c
 
-pthread_rwlock_o-ptw32_rwlock_check_need_init.obj: ptw32_rwlock_check_need_init.c
-@AMDEP_TRUE@	source='ptw32_rwlock_check_need_init.c' object='pthread_rwlock_o-ptw32_rwlock_check_need_init.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_check_need_init.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_check_need_init.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.obj: ptw32_rwlock_check_need_init.c
+@AMDEP_TRUE@	source='ptw32_rwlock_check_need_init.c' object='rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-ptw32_rwlock_check_need_init.obj `cygpath -w ptw32_rwlock_check_need_init.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-ptw32_rwlock_check_need_init.obj `cygpath -w ptw32_rwlock_check_need_init.c`
 
-pthread_rwlock_o-ptw32_rwlock_cancelwrwait.o: ptw32_rwlock_cancelwrwait.c
-@AMDEP_TRUE@	source='ptw32_rwlock_cancelwrwait.c' object='pthread_rwlock_o-ptw32_rwlock_cancelwrwait.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_cancelwrwait.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_cancelwrwait.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.o: ptw32_rwlock_cancelwrwait.c
+@AMDEP_TRUE@	source='ptw32_rwlock_cancelwrwait.c' object='rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-ptw32_rwlock_cancelwrwait.o `test -f 'ptw32_rwlock_cancelwrwait.c' || echo '$(srcdir)/'`ptw32_rwlock_cancelwrwait.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.o `test -f 'ptw32_rwlock_cancelwrwait.c' || echo '$(srcdir)/'`ptw32_rwlock_cancelwrwait.c
 
-pthread_rwlock_o-ptw32_rwlock_cancelwrwait.obj: ptw32_rwlock_cancelwrwait.c
-@AMDEP_TRUE@	source='ptw32_rwlock_cancelwrwait.c' object='pthread_rwlock_o-ptw32_rwlock_cancelwrwait.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_cancelwrwait.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-ptw32_rwlock_cancelwrwait.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.obj: ptw32_rwlock_cancelwrwait.c
+@AMDEP_TRUE@	source='ptw32_rwlock_cancelwrwait.c' object='rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-ptw32_rwlock_cancelwrwait.obj `cygpath -w ptw32_rwlock_cancelwrwait.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-ptw32_rwlock_cancelwrwait.obj `cygpath -w ptw32_rwlock_cancelwrwait.c`
 
-pthread_rwlock_o-pthread_rwlock_init.o: pthread_rwlock_init.c
-@AMDEP_TRUE@	source='pthread_rwlock_init.c' object='pthread_rwlock_o-pthread_rwlock_init.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_init.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_init.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_init.o: pthread_rwlock_init.c
+@AMDEP_TRUE@	source='pthread_rwlock_init.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_init.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_init.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_init.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_init.o `test -f 'pthread_rwlock_init.c' || echo '$(srcdir)/'`pthread_rwlock_init.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_init.o `test -f 'pthread_rwlock_init.c' || echo '$(srcdir)/'`pthread_rwlock_init.c
 
-pthread_rwlock_o-pthread_rwlock_init.obj: pthread_rwlock_init.c
-@AMDEP_TRUE@	source='pthread_rwlock_init.c' object='pthread_rwlock_o-pthread_rwlock_init.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_init.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_init.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_init.obj: pthread_rwlock_init.c
+@AMDEP_TRUE@	source='pthread_rwlock_init.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_init.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_init.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_init.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_init.obj `cygpath -w pthread_rwlock_init.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_init.obj `cygpath -w pthread_rwlock_init.c`
 
-pthread_rwlock_o-pthread_rwlock_destroy.o: pthread_rwlock_destroy.c
-@AMDEP_TRUE@	source='pthread_rwlock_destroy.c' object='pthread_rwlock_o-pthread_rwlock_destroy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_destroy.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_destroy.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_destroy.o: pthread_rwlock_destroy.c
+@AMDEP_TRUE@	source='pthread_rwlock_destroy.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_destroy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_destroy.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_destroy.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_destroy.o `test -f 'pthread_rwlock_destroy.c' || echo '$(srcdir)/'`pthread_rwlock_destroy.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_destroy.o `test -f 'pthread_rwlock_destroy.c' || echo '$(srcdir)/'`pthread_rwlock_destroy.c
 
-pthread_rwlock_o-pthread_rwlock_destroy.obj: pthread_rwlock_destroy.c
-@AMDEP_TRUE@	source='pthread_rwlock_destroy.c' object='pthread_rwlock_o-pthread_rwlock_destroy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_destroy.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_destroy.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_destroy.obj: pthread_rwlock_destroy.c
+@AMDEP_TRUE@	source='pthread_rwlock_destroy.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_destroy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_destroy.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_destroy.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_destroy.obj `cygpath -w pthread_rwlock_destroy.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_destroy.obj `cygpath -w pthread_rwlock_destroy.c`
 
-pthread_rwlock_o-pthread_rwlockattr_init.o: pthread_rwlockattr_init.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_init.c' object='pthread_rwlock_o-pthread_rwlockattr_init.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_init.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_init.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_init.o: pthread_rwlockattr_init.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_init.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_init.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_init.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_init.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_init.o `test -f 'pthread_rwlockattr_init.c' || echo '$(srcdir)/'`pthread_rwlockattr_init.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_init.o `test -f 'pthread_rwlockattr_init.c' || echo '$(srcdir)/'`pthread_rwlockattr_init.c
 
-pthread_rwlock_o-pthread_rwlockattr_init.obj: pthread_rwlockattr_init.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_init.c' object='pthread_rwlock_o-pthread_rwlockattr_init.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_init.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_init.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_init.obj: pthread_rwlockattr_init.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_init.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_init.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_init.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_init.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_init.obj `cygpath -w pthread_rwlockattr_init.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_init.obj `cygpath -w pthread_rwlockattr_init.c`
 
-pthread_rwlock_o-pthread_rwlockattr_destroy.o: pthread_rwlockattr_destroy.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_destroy.c' object='pthread_rwlock_o-pthread_rwlockattr_destroy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_destroy.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_destroy.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.o: pthread_rwlockattr_destroy.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_destroy.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_destroy.o `test -f 'pthread_rwlockattr_destroy.c' || echo '$(srcdir)/'`pthread_rwlockattr_destroy.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.o `test -f 'pthread_rwlockattr_destroy.c' || echo '$(srcdir)/'`pthread_rwlockattr_destroy.c
 
-pthread_rwlock_o-pthread_rwlockattr_destroy.obj: pthread_rwlockattr_destroy.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_destroy.c' object='pthread_rwlock_o-pthread_rwlockattr_destroy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_destroy.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_destroy.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.obj: pthread_rwlockattr_destroy.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_destroy.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_destroy.obj `cygpath -w pthread_rwlockattr_destroy.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_destroy.obj `cygpath -w pthread_rwlockattr_destroy.c`
 
-pthread_rwlock_o-pthread_rwlockattr_getpshared.o: pthread_rwlockattr_getpshared.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_getpshared.c' object='pthread_rwlock_o-pthread_rwlockattr_getpshared.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_getpshared.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_getpshared.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.o: pthread_rwlockattr_getpshared.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_getpshared.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_getpshared.o `test -f 'pthread_rwlockattr_getpshared.c' || echo '$(srcdir)/'`pthread_rwlockattr_getpshared.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.o `test -f 'pthread_rwlockattr_getpshared.c' || echo '$(srcdir)/'`pthread_rwlockattr_getpshared.c
 
-pthread_rwlock_o-pthread_rwlockattr_getpshared.obj: pthread_rwlockattr_getpshared.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_getpshared.c' object='pthread_rwlock_o-pthread_rwlockattr_getpshared.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_getpshared.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_getpshared.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.obj: pthread_rwlockattr_getpshared.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_getpshared.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_getpshared.obj `cygpath -w pthread_rwlockattr_getpshared.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_getpshared.obj `cygpath -w pthread_rwlockattr_getpshared.c`
 
-pthread_rwlock_o-pthread_rwlockattr_setpshared.o: pthread_rwlockattr_setpshared.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_setpshared.c' object='pthread_rwlock_o-pthread_rwlockattr_setpshared.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_setpshared.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_setpshared.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.o: pthread_rwlockattr_setpshared.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_setpshared.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_setpshared.o `test -f 'pthread_rwlockattr_setpshared.c' || echo '$(srcdir)/'`pthread_rwlockattr_setpshared.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.o `test -f 'pthread_rwlockattr_setpshared.c' || echo '$(srcdir)/'`pthread_rwlockattr_setpshared.c
 
-pthread_rwlock_o-pthread_rwlockattr_setpshared.obj: pthread_rwlockattr_setpshared.c
-@AMDEP_TRUE@	source='pthread_rwlockattr_setpshared.c' object='pthread_rwlock_o-pthread_rwlockattr_setpshared.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_setpshared.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlockattr_setpshared.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.obj: pthread_rwlockattr_setpshared.c
+@AMDEP_TRUE@	source='pthread_rwlockattr_setpshared.c' object='rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlockattr_setpshared.obj `cygpath -w pthread_rwlockattr_setpshared.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlockattr_setpshared.obj `cygpath -w pthread_rwlockattr_setpshared.c`
 
-pthread_rwlock_o-pthread_rwlock_rdlock.o: pthread_rwlock_rdlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_rdlock.c' object='pthread_rwlock_o-pthread_rwlock_rdlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_rdlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_rdlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.o: pthread_rwlock_rdlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_rdlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_rdlock.o `test -f 'pthread_rwlock_rdlock.c' || echo '$(srcdir)/'`pthread_rwlock_rdlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.o `test -f 'pthread_rwlock_rdlock.c' || echo '$(srcdir)/'`pthread_rwlock_rdlock.c
 
-pthread_rwlock_o-pthread_rwlock_rdlock.obj: pthread_rwlock_rdlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_rdlock.c' object='pthread_rwlock_o-pthread_rwlock_rdlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_rdlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_rdlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.obj: pthread_rwlock_rdlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_rdlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_rdlock.obj `cygpath -w pthread_rwlock_rdlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_rdlock.obj `cygpath -w pthread_rwlock_rdlock.c`
 
-pthread_rwlock_o-pthread_rwlock_timedrdlock.o: pthread_rwlock_timedrdlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_timedrdlock.c' object='pthread_rwlock_o-pthread_rwlock_timedrdlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedrdlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedrdlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.o: pthread_rwlock_timedrdlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_timedrdlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_timedrdlock.o `test -f 'pthread_rwlock_timedrdlock.c' || echo '$(srcdir)/'`pthread_rwlock_timedrdlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.o `test -f 'pthread_rwlock_timedrdlock.c' || echo '$(srcdir)/'`pthread_rwlock_timedrdlock.c
 
-pthread_rwlock_o-pthread_rwlock_timedrdlock.obj: pthread_rwlock_timedrdlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_timedrdlock.c' object='pthread_rwlock_o-pthread_rwlock_timedrdlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedrdlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedrdlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.obj: pthread_rwlock_timedrdlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_timedrdlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_timedrdlock.obj `cygpath -w pthread_rwlock_timedrdlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_timedrdlock.obj `cygpath -w pthread_rwlock_timedrdlock.c`
 
-pthread_rwlock_o-pthread_rwlock_wrlock.o: pthread_rwlock_wrlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_wrlock.c' object='pthread_rwlock_o-pthread_rwlock_wrlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_wrlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_wrlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.o: pthread_rwlock_wrlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_wrlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_wrlock.o `test -f 'pthread_rwlock_wrlock.c' || echo '$(srcdir)/'`pthread_rwlock_wrlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.o `test -f 'pthread_rwlock_wrlock.c' || echo '$(srcdir)/'`pthread_rwlock_wrlock.c
 
-pthread_rwlock_o-pthread_rwlock_wrlock.obj: pthread_rwlock_wrlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_wrlock.c' object='pthread_rwlock_o-pthread_rwlock_wrlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_wrlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_wrlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.obj: pthread_rwlock_wrlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_wrlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_wrlock.obj `cygpath -w pthread_rwlock_wrlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_wrlock.obj `cygpath -w pthread_rwlock_wrlock.c`
 
-pthread_rwlock_o-pthread_rwlock_timedwrlock.o: pthread_rwlock_timedwrlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_timedwrlock.c' object='pthread_rwlock_o-pthread_rwlock_timedwrlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedwrlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedwrlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.o: pthread_rwlock_timedwrlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_timedwrlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_timedwrlock.o `test -f 'pthread_rwlock_timedwrlock.c' || echo '$(srcdir)/'`pthread_rwlock_timedwrlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.o `test -f 'pthread_rwlock_timedwrlock.c' || echo '$(srcdir)/'`pthread_rwlock_timedwrlock.c
 
-pthread_rwlock_o-pthread_rwlock_timedwrlock.obj: pthread_rwlock_timedwrlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_timedwrlock.c' object='pthread_rwlock_o-pthread_rwlock_timedwrlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedwrlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_timedwrlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.obj: pthread_rwlock_timedwrlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_timedwrlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_timedwrlock.obj `cygpath -w pthread_rwlock_timedwrlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_timedwrlock.obj `cygpath -w pthread_rwlock_timedwrlock.c`
 
-pthread_rwlock_o-pthread_rwlock_unlock.o: pthread_rwlock_unlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_unlock.c' object='pthread_rwlock_o-pthread_rwlock_unlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_unlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_unlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_unlock.o: pthread_rwlock_unlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_unlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_unlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_unlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_unlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_unlock.o `test -f 'pthread_rwlock_unlock.c' || echo '$(srcdir)/'`pthread_rwlock_unlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_unlock.o `test -f 'pthread_rwlock_unlock.c' || echo '$(srcdir)/'`pthread_rwlock_unlock.c
 
-pthread_rwlock_o-pthread_rwlock_unlock.obj: pthread_rwlock_unlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_unlock.c' object='pthread_rwlock_o-pthread_rwlock_unlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_unlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_unlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_unlock.obj: pthread_rwlock_unlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_unlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_unlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_unlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_unlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_unlock.obj `cygpath -w pthread_rwlock_unlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_unlock.obj `cygpath -w pthread_rwlock_unlock.c`
 
-pthread_rwlock_o-pthread_rwlock_tryrdlock.o: pthread_rwlock_tryrdlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_tryrdlock.c' object='pthread_rwlock_o-pthread_rwlock_tryrdlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_tryrdlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_tryrdlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.o: pthread_rwlock_tryrdlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_tryrdlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_tryrdlock.o `test -f 'pthread_rwlock_tryrdlock.c' || echo '$(srcdir)/'`pthread_rwlock_tryrdlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.o `test -f 'pthread_rwlock_tryrdlock.c' || echo '$(srcdir)/'`pthread_rwlock_tryrdlock.c
 
-pthread_rwlock_o-pthread_rwlock_tryrdlock.obj: pthread_rwlock_tryrdlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_tryrdlock.c' object='pthread_rwlock_o-pthread_rwlock_tryrdlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_tryrdlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_tryrdlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.obj: pthread_rwlock_tryrdlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_tryrdlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_tryrdlock.obj `cygpath -w pthread_rwlock_tryrdlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_tryrdlock.obj `cygpath -w pthread_rwlock_tryrdlock.c`
 
-pthread_rwlock_o-pthread_rwlock_trywrlock.o: pthread_rwlock_trywrlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_trywrlock.c' object='pthread_rwlock_o-pthread_rwlock_trywrlock.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_trywrlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_trywrlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.o: pthread_rwlock_trywrlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_trywrlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_trywrlock.o `test -f 'pthread_rwlock_trywrlock.c' || echo '$(srcdir)/'`pthread_rwlock_trywrlock.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.o `test -f 'pthread_rwlock_trywrlock.c' || echo '$(srcdir)/'`pthread_rwlock_trywrlock.c
 
-pthread_rwlock_o-pthread_rwlock_trywrlock.obj: pthread_rwlock_trywrlock.c
-@AMDEP_TRUE@	source='pthread_rwlock_trywrlock.c' object='pthread_rwlock_o-pthread_rwlock_trywrlock.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_trywrlock.Po' tmpdepfile='$(DEPDIR)/pthread_rwlock_o-pthread_rwlock_trywrlock.TPo' @AMDEPBACKSLASH@
+rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.obj: pthread_rwlock_trywrlock.c
+@AMDEP_TRUE@	source='pthread_rwlock_trywrlock.c' object='rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.Po' tmpdepfile='$(DEPDIR)/rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pthread_rwlock_o_CFLAGS) $(CFLAGS) -c -o pthread_rwlock_o-pthread_rwlock_trywrlock.obj `cygpath -w pthread_rwlock_trywrlock.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rtl_pthread_rwlock_ko_CFLAGS) $(CFLAGS) -c -o rtl_pthread_rwlock_ko-pthread_rwlock_trywrlock.obj `cygpath -w pthread_rwlock_trywrlock.c`
 CCDEPMODE = @CCDEPMODE@
 uninstall-info-am:
 

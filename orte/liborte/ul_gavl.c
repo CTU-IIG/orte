@@ -5,7 +5,7 @@
 
   (C) Copyright 2003 by Pavel Pisa - Originator
 
-  The uLan driver is distributed under the Gnu General Public License. 
+  The uLan driver is distributed under the Gnu General Public License.
   See file COPYING for details.
 
   Originator reserve the right to use and publish sources
@@ -16,7 +16,7 @@
 
 //#include <malloc.h>
 #include <orte.h>
-#include <string.h>
+//#include <string.h>
 #include "ul_gavl.h"
 
 int 

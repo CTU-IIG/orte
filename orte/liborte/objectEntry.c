@@ -199,6 +199,10 @@ objectEntryDeleteAll(ORTEDomain *d,ObjectEntry *objectEntry) {
                 objectEntryOID->objectEntryAID,
                 &objectEntryOID->expirationPurgeTimer,
                 0);
+        eventDetach(d,
+                objectEntryOID->objectEntryAID,
+                &objectEntryOID->sendCallBackDelayTimer,
+                0);
         FREE(objectEntryOID->attributes);
         FREE(objectEntryOID);
       }

@@ -25,6 +25,13 @@
 extern "C" {
 #endif
 
+typedef struct CSTWriter CSTWriter;               //forward declarations
+typedef struct CSTReader CSTReader;               
+typedef struct ObjectEntryOID ObjectEntryOID;
+typedef struct ObjectEntryHID ObjectEntryHID;
+typedef struct ObjectEntryAID ObjectEntryAID;
+typedef struct ObjectEntry ObjectEntry; 
+
 /**
  * struct sock_t - 
  */
@@ -69,24 +76,25 @@ typedef struct TypeNode {
 } TypeNode;
 
 /**
- * struct SubscriptionPatternNode - 
+ * struct PatternsNode - 
  */
-typedef struct SubscriptionPatternNode {
+typedef struct PatternNode {
   ul_list_node_t         node;
   PathName               topic;
   TypeName               type;
   ORTESubscriptionPatternCallBack subscriptionCallBack;
   void                   *param;
-} SubscriptionPatternNode;
+} PatternNode;
 
 /**
  * struct PatternEntry - 
  */
 typedef struct PatternEntry {
-  ul_list_head_t         subscription;
+  ul_list_head_t         patterns;
   ORTEPatternCheck       check;
   ORTEPatternMatch       match;
   void                   *param;
+  pthread_rwlock_t       lock;
 } PatternEntry;
   
 /**
@@ -108,11 +116,6 @@ typedef struct AppParams {
   NtpTime                expirationTime;
   SequenceNumber         vargAppsSequenceNumber;    //useful only for manager
 } AppParams;
-
-typedef struct ObjectEntryOID ObjectEntryOID;
-typedef struct ObjectEntryHID ObjectEntryHID;
-typedef struct ObjectEntryAID ObjectEntryAID;
-typedef struct ObjectEntry ObjectEntry; 
 
 typedef void EVH1(ORTEDomain *,ObjectEntryAID *,ul_htim_time_t *);
 /**
@@ -248,7 +251,6 @@ typedef struct CSChangeForReader {
   HTimFncUserNode        waitWhileDataUnderwayTimer;
 } CSChangeForReader;
 
-typedef struct CSTWriter CSTWriter;               //forward declaration
 /**
  * struct CSTRemoteReader - 
  */
@@ -326,7 +328,6 @@ typedef struct CSChangeFromWriter {
   StateMachineChFWriter  commStateChFWriter;
 } CSChangeFromWriter;
 
-typedef struct CSTReader CSTReader;               //forward declaration
 /**
  * struct CSTRemoteWriter - 
  */
@@ -380,6 +381,8 @@ struct CSTReader {
 
   unsigned int           strictReliableCounter;
   unsigned int           bestEffortsCounter;
+  
+  Boolean                createdByPattern;
 };
 
 /**

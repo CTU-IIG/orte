@@ -1,5 +1,5 @@
 /*
- *  $Id: orte_api.h.h,v 0.0.0.1         2003/08/21 
+ *  $Id: orte_api.h.h,v 0.0.0.1         2003/08/21
  *
  *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
@@ -10,12 +10,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
 #ifndef _ORTE_API_H
@@ -26,12 +26,12 @@ extern "C" {
 #endif
 
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include <orte_config.h>
 #endif
 #ifdef _OMK_UNIX
   #define HAVE_SYS_TYPES_H
 #endif
-#ifdef HAVE_SYS_TYPES_H
+#if defined HAVE_SYS_TYPES_H && !defined CONFIG_ORTE_RT
   #include <sys/types.h>
 #endif
 #ifdef _WIN32

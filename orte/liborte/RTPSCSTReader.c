@@ -46,6 +46,7 @@ CSTReaderInit(ORTEDomain *d,CSTReader *cstReader,ObjectEntryOID *object,
   cstReader->strictReliableCounter=0;
   cstReader->bestEffortsCounter=0;
   cstReader->cstRemoteWriterCounter=0;
+  cstReader->createdByPattern=ORTE_FALSE;
   CSTReaderCSChange_init_head(cstReader);
   CSTRemoteWriter_init_root_field(cstReader);
   pthread_rwlock_init(&cstReader->lock,NULL);

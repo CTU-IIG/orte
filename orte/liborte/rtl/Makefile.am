@@ -21,9 +21,9 @@ pthread_rwlock_unlock.c \
 pthread_rwlock_tryrdlock.c \
 pthread_rwlock_trywrlock.c
 
-if CONFIG_ORTE_RT
-module_PROGRAMS = pthread_rwlock.o
-pthread_rwlock_o_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
-pthread_rwlock_o_SOURCES = $(PTHREAD_RWLOCK_SOURCES)
-pthread_rwlock_o_LINK = $(top_builddir)/modtool --link -o $@
+if USE_RTLINUX
+module_PROGRAMS = rtl_pthread_rwlock.ko
+rtl_pthread_rwlock_ko_CFLAGS = $(ORTE_CFLAGS) $(LINUX_CFLAGS) $(RTAI_CFLAGS) $(RTLINUX_CFLAGS)
+rtl_pthread_rwlock_ko_SOURCES = $(PTHREAD_RWLOCK_SOURCES)
+rtl_pthread_rwlock_ko_LINK = $(top_builddir)/modtool --link -o $@
 endif

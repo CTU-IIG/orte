@@ -21,13 +21,13 @@
 
 #include "orte.h"
 
-GAVL_CUST_NODE_INT_IMP(ORTEType, TypeEntry, TypeNode, char *,
+GAVL_CUST_NODE_INT_IMP(ORTEType, TypeEntry, TypeNode, const char *,
     types, node, typeRegister.typeName, gavl_cmp_str)
-
+    
 
 /*****************************************************************************/
 Boolean
-ORTETypeRegisterFind(ORTEDomain *d,char *typeName) {
+ORTETypeRegisterFind(ORTEDomain *d,const char *typeName) {
   Boolean            result=ORTE_FALSE;
   
   if (!d) return ORTE_FALSE;  //bat handle
@@ -40,7 +40,7 @@ ORTETypeRegisterFind(ORTEDomain *d,char *typeName) {
 
 /*****************************************************************************/
 int
-ORTETypeRegisterAdd(ORTEDomain *d,char *typeName,ORTETypeSerialize ts,
+ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
                     ORTETypeDeserialize ds,unsigned int gms) {
   TypeNode           *tn;
   
@@ -52,6 +52,7 @@ ORTETypeRegisterAdd(ORTEDomain *d,char *typeName,ORTETypeSerialize ts,
     tn=(TypeNode*)MALLOC(sizeof(TypeNode));
     tn->typeRegister.typeName=strdup(typeName);
     ORTEType_insert(&d->typeEntry,tn);
+    debug(26,3) ("ORTETypeRegisterAdd: created\n");
   }
   tn->typeRegister.serialize=ts;
   tn->typeRegister.deserialize=ds;
@@ -69,6 +70,7 @@ ORTETypeRegisterDestroyAll(ORTEDomain *d) {
   if (!d) return -1;       //bat handle
   pthread_rwlock_wrlock(&d->typeEntry.lock);    
   while((tn=ORTEType_cut_first(&d->typeEntry))) {
+    free((char*)tn->typeRegister.typeName);
     FREE(tn);
   }
   pthread_rwlock_unlock(&d->typeEntry.lock);    

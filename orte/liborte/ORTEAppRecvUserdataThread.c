@@ -105,4 +105,5 @@ void ORTEAppRecvUserdataThread(ORTEDomain *d) {
   } 
 
   debug(23,10) ("ORTEAppRecvUserdataThread: finished\n");
+  pthread_exit(NULL);
 }

@@ -28,12 +28,20 @@ extern "C" {
 ///////////////////////////////////////////////////////////////////////////////
 // conv.c
 extern char* 
-IPAddressToString(IPAddress ipAddress);
+IPAddressToString(IPAddress ipAddress,char *buff);
 extern IPAddress
 StringToIPAddress(const char *string);
+extern char *
+NtpTimeToStringMs(NtpTime time,char *buff);
+extern char *
+NtpTimeToStringUs(NtpTime time,char *buff);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEDomain.c
+extern void
+ORTEDomainStart(ORTEDomain *d,
+    Boolean recvMetatrafficThread,Boolean recvUserDataThread,Boolean sendThread);
 extern Boolean
 ORTEDomainPropDefaultGet(ORTEDomainProp *prop);
 extern Boolean
@@ -49,8 +57,11 @@ ORTESubsPropDefaultSet(ORTEDomain *d,ORTESubsProp *sp);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEDomainApp.c
+extern void ORTEDomainAppStart(ORTEDomain *d,
+    Boolean recvMetatrafficThread,Boolean recvUserDataThread,Boolean sendThread);
 extern ORTEDomain * 
-ORTEDomainAppCreate(int domain,ORTEDomainProp *prop,ORTEDomainAppEvents *events);
+ORTEDomainAppCreate(int domain,ORTEDomainProp *prop,ORTEDomainAppEvents *events,
+    Boolean suspended);
 extern Boolean
 ORTEDomainAppDestroy(ORTEDomain *d);
 extern Boolean 
@@ -67,14 +78,14 @@ ORTEDomainAppSubscriptionPatternDestroyAll(ORTEDomain *d);
 // ORTEDomainMgr.c
 extern ORTEDomain *
 ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
-                    ORTEDomainAppEvents *events,Boolean startSendingThread);
+    ORTEDomainAppEvents *events,Boolean suspended);
 extern Boolean
 ORTEDomainMgrDestroy(ORTEDomain *d);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEPublication.c
 extern ORTEPublication * 
-ORTEPublicationCreate(ORTEDomain *d,char *topic,char *typeName,
+ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
     void *instance,NtpTime *persistence,int strength,
     ORTESendCallBack sendCallBack,void *sendCallBackParam,
     NtpTime *sendCallBackDelay);
@@ -96,7 +107,7 @@ ORTEPublicationSend(ORTEPublication *cstWriter);
 // ORTESubscription.c
 extern ORTESubscription * 
 ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sType,
-    char *topic,char *typeName,void *instance,NtpTime *deadline,
+    const char *topic,const char *typeName,void *instance,NtpTime *deadline,
     NtpTime *minimumSeparation,ORTERecvCallBack recvCallBack,
     void *recvCallBackParam);
 extern int
@@ -116,7 +127,7 @@ ORTESubscriptionPull(ORTESubscription *cstReader);
 ///////////////////////////////////////////////////////////////////////////////
 // ORTETypeRegister.c
 extern int
-ORTETypeRegisterAdd(ORTEDomain *d,char *typeName,ORTETypeSerialize ts,
+ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
                     ORTETypeDeserialize ds,unsigned int gms);
 extern int
 ORTETypeRegisterDestroyAll(ORTEDomain *d);

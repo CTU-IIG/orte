@@ -6,7 +6,7 @@
 #  Uncomment and customize the following to ORTE your needs:
 #
 if CONFIG_ORTE_RT
-SUBDIRS = hello
+SUBDIRS = hello 
 else
 SUBDIRS	= hello reliable ORTEPing ORTESpy
 endif

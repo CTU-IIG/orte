@@ -36,7 +36,7 @@ RTPSInfoTSCreate(u_int8_t *rtps_msg,u_int32_t max_msg_len,NtpTime time) {
 void 
 RTPSInfoTS(u_int8_t *rtps_msg,MessageInterpret *mi) {
   int8_t   e_bit=rtps_msg[1] & 0x01;
-  int32_t  sec,msec;
+  char buff[MAX_STRING_NTPTIME_LENGTH];
 
   if ((rtps_msg[1] & 0x02)==0) {               /* I = bit */
     mi->haveTimestamp=ORTE_TRUE;
@@ -46,9 +46,9 @@ RTPSInfoTS(u_int8_t *rtps_msg,MessageInterpret *mi) {
     mi->haveTimestamp=ORTE_FALSE;
     NTPTIME_ZERO(mi->timestamp);
   }
-  NtpTimeDisAssembToMs(sec,msec,mi->timestamp);
   if (mi->haveTimestamp)
-    debug(45,3) ("recv: RTPSInfoTS, timestamp %lis %lims\n",sec,msec);
+    debug(45,3) ("recv: RTPSInfoTS, timestamp %s\n",
+                  NtpTimeToStringUs(mi->timestamp, buff));
   else
     debug(45,3) ("recv: RTPSInfoTS\n");
 }

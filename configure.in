@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.1 2004/01/13 12:39:53 ppisa Exp $
+# $Id: configure.in,v 1.2 2004/01/17 18:16:35 ppisa Exp $
 
 # autoconf requirement
 AC_PREREQ([2.57])
@@ -29,28 +29,10 @@ AC_SUBST(ORTE_MINOR_VERSION)
 AC_SUBST(ORTE_MICRO_VERSION)
 AC_SUBST(ORTE_VERSION)
 
-###############################
-# includes
-case "$target" in
-  *-cygwin* | *-mingw*)
-    INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/win32'
-    WIN_LIB='yes'
-    ;;
-  *)
-    # Assume Unix.
-    if test ${USE_RTLINUX} == "yes" ; then
-      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtl -I$(top_srcdir)/RTL_UDP/include'
-    else
-      INCLUDES='-I$(top_srcdir)/orte/include'
-    fi
-    ;;
-esac
-AC_SUBST(INCLUDES)
-AM_CONDITIONAL(CONFIG_ORTE_WIN, test x$WIN_LIB = xyes)
 
 ###############################
 # modules
-moduledir="\$(libdir)/modules/\$(LINUX_KERNELRELEASE)/comedi"
+moduledir="\$(libdir)/modules/\$(LINUX_KERNELRELEASE)/orte"
 modulePROGRAMS_INSTALL="\$(top_builddir)/modtool --install"
 modulePROGRAMS_UNINSTALL="\$(top_builddir)/modtool --uninstall"
 AC_SUBST(moduledir)
@@ -63,19 +45,45 @@ AC_PROG_RANLIB
 
 ###############################
 # Checks for libraries (no for RT)
-if test ${USE_RTLINUX} != "yes" ; then
+if test -z ${CONFIG_ORTE_RT} ; then
 AC_CHECK_LIB([ws2_32], [main])
 AC_CHECK_LIB([pthread], [main])
 fi
 
 ###############################
 # Checks for header files.
+if test -z ${CONFIG_ORTE_RT} ; then
 AC_HEADER_STDC
 AC_CHECK_HEADERS(
 [arpa/inet.h fcntl.h stdio.h netdb.h netinet/in.h stdlib.h \
 string.h sys/ioctl.h sys/socket.h sys/time.h unistd.h pthread.h \
 stdarg.h getopt.h sys/types.h net/if.h byteswap.h signal.h errno.h \
 ctype.h sys/stat.h winsock2.h ws2tcpip.h])
+fi
+###############################
+# includes
+case "$target" in
+  *-cygwin* | *-mingw*)
+    INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/win32'
+    WIN='yes'
+    AC_DEFINE([CONFIG_ORTE_WIN],[1],[Define if is target windows])
+    ;;
+  *)
+    # Assume Unix.
+    if test ${USE_RTLINUX} == "yes" ; then
+      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtl -I$(top_srcdir)/orte/contrib/RTL_UDP/include'
+    elif test ${USE_RTAI} == "yes" ; then
+      INCLUDES='-I$(top_srcdir)/orte/include -I$(top_srcdir)/orte/include/rtai'
+    else
+      INCLUDES='-I$(top_srcdir)/orte/include'
+      UNIX='yes'
+      AC_DEFINE([CONFIG_ORTE_UNIX],[1],[Define if is target a unix system])
+    fi
+    ;;
+esac
+AC_SUBST(INCLUDES)
+AM_CONDITIONAL(CONFIG_ORTE_WIN, test x$WIN = xyes)
+AM_CONDITIONAL(CONFIG_ORTE_UNIX, test x$UNIX = xyes)
 
 ###############################
 # Checks for typedefs, structures, and compiler characteristics.
@@ -84,12 +92,10 @@ AC_C_CONST
 AC_C_INLINE
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
 
 ###############################
 # Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
-AC_FUNC_MALLOC
 AC_CHECK_FUNCS([strdup])
 
 ###############################
@@ -98,8 +104,6 @@ CFLAGS="$CFLAGS -Wall"
 
 AC_CONFIG_FILES([Makefile
                  orte/Makefile
-                 RTL_UDP/Makefile
-                 RTL_UDP/udp/Makefile
 		 orte/liborte/Makefile
 		 orte/liborte/rtl/Makefile
 		 orte/examples/Makefile
@@ -109,10 +113,27 @@ AC_CONFIG_FILES([Makefile
 		 orte/examples/ORTESpy/Makefile
                  orte/manager/Makefile])
 
+
+
 AC_OUTPUT([
 modtool
 ])
 chmod +x modtool
+
+
+# ======================================================================
+#		generate orte/include/orte_config.h
+# ======================================================================
+
+AC_MSG_NOTICE([creating orte/include/orte_config.h])
+sed -e "s/ PACKAGE/ ORTE_PACKAGE/" -e "s/ VERSION/ ORTE_VERSION/" \
+    orte/include/config.h >orte/include/orte_config.h.new
+if cmp -s orte/include/orte_config.h.new orte/include/orte_config.h; then
+	rm orte/include/orte_config.h.new
+	AC_MSG_NOTICE([orte/include/orte_config.h is unchanged])
+else
+	mv orte/include/orte_config.h.new orte/include/orte_config.h
+fi
 
 echo \
 "------------------------------------------------------------------------

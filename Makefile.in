@@ -68,6 +68,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
+CONFIG_ORTE_RT = @CONFIG_ORTE_RT@
 DEPDIR = @DEPDIR@
 INCLUDES = @INCLUDES@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
@@ -107,8 +108,7 @@ moduledir = @moduledir@
 #
 AUTOMAKE_OPTIONS = foreign
 
-@USE_RTLINUX_TRUE@SUBDIRS = orte RTL_UDP
-@USE_RTLINUX_FALSE@SUBDIRS = orte 
+SUBDIRS = orte 
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO orte.kdevelop
 
@@ -129,7 +129,7 @@ DIST_COMMON = ./orte/include/config.h.in Makefile.am Makefile.in \
 	admin/depcomp admin/install-sh admin/ltconfig admin/ltmain.sh \
 	admin/missing admin/mkinstalldirs configure configure.in \
 	modtool.in
-DIST_SUBDIRS = orte RTL_UDP
+DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
 .SUFFIXES:
@@ -302,7 +302,7 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  if test "$$subdir" = .; then :; else \
 	    test -d $(distdir)/$$subdir \
 	    || mkdir $(distdir)/$$subdir \

@@ -75,7 +75,7 @@ typedef void (*ORTETypeDeserialize)(ORTECDRStream *cdr_stream, void *instance);
  * struct ORTETypeRegister - 
  */
 typedef struct ORTETypeRegister {
-  char                   *typeName;
+  const char             *typeName;
   ORTETypeSerialize      serialize;
   ORTETypeDeserialize    deserialize;
   unsigned int           getMaxSize;
@@ -234,7 +234,7 @@ typedef void
 typedef void 
 (*ORTESendCallBack)(const ORTESendInfo *info,void *instance, void *sendCallBackParam);
 typedef ORTESubscription*
-(*ORTESubscriptionPatternCallBack)(const char *topic, const char *nddsType, void *Param);
+(*ORTESubscriptionPatternCallBack)(const char *topic, const char *type, void *Param);
 
 
 //Pattern

@@ -395,11 +395,55 @@ void
 NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
   ObjectEntryOID     *o;
   ORTEPublProp       *pp;
-  CSTWriter          *cstWriter;
-  CSTReader          *cstReader;
+  CSTWriter          *cstWriter=NULL;
+  CSTReader          *cstReader=NULL;
+  PatternNode        *pnode;
   
   if ((d==NULL) || (op==NULL)) return;
   pp=(ORTEPublProp*)op->attributes;
+  //***************************************
+  //Pattern 
+  //try to find if subscription exists
+  pthread_rwlock_rdlock(&d->patternEntry.lock);
+  pthread_rwlock_rdlock(&d->subscriptions.lock);
+  gavl_cust_for_each(CSTReader,
+                     &d->subscriptions,cstReader) {
+    if (cstReader->createdByPattern) {
+      ORTESubsProp       *sp;
+      sp=(ORTESubsProp*)cstReader->objectEntryOID->attributes;
+      if ((strcmp(sp->topic,pp->topic)==0) &&
+          (strcmp(sp->typeName,pp->typeName)==0)) 
+        break; //found
+    }
+  }
+  pthread_rwlock_unlock(&d->subscriptions.lock);
+  if (!cstReader) { //not exists
+    ul_list_for_each(Pattern,&d->patternEntry,pnode) {
+      if ((fnmatch(pnode->topic,pp->topic,0)==0) &&
+          (fnmatch(pnode->type,pp->typeName,0)==0)) {
+        //pattern matched
+        // free resources
+        pthread_rwlock_unlock(&d->patternEntry.lock);        
+        pthread_rwlock_unlock(&d->readerPublications.lock);        
+        pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
+        pthread_rwlock_unlock(&d->objectEntry.objRootLock);    
+        cstReader=pnode->subscriptionCallBack(
+            pp->topic,
+            pp->typeName,
+            pnode->param);
+        if (cstReader) {
+          cstReader->createdByPattern=ORTE_TRUE;
+        }
+        //allocate resources
+        pthread_rwlock_wrlock(&d->objectEntry.objRootLock);    
+        pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
+        pthread_rwlock_wrlock(&d->readerPublications.lock);        
+        pthread_rwlock_rdlock(&d->patternEntry.lock);
+      }  
+    }
+  }
+  pthread_rwlock_unlock(&d->patternEntry.lock);
+  //Pattern end
   pthread_rwlock_rdlock(&d->psEntry.subscriptionsLock);
   gavl_cust_for_each(SubscriptionList,&d->psEntry,o) {
     ORTESubsProp *sp=(ORTESubsProp*)o->attributes;
@@ -490,4 +534,4 @@ NewSubscriber(ORTEDomain *d,ObjectEntryOID *os) {
     }
   } 
   pthread_rwlock_unlock(&d->psEntry.publicationsLock);
-}              
+}

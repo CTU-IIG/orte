@@ -40,7 +40,9 @@ ORTEPatternMatchDefault(const char *topic,const char *pattern,void *param) {
 void
 ORTEPatternRegister(ORTEDomain *d,ORTEPatternCheck check,
      ORTEPatternMatch match,void *param) {
+  pthread_rwlock_wrlock(&d->patternEntry.lock);
   d->patternEntry.check=check;
   d->patternEntry.match=match;
   d->patternEntry.param=param;
+  pthread_rwlock_unlock(&d->patternEntry.lock);
 }

@@ -48,7 +48,7 @@ gavl_cmp_guid(const GUID_RTPS *a, const GUID_RTPS *b) {
 
 /**********************************************************************************/
 int 
-gavl_cmp_str(char *const *a,char *const *b) {
+gavl_cmp_str(const char *const *a,const char *const *b) {
   return strcmp(*a,*b);
 }
 /**********************************************************************************/
