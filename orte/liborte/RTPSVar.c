@@ -376,21 +376,23 @@ RTPSVar(ORTEDomain *d,uint8_t *rtps_msg,MessageInterpret *mi,IPAddress senderIPA
         break;
     }
   }
-  if (!cstReader) return;
-  if (!cstRemoteWriter) {
-    pthread_rwlock_unlock(&cstReader->lock);
-    return;
-  }
-  debug(46,10) ("recv: processing CSChange\n");
-  if (SeqNumberCmp(sn,cstRemoteWriter->sn)>0) { //have to be sn>writer_sn
-    CSTReaderAddCSChange(cstRemoteWriter,csChange);
-    CSTReaderProcCSChanges(d,cstRemoteWriter);
-  } else {
-    //destroy csChange
+  if (cstReader && cstRemoteWriter) {
+    debug(46,10) ("recv: processing CSChange\n");
+    if (SeqNumberCmp(sn,cstRemoteWriter->sn)>0) { //have to be sn>writer_sn
+      CSTReaderAddCSChange(cstRemoteWriter,csChange);
+      CSTReaderProcCSChanges(d,cstRemoteWriter);
+      csChange=NULL;
+    }
+  }  
+  if (csChange) {
+    //destroy csChange if any
     parameterDelete(csChange);
     FREE(csChange);
   }
-  pthread_rwlock_unlock(&cstReader->lock);
+  if (cstReader) {
+    pthread_rwlock_unlock(&cstReader->lock);
+    return;
+  }
 } 
 
 
