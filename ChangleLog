@@ -1,3 +1,7 @@
+v0.2.1 - 02/04/2004
+
+- updated CDRStream format -> char ->u_int8_t
+
 v0.2.0 - 08/01/2004
 
 - many things (circa 80% of code scratched)

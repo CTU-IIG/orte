@@ -194,7 +194,7 @@ extern "C" {
   #include <win32/getopt.h>
   #include <ew_types.h>
   #define ioctl ioctlsocket
-  #define ORTE_PACKAGE_STRING "orte 0.2.0"
+  #define ORTE_PACKAGE_STRING "orte 0.2.1"
 #endif
 
 #ifdef __cplusplus

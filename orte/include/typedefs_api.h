@@ -115,8 +115,8 @@ typedef struct ORTEMulticastProp {
  * Struct @ORTECDRStream is used by serialization and deserialization functions.
  */
 typedef struct ORTECDRStream {
-  char           *buffer;
-  char           *bufferPtr;
+  u_int8_t       *buffer;
+  u_int8_t       *bufferPtr;
   Boolean        needByteSwap;
   int            length;
 } ORTECDRStream;

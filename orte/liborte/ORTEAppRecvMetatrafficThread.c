@@ -24,7 +24,7 @@
 /*****************************************************************************/
 void ORTEAppRecvMetatrafficThread(ORTEDomain *d) {
   struct sockaddr_in    des;
-  int16_t               submsg_len,msg_ptr;
+  u_int16_t             submsg_len,msg_ptr;
   u_int16_t             msg_total_len;
   MessageInterpret      mi; 
 
@@ -41,6 +41,7 @@ void ORTEAppRecvMetatrafficThread(ORTEDomain *d) {
     debug(22,7) ("ORTEAppRecvMetatrafficThread: fired\n");
     //is it header of valid RTPS packet?
     if (RTPSHeaderCheck(d->mbRecvMetatraffic.cdrStream.buffer,msg_total_len,&mi)==0) {
+      int i=1;
       debug(22,7) ("ORTEAppRecvMetatrafficThread: RTPS Heard OK\n");
       debug(22,7) ("  PV: %d.%d VID:%d.%d HID:0x%x AID:0x%x\n",
                     mi.sourceVersion.major,mi.sourceVersion.minor,
@@ -48,12 +49,14 @@ void ORTEAppRecvMetatrafficThread(ORTEDomain *d) {
       mi.sourceHostId,mi.sourceAppId);
       msg_ptr=16;
       do {
+        debug(22,7) ("ORTEAppRecvMetatrafficThread: processing submessage : %d\n",i++);
         // check if length of submessage header is OK 
         if ((msg_ptr+3)<=msg_total_len) {
           int8_t e_bit=d->mbRecvMetatraffic.cdrStream.buffer[msg_ptr+1] & 1;
           submsg_len=(u_int16_t)d->mbRecvMetatraffic.cdrStream.buffer[msg_ptr+2];
           conv_u16(&submsg_len,e_bit);
-          // check if length of submessage OK 
+          debug(22,10) ("ORTEAppRecvMetatrafficThread: submessage length: %d\n",submsg_len);
+          // check if length of submessage is OK 
           if ((submsg_len+msg_ptr+3)<=msg_total_len) {
             pthread_rwlock_wrlock(&d->objectEntry.objRootLock);    
             pthread_rwlock_wrlock(&d->objectEntry.htimRootLock);
@@ -94,6 +97,7 @@ void ORTEAppRecvMetatrafficThread(ORTEDomain *d) {
           } else break;          /* submessage is too big */
         } else break;            /* submessage is too big */
       } while (msg_ptr<msg_total_len);
+      debug(22,7) ("ORTEAppRecvMetatrafficThread: processing of message(s) finnished\n");
     }
   } 
 

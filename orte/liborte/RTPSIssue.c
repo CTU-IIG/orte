@@ -28,7 +28,7 @@ RTPSIssueCreateHeader(u_int8_t *rtps_msg,u_int32_t max_msg_len,u_int32_t length,
   if (max_msg_len<20) return -1;
   rtps_msg[0]=(u_int8_t)ISSUE;
   rtps_msg[1]=ORTE_MY_MBO;
-  *((ParameterLength*)(rtps_msg+2))=length;
+  *((ParameterLength*)(rtps_msg+2))=(u_int16_t)length;
   conv_u32(&roid,0);
   *((ObjectId*)(rtps_msg+4))=roid;
   conv_u32(&woid,0);

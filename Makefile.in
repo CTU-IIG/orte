@@ -196,7 +196,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/configure \
 	./orte/include/config.h.in Makefile.am aclocal.m4 admin/compile \
 	admin/config.guess admin/config.sub admin/depcomp \
 	admin/install-sh admin/ltconfig admin/ltmain.sh admin/missing \
-	admin/mkinstalldirs configure.in modtool.in
+	admin/mkinstalldirs configure configure.in modtool.in
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 

@@ -296,6 +296,8 @@ ORTEPublicationSendLocked(ORTEPublication *cstWriter) {
       csChange->cdrStream.bufferPtr+=cstWriter->typeRegister->getMaxSize;
     }
     csChange->cdrStream.needByteSwap=ORTE_FALSE;
+    debug(31,10) ("ORTEPublicationCreate: message length:%d\n",
+                   cstWriter->typeRegister->getMaxSize);
     CSTWriterAddCSChange(cstWriter->domain,
                         cstWriter,
                         csChange);

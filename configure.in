@@ -1,12 +1,12 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.6 2004/03/17 22:15:37 smolik Exp $
+# $Id: configure.in,v 1.7 2004/04/03 11:27:21 smolik Exp $
 
 # autoconf requirement
 
 AC_PREREQ([2.56])
 
-AC_INIT([orte],[0.2.0],[petr.smolik@wo.cz])
+AC_INIT([orte],[0.2.1],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
 
 #Check for CPU / vendor / OS
@@ -23,7 +23,7 @@ DS_LINUX()
 # Package info
 ORTE_MAJOR_VERSION=0
 ORTE_MINOR_VERSION=2
-ORTE_MICRO_VERSION=0
+ORTE_MICRO_VERSION=1
 ORTE_VERSION=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION.$ORTE_MICRO_VERSION
 AC_SUBST(ORTE_MAJOR_VERSION)
 AC_SUBST(ORTE_MINOR_VERSION)

@@ -262,7 +262,8 @@ CSTWriterSendStrictTimer(ORTEDomain *d,void *vcstRemoteReader) {
           return 1;
         }
         memcpy(d->mbSend.cdrStream.bufferPtr,     //dest
-               csChange->cdrStream.bufferPtr-len, //src
+//               csChange->cdrStream.bufferPtr-len, //src
+               csChange->cdrStream.buffer+RTPS_HEADER_LENGTH+12, //src
                len);                              //length
         d->mbSend.cdrStream.bufferPtr+=len;
         d->mbSend.cdrStream.length+=len;
@@ -291,13 +292,15 @@ CSTWriterSendTimer(ORTEDomain *d,void *vcstRemoteReader) {
   
   debug(52,10) ("CSTWriterSendTimer: start\n");
   max_msg_len=getMaxMessageLength(d);
+  //setup f_bit of object
+  if (cstRemoteReader->cstWriter->params.fullAcknowledge)
+    f_bit=ORTE_FALSE;
   if (cstRemoteReader->commStateSend!=NOTHNIGTOSEND) {
     gavl_cust_for_each(CSChangeForReader,cstRemoteReader,csChangeForReader) {
       if (csChangeForReader->commStateChFReader==TOSEND) {
         cstRemoteReader->commStateSend=MUSTSENDDATA;
         if ((firstTrace) && (cstRemoteReader->cstWriter->params.fullAcknowledge) &&
             !d->mbSend.containsInfoReply) {
-          f_bit=ORTE_FALSE;
           firstTrace=ORTE_FALSE;
           len=RTPSInfoREPLYCreate(d->mbSend.cdrStream.bufferPtr,max_msg_len,
               IPADDRESS_INVALID,
