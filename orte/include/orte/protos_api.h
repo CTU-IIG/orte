@@ -306,6 +306,16 @@ extern int
 ORTEPublicationSendEx(ORTEPublication *cstWriter,
     ORTEPublicationSendParam *psp);
 
+/**
+ * ORTEPublicationGetInstance - return pointer to an instance
+ * @cstWriter: publication object
+ *
+ * Returns handle
+ */
+extern void *
+ORTEPublicationGetInstance(ORTEPublication *cstWriter);
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // ORTESubscription.c
 
@@ -381,7 +391,7 @@ ORTESubscriptionWaitForPublications(ORTESubscription *cstReader,NtpTime wait,
 /**
  * ORTESubscriptionGetStatus - get status of a subscription
  * @cstReader: handle to subscription
- * @status: pointer to ORTESubsStatus structure 
+ * @status: pointer to ORTESubsStatus structure
  *
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstReader is not valid subscription handle.
  */
@@ -397,6 +407,16 @@ ORTESubscriptionGetStatus(ORTESubscription *cstReader,ORTESubsStatus *status);
 extern int
 ORTESubscriptionPull(ORTESubscription *cstReader);
 
+/**
+ * ORTESubscriptionGetInstance - return pointer to an instance
+ * @cstReader: publication object
+ *
+ * Returns handle
+ */
+extern void *
+ORTESubscriptionGetInstance(ORTESubscription *cstReader);
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // ORTETypeRegister.c
 /**
@@ -408,10 +428,10 @@ ORTESubscriptionPull(ORTESubscription *cstReader);
  * @gms: pointer to a function given maximum length of data (in bytes)
  * @ms: default maximal size
  *
- * Each data type has to be registered. Main purpose of this process is to define serialization and deserialization functions for given data type. The same data type can be 
+ * Each data type has to be registered. Main purpose of this process is to define serialization and deserialization functions for given data type. The same data type can be
  * registered several times, previous registrations of the same type will be overwritten.
- * 
- * Examples of serialization and deserialization functions can be found if contrib/shape/ortedemo_types.c file. 
+ *
+ * Examples of serialization and deserialization functions can be found if contrib/shape/ortedemo_types.c file.
  *
  * Returns ORTE_OK if new data type has been succesfully registered.
  */

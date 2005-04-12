@@ -30,14 +30,16 @@
 #include "orte.h"
 /* pregenerated header */
 #include "jorte/org_ocera_orte_JOrte.h"
-
+#include "jorte/4all.h"
 
 
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_JOrte_jORTESleepMs
 (JNIEnv *env, jclass cls, jlong milisec)
 {
-  printf(":c: spoustim ORTESleepMs()..\n");
+  #ifdef TEST_STAGE
+    printf(":c: orteSleep() called.. ZZzzzz \n");
+  #endif
   ORTESleepMs((unsigned int) milisec);
 }
 

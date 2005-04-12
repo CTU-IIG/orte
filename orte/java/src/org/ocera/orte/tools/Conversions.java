@@ -1,6 +1,4 @@
 /* Conversions.java */
-package org.ocera.orte.tools;
-import  org.ocera.orte.types.*;
 
 /**
   * Class Conversions provides conversions between IPAddress
@@ -24,6 +22,8 @@ import  org.ocera.orte.types.*;
   * GNU General Public License for more details.
   *
   */
+
+package org.ocera.orte.tools;
 
 
 public class Conversions {
@@ -58,26 +58,6 @@ public class Conversions {
    long StringToIPAddress(String ipAddress);
 
 
-  /**
-   * NtpTimeToStringMs - converts NtpTime from number notation into its
-   * string notation in miliseconds
-   *
-   * @param time time given in JNtpTime object
-   * @return NtpTime in string notation in miliseconds
-   */
-   public static native
-   String NtpTimeToStringMs(NtpTime time);
-
-
-   /**
-   * NtpTimeToStringUs - converts NtpTime from number notation into its
-   * string notation in microseconds
-   *
-   * @param time time given in JNtpTime object
-   * @return NtpTime in string notation in microseconds
-   */
-   public static native
-   String NtpTimeToStringUs(NtpTime time);
 
 
 }

@@ -1,6 +1,4 @@
 /* ProtocolVersion.java */
-package org.ocera.orte.types;
-
 
 /**
   * Class ProtocolVersion substitutes the struct ProtocolVersion
@@ -31,18 +29,23 @@ package org.ocera.orte.types;
   *
   */
 
+package org.ocera.orte.types;
+
 
 public class ProtocolVersion {
 
-   char           major;
-   char           minor;
-
+   byte           major;
+   byte           minor;
 
    /* constructor */
-   public ProtocolVersion(char majorNumber, char minorNumber) {
-      major = majorNumber;
-      minor = minorNumber;
+   public ProtocolVersion(byte major,byte minor) 
+   {
+      this.major = major;
+      this.minor = minor;
    }
 
+  public String toString()
+  {
+  	return (major + "." + minor); 
+  }
 }
-

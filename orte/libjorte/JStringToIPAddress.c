@@ -40,9 +40,9 @@ Java_org_ocera_orte_tools_JORTEConversions_StringToIPAddress
   const char *charIP;
   long        longIP;
 
-  // get IP from JAVA Enviromnent
+  // get IP
   charIP = (*env)->GetStringUTFChars(env,jstrIP,0);
-  // call the original liborte function
+  // call ORTE function
   longIP = (long)StringToIPAddress(charIP);
   // free memory
   (*env)->ReleaseStringUTFChars(env, jstrIP, charIP);

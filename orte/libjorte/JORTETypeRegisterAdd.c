@@ -29,39 +29,31 @@
 // library header file's path
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_Domain.h"
-
+#include "jorte/org_ocera_orte_DomainApp.h"
+#include "jorte/4all.h"
 
 JNIEXPORT jint JNICALL
-Java_org_ocera_orte_Domain_jORTETypeRegisterAdd
+Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
 (JNIEnv *env, jclass cls, jint handle, jstring jname, jlong jlength)
 {
-  const char 	*name;
+  const char     *name;
   int            b;
 
-  /* get type name from JAVA env */
+  // get type name from JAVA env
   name = (*env)->GetStringUTFChars(env,jname,0);
-
-  /* call original orte function  */
-  b = ORTETypeRegisterAdd((ORTEDomain *) handle, name, NULL, NULL, NULL,(unsigned int) jlength);
-
-  /* free memmory space  */
+  // call ORTE function
+  b = ORTETypeRegisterAdd((ORTEDomain *) handle,
+                          name,
+                          NULL,
+                          NULL,
+                          NULL,
+                          (unsigned int) jlength);
+  // free memmory space
   (*env)->ReleaseStringUTFChars(env,jname,name);
-
-/*
-  if (b == ORTE_OK) return ORTE_TRUE;
-
-  return ORTE_FALSE;
-*/
-
+  #ifdef TEST_STAGE
   printf(":c: jORTETypeRegisterAdd vraci %d [%d = ORTE_OK, %d = ORTE_BAD_HANDLE] \n",
-  b,ORTE_OK,ORTE_BAD_HANDLE);
+         b,ORTE_OK,ORTE_BAD_HANDLE);
+  #endif
+  return b;
 
-   return b;
-
-/*
-ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
-                    ORTETypeDeserialize ds,unsigned int gms);
-*/
 }
-

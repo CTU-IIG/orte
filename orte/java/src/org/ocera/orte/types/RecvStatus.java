@@ -1,20 +1,13 @@
 /* RecvStatus.java */
-package org.ocera.orte.types;
-
 
 /**
-  * Class SendStatus
+  * Class RecvStatus.
   *
   * @author Lukas Pokorny (lukas_pokorny@centrum.cz)
   * @author CTU FEE Prague - Department of Control Engineering (dce.felk.cvut.cz)
   * @author Project ORTE - OCERA Real Time Ethernet (www.ocera.org)
   * @author dedication to Kj
   * @version 0.1
-  *
-  * typedef enum ORTESendStatus {
-  *      NEED_DATA        = 0x01,
-  *      CQL              = 0x02
-  *    } ORTESendStatus;
   *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
@@ -27,6 +20,9 @@ package org.ocera.orte.types;
   * GNU General Public License for more details.
   *
   */
+
+package org.ocera.orte.types;
+
 
 public class RecvStatus
 {

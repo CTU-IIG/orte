@@ -30,19 +30,26 @@ typedef struct
  JavaVM        *jvm;
  jobject        obj;
  jobject        rinfo;
- int            value; // !! pro testovani
+ jobject        msg;
+ jobject        bbuff; // byteBuffer
 } JORTECallbackContext_t;
 
 
 typedef struct
 {
- jobject     obj_recvStatus;
- jobject     str_topic;
- jobject     str_type;
- jobject     obj_guid;
- jobject     obj_ntpT_loc;
- jobject     obj_ntpT_rem;
- jobject     obj_sn;
-} RecvInfoVar_t;
+ JavaVM        *jvm;
+ jobject        obj_de;  // domain events
+} JORTEDomainEventsContext_t;
 
 
+typedef enum {
+        ON_REG_FAIL       = 1,
+        ON_MGR_NEW        = 2,
+        ON_MGR_DELETE     = 3,
+        ON_APP_REMOTE_NEW = 4,
+        ON_APP_DELETE     = 5,
+        ON_PUB_REMOTE     = 6,
+        ON_PUB_DELETE     = 7,
+        ON_SUB_REMOTE     = 8,
+        ON_SUB_DELETE     = 9
+      } JORTEDomainEvents_t;

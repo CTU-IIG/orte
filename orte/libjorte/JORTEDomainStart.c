@@ -31,7 +31,7 @@
 #include "orte.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Domain.h"
-
+#include "jorte/4all.h"
 
 // ve fci chybi 2 Multicast argumenty - maji se dodat???
 JNIEXPORT void JNICALL
@@ -48,6 +48,8 @@ Java_org_ocera_orte_Domain_jORTEDomainStart
                   (Boolean) recvUnicastUserDataThread,
                   ORTE_FALSE, // Multicast !
                   (Boolean) sendThread);
-
+  #ifdef TEST_STAGE
+    printf(":c: starting domain thread [ORTEDomainStart()].. \n");
+  #endif
 }
 

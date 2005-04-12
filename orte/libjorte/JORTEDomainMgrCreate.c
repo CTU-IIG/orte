@@ -29,50 +29,57 @@
 // origin orte headers
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_Manager.h"
+#include "jorte/org_ocera_orte_DomainMgr.h"
+#include "jorte/4all.h"
 
-
-
-// create default manager domain
+/* ****************************** *
+ *  create default manager domain *
+ * ****************************** */
 JNIEXPORT jint JNICALL
-Java_org_ocera_orte_Manager_jORTEDomainDefaultMgrCreate
+Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreate
 (JNIEnv *env, jclass cls, jint jdomain, jboolean susp)
 {
-  jint                   d;
+  jint       d;
 
-  printf(":c: jsem pred ORTEDomainDefaultMgrCreate() \n");
-  /* call the liborte function */
+  // call ORTE function
   d = (jint) ORTEDomainMgrCreate((int)jdomain,
                                  NULL,
                                  NULL,
                                  (Boolean) susp);
-  if(!d) {
-    printf(":!c: ORTEDomainDefaultMgrCreate() FAILED.. \n");
+  if(d == 0)
+  {
+    printf(":!c: creating mgrDomain failed! \n");
     return 0;
   }
-  printf(":c: ORTEDomainDefautlMgrCreate() ok.. + %d \n", d);
+  #ifdef TEST_STAGE
+     printf(":c: mgrDomain created.. \n");
+  #endif
   return (d);
 }
 
 
-// create user manager domain
+/* *************************** *
+ *  create user manager domain *
+ * *************************** */
 JNIEXPORT jint JNICALL
-Java_org_ocera_orte_Manager_jORTEDomainMgrCreate
+Java_org_ocera_orte_DomainMg_jORTEDomainMgrCreate
 (JNIEnv *env, jclass cls, jint jdomain, jint propHandle,
  jint eventsHandle, jboolean susp)
 {
-  jint                    d;
+  jint        d;
 
-  printf(":c: jsem pred ORTEDomainMgrCreate() \n");
-  /* call the liborte function */
+  // call ORTE function
   d = (jint) ORTEDomainMgrCreate((int)jdomain,
                                  (ORTEDomainProp *) propHandle,
                                  (ORTEDomainAppEvents *) eventsHandle,
                                  (Boolean) susp);
-  if(!d) {
-    printf(":!c: ORTEDomainMgrCreate() FAILED.. \n");
+  if(d == 0)
+  {
+    printf(":!c: creating mgrDomain failed! \n");
     return 0;
   }
-  printf(":c: ORTEDomainMgrCreate() ok.. + %d \n", d);
+  #ifdef TEST_STAGE
+     printf(":c: mgrDomain created.. \n");
+  #endif
   return (d);
 }

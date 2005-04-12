@@ -25,29 +25,32 @@
   *
   */
 
-
+#include <stdlib.h>
 // origin orte headers
 #include "orte.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Publication.h"
-
+#include "jorte/4all.h"
 
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationDestroy
-(JNIEnv *env, jclass cls, jint dhandle)
+(JNIEnv *env, jclass cls, jint pub_handle)
 {
-  int8_t b;
+  int8_t    b;
 
-  // call the liborte function
-  b = ORTEPublicationDestroy((ORTEPublication *) dhandle);
-  if(b == ORTE_OK)
+  // call ORTE function
+  b = ORTEPublicationDestroy((ORTEPublication *) pub_handle);
+  if (b == ORTE_BAD_HANDLE)
   {
-    //printf(":c: ORTEPublicationDestroy() succesfuly.. \n");
+    printf(":!c: publication destroy failed! [bad publication handle] \n");
     return 1;
   }
-  if (b == ORTE_BAD_HANDLE)
-    printf(":!c: ORTEPublicationDestroy failed! (bad publication's handle) \n");
+  // free data buffer
+  free(ORTEPublicationGetInstance((ORTEPublication *) pub_handle));
+  #ifdef TEST_STAGE
+    printf(":c: publication destroyed successfully.. \n");
+  #endif
   return 0;
 }
 

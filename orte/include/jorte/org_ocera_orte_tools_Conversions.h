@@ -23,22 +23,6 @@ JNIEXPORT jstring JNICALL Java_org_ocera_orte_tools_Conversions_IPAddressToStrin
 JNIEXPORT jlong JNICALL Java_org_ocera_orte_tools_Conversions_StringToIPAddress
   (JNIEnv *, jclass, jstring);
 
-/*
- * Class:     org_ocera_orte_tools_Conversions
- * Method:    NtpTimeToStringMs
- * Signature: (Lorg/ocera/orte/types/NtpTime;)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_org_ocera_orte_tools_Conversions_NtpTimeToStringMs
-  (JNIEnv *, jclass, jobject);
-
-/*
- * Class:     org_ocera_orte_tools_Conversions
- * Method:    NtpTimeToStringUs
- * Signature: (Lorg/ocera/orte/types/NtpTime;)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_org_ocera_orte_tools_Conversions_NtpTimeToStringUs
-  (JNIEnv *, jclass, jobject);
-
 #ifdef __cplusplus
 }
 #endif

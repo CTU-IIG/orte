@@ -27,541 +27,527 @@
 
 
 #include <stdlib.h>
-#include "jorte/getNtpTime.h"
+
 // library header file's path
 #include "orte.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Subscription.h"
 // enable TEST_STAGE run level
 #include "jorte/4all.h"
+// new data types
+#include "jorte/jorte_typedefs_defines.h"
+#include "jorte/jorte_protos_api.h"
 
-/*
-typedef struct
-{
- JavaVM        *jvm;
- jobject        obj;
- jobject        rinfo;
- int            value; // !! pro testovani
-} JORTECallbackContext_t;
-
-
-typedef struct
-{
- jobject     obj_recvStatus;
- jobject     str_topic;
- jobject     str_type;
- jobject     obj_guid;
- jobject     obj_ntpT_loc;
- jobject     obj_ntpT_rem;
- jobject     obj_sn;
-} RecvInfoVar_t;
-*/
-#include "jorte/typedefs_defines_jorte.h"
-
-// ### recvCallBack() #########################################################
+/* ****************************************************************** *
+ *                           CallBack function                        *
+ * ****************************************************************** */
 
 void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
 {
-//  char *instance=(char*)vinstance;
-
-  JavaVM          *jvm;
-  JNIEnv          *env = NULL; // local reference - Ok
-
-  jclass           cls = 0; //! local reference
-
-  jobject          obj = 0; //! local reference
-  //jobject          obj_recvInfo = 0; //! local reference
-  jobject          rinfo = 0; //! local reference
-  jobject          obj_instance = 0;
-
-  jmethodID        mid = 0; //! local reference
-  jmethodID        mid_callback = 0; //! local reference
-
-  jfieldID         fid = 0; //! local reference
-  jstring          jstr;
-  //RecvInfoVar_t       *recvInfoVar   = (RecvInfoVar_t*)malloc(sizeof(RecvInfoVar_t));
-
+  // jni varialbles
+  JavaVM          *jvm = 0;
+  JNIEnv          *env = 0;
+  jclass           cls = 0; // local reference!
+  jclass           cls_msg = 0;
+  jclass           cls_bb;
+  jclass           cls_tmp = 0;
+  jobject          obj = 0;
+  jobject          rinfo = 0;
+  jobject          obj_msg;
+  jobject          obj_bb;
+  jmethodID        mid = 0;
+  jmethodID        mid_callback = 0;
+  jfieldID         fid = 0;
+  //
+  char            *buffer;
+  int              i;
+  int              buff_length;
+  int              flag_ok = 0;
+  //
   JORTECallbackContext_t   *callback_cont = (JORTECallbackContext_t*)recvCallBackParam;
 
-  int i = callback_cont->value++; // !! JEN PRO TESTOVACI UCELY
+  #ifdef TEST_STAGE
+    printf("\n\n:c: --------------- recvCallBack called.. --------------- \n");
+  #endif
 
-
-
-
-
-#ifdef TEST_STAGE
-  printf("\n\n");
-  printf(":c: --------------- spustena recvCallBack.. z Ccka ------------------\n");
-#endif
-
-  if(callback_cont->obj == 0) return;
-  obj = callback_cont->obj;
-
-  if(callback_cont->jvm == 0) return;
-  jvm = callback_cont->jvm;
-
-  rinfo = callback_cont->rinfo;
-
-
-
-
-#ifdef TEST_STAGE
-   printf(":c: recvCallBack:  jvm = %p \n", jvm);
-   printf(":c: recvCallBack:  obj = %p \n", obj);
-#endif
-
-  // get env
-  (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
-  if(!env)
+  do
   {
-    printf(":!c: recvCallBack: can't get env..\n");
-    return;
-  }
+    // set local variables from struct
+    if(callback_cont->jvm == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: jvm = NULL \n");
+      #endif
+      break;
+    }
+    jvm = callback_cont->jvm;
+    // get env
+    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    if(env == 0)
+    {
+      #ifdef TEST_STAGE
+       printf(":!c: env = NULL \n");
+      #endif
+      break;
+    }
+    //
+    if(callback_cont->obj == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: obj = NULL \n");
+      #endif
+      break;
+    }
+    // set local vars
+    obj = callback_cont->obj;
+    rinfo = callback_cont->rinfo;
+    obj_msg = callback_cont->msg;
+    obj_bb = callback_cont->bbuff;
 
-#ifdef TEST_STAGE
-   printf(":c: recvCallBack:  env = %p \n", env);
-#endif
+
+      #ifdef TEST_STAGE
+         printf(":c: #0 \n");
+         printf(":c: env = %p, obj_msg = %p \n", env, obj_msg);
+      #endif
+
+
+	//
+    if(rinfo == 0)
+    {
+      // find cls
+      cls = (*env)->FindClass(env, "org/ocera/orte/types/RecvInfo");
+      if(cls == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: cls = NULL \n");
+        #endif
+        break;
+      }
+      // call object constructor
+      mid = (*env)->GetMethodID(env, cls, "<init>", "()V");
+      if(mid == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: constructor failed! \n");
+        #endif
+        break;
+      }
+      // create new object
+      rinfo = (*env)->NewObject(env, cls, mid);
+      if(rinfo == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: rinfo = NULL \n");
+        #endif
+        break;
+      }
+      // create global reference
+      callback_cont->rinfo = (*env)->NewGlobalRef(env, rinfo);
+      if (callback_cont->rinfo == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: callback_cont->rinfo = NULL \n");
+        #endif
+        break;
+      }
+    }
+    ////////////////////////////////////////////////////
+    // set RecvInfo instance
+    if(setRecvInfo(env,info,callback_cont->rinfo) == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: setRecvInfo() failed! \n");
+      #endif
+      break;
+    }
+    ////////////////////////////////////////////////////
+    // control print - only in TEST_STAGE
+    #ifdef TEST_STAGE
+      printf(":c: rinfo created :] \n");
+      printf(":c:----- ORTERecvInfo members  ------ \n");
+      printf(":c:    recvStatus: %d \n", info->status);
+      printf(":c:    senderGuid: hid = %d, aid = %d, oid = %d \n",
+             info->senderGUID.hid,info->senderGUID.aid,info->senderGUID.oid);
+      printf(":c:         topic: %s \n",info->topic);
+      printf(":c:          type: %s \n",info->type);
+      printf(":c: localTimeRecv: sec = %d, fract = %d \n",
+             info->localTimeReceived.seconds,info->localTimeReceived.fraction);
+      printf(":c: remoteTimePub: sec = %d, fract = %d \n",
+             info->remoteTimePublished.seconds,info->remoteTimePublished.fraction);
+      printf(":c:         seqNr: high = %d, low = %d \n",info->sn.high,info->sn.low);
+      printf(":c:---------------------------------- \n");
+    #endif
+    ////////////////////////////////////////////////////
+    // update MessageData instance
+    // get cls
+    cls_msg = (*env)->GetObjectClass(env, obj_msg);
+    //cls_tmp = (*env)->FindClass(env, "org/ocera/orte/types/MessageData");
+    if(cls_msg == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: cls_msg = NULL \n");
+      #endif
+      break;
+    }
+    //
+    if (obj_bb == 0)
+    {
+      // get buff's fieldID
+      fid = (*env)->GetFieldID(env,
+                               cls_msg,
+                               "buffer",
+                               "Ljava/nio/ByteBuffer;");
+      if (fid == NULL)
+      {
+        #ifdef TEST_STAGE
+           printf(":!c: fid = NULL \n");
+        #endif
+        break;
+      }
+      // get buff's object
+      obj_bb = (*env)->GetObjectField(env, obj_msg, fid);
+      if(obj_bb == NULL)
+      {
+        #ifdef TEST_STAGE
+           printf(":!c: obj_bb = NULL \n");
+        #endif
+        break;
+      }
+      // create global reference
+      callback_cont->bbuff = (*env)->NewGlobalRef(env, obj_bb);
+      if (callback_cont->bbuff == 0)
+      {
+        #ifdef TEST_STAGE
+           printf(":!c: callback_cont->bbuff = NULL \n");
+        #endif
+        break;
+      }
+      #ifdef TEST_STAGE
+         printf(":c: global reference created.. \n");
+      #endif
+    }
+    // get class ByteBuffer
+    cls_bb = (*env)->GetObjectClass(env, obj_bb);
+    if(cls_bb == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: cls_bb = NULL \n");
+      #endif
+      break;
+    }
+    // get buff's length
+    mid = (*env)->GetMethodID(env,
+                              cls_msg,
+                              "getMaxDataLength",
+                              "()I");
+    if(mid == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: mid = NULL \n");
+      #endif
+      break;
+    }
+    buff_length = (*env)->CallIntMethod(env,
+                                        obj_msg,
+                                        mid);
+    // needs rewind buffer before working with it!!
+    // (needs cls Buffer not ByteBuffer!)
+    // get class Buffer
+    cls_tmp = (*env)->FindClass(env, "java/nio/Buffer");
+    if(cls_tmp == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: cls_tmp = NULL \n");
+      #endif
+      break;
+    }
+    // methodID - rewind()
+    mid = (*env)->GetMethodID(env,
+                            cls_tmp,
+                            "rewind",
+                            "()Ljava/nio/Buffer;");
+    if(mid == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: mid = NULL \n");
+      #endif
+      break;
+    }
+    // call method
+    (*env)->CallObjectMethod(env,
+                             obj_bb,
+                             mid);
+    #ifdef TEST_STAGE
+       printf(":c: buffer successfully rewind..\n");
+    #endif
+    // methodID - put()
+    mid = (*env)->GetMethodID(env,
+                              cls_bb,
+                              "put",
+                              "(B)Ljava/nio/ByteBuffer;");
+    if(mid == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: mid = NULL \n");
+      #endif
+      break;
+    }
+    // copy the bytes from C to JAVA buffer
+    /////////////////////////////////////////////////////
+    buffer = (char *) vinstance;
+    //
+    for(i = 0; i < buff_length; i++)
+    {
+      #ifdef TEST_STAGE
+        printf(":c: i = %d kopirovany znak = %c [%d] \n",
+               i,*buffer,*buffer);
+      #endif
+      // call method
+      obj_bb = (*env)->CallObjectMethod(env,
+                                        obj_bb,
+                                        mid,
+                                        *buffer);
+      // next char
+      buffer++;
+    }
+    /////////////////////////////////////////////////////
+    // methodID - read()
+    mid = (*env)->GetMethodID(env,
+                              cls_msg,
+                              "read",
+                              "()V");
+    if(mid == 0)
+    {
+      #ifdef TEST_STAGE
+         printf(":!c: mid = NULL \n");
+      #endif
+      break;
+    }
+    // call method
+    (*env)->CallVoidMethod(env,
+                           obj_msg,
+                           mid);
+
+   /* *************************** *
+    *  call JAVA CallBack method  *
+    * *************************** */
+      #ifdef TEST_STAGE
+        printf(":c: call JAVA CallBack method \n");
+      #endif
+
 
 	// get class
-    cls = (*env)->GetObjectClass(env,obj);
+    cls = (*env)->GetObjectClass(env,callback_cont->obj);
     if(cls == 0)
     {
-      printf(":!c: cannot find callbackObj class..\n");
-      return;
+      #ifdef TEST_STAGE
+        printf(":!c: cls = NULL \n");
+      #endif
+      break;
     }
-    // create global reference
-
-#ifdef TEST_STAGE
-	printf(":c: recvCallBack:  volana fce GetMethodID().. \n");
-#endif
-
-	// get method ID
+    // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "callback",
-                              "(Lorg/ocera/orte/types/RecvInfo;Ljava/lang/Object;)V");
-     	               //   "(Lorg/ocera/orte/types/RecvInfo;Ljava/lang/Object;)V");
-	// create global reference to callback method
-	if(mid == 0)
+                              "(Lorg/ocera/orte/types/RecvInfo;Lorg/ocera/orte/types/MessageData;)V");
+    if(mid == 0)
     {
-      printf(":!c: can not find callback() method...\n");
-      return;
+      #ifdef TEST_STAGE
+        printf(":!c: cls = NULL \n");
+      #endif
+      break;
     }
     mid_callback = mid;
+    //
+    #ifdef TEST_STAGE
+      printf(":c: volam callback metodu.. halo jsi tam?? \n");
+    #endif
+    // call object's method
+    (*env)->CallVoidMethod(env,
+                           callback_cont->obj, /*obj*/
+                           mid_callback,
+                           callback_cont->rinfo,
+                           NULL);//obj_msg);
+    // set flag
+    flag_ok = 1;
+  } while(0);
 
-#ifdef TEST_STAGE
-   printf(":c: recvCallBack:          obj = %p \n", obj);
-   printf(":c: recvCallBack:          cls = %p \n", cls);
-   printf(":c: recvCallBack:          mid = %p \n", mid);
+  // detach current thread
+  if((*jvm)->DetachCurrentThread(jvm) != 0)
+     printf(":c!: DetachCurrentThread failed! \n");
   //
-#endif
-
-
-// -- vytvoreni parametru callback funkce ---------------------------------------------
-// vytvorit objekt RecvInfo - global ref
-
-
-  // get object RecvInfo class
-  cls = (*env)->FindClass(env, "org/ocera/orte/types/RecvInfo");
-  if(!cls)
-  {
-    printf(":!c: cls RecvInfo class not found..\n");
-    return; // ma se pri selhani RecvInfa davat tvrdy return?
-  }
-
-  // create RecvInfo object
-  if (rinfo == 0)
-  {
-	// call object constructor
-	mid = (*env)->GetMethodID(env, cls, "<init>", "()V");
-	if(!mid)
-	{
-      printf(":!c: constructor RecvInfo() not found..\n");
-      return; // ma se pri selhani RecvInfa davat tvrdy return?
-	}
-	// new object
-	rinfo = (*env)->NewObject(env, cls, mid);
-	if(!rinfo)
-	{
-      printf(":!c: obj_recvInfo not created..\n");
-  	  return;
-	}
-    #ifdef TEST_STAGE
-    	printf(":c: object RecvInfo created..\n");
-    #endif
-	// create global reference
-    callback_cont->rinfo = (*env)->NewGlobalRef(env, rinfo);
-	if (callback_cont->rinfo == 0)
-    {
-      printf(":!c: cannot create global reference callback_cont->rinfo ..\n");
-      return;
-    }
-    #ifdef TEST_STAGE
-    	printf(":c: global reference to object RecvInfo created..\n");
-    #endif
-  }
-
-
-
-//--------------------------------------------------------------------
-// set RecvInfo fields
-
-#ifdef TEST_STAGE
-//*** int i - testovaci
-  // get field ID
-  fid = (*env)->GetFieldID(env,cls,"i","I");
-  if(fid == NULL)
-  {
-    printf(":!c: cannot get ReccvInfo.i fieldID..\n");
-    return; // je toto nutne??
-  }
-  printf(":c: fid of ReccvInfo.i found..\n");
-  // set new value '1234'
-  (*env)->SetIntField(env,callback_cont->rinfo,fid,i++);
-  printf(":c: kontrola prirazeni %d \n",
-         (*env)->GetIntField(env,callback_cont->rinfo,fid));
-  printf(":c: new value of RecvInfo.i set..\n");
-#endif
-
-
-
-//*** RecvStatus
-    #ifdef TEST_STAGE
-        printf("\n");
-		printf(":c: ---- RecvInfo [odesilane]:\n");
-    #endif
-
-	// get method ID
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "setRecvStatus",
-                              "(I)V");
-	if(mid == 0)
-    {
-      printf(":!c: can not find setRecvStatus() method...\n");
-      return;
-    }
-    // call method
-	(*env)->CallVoidMethod(env,
-                           callback_cont->rinfo,
-	                       mid,
-                           (jint)info->status);
-
-//*** topic
-    // Look for the instance field s in cls
-    fid = (*env)->GetFieldID(env,
-                             cls,
-		  				     "topic",
-						     "Ljava/lang/String;");
-    if (fid == NULL)
-	{
-      printf(":!c: can not find 'topic' field ID...\n");
-	  return; // failed to find the field
-    }
-    // Read the instance field s
-	jstr = (*env)->GetObjectField(env, obj, fid);
-    // Create a new string and overwrite the instance field
-    jstr = (*env)->NewStringUTF(env, info->topic);
-    if (jstr == NULL)
-	{
-	  return;
-	  /* out of memory */
-    }
-    (*env)->SetObjectField(env, callback_cont->rinfo, fid, jstr);
-
-
-
-//*** type
-    // Look for the instance field s in cls
-    fid = (*env)->GetFieldID(env,
-                             cls,
-		  				     "type",
-						     "Ljava/lang/String;");
-    if (fid == NULL)
-	{
-      printf(":!c: can not find 'type' field ID...\n");
-	  return; // failed to find the field
-    }
-    // Read the instance field s
-	jstr = (*env)->GetObjectField(env, obj, fid);
-    // Create a new string and overwrite the instance field
-    jstr = (*env)->NewStringUTF(env, info->type);
-    if (jstr == NULL)
-	{
-      printf(":!c: can not set new value 'type'..\n");
-	  return;
-	  /* out of memory*/
-    }
-    (*env)->SetObjectField(env, callback_cont->rinfo, fid, jstr);
-
-
-
-//*** GUID_RTPS
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "setSenderGuid",
-                              "(JJJ)V");
-	if(mid == 0)
-    {
-      printf(":!c: can not find setSenderGuid() method...\n");
-      return;
-    }
-    // call method
-	(*env)->CallVoidMethod(env,
-                           callback_cont->rinfo,
-	                       mid,
-                           (jlong)info->senderGUID.hid,
-                           (jlong)info->senderGUID.aid,
-						   (jlong)info->senderGUID.oid);
-
-
-//*** localTimeRecv
-	// get method ID
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "setLocalTimeRecv",
-                              "(IJ)V");
-	if(mid == 0)
-    {
-      printf(":!c: can not find setLocalTimeRecv() method...\n");
-      return;
-    }
-    // call method
-	(*env)->CallVoidMethod(env,
-                           callback_cont->rinfo,
-	                       mid,
-                           (jint) info->localTimeReceived.seconds,
-                           (jlong)info->localTimeReceived.fraction);
-
-
-
-//*** remoteTimePublished
-	// get method ID
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "setRemoteTimePub",
-                              "(IJ)V");
-	if(mid == 0)
-    {
-      printf(":!c: can not find setRemoteTimePub() method...\n");
-      return;
-    }
-    // call method
-	(*env)->CallVoidMethod(env,
-                           callback_cont->rinfo,
-	                       mid,
-                           (jint) info->remoteTimePublished.seconds,
-                           (jlong)info->remoteTimePublished.fraction);
-
-
-//*** Sequence number
-	// get method ID
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "setSeqNumber",
-                              "(II)V");
-	if(mid == 0)
-    {
-      printf(":!c: can not find setSeqNumber() method...\n");
-      return;
-    }
-    // call method
-	(*env)->CallVoidMethod(env,
-                           callback_cont->rinfo,
-	                       mid,
-                           info->sn.high,
-                           info->sn.low);
-
-    #ifdef TEST_STAGE
-      printf(":c:    recvStatus: %d \n", info->status);
-      printf(":c:    senderGuid: hid = %d, aid = %d, oid = %d \n",
-	         info->senderGUID.hid,info->senderGUID.aid,info->senderGUID.oid);
-      printf(":c:         topic: %s \n",info->topic);
-      printf(":c:          type: %s \n",info->type);
-	  printf(":c: localTimeRecv: sec = %d, fract = %d \n",
-	         info->localTimeReceived.seconds,info->localTimeReceived.fraction);
-      printf(":c: remoteTimePub: sec = %d, fract = %d \n",
-	         info->remoteTimePublished.seconds,info->remoteTimePublished.fraction);
-      printf(":c:         seqNr: high = %d, low = %d \n",info->sn.high,info->sn.low);
-      printf("\n");
-	#endif
-
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-  obj_instance = (jobject)vinstance; //?? pujde to??
-#ifdef TEST_STAGE
-  if(!obj_instance) printf(":!c: pretypovani: (jobject)vinstance = NULL..\n");
-   else printf(":c: pretypovani: (jobject)vinstance = %p OK ..\n", obj_instance);
-#endif
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// -- vytvoreni parametru callback funkce ----------------------------------------end
-
-  // call object's method
-#ifdef TEST_STAGE
-  printf(":c: volam callback metodu.. halo jsi tam?? \n\n");
-#endif
-  (*env)->CallVoidMethod(env,
-                         callback_cont->obj, /*obj*/
-	                     mid_callback,
-                         callback_cont->rinfo,
-			             obj_instance);
-
-  if((*jvm)->DetachCurrentThread(jvm)!=0) printf("DetachCurrentThread fault\n");
-
-#ifdef TEST_STAGE
-  printf("\n");
-  printf("-------------------- opoustim recvCallBack() z Ccka-------------------");
-  printf("\n\n\n");
-#endif
-// --funkcni 05-01-13 ------------------------------------------------------------
-
+  #ifdef TEST_STAGE
+     printf(":c: ------------ thats all from recvCallBack ------------ \n\n");
+  #endif
 
 }
 
-// ### END recvCallBack() #####################################################
-
-
-
-
-// ### nativni metoda #########################################################
-
+/* ****************************************************************** *
+ *                            native method                           *
+ * ****************************************************************** */
 JNIEXPORT jint JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
-(JNIEnv *env, jobject obj, jint dhandle, jint jsmode,
- jint jstype, jstring jtopic, jstring jtname, jint jbufflength,
- jobject jdeadline, jobject jminSeparation,
- jobject callbackObj /* recvCallBackparam  */, jlong j_multicastIP)
+(JNIEnv   *env,
+ jobject   obj,
+ jint      dhandle,   // appDomain handle
+ jint      jsmode,    // subs mode
+ jint      jstype,    // subs type
+ jstring   jtopic,    // subs topic
+ jstring   jtname,    // subs typeName
+ jint      jbufflen,  // length of buffer
+ jobject   obj_msg,   // messageData instance
+ jobject   jdeadline,
+ jobject   jminSeparation,
+ jobject   obj_callback,
+ jlong     j_multicastIP)
 {
-  ORTESubscription   *s;
-  ORTEDomain         *d;
-  SubscriptionMode    smode;
-  SubscriptionType    stype;
-  const char         *topic;
-  const char         *typename;
-  char               *instance;  // dynamicky naalokovat pole instance2send !!!!!
-  NtpTime             deadline;
-  NtpTime             minSeparation;
+  // jni variables
+  JavaVM                 *jvm;
+  jfieldID                fid;
+  jclass                  cls;
+  // orte variables
+  ORTESubscription       *s = 0;
+  ORTEDomain             *d;
+  SubscriptionMode        smode;
+  SubscriptionType        stype;
+  NtpTime                 deadline;
+  NtpTime                 minSeparation;
+  // jorte varialbe
+  JORTECallbackContext_t *callback_cont;
+  // standart variables
+  const char             *topic = 0;
+  const char             *typename = 0;
+  char                   *buffer;
+  int                     flag_ok = 0;
+  // memory alocation
+  // don't forget use free() funct.!!
+  callback_cont = (JORTECallbackContext_t*)malloc(sizeof(JORTECallbackContext_t));
 
-  JavaVM                *jvm;
-  jfieldID fid;
-  jclass cls;
-  // callback_cont
-  JORTECallbackContext_t *callback_cont = (JORTECallbackContext_t*)malloc(sizeof(JORTECallbackContext_t));
-  //RecvInfoVar_t     *recvInfoVar   = (RecvInfoVar_t*)malloc(sizeof(RecvInfoVar_t));
-
-  // bad/zero callbackObj
-  if (callbackObj == 0)
+  do
   {
-    printf(":c!: callbackObj can not be null.. \n");
-    return 0;
-  }
-
-  // get jvm
-  jint b = (*env)->GetJavaVM(env,&jvm);
-  if (b <  0)
-  {
-    printf(":!c: getJavaVM() fault..\n");
-    return 0;
-  }
-  if (b == 0)
-  {
+    // create buffer
+    buffer = (char*) malloc((int32_t) jbufflen);
+    // check obj_callback
+    if (obj_callback == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: obj_callback = NULL \n");
+      #endif
+      break;
+    }
+    // get jvm
+    jint b = (*env)->GetJavaVM(env,&jvm);
+    if (b <  0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: getJavaVM() failed! \n");
+      #endif
+      break;
+    }
+    if (b == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":c: getJavaVM succesfull.. \n");
+      #endif
+    }
+    callback_cont->jvm = jvm;
+    // create global references
+    callback_cont->obj = (*env)->NewGlobalRef(env, obj_callback);
+    //
+    if (callback_cont->obj == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":c: global reference not created! \n");
+      #endif
+      break;
+    }
+    // create global references
+    callback_cont->msg = (*env)->NewGlobalRef(env, obj_msg);
+    //
+    if (callback_cont->msg == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":c: global reference not created! \n");
+      #endif
+      break;
+    }
+    // init RecvInfo pointer
+    callback_cont->rinfo = 0;
+    callback_cont->bbuff = 0;
+    //
+    cls = (*env)->GetObjectClass(env, obj);
+    if(cls == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: cls = NULL \n");
+      #endif
+      break;
+    }
+    // fieldID - callbackContextHandle
+    fid = (*env)->GetFieldID(env,
+                             cls,
+                             "callbackContextHandle",
+                             "I");
+    if(fid == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: fid = NULL \n");
+      #endif
+      break;
+    }
+    (*env)->SetIntField(env,
+                        obj,
+                        fid,
+                        (int) callback_cont);
     #ifdef TEST_STAGE
-      printf(":c: nativ fce: getJavaVM succesfull.. jvm = %p \n",jvm);
-      printf(":c: nativ fce:                        env = %p \n",env);
+       printf(":c: ORTESubscriptionCreate() calling..\n");
     #endif
-  }
-  callback_cont->jvm = jvm;
+    //
+    d = (ORTEDomain *) dhandle;
+    if (d == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: d = NULL [bad domain handle] \n");
+      #endif
+      break;
+    }
+    //
+    smode = (SubscriptionMode) jsmode;
+    stype = (SubscriptionType) jstype;
+    topic = (*env)->GetStringUTFChars(env, jtopic, 0);
+    typename = (*env)->GetStringUTFChars(env, jtname, 0);
+    deadline = getNtpTime(env, jdeadline);//
+    minSeparation = getNtpTime(env, jminSeparation);//
+    // call ORTE function
+    s = ORTESubscriptionCreate(d,
+                               smode,
+                               stype,
+                               topic,
+                               typename,
+                               (void *) buffer,
+                               &deadline,
+                               &minSeparation,
+                               recvCallBack,
+                               (void*)callback_cont,
+                               (uint32_t) j_multicastIP);
+    if (s == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: s = NULL [subscription not created] \n");
+      #endif
+      break;
+    }
 
-  // create global reference
-  callback_cont->obj = (*env)->NewGlobalRef(env, callbackObj);
-  // global reference not created
-  if (callback_cont->obj == 0)
-  {
-    printf(":!c: cannot create global reference obj_subsCallback ..\n");
-    return 0;
-  }
+    // set flag
+    flag_ok = 1;
+  } while(0);
 
-  // init RecvInfo pointer
-  callback_cont->rinfo = 0;
-  callback_cont->value = 0; // !!! JEN PRO TESTOVACI UCELY
-
-#ifdef TEST_STAGE
-  printf(":c: global reference obj_subsCallback created [%p] ..\n", callback_cont->obj);
-  printf(":c: local  reference callbackObj              [%p] ..\n", callbackObj);
-  printf(":c: global reference RecvInfo                 [%p] ..\n", callback_cont->rinfo);
-#endif
-
-
-// nastavi handle na stukturu callback_cont
-  cls = (*env)->GetObjectClass(env, obj);
-  fid = (*env)->GetFieldID(env, cls, "callbackContextHandle", "I");
-  (*env)->SetIntField(env, obj, fid, (int)callback_cont);
-
-// ---------------------------------------------------------------------------------------
-//uz funkcni cast - bez recvCallbacku
-
-  printf(":c: chystam se vytvorit subscribera..\n");
-  d = (ORTEDomain *) dhandle;
-  if (!d)
-  {
-    printf(":!c: jORTESubscriptionCreate bad domain handle.. \n ");
-    return 0;
-  }  //JavaVM          *jvm;
-
-  smode = (SubscriptionMode) jsmode;
-  stype = (SubscriptionType) jstype;
-  topic = (*env)->GetStringUTFChars(env, jtopic, 0);
-  typename = (*env)->GetStringUTFChars(env, jtname, 0);
-  instance = (char *) malloc((int) jbufflength);
-  deadline = getNtpTime(env, jdeadline);//
-  minSeparation = getNtpTime(env, jminSeparation);//
-  /* ... */
-  /* ... */
-
-  printf(":c: jORTESubscriptionreate() - nacteny parametry z javy..\n");
-
-/*
-ORTESubscriptionCreate(ORTEDomain *d,
-                       SubscriptionMode mode,
-                       SubscriptionType sType,
-                       const char *topic,
-                       const char *typeName,
-                       void *instance,
-                       NtpTime *deadline,
-                       NtpTime *minimumSeparation,
-                       ORTERecvCallBack recvCallBack,
-                       void *recvCallBackParam,
-                       IPAddress multicastIPAddress);
-
-*/
-  // call original liborte function
-  s = ORTESubscriptionCreate(d,
-                             smode,
-                             stype,
-                             topic,
-                             typename,
-                             &instance,
-                             &deadline,
-                             &minSeparation,
-                             recvCallBack,
-                             (void*)callback_cont,
-                             (uint32_t) j_multicastIP);
-
-  printf(":c: provedeno volani ORTESubscriptionCreate()..\n");
-
-  if (!s) {
-    printf(":!c: ORTESubscriptionCreate: bad publication handle.. \n ");
-    return 0;
-  }
-
-  // free the memory
+  // free memory
   (*env)->ReleaseStringUTFChars(env, jtopic, topic);
   (*env)->ReleaseStringUTFChars(env, jtname, typename);
-
+  // returns handle of new created Subscription
+  if(flag_ok == 0) return 0;
   return ((jint) s);
-}
 
+}

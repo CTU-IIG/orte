@@ -1,6 +1,4 @@
 /* SendInfo.java */
-package org.ocera.orte.types;
-
 
 /**
   * Class SendInfo
@@ -27,6 +25,9 @@ package org.ocera.orte.types;
   * GNU General Public License for more details.
   *
   */
+
+package org.ocera.orte.types;
+
 
 public class SendInfo
 {

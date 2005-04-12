@@ -9,7 +9,7 @@ Thanks all of you for help with creation of the project ORTE.
 
 
 Petr Smolik <petr.smolik@wo.cz>
-    * originator
+    * originator and mainteiner
     
 Pavel Pisa <pisa@cmp.felk.cvut.cz> 
     * gavl implentations
@@ -23,7 +23,7 @@ Jan Kiszka <Jan.Kiszka@web.de>
     * RTAI ports
     
 Zdenek Sebek <sebek@fel.cvut.cz>
-    * documentation
+    * first documentation
 
 Lukas Pokorny <maskis@seznam.cz>
     * RTPS Ethereal analyzer
@@ -32,4 +32,5 @@ Lukas Pokorny <maskis@seznam.cz>
 Tomas Ciganek <t.ciganek@sh.cvut.cz>
     * OPNet simulation
 
-
+Jan Kelbel <jan.kelbel@centrum.cz>
+    * makefiles for msvc

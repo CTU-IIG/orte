@@ -28,13 +28,13 @@
 // origin orte headers
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_tools_Conversions.h"
+#include "jorte/org_ocera_orte_types_NtpTime.h"
 
 
 
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT jstring JNICALL
-Java_org_ocera_orte_tools_JORTEConversions_NtpTimeToStringUs
+Java_org_ocera_orte_types_JORTENtpTime_NtpTimeToStringUs
 (JNIEnv *env, jclass class, jobject j_ntpTime)
 {
   char             buff[65];  // 32 + 32 + 1 end char

@@ -30,24 +30,26 @@
 // origin orte headers
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_Manager.h"
-
+#include "jorte/org_ocera_orte_DomainMgr.h"
+#include "jorte/4all.h"
 
 
 JNIEXPORT jboolean JNICALL
-Java_org_ocera_orte_Manager_jORTEDomainMgrDestroy
+Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
 (JNIEnv *env, jclass cls, jint dhandle)
 {
   int8_t     b;
 
-  // call the liborte function
+  // call ORTE function
   b = ORTEDomainMgrDestroy((ORTEDomain *) dhandle);
   if(b == ORTE_OK)
   {
-    //printf(":c: ORTEDomainMgrDestroy() succesfuly.. \n");
+    #ifdef TEST_STAGE
+      printf(":c: mgrDomain destroy successfully.. \n");
+    #endif
     return 1;
   }
   if (b == ORTE_BAD_HANDLE)
-    printf(":!c: ORTEDomainMgrDestroy() failed! (bad domain handle..) \n");
+    printf(":!c: mgrDomain destroy failed! [bad domain handle] \n");
   return 0;
 }

@@ -372,3 +372,9 @@ ORTEPublicationSend(ORTEPublication *cstWriter) {
   return ORTEPublicationSendEx(cstWriter,NULL);
 }
 
+
+/*****************************************************************************/
+inline void *
+ORTEPublicationGetInstance(ORTEPublication *cstWriter) {
+  return cstWriter->objectEntryOID->instance;
+}

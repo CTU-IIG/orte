@@ -256,3 +256,11 @@ ORTESubscriptionPull(ORTESubscription *cstReader) {
   pthread_rwlock_unlock(&cstReader->domain->objectEntry.objRootLock);
   return ORTE_OK;
 }
+
+
+/*****************************************************************************/
+inline void *
+ORTESubscriptionGetInstance(ORTESubscription *cstReader) {
+  return cstReader->objectEntryOID->instance;
+}
+

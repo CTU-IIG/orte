@@ -31,30 +31,32 @@
 // origin orte headers
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_DomainProp.h"
-
-
+#include "jorte/org_ocera_orte_types_DomainProp.h"
+#include "jorte/4all.h"
 
 JNIEXPORT jint JNICALL
-Java_org_ocera_orte_DomainProp_jORTEDomainPropDefaultGet
+Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
 (JNIEnv *env, jclass cls)
 {
   ORTEDomainProp *dprop;
 
-  /* allocation space for the pointer to struc ORTEDomainProp  */
+  // memory allocation
+  // don't forget use free()!!
   dprop = (ORTEDomainProp *) malloc(sizeof(ORTEDomainProp));
-  if (dprop == NULL) {
-     printf(":!c: not enough of memory to alocation ORTEDomainProp..");
+  if (dprop == NULL)
+  {
+     printf(":!c: not enough memory to alocate DomainProp!");
      return 0;
   }
-
-  /* call the liborte function */
-  if (!ORTEDomainPropDefaultGet(dprop)) {
+  // call ORTE function
+  if (!ORTEDomainPropDefaultGet(dprop))
+  {
     printf(":!c: ORTEDomainPropDefaultGet() failed.. \n");
     free(dprop);
     return 0;
   }
-  printf(":c: ORTEDomainPropDefaultGet() succesful.. %p \n",dprop);
+  #ifdef TEST_STAGE
+    printf(":c: default domain properties created.. \n");
+  #endif
   return ((jint) dprop);
-
 }

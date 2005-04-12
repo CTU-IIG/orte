@@ -34,52 +34,99 @@
 // pregenerated header
 #include "jorte/org_ocera_orte_Subscription.h"
 //
-#include "jorte/typedefs_defines_jorte.h"
+#include "jorte/jorte_typedefs_defines.h"
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
-(JNIEnv *env, jobject obj, jint dhandle)
+(JNIEnv *env, jobject obj, jint subs_handle)
 {
   int8_t        b;
   jint          h;
   jclass        cls;
   jfieldID      fid;
+  int           flag_ok = 0;
 
-  printf(":!c: ORTESubscriptionDestroy() called.. \n");
-  // free callBack object
-  cls = (*env)->GetObjectClass(env, obj);
-  fid = (*env)->GetFieldID(env, cls, "callbackContextHandle", "I");
-  h   = (*env)->GetIntField(env, obj, fid);
-  //(*env)->SetIntField(env, obj, fid, 0);
-  printf(":!c: JORTECallbackContext_t handle: %x\n", h);
-  if(h) {
-	//JavaVM *jvm;
-    //jint ret;
-    printf(":c: ORTESubscriptionDestroy() destroying JORTECallbackContext_t.. \n");
-	JORTECallbackContext_t *ctx = (JORTECallbackContext_t*)h;
-    if(ctx->obj) {
-        printf(":!c: deleting ctx->obj\n");
-	    (*env)->DeleteLocalRef(env, ctx->obj);
-	}
-    if(ctx->rinfo) {
-        printf(":!c: deleting ctx->rinfo\n");
-	    (*env)->DeleteLocalRef(env, ctx->rinfo);
-	}
+  #ifdef TEST_STAGE
+    printf(":c: ORTESubscriptionDestroy() called.. \n");
+  #endif
 
-    free((void*)h);
+  do
+  {
+    // free callBack object
+    // find cls
+    cls = (*env)->GetObjectClass(env, obj);
+    if(cls == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: cls = NULL! \n");
+     #endif
+     break;
+    }
+    // fieldID
+    fid = (*env)->GetFieldID(env,
+                             cls,
+                             "callbackContextHandle",
+                             "I");
+    if(fid == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: fid = NULL! \n");
+     #endif
+     break;
+    }
+    // get value
+    h = (*env)->GetIntField(env, obj, fid);
+    if(h)
+    {
+      //JavaVM *jvm;
+      //jint ret;
+      JORTECallbackContext_t *ctx = (JORTECallbackContext_t*)h;
+      if(ctx->obj)
+      {
+        #ifdef TEST_STAGE
+          printf(":c: deleting ctx->obj \n");
+        #endif
+        (*env)->DeleteLocalRef(env, ctx->obj);
+      }
+      if(ctx->rinfo)
+      {
+        #ifdef TEST_STAGE
+          printf(":c: deleting ctx->rinfo\n");
+        #endif
+        (*env)->DeleteLocalRef(env, ctx->rinfo);
+      }
+      //
+      free((void*)h);
+    }
+    //
+    if(subs_handle)
+    {
+      // free data buffer
+      free(ORTESubscriptionGetInstance((ORTESubscription *) subs_handle));
+      // call ORTE function
+      b = ORTESubscriptionDestroy((ORTESubscription *) subs_handle);
+      if (b == ORTE_BAD_HANDLE)
+      {
+        printf(":!c: subscription destroy failed! [bad sub handle] \n");
+        break;
+      }
+      #ifdef TEST_STAGE
+        printf(":c: subscription destroy succesfuly.. \n");
+      #endif
+    }
+    // set flag
+    flag_ok = 1;
+  } while(0);
+
+  #ifdef TEST_STAGE
+     printf(":c: flag_ok = %d \n",flag_ok);
+  #endif
+
+  if(flag_ok == 0)
+  {
+    return 0;
   }
-  // call the liborte destroy function
-  printf(":!c: ORTESubscription handle: %x\n", dhandle);
-  if(dhandle) {
-	b = ORTESubscriptionDestroy((ORTESubscription *) dhandle);
-	if(b == ORTE_OK)
-	{
-		printf(":c: ORTESubscriptionDestroy() succesfuly.. \n");
-		return 1;
-	}
-	if (b == ORTE_BAD_HANDLE)
-		printf(":!c: ORTESubscriptionDestroy() failed! (bad subsriber's handle) \n");
-  }
-  return 0;
+
+  return 1;
+
 }
-

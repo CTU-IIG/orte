@@ -27,35 +27,37 @@
   *
   */
 
-
 #include <stdlib.h>
 // origin orte headers
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_DomainEvents.h"
-
-
+#include "jorte/org_ocera_orte_types_DomainEvents.h"
+#include "jorte/4all.h"
 
 JNIEXPORT jint JNICALL
-Java_org_ocera_orte_DomainEvents_jORTEDomainInitEvents
+Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
 (JNIEnv *env, jclass cls)
 {
   ORTEDomainAppEvents *evs;
 
-  /* allocation space for the pointer to struc ORTEDomainProp  */
+  // memory allocation
   evs = (ORTEDomainAppEvents *) malloc(sizeof(ORTEDomainAppEvents));
-  if (evs == NULL) {
-     printf(":!c: not enough of memory to alocation ORTEDomainAppEvents..");
-     return 0;
+  if(evs == 0)
+  {
+    printf(":!c: evs = NULL [not enough memory] \n");
+    return 0;
   }
-
-  /* call the liborte function */
-  if (!ORTEDomainInitEvents(evs)) {
-    printf(":!c: ORTEDomainInitEvents() failed.. \n");
+  // call the liborte function
+  if (!ORTEDomainInitEvents(evs))
+  {
+    printf(":!c: events not initialized! \n");
     free(evs);
     return 0;
   }
-  printf(":c: ORTEDomainInitEvents() succesful.. %p \n",evs);
+  #ifdef TEST_STAGE
+     printf(":c: events initialized.. \n");
+  #endif
+
   return ((jint) evs);
 
 }

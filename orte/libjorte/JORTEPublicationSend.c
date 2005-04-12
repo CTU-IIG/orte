@@ -31,30 +31,154 @@
 #include "orte.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Publication.h"
+// enable TEST_STAGE run level
+#include "jorte/4all.h"
 
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationSend
-(JNIEnv *env, jobject obj, jint pub_handle, jobject obj_instance)
+(JNIEnv *env, jobject obj, jint pub_handle, jobject obj_msg)
 {
-  int8_t b;
+  jclass    cls;
+  jobject   obj_bb;
+  jfieldID  fid;
+  jmethodID  mid;
+  //
+  int       flag_ok = 0;
+  int8_t    b;
+  int       buff_length,i = 0;
+  char     *orte_instance;
+  //
+  ORTEPublicationSendParam psp;
 
-  // nezapomenout udelat free() !!!!!!!!!!!
-  ORTEPublicationSendParam *psp = (ORTEPublicationSendParam *)malloc(sizeof(ORTEPublicationSendParam));
+  #ifdef TEST_STAGE
+    printf(":c: jORTEPublicationSend() called.. \n");
+  #endif
 
-  psp->instance = (void *) obj_instance;
-  psp->data_endian = 0; /* BIG -pak tahat z headeru !!*/
-
-  // call the liborte function
-  b = ORTEPublicationSendEx((ORTEPublication *) pub_handle, psp);
-  if (b == ORTE_BAD_HANDLE)
-    printf(":!c: ORTEPublicationSend() failed! (bad publication handle).. \n");
-  return 0;
-  if(b == ORTE_OK)
+  do
   {
-    //printf(":c: ORTEPublicationSend() succesfuly.. \n");
+    // get class MessageData
+    cls = (*env)->GetObjectClass(env, obj_msg);
+    if(cls == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: cls = NULL \n");
+     #endif
+     break;
+    }
+    // methodID
+    mid = (*env)->GetMethodID(env,
+                              cls,
+                              "getMaxDataLength",
+                              "()I");
+    if(mid == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: mid = NULL \n");
+     #endif
+     break;
+    }
+    // call method
+    buff_length = (*env)->CallIntMethod(env,
+                                        obj_msg,
+                                        mid);
+    // get fieldID - buffer
+    fid = (*env)->GetFieldID(env,
+                             cls,
+                             "buffer",
+                             "Ljava/nio/ByteBuffer;");
+    if(fid == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: fid = NULL \n");
+     #endif
+     break;
+    }
+    // get object
+    obj_bb = (*env)->GetObjectField(env,obj_msg,fid);
+    if(obj_bb == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_bb = NULL \n");
+     #endif
+     break;
+    }
+    // get obj class
+    cls = (*env)->GetObjectClass(env, obj_bb);
+    if(cls == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: cls = NULL \n");
+     #endif
+     break;
+    }
+    // methodID
+    mid = (*env)->GetMethodID(env,
+                              cls,
+                              "get",
+                              "(I)B");
+    if(mid == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: mid = NULL \n");
+     #endif
+     break;
+    }
+    /////////////////////////////////////////////////
+    // get handle to data buffer
+    orte_instance = ORTEPublicationGetInstance((ORTEPublication *) pub_handle);
+    // copy the bytes from JAVA to C buffer
+    /////////////////////////////////////////////////
+    for(i = 0; i < buff_length; i++)
+    {
+      // calling method
+      char b;
+
+      b = (*env)->CallByteMethod(env,
+                                 obj_bb,
+                                 mid,
+                                 i);
+      orte_instance[i] = b;
+
+      #ifdef TEST_STAGE
+        printf(":c: #7.%d: znak %c [%d] \n",
+               i,orte_instance[i],orte_instance[i]);
+      #endif
+    }
+    /////////////////////////////////////////////////
+    psp.instance = (void *) orte_instance;
+    psp.data_endian = 0; /* BIG -pak tahat z headeru !!*/
+    #ifdef TEST_STAGE
+      printf(":c: endian? \n");
+    #endif
+    /////////////////////////////////////////////////
+    // call ORTE function
+    b = ORTEPublicationSendEx((ORTEPublication *) pub_handle, &psp);
+    #ifdef TEST_STAGE
+      printf(":c: b = ORTEPublicationSendEx() = %d \n",b);
+    #endif
+    if (b == ORTE_BAD_HANDLE)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: data not sent! [bad pub handle] \n");
+     #endif
+     break;
+    }
+    if(b == ORTE_OK)
+    {
+     #ifdef TEST_STAGE
+       printf(":c: data sent succesfuly.. \n");
+     #endif
+    }
+    // set flag
+    flag_ok = 1;
+  } while(0);
+
+  if(flag_ok == 0)
+  {
+    return 0;
   }
-  // free memory
-  free(psp);
+
   return 1;
+
 }

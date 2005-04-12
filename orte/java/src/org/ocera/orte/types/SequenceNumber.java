@@ -1,6 +1,4 @@
 /* SequenceNumber.java */
-package org.ocera.orte.types;
-
 
 /**
   * Class SequenceNumber substitutes the struct SequenceNumber
@@ -31,20 +29,21 @@ package org.ocera.orte.types;
   *
   */
 
+package org.ocera.orte.types;
 
 
 public class SequenceNumber
 {
-  public int    high;
-  public int    low;
+  private int    high;
+  private long    low;
 
 
   /* constructor */
-  public SequenceNumber(int h, int l)
+  public SequenceNumber(int high, long low)
   {
-    this.high = h;
-    this.low  = l;
-    System.out.println(":j: instance SequenceNumber created..");
+    this.high = high;
+    this.low  = low;
+    //System.out.println(":j: instance SequenceNumber created..");
   }
 
   public SequenceNumber get()
@@ -52,10 +51,11 @@ public class SequenceNumber
     return this;
   }
 
-  public void set(int h, int l)
+  public long getDecimal()
   {
-    this.high = h;
-    this.low  = l;
+    long sn = high*2^32 + low; 
+  	return sn;	
   }
+  
 }
 

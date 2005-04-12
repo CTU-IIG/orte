@@ -1,6 +1,4 @@
 /* VendorId.java */
-package org.ocera.orte.types;
-
 
 /**
   * Class VendorId substitutes the struct VendorId
@@ -31,19 +29,23 @@ package org.ocera.orte.types;
   *
   */
 
+package org.ocera.orte.types;
 
 
 public class VendorId {
 
-   char           major;
-   char           minor;
-
+   byte           major;
+   byte           minor;
 
    /* constructor */
-   public VendorId(char majorNumber,char minorNumber) {
-      major = majorNumber;
-      minor = minorNumber;
+   public VendorId(byte major,byte minor) {
+      this.major = major;
+      this.minor = minor;
    }
 
+  public String toString()
+  {
+  	return (major + "." + minor); 
+  }
 }
 

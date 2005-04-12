@@ -1,7 +1,7 @@
 If you are a developper and wants to help, enjoy !
 
 ################################################################
-               Release: ORTE0-3-0      Date: 040220
+               Release: ORTE0-3-0      Date: 050220
 
 1) clean code !!! :)))
 
@@ -9,7 +9,10 @@ If you are a developper and wants to help, enjoy !
 
 3) implement reference counting into main tree to make thread safe operations
 
-4) RTerms port
+4) RTerms & VxWorks port
+
+5) up to date documentation from verssion 0.2.4 to 0.3.0
+   - describe IDL compiler
 
 
 ...

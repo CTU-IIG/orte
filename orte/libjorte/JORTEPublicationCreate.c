@@ -25,24 +25,22 @@
   *
   */
 
-
 #include <stdlib.h>
-#include  "jorte/getNtpTime.h"
 // origin orte headers
 #include "orte.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Publication.h"
-
-
+#include "jorte/jorte_protos_api.h"
+#include "jorte/4all.h"
 
 // ### DOCASNE ##################################################################
-
 
 // ### DOCASNE ##################################################################
 int counter = 0;
 
 void
-sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
+sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
+{
   char *instance=(char*)vinstance;
 
   printf(":c: zacatek sendCallBack()..\n");
@@ -57,125 +55,105 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) 
       break;
   }
 }
-
 // ### DOCASNE ##################################################################
 
 // ### DOCASNE ##################################################################
 
 
+// native method
 JNIEXPORT jint JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationCreate
-(JNIEnv *env , jobject obj, jint dom_handle, jstring j_topic,
- jstring j_type_name, jobject j_instance, jobject j_persistence,
- jint j_strength /*, callback not used */)
+(JNIEnv   *env ,
+ jobject   obj,
+ jint      dom_handle,
+ jstring   j_topic,
+ jstring   j_type_name,
+ jint      jbufflen,
+ jobject   j_instance,
+ jobject   j_persistence,
+ jint      j_strength)
 {
-  ORTEPublication  *p;
+  ORTEPublication  *p = 0;
   ORTEDomain       *d;
   const char       *topic;
-  const char       *typename;
-  char             *buffer;  // dynamicky naalokovat pole instance2send @!!!!!!!!!!!!
+  const char       *typeName;
+  char             *buffer;
   NtpTime           persistence;
   int               strength;
-  jclass            cls;
-  jmethodID         mid;
-  jint              buff_length;
+  int               flag_ok = 0;
 
-  printf(":c: chystam se vytvorit publikaci\n");
+  // check domain handle
   d = (ORTEDomain *) dom_handle;
-  if (!d) {
-    printf(":!c: jORTEPublicationCreate() fault - bad domain handle! \n ");
+  if(d == 0)
+  {
+    printf(":!c: publication create failed! [bad domain handle] \n");
     return 0;
   }
-
+  // get topic
   topic = (*env)->GetStringUTFChars(env, j_topic, 0);
-  typename = (*env)->GetStringUTFChars(env, j_type_name, 0);
-
-
-
-  persistence = getNtpTime(env, j_persistence);
-  strength = (int) j_strength;
-
-
-  printf(":c: jORTEPublicationCreate() - nacteny parametry z javy..\n");
-
-
-  // create buffer
-
-  // get object's class
-  cls = (*env)->GetObjectClass(env, j_instance);
-  if(!cls)
+  if(topic == 0)
   {
-    printf(":!c: Class of 'instance' not found! \n");
+    // OutOfMemoryError already thrown
+    #ifdef TEST_STAGE
+      printf(":!c: topic = NULL \n");
+    #endif
     return 0;
   }
-  // get method ID
-  mid = (*env)->GetMethodID(env, cls, "getMaxSerializeLength", "()I");
-  if(!mid)
+  // get typeName
+  typeName = (*env)->GetStringUTFChars(env, j_type_name, 0);
+  if(typeName == 0)
   {
-    printf(":!c: Method getMaxSerializeLength() not found! \n");
-    return 0; // ma se pri selhani RecvInfa davat tvrdy return?
-  }
-
-/*
-  // get fieldID
-  if((fieldID = (*env)->GetFieldID(env,cls_instance,"seconds","I")) == NULL)
-    return((*env)->NewStringUTF(env, "error when reading Java-ntpTime"));
-  // get objects value
-  time.seconds = (int32_t) (*env)->GetIntField(env,j_ntpTime,fieldID);
-*/
-
-
-
-
-  // get class MessageData
-  cls = (*env)->GetObjectClass(env, j_instance);
-  if(cls == 0)
-  {
-    printf(":!c: cannot find MessageData class! \n");
-    return 0;
-  }
-  // get class's method ID
-  mid = (*env)->GetMethodID(env,
-                            cls,
-                            "getMaxSerializeLength",
-                            "()I");
-  if(mid == 0)
-  {
-    printf(":!c: method getMaxSerializeLength failed! \n");
-    return 0;
-  }
-  // calling method
-  buff_length = (*env)->CallIntMethod(env,
-                                 j_instance,
-                                 mid);
-
-  buffer = (char*) malloc((int) buff_length); // 64 !!! provizorne - upravit!!
-
-
-  /* call original ORTE function */
-  p = ORTEPublicationCreate(d,
-                            topic,
-							typename,
-							(void *) buffer,
-							&persistence,
-                            strength,
-							sendCallBack, /* BUDE NULL !!!*/
-							j_instance,
-							NULL);
-
-  printf(":c: provedeno volani ORTEPublicationCreate() \n");
-
-  if (!p) {
-    printf(":!c: jORTEPublicationCreate() fault! (bad publication handle).. \n ");
+    // OutOfMemoryError already thrown
+    #ifdef TEST_STAGE
+      printf(":!c: typeName = NULL \n");
+    #endif
+    // free memory
+    (*env)->ReleaseStringUTFChars(env, j_topic, topic);
     return 0;
   }
 
+  do
+  {
+    // get persistence
+    persistence = getNtpTime(env, j_persistence);
+    // get strenght
+    strength = (int) j_strength;
+    // create buffer
+    buffer = (char*) malloc((int32_t) jbufflen);
+    if(buffer == 0)
+    {
+      printf(":!c: buffer create failed! \n");
+      break;
+    }
+    // call ORTE function
+    p = ORTEPublicationCreate(d,
+                              topic,
+                              typeName,
+                              (void *) buffer,
+                              &persistence,
+                              strength,
+                              sendCallBack, // BUDE NULL!!
+                              j_instance,
+                              NULL);
+    if(p == 0)
+    {
+      printf(":!c: publication create failed! \n");
+      break;
+    }
+    // set flag
+    flag_ok = 1;
+  }  while(0);
 
-  /* free the memory */
+  // free memory in every case
   (*env)->ReleaseStringUTFChars(env, j_topic, topic);
-  (*env)->ReleaseStringUTFChars(env, j_type_name, typename);
-  /* free the alocated memory  - buffer !!!!*/
-
+  (*env)->ReleaseStringUTFChars(env, j_type_name, typeName);
+  //
+  if (flag_ok == 0)
+  {
+    // free memory
+    if(buffer != 0) free(buffer);
+    return 0;
+  }
   return ((jint) p);
-}
 
+}

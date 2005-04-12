@@ -16,6 +16,12 @@ INCLUDES = -I $(srcdir)/../include -I $(JAVA_HOME)/include  -I $(JAVA_HOME)/incl
 
 jorte_SOURCES = \
 getNtpTime.c \
+setType.c \
+setTopic.c \
+createAppInfo.c \
+createPubInfo.c \
+createSubInfo.c \
+setRecvInfo.c \
 JGetORTEConstant.c \
 JIPAddressToString.c \
 JNtpTimeToStringMs.c \
@@ -31,10 +37,21 @@ JORTEInit.c \
 JORTEPublicationCreate.c \
 JORTEPublicationDestroy.c \
 JORTEPublicationSend.c \
+JORTEPublicationPropertiesSet.c \
+JORTEPublicationPropertiesGet.c \
+JORTEPublicationGetStatus.c \
+JORTEPublicationWaitForSubscriptions.c \
 JORTESleepMs.c \
 JORTESubscriptionCreate.c \
 JORTESubscriptionDestroy.c \
+JORTESubscriptionPropertiesGet.c \
+JORTESubscriptionPropertiesSet.c \
+JORTESubscriptionGetStatus.c \
+JORTESubscriptionWaitForPublications.c \
 JORTETypeRegisterAdd.c \
+JORTETypeRegisterDestroyAll.c \
+JORTEVerbositySetLogFile.c \
+JORTEVerbositySetOptions.c \
 JStringToIPAddress.c
 
 endif #CONFIG_OC_ETH_JORTE

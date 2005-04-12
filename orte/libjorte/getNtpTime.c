@@ -25,7 +25,7 @@
   *
   */
 
-#include  "jorte/getNtpTime.h"
+#include  "jorte/jorte_protos_api.h"
 
 
 NtpTime getNtpTime(JNIEnv *env, jobject obj)
