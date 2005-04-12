@@ -167,16 +167,6 @@ void *mem_check_malloc(size_t size) {
   return ptr;
 }
 
-void *mem_check_realloc(void *ptr,size_t size) { 
-  void *nptr;
-  
-  if (!ptr) {
-    mem_check_counter++;
-    debug(1,9) ("mem check: inc %d\n",mem_check_counter);
-  }
-  return nptr=realloc(ptr,size);
-}
-
 void mem_check_free(void *ptr) {
   if(!ptr) {
 //    LOG_FATAL(KERN_CRIT "ul_mem_check_free : triing to free NULL ptr\n");

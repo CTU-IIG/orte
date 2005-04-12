@@ -42,11 +42,9 @@ extern "C" {
 #ifndef ENABLE_MEM_CHECK
   #define MALLOC malloc
   #define FREE   free
-  #define REALLOC realloc
 #else
   #define MALLOC mem_check_malloc
   #define FREE   mem_check_free
-  #define REALLOC mem_check_realloc
 #endif        
         
 //////////////////////////////////////////////////////////////////////////////

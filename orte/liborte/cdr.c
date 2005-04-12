@@ -47,7 +47,7 @@ CDR_buffer_init(CDR_Codec *codec, const unsigned int size)
 	return CORBA_TRUE;
 }
 
-
+/*
 CORBA_boolean 
 CDR_buffer_grow(CDR_Codec *codec, const unsigned int growth)
 {
@@ -64,7 +64,7 @@ CDR_buffer_grow(CDR_Codec *codec, const unsigned int growth)
 
 	return CORBA_TRUE;
 }
-
+*/
 CORBA_boolean 
 CDR_buffer_puts(CDR_Codec *codec, const void *data, const unsigned int len)
 {
