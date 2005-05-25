@@ -44,20 +44,21 @@ public class Publisher {
   	// set publisher's parameters
     NtpTime persistence = new NtpTime(3);
     int strength = 1;
-
+    // 
+    MyEvents events = new MyEvents();
+    
     /**
      *  Create a new Application Domain for a Publisher.
      * (Constructor without arguments creates the default Application Domain.)
      */ 
      // creates default app domain
-     DomainApp appDomain = new DomainApp();
+     //DomainApp appDomain = new DomainApp();
      // creates user defined app domain
-     /*     
-     DomainApp appDomain = new DomainApp(ORTEConstant.ORTE_DEFAULT_DOMAIN,
-                                         DomainProp.defaultPropsCreate(),
-		  	                             DomainEvents.init(),
-			                             false);
-    */
+          
+    DomainApp appDomain = new DomainApp(ORTEConstant.ORTE_DEFAULT_DOMAIN,
+                                        DomainProp.defaultPropsCreate(),
+                                        events,
+                                        false);	
     if (appDomain == null)
 	{
       System.out.println(":!j: cannot create default domain!");

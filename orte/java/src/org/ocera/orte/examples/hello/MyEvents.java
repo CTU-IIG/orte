@@ -38,14 +38,14 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   }
 
-  public void onMgrNew() 
+  public void onMgrNew(AppInfo appInfo) 
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onMgrNew()'..           *");
   	System.out.println(":j: *************************************************");
   }
   
-  public void onMgrDelete()
+  public void onMgrDelete(AppInfo appInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onMgrDelete()'..        *");
@@ -57,64 +57,78 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onAppRemoteNew()'..     *");
   	System.out.println(":j: *************************************************");
-/*
-  	System.out.println(":j: * AppInfo.hostId = " + appInfo.getHostId());
-	System.out.println(":j: * AppInfo.appId  = " + appInfo.getAppId());
-	System.out.println(":j: * AppInfo.unicastIPcount = " + appInfo.getUnicastIPcount());
-	System.out.println(":j: * AppInfo.unicastIPcount = " + appInfo.getMulticastIPcount());
-	System.out.println(":j: * AppInfo.mettatrafficUniPort = " + appInfo.getMetatrafficUniPort());
-	System.out.println(":j: * AppInfo.userdataUniPort     = " + appInfo.getUserdataUniPort());
-	System.out.println(":j: * AppInfo.vendorId = " + appInfo.getVendorId());
-	System.out.println(":j: * AppInfo.vendorId = " + appInfo.getProtocolVersion());
-*/
+    //
+  	appInfo.printWithLegend();
   }
 
-  public void onAppDelete()
+  public void onAppDelete(AppInfo appInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onAppDelete()'..        *");
   	System.out.println(":j: *************************************************");
+    //
+    appInfo.printWithLegend();   
   }
 
-  public void onPubRemoteNew()
+  public void onPubRemoteNew(AppInfo appInfo, PubInfo pubInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onPubRemoteNew()'..     *");
   	System.out.println(":j: *************************************************");
+    // 
+  	appInfo.printWithLegend();
+  	pubInfo.printWithLegend();
   }
 
-  public void onPubRemoteChanged()
+  public void onPubRemoteChanged(AppInfo appInfo, PubInfo pubInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onPubRemoteChanged()'.. *");
   	System.out.println(":j: *************************************************");
+    // 
+  	appInfo.printWithLegend();	
+    pubInfo.printWithLegend();
   }
 
-  public void onPubDelete()
+  public void onPubDelete(AppInfo appInfo, PubInfo pubInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onPubDelete()'..        *");
   	System.out.println(":j: *************************************************");
+    // 
+  	appInfo.printWithLegend();	
+    pubInfo.printWithLegend();
   }
   
-  public void onSubRemoteNew()
+  
+  public void onSubRemoteNew(AppInfo appInfo, SubInfo subInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onSubRemoteNew()'..     *");
   	System.out.println(":j: *************************************************");
+    // 
+  	appInfo.printWithLegend();	
+    subInfo.printWithLegend();
   }
 
-  public void onSubRemoteChanged()
+  public void onSubRemoteChanged(AppInfo appInfo, SubInfo subInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onSubRemoteChanged()'.. *");
   	System.out.println(":j: *************************************************");
+    // 
+  	appInfo.printWithLegend();	
+    subInfo.printWithLegend();  
   }
 
-  public void onSubDelete()
+  public void onSubDelete(AppInfo appInfo, SubInfo subInfo)
   {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onSubDelete()'..        *");
   	System.out.println(":j: *************************************************");
+    // 
+  	appInfo.printWithLegend();	
+    subInfo.printWithLegend();
   }
+  
 }

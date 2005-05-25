@@ -13,7 +13,6 @@ jobject createAppInfo(JNIEnv *env, ORTEAppInfo *ainfo)
   jobject   obj_tmp;
   jfieldID  fid;
   jmethodID mid;
-
   //
   int flag_ok = 0;
 
@@ -79,7 +78,22 @@ jobject createAppInfo(JNIEnv *env, ORTEAppInfo *ainfo)
                          obj,
                          fid,
                          (jlong) ainfo->appId);
-
+    // field ID - unicastIPAddressTemp
+    fid = (*env)->GetFieldID(env,cls,"unicastIPAddressTemp","J");
+    if(fid == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: fid uniIPAddrTemp = NULL \n");
+      #endif
+      break;
+    }
+    #ifdef TEST_STAGE
+       printf(":c: ainfo.unicastIPAddressList = %d \n",ainfo->unicastIPAddressList);
+    #endif
+    (*env)->SetLongField(env,
+                         obj,
+                         fid,
+                         (jlong) *ainfo->unicastIPAddressList);
     // field ID - unicastIPcount
     fid = (*env)->GetFieldID(env,cls,"unicastIPcount","B");
     if(fid == 0)
@@ -97,8 +111,24 @@ jobject createAppInfo(JNIEnv *env, ORTEAppInfo *ainfo)
                          obj,
                          fid,
                          (jbyte) ainfo->unicastIPAddressCount);
-
-	// field ID - multicastIPcount
+    // field ID - multicastIPAddressTemp
+    fid = (*env)->GetFieldID(env,cls,"mettaTrafficMulticastIPAddressTemp","J");
+    if(fid == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":!c: fid multiIPAddrTemp = NULL \n");
+      #endif
+      break;
+    }
+    #ifdef TEST_STAGE
+       printf(":c: ainfo.multicastIPAddressList = %d \n",
+              ainfo->metatrafficMulticastIPAddressList);
+    #endif
+    (*env)->SetLongField(env,
+                         obj,
+                         fid,
+                         (jlong) *ainfo->metatrafficMulticastIPAddressList);
+    // field ID - multicastIPcount
     fid = (*env)->GetFieldID(env,cls,"multicastIPcount","B");
     if(fid == 0)
     {

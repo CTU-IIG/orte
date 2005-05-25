@@ -25,7 +25,7 @@
 package org.ocera.orte.types;
 
 
-public class SubInfo 
+public class SubInfo extends CommonPubSubInfo
 {
   private String topic;
   private String typeName;
@@ -43,6 +43,13 @@ public class SubInfo
   public String getTypeName()
   {
     return this.typeName;
+  }
+
+  // only for testing purposes
+  public void printWithLegend()
+  {
+  	System.out.println(":j: * SubInfo.topic = " + getTopic());
+	System.out.println(":j: * SubInfo.typeName  = " + getTypeName()); 	
   }
 
 }

@@ -56,6 +56,16 @@ public class Domain {
      return this.handle;
    }
 
+   /**
+    * Get handle of the Application Domain.   
+    * @return Handle of the Application Domain. 
+    */
+    public boolean destroy() 
+    {
+    	return false;
+    }
+   
+   
   /* ****************************************************************** *
    *                                                                    *
    *                         native methods                             *

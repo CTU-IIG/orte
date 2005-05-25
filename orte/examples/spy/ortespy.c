@@ -87,6 +87,7 @@ static void usage(void) {
   printf("  -R, --refresh <s>             refresh period in second(s)\n");
   printf("  -P, --purge <s>               purge time in second(s)\n");
   printf("  -e, --expiration <s>          expiration time of manager in second(s)\n");
+  printf("  -I, --metaMulticast <IPAdd>   use multicast IPAddr for metatraffic comm.\n");
   printf("  -l, --logfile <filename>      set log file name\n");
   printf("  -V, --version                 show version\n");
   printf("  -h, --help                    this usage screen\n");
@@ -100,6 +101,7 @@ int main(int argc,char *argv[]) {
     { "refresh",1,0, 'R' },
     { "purge",1,0, 'P' },
     { "expiration",1,0, 'E' },
+    { "metaMulticast",1,0, 'I' },
     { "logfile",1,0, 'l' },
     { "version",0,0, 'V' },
     { "help",  0, 0, 'h' },
@@ -115,9 +117,9 @@ int main(int argc,char *argv[]) {
   NTPTIME_BUILD(minimumSeparation,0); 
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
-  while ((opt = getopt_long(argc, argv, "d:v:R:E:P:l:Vh",&long_opts[0], NULL)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "d:v:R:E:I:P:l:Vh",&long_opts[0], NULL)) != EOF) {
 #else
-  while ((opt = getopt(argc, argv, "d:v:R:E:P:l:Vh")) != EOF) {
+  while ((opt = getopt(argc, argv, "d:v:R:E:I:P:l:Vh")) != EOF) {
 #endif
     switch (opt) {
       case 'd':
@@ -135,6 +137,10 @@ int main(int argc,char *argv[]) {
       case 'E':
         NtpTimeAssembFromMs(dp.baseProp.expirationTime,strtol(optarg,NULL,0),0);
         break;
+      case 'I':
+        dp.multicast.enabled=ORTE_TRUE;
+        dp.multicast.ipAddress=StringToIPAddress(optarg);
+        break;	
       case 'l':
         ORTEVerbositySetLogFile(optarg);
       case 'V':

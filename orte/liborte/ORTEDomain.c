@@ -292,6 +292,32 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   /* UnicastMetatraffic */
   Domain2Port(d->domain,port);
   if (manager) {
+    if (d->domainProp.multicast.enabled) {
+      char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+      struct ip_mreq mreq;
+      int reuse=1,loop=0;
+    
+      //reuseaddr
+      sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock, SOL_SOCKET, 
+		    SO_REUSEADDR, (char*)&reuse, sizeof(reuse));
+      debug(30,2) ("ORTEDomainCreate: set value SO_REUSEADDR: %u\n",
+  		    reuse);
+
+      //multicast loop
+      sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock, IPPROTO_IP, 
+ 		    IP_MULTICAST_LOOP, (char*)&loop, 
+		    sizeof(loop));
+      debug(30,2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
+		  loop);
+      
+      mreq.imr_multiaddr.s_addr=htonl(d->domainProp.multicast.ipAddress);
+      mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+      if(sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock,IPPROTO_IP,
+  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+        debug(30,2) ("ORTEDomainCreate: listening to mgroup %s\n",
+                      IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
+      }
+    }
     sock_bind(&d->taskRecvUnicastMetatraffic.sock,port); 
   } else {
     /* give me receiving port (metatraffic) */

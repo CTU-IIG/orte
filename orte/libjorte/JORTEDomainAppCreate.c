@@ -106,7 +106,7 @@ onRegFail(void *param)
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -125,6 +125,7 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -163,12 +164,21 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onMgrNew",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -179,13 +189,14 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -204,6 +215,7 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -242,12 +254,21 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onMgrDelete",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -258,13 +279,14 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -314,21 +336,21 @@ onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
      #endif
      break;
     }
-    // create AppInfo instance
-    obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
-     #endif
-     break;
-    }
     // find class
     cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
        printf(":!c: cls = NULL! \n");
+     #endif
+     break;
+    }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
      #endif
      break;
     }
@@ -356,7 +378,7 @@ onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -375,7 +397,7 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
-  //jobject          obj_ainfo;
+  jobject          obj_ainfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -414,12 +436,21 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onAppDelete",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -430,13 +461,14 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -457,6 +489,8 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
+  jobject          obj_pinfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -495,12 +529,30 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
+    // create PubInfo instance
+    obj_pinfo = createPubInfo(env, pubInfo);
+    if(obj_pinfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_pinfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onPubRemoteNew",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -511,13 +563,15 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo,
+                           obj_pinfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -538,6 +592,8 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
+  jobject          obj_pinfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -576,12 +632,30 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
+    // create PubInfo instance
+    obj_pinfo = createPubInfo(env, pubInfo);
+    if(obj_pinfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_pinfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onPubRemoteChanged",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -592,13 +666,15 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo,
+                           obj_pinfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -614,13 +690,15 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onPubDelete(const struct ORTEAppInfo *appInfo,
-                   const struct ORTEPubInfo *pubInfo,
-                   void *param)
+            const struct ORTEPubInfo *pubInfo,
+            void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
+  jobject          obj_pinfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -659,12 +737,30 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
+    // create PubInfo instance
+    obj_pinfo = createPubInfo(env, pubInfo);
+    if(obj_pinfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_pinfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onPubDelete",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -675,13 +771,15 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo,
+                           obj_pinfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -690,18 +788,19 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
 }
 
 
-
 // /////////////////////////////////////////////////////////////////////
 //  Event - onSubRemoteNew
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onSubRemoteNew(const struct ORTEAppInfo *appInfo,
-               const struct ORTESubInfo *pubInfo,
+               const struct ORTESubInfo *subInfo,
                void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
+  jobject          obj_ainfo;
+  jobject          obj_sinfo;
   jclass           cls;
   jmethodID        mid;
   //
@@ -741,12 +840,30 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
+    // create SubInfo instance
+    obj_sinfo = createSubInfo(env, subInfo);
+    if(obj_sinfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_sinfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onSubRemoteNew",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -757,13 +874,15 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo,
+                           obj_sinfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -772,19 +891,20 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
 }
 
 
-
 // /////////////////////////////////////////////////////////////////////
 //  public void onSubRemoteChanged() { }
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
-               const struct ORTESubInfo *pubInfo,
-               void *param)
+                   const struct ORTESubInfo *subInfo,
+                   void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
+  jobject          obj_sinfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -823,12 +943,30 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
+    // create SubInfo instance
+    obj_sinfo = createSubInfo(env, subInfo);
+    if(obj_sinfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_sinfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onSubRemoteChanged",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -839,13 +977,15 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo,
+                           obj_sinfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
@@ -854,19 +994,20 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
 }
 
 
-
 // /////////////////////////////////////////////////////////////////////
 //  public void onSubDelete() { }
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onSubDelete(const struct ORTEAppInfo *appInfo,
-               const struct ORTESubInfo *pubInfo,
-               void *param)
+            const struct ORTESubInfo *subInfo,
+            void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
   JNIEnv          *env = NULL; // local reference
   jclass           cls;
+  jobject          obj_ainfo;
+  jobject          obj_sinfo;
   jmethodID        mid;
   //
   JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
@@ -905,12 +1046,30 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
      #endif
      break;
     }
+    // create AppInfo instance
+    obj_ainfo = createAppInfo(env, appInfo);
+    if(obj_ainfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_ainfo = NULL! \n");
+     #endif
+     break;
+    }
+    // create SubInfo instance
+    obj_sinfo = createSubInfo(env, subInfo);
+    if(obj_sinfo == 0)
+    {
+     #ifdef TEST_STAGE
+       printf(":!c: obj_sinfo = NULL! \n");
+     #endif
+     break;
+    }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
                               cls,
                               "onSubDelete",
-                              "()V");
+                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
     if(mid == 0)
     {
      #ifdef TEST_STAGE
@@ -921,20 +1080,21 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
     // call method
     (*env)->CallVoidMethod(env,
                            domain_events_cont->obj_de,
-                           mid);
+                           mid,
+                           obj_ainfo,
+                           obj_sinfo);
     flag_ok = 1;
   } while(0);
   // while broken
   if(!flag_ok)
   {
-    if((*jvm)->DetachCurrentThread(jvm)!=0)
+    if((*jvm)->DetachCurrentThread(jvm) != 0)
       printf(":c!: DetachCurrentThread fault! \n");
     return  ORTE_FALSE;
   }
 
   return ORTE_TRUE;
 }
-
 
 
 // /////////////////////////////////////////////////////////////////////

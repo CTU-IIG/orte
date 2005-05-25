@@ -24,7 +24,7 @@
 
 package org.ocera.orte.types;
 /* TODO - IpAddr!! */
-//import  java.net.Inet4Address;
+import  java.net.Inet4Address;
 
 /**
  * @author luky
@@ -36,24 +36,61 @@ package org.ocera.orte.types;
 /* TODO - naucit se delat s poli JAVA/JNI */
 public class AppInfo 
 {
+/*  
+struct ORTEAppInfo {
+HostId hostId;
+AppId appId;
+
+IPAddress * unicastIPAddressList;
+unsigned char unicastIPAddressCount;
+
+IPAddress * metatrafficMulticastIPAddressList;
+unsigned char metatrafficMulticastIPAddressCount;
+
+Port metatrafficUnicastPort;
+Port userdataUnicastPort;
+
+VendorId vendorId;
+ProtocolVersion protocolVersion;
+};
+*/
+    
   private long            hostId;
   private long            appId;
-//  private Inet4Address[]  unicastIPList; 
-    private byte            unicastIPcount;	
-//  private Inet4Address[]  multicastIPList; 
+  /* TODO make an array of InetAddress[] instances */
+  // temporaly 1 address not list
+  private long            unicastIPAddressTemp;  
+  private byte            unicastIPcount;	
+  /* TODO make an array of InetAddress[] instances */
+  // temporaly 1 address not list
+  private long            mettaTrafficMulticastIPAddressTemp;	  
   private byte            multicastIPcount;
   private long            metatrafficUniPort;
   private long            userdataUniPort;
   private VendorId        vendorId;
   private ProtocolVersion protocolVersion;
-	
-
+  	
+  private Inet4Address ip;  
   /* constructor */		
   public AppInfo()
   {
   
   }
-   
+
+  // ONLY FOR TESTING PURPOSES  
+  public void setHostId(long hostId)
+  {
+      this.hostId = hostId;	
+      return;
+  }  
+  // ONLY FOR TESTING PURPOSES  
+  public void setAppId(long appId)
+  {
+      this.appId = appId;	
+      return;
+  }    
+  // ONLY FOR TESTING PURPOSES  
+  
   public long getHostId()
   {
   	return this.hostId;
@@ -64,6 +101,11 @@ public class AppInfo
   	return this.appId;
   }
 
+  public long getIpAddressTemp()
+  {
+  	return this.unicastIPAddressTemp;
+  }
+    
   public byte getUnicastIPcount()
   {
   	return this.unicastIPcount;
@@ -74,6 +116,13 @@ public class AppInfo
   	return this.multicastIPcount;
   }
     
+  public long getMettaTrafficMulticastIPAddressTemp() 
+  {
+        return this.mettaTrafficMulticastIPAddressTemp;
+  }
+  
+  
+  
   public long getMetatrafficUniPort()
   {
   	return this.metatrafficUniPort;
@@ -90,8 +139,26 @@ public class AppInfo
   }
 
   public ProtocolVersion getProtocolVersion()
-  {
-  	return this.protocolVersion;
+  {      	
+      return this.protocolVersion;
   }
 
+    
+  // only for testing purposes
+  public void printWithLegend()
+  {
+  	System.out.println(":j: * AppInfo.hostId = " + getHostId());
+	System.out.println(":j: * AppInfo.appId  = " + getAppId());
+	// ipAdressList
+	System.out.println(":j: * AppInfo.pAddressTemp  = " + getIpAddressTemp());
+	System.out.println(":j: * AppInfo.unicastIPcount = " + getUnicastIPcount());
+	// ipAdressList
+	System.out.println(":j: * AppInfo.pAddressTemp  = " + getIpAddressTemp());
+        System.out.println(":j: * AppInfo.unicastIPcount = " + getMulticastIPcount());
+	System.out.println(":j: * AppInfo.mettatrafficUniPort = " + getMetatrafficUniPort());
+	System.out.println(":j: * AppInfo.userdataUniPort     = " + getUserdataUniPort());
+	System.out.println(":j: * AppInfo.vendorId = " + getVendorId());
+	System.out.println(":j: * AppInfo.protocolVersion = " + getProtocolVersion()); 	
+  }
+  
 }

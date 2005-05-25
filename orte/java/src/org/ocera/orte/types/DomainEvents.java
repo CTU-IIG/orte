@@ -58,16 +58,16 @@ public class DomainEvents {
   }
   
   public void onRegFail() { }
-  public void onMgrNew() { }
-  public void onMgrDelete() { }
+  public void onMgrNew(AppInfo appInfo) { }
+  public void onMgrDelete(AppInfo appInfo) { }
   public void onAppRemoteNew(AppInfo appInfo) { }
-  public void onAppDelete() { }
-  public void onPubRemoteNew() { }
-  public void onPubRemoteChanged() { }
-  public void onPubDelete() { }
-  public void onSubRemoteNew() { }
-  public void onSubRemoteChanged() { }
-  public void onSubDelete() { }
+  public void onAppDelete(AppInfo appInfo) { }
+  public void onPubRemoteNew(AppInfo appInfo, PubInfo pubInfo) { }
+  public void onPubRemoteChanged(AppInfo appInfo, PubInfo pubInfo) { }
+  public void onPubDelete(AppInfo appInfo, PubInfo pubInfo) { }
+  public void onSubRemoteNew(AppInfo appInfo, SubInfo subInfo) { }
+  public void onSubRemoteChanged(AppInfo appInfo, SubInfo subInfo) { }
+  public void onSubDelete(AppInfo appInfo, SubInfo subInfo) { }
   
  /* ****************************************************************** *
   *                                                                    *

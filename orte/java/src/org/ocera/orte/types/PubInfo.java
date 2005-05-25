@@ -25,7 +25,7 @@
 package org.ocera.orte.types;
 
 
-public class PubInfo
+public class PubInfo extends CommonPubSubInfo
 {
 	  private String topic;
 	  private String typeName;
@@ -45,5 +45,12 @@ public class PubInfo
 	    return this.typeName;
 	  }
 
-	}
+	  // only for testing purposes
+	  public void printWithLegend()
+	  {
+	  	System.out.println(":j: * PubInfo.topic = " + getTopic());
+		System.out.println(":j: * PubInfo.typeName  = " + getTypeName()); 	
+	  }
+
+}
 

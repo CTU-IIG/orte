@@ -30,7 +30,7 @@ public class Subscription {
 
    private int handle;
    private int callbackContextHandle = 0;
-
+   private Domain appDomain;
 
   /**
    * Get Subscription's handle.
@@ -51,7 +51,8 @@ public class Subscription {
 						 MessageData message,
 						 SubscriptionCallback subsCallback)
   {
-    this.handle = jORTESubscriptionCreate(appDomain.handle,
+    this.appDomain = appDomain;
+  	this.handle = jORTESubscriptionCreate(this.appDomain.handle,
 	                                      subsProp.getMode(),
 	                                      subsProp.getType(),
 	                                      subsProp.getTopic(),
@@ -84,13 +85,21 @@ public class Subscription {
   {
   	/* TODO vyradit vypis na nasledujici radce */
   	System.out.println(":j: subscription destroy called..");
-  	if(jORTESubscriptionDestroy(this.handle)) 
+  	// destroy subscription
+  	if(!jORTESubscriptionDestroy(this.handle)) 
   	{
-      System.out.println(":j: subscription destroy successfull..");
-      return true;  		
+  	    System.out.println(":j!: subscription destroy fault!");
+  	    return false;              	
   	}
-    System.out.println(":j!: subscription destroy fault!");
-    return false;
+  	// destroy application domain    
+    if(!appDomain.destroy()) 
+    {
+  	    System.out.println(":j!: subscription destroy fault!");
+  	    return false;              	    	
+    }
+    System.out.println(":j: subscription destroy successfull..");
+    return true;
+    
   }
  
   /**
