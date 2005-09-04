@@ -53,6 +53,19 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
     return NULL;
   }  
   pthread_rwlock_wrlock(&d->subscriptions.lock);
+  // join to multicast group
+  if (IN_MULTICAST(multicastIPAddress)) {
+    char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+    struct ip_mreq mreq;
+
+    mreq.imr_multiaddr.s_addr=htonl(multicastIPAddress);
+    mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+    if(sock_setsockopt(&d->taskRecvMulticastUserdata.sock,IPPROTO_IP,
+  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+        debug(33,2) ("ORTESubscriptionCreate: listening to mgroup %s\n",
+                      IPAddressToString(multicastIPAddress,sIPAddress));
+    }
+  }
   //generate new guid of publisher
   d->subscriptions.counter++;
   guid.hid=d->guid.hid;guid.aid=d->guid.aid;

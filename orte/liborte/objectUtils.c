@@ -292,8 +292,6 @@ appSelfParamChanged(ORTEDomain *d,
 ObjectEntryOID *
 getAppO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
     AppParams *ap) {
-  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
-  struct 	    ip_mreq mreq;
   GUID_RTPS         guid;
   AppParams 	    *map;
   IPAddress         maddr;
@@ -313,15 +311,6 @@ getAppO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
   				      objectEntryOID->multicastPort);
       debug(9,2) ("new multicast application 0x%x-0x%x-0x%x temporary created\n",
                    GUID_PRINTF(guid));
-
-       // join multicast group
-      mreq.imr_multiaddr.s_addr=htonl(maddr);
-      mreq.imr_interface.s_addr=htonl(INADDR_ANY);
-      if(sock_setsockopt(&d->taskRecvMulticastUserdata.sock,IPPROTO_IP,
-  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
-        debug(9,2) ("getAppO2SRemoteReader: listening to mgroup %s\n",
-                      IPAddressToString(maddr,sIPAddress));
-      }
     }
   }
   return objectEntryOID;
@@ -337,8 +326,6 @@ getAppO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
 ObjectEntryOID *
 getSubsO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
     ORTESubsProp *sp) {
-  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
-  struct 	    ip_mreq mreq;
   AppParams 	    *map;
   GUID_RTPS         guid;
 
@@ -357,15 +344,6 @@ getSubsO2SRemoteReader(ORTEDomain *d,ObjectEntryOID *objectEntryOID,
   				   objectEntryOID->multicastPort);
       debug(9,2) ("new subs. multicast application 0x%x-0x%x-0x%x temporary created\n",
                    GUID_PRINTF(guid));
-
-       // join multicast group
-      mreq.imr_multiaddr.s_addr=htonl(sp->multicast);
-      mreq.imr_interface.s_addr=htonl(INADDR_ANY);
-      if(sock_setsockopt(&d->taskRecvMulticastUserdata.sock,IPPROTO_IP,
-  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
-        debug(9,2) ("getSubsO2SRemoteReader: listening to mgroup %s\n",
-                      IPAddressToString(sp->multicast,sIPAddress));
-      }
     }
   }
   return objectEntryOID;

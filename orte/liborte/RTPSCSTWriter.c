@@ -601,13 +601,10 @@ CSTWriterMulticast(CSChangeForReader *csChangeForReader)
       
         cstRemoteReader1=csChangeForReader1->cstRemoteReader;
         objectEntryOID1=cstRemoteReader1->sobject;
-
-         /* are RRs from same host */
-        if (cstRemoteReader1->guid.hid!=cstRemoteReader->guid.hid) {
-          /* is the sending object from same multicast group ? */
-          if (objectEntryOID!=objectEntryOID1)
-              continue;
-        }
+		   
+        /* are RRs from same GROUP */
+        if (objectEntryOID!=objectEntryOID1)
+          continue;
 
         /* is the csChange in state TOSEND ? If yes, marks like proc. */
         CSTWriterCSChangeForReaderNewState(csChangeForReader1);
@@ -616,6 +613,7 @@ CSTWriterMulticast(CSChangeForReader *csChangeForReader)
         if (!(cstRemoteReader->commStateSend==NOTHNIGTOSEND) &&
             !(cstRemoteReader->commStateHB==MAYSENDHB))
 	    continue;
+
         if ((cstRemoteReader->cstWriter->guid.oid & 0x07)==OID_PUBLICATION) 
           queue=2;
         eventDetach(cstRemoteReader->cstWriter->domain,

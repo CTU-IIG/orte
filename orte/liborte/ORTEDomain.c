@@ -310,11 +310,12 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       debug(30,2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
 		  loop);
       
+      //joint to multicast group
       mreq.imr_multiaddr.s_addr=htonl(d->domainProp.multicast.ipAddress);
       mreq.imr_interface.s_addr=htonl(INADDR_ANY);
       if(sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock,IPPROTO_IP,
   	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
-        debug(30,2) ("ORTEDomainCreate: listening to mgroup %s\n",
+        debug(30,2) ("ORTEDomainCreate: joint to mgroup %s\n",
                       IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
       }
     }
@@ -329,6 +330,8 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   /************************************************************************/
   /* MulticastMetatraffic */
   if (d->domainProp.multicast.enabled && !manager) {
+    char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+    struct ip_mreq mreq;
     Port mport;
     int reuse=1;
     
@@ -344,7 +347,16 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		    sizeof(d->domainProp.multicast.loopBackEnabled));
     debug(30,2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
 		  d->domainProp.multicast.loopBackEnabled);
-
+    
+    //joint to multicast group
+    mreq.imr_multiaddr.s_addr=htonl(d->domainProp.multicast.ipAddress);
+    mreq.imr_interface.s_addr=htonl(INADDR_ANY);
+    if(sock_setsockopt(&d->taskRecvMulticastMetatraffic.sock,IPPROTO_IP,
+        IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+      debug(30,2) ("ORTEDomainCreate: joint to mgroup %s\n",
+                    IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
+    }
+    
     /* receiving multicast port (metatraffic) */
     Domain2PortMulticastMetatraffic(d->domain,mport);
     sock_bind(&d->taskRecvMulticastMetatraffic.sock,(uint16_t)mport); 
