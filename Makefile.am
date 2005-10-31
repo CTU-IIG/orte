@@ -7,6 +7,13 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS	= orte 
 
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO orte.kdevelop
-
 ACLOCAL_AMFLAGS = -I admin
+
+EXTRA_DIST = authors copying ChangeLog install readme \
+readme.makerules Makefile Makefile.omk Makefile.cvs Makefile.rules OCERA_TOP_DIR-ocera \
+kernelcfg2mk switch2standalone todo \
+doc
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile
+	rm -rf `find $(distdir) -name CVS`

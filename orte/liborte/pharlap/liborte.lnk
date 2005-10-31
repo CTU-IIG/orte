@@ -1,0 +1,7 @@
+@vcdll.emb
+
+! Needed imports from ETS kernel (must be exported from ETS application):
+@liborte.imp
+@liborte.exp
+
+-start _DllMain@12

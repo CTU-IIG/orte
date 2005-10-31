@@ -1,0 +1,10 @@
+! pci_imp.emb -  Imported PCI symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Import PCI symbols
+-import _EtsPCIInit=EtsPCIInit
+-import _EtsPCIReadCfgByte=EtsPCIReadCfgByte
+-import _EtsPCIReadCfgWord=EtsPCIReadCfgWord
+-import _EtsPCIReadCfgDWord=EtsPCIReadCfgDWord
+-import _EtsPCIFindDevice=EtsPCIFindDevice

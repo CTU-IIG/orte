@@ -1,24 +1,40 @@
 <?xml version="1.0"?>
-<!-- build file for OCERA CanMonitor -->
+<!-- build file for OCERA Java ORTE and RTPSeYe -->
 
 <project name="orte" default="default" basedir=".">
 
     <property name="src" location="src"/>
     <property name="class" location="${java_class_dir}class"/>
     <property name="lib"  location="${java_lib_dir}lib"/>
+    <property name="rtpseye" location="${java_class_dir}rtpseye"/>
     <property name="path.orte" value="org/ocera/orte"/>
+    <property name ="path.rtpseye" value="org/ocera/orte/rtpseye"/>
+
 
     <target name="default" depends="orte">
     </target>
 
+    <!-- orte -->
     <target name="orte" depends="jar-orte">
     </target>
 
-    <target name="prepare-compile">
-         <mkdir dir="${class}"/>
-         <mkdir dir="${lib}"/>
-     </target>
+    <!-- jar files -->
+    <target name="jar-orte" depends="compile-orte">
+        <!-- jar-orte -->
+        <jar jarfile="${lib}/orte.jar" basedir="${class}"
+            manifest="${src}/${path.orte}/manifest">
+            <!-- Do not include rtpseye's files in the jar -->
+            <exclude name="**/rtpseye/*.*"/>
+        </jar>
+        <!-- rtpseye-jar -->
+        <jar jarfile="${lib}/rtpseye.jar" basedir="${class}"
+            manifest="${src}/${path.rtpseye}/manifest">
+            <!-- Do not include example's files in the jar -->
+            <exclude name="**/examples/*.*"/>
+        </jar>
+    </target>
 
+    <!-- compile orte -->
     <target name="compile-orte" depends="prepare-compile">
         <javac srcdir="${src}" destdir="${class}"
             classpath=""
@@ -28,25 +44,15 @@
             />
     </target>
 
-<!--            includes="${path.monitor}/CanMonitor.java" -->
-
-    <target name="jar-orte" depends="compile-orte">
-        <jar jarfile="${lib}/orte.jar" basedir="${class}"
-            manifest="${src}/${path.orte}/manifest">
-            <!-- Do not include test files in the runtime jar
-            <exclude name="**/Test*.*"/>
-            <exclude name="**/test*.*"/>
-            -->
-        </jar>
-<!--        <copy todir="${java_lib_dir}" file="orte"/>
-	<chmod file="${java_lib_dir}/canmonitor" perm="a+x"/> -->
+    <!-- prepare compilation -->
+    <target name="prepare-compile">
+         <mkdir dir="${class}"/>
+         <mkdir dir="${lib}"/>
+         <mkdir dir="${rtpseye}"/>
     </target>
 
 
-<!--    <target name="run"  depends="jar-orte">
-        <exec dir="." executable="canmonitor" os="Linux"/>
-    </target>
--->
+    <!-- CLEAN -->
     <target name="clean" >
         <delete quiet="true">
             <fileset dir="${class}" includes="**/*.class" defaultexcludes="no"/>

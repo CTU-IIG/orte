@@ -1,19 +1,19 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id: configure.in,v 1.13 2005/04/12 19:20:23 smolik Exp $
+# $Id: configure.in,v 1.14 2005/10/31 12:44:18 smolik Exp $
 
 # autoconf requirement
 
 AC_PREREQ([2.56])
 
-AC_INIT([orte],[0.3.0],[petr.smolik@wo.cz])
+AC_INIT([orte],[0.3.1],[petr.smolik@wo.cz])
 AC_CONFIG_AUX_DIR(admin)
 
 ###############################
 # Package info
 ORTE_MAJOR_VERSION=0
 ORTE_MINOR_VERSION=3
-ORTE_MICRO_VERSION=0
+ORTE_MICRO_VERSION=1
 ORTE_INTERFACE_AGE=0
 ORTE_BINARY_AGE=0
 ORTE_VERSION=$ORTE_MAJOR_VERSION.$ORTE_MINOR_VERSION.$ORTE_MICRO_VERSION
@@ -114,8 +114,9 @@ fi
 
 ###############################
 # Checks for programs.
+# Initialize libtool
 AC_PROG_CC
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
 
 ###############################
 # Checks for ability to compile ORTE_IDL
@@ -128,9 +129,6 @@ AM_JORTE
 ###############################
 # Checks for libraries and init libtools
 if test -z ${CONFIG_ORTE_RT} ; then
-  #Initialize libtool
-  AM_PROG_LIBTOOL
-  
   AC_CHECK_LIB([ws2_32], [main])
   AC_CHECK_LIB([socket], [main])
   AC_CHECK_LIB([nsl], [main])
@@ -138,7 +136,7 @@ if test -z ${CONFIG_ORTE_RT} ; then
   AC_CHECK_LIB(pthread, pthread_create, ,
          AC_CHECK_LIB(c_r, pthread_create, ,
               if test ${MINGW} == 'yes' ; then
-                     LIBS=$LIBS' $(top_srcdir)/orte/contrib/win_pthread/libpthreadGC.a'
+                     LIBS=$LIBS' -L$(top_srcdir)/orte/contrib/win_pthread/ -lpthread'
                      AC_MSG_NOTICE([Using internal version of pthreads!!!])
               else
                      AC_MSG_ERROR([Can't compile without pthreads!!!])
@@ -257,6 +255,8 @@ AC_CONFIG_FILES([Makefile
 		 orte/examples/reliable/Makefile
 		 orte/examples/ping/Makefile
 		 orte/examples/spy/Makefile
+		 orte/examples/schneider/Makefile
+		 orte/examples/mpo/Makefile
 		 orte/idl-compiler/Makefile
 		 orte/libjorte/Makefile
                  orte/manager/Makefile])

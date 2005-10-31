@@ -1,4 +1,5 @@
     	            ORTE - OCERA Real-Time Ethernet
+		    -------------------------------
 
 What is it?
 -----------
@@ -10,7 +11,7 @@ area, which is build on top of standard UDP stack.
 Which targets are supported by ORTE?
 -----------------------------------
 UNIX - Linux, Solars, MacOS, FreeBSD
-Windows - MinGW, CygWin, MSVC
+Windows - MinGW, CygWin, MSVC, PharLap
 RTLinux - with preliminary UDP stack
 RTAI - with RTNet
 JAVA
@@ -19,8 +20,34 @@ note: was tested on
 sparc-sun-solaris2.9
 powerpc-apple-darwin6.8
 
-How to install it?
+Obtaining CVS Code
 ------------------
+
+This seems redundant, since if you're reading this you most likely have
+already performed this step; however, for completeness, you can obtain
+the ORTE source code via anonymous CVS from the Sourceforge
+project <http://sf.org/projects/ocera/>:
+
+  $ cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/ocera login
+  $ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/ocera co -P ocera/components/comm/eth/orte
+
+Building From CVS
+-----------------
+
+To build ORTE from CVS, you will need Autoconf, Automake, 
+and any tools that those utilities require (GNU m4, Perl,
+etc.).  See the configure.in file to find the minimum versions of each
+of these tools. 
+
+After checking out the code, you will need to perform these steps to get
+to the point where you can run "make".
+
+ $ make -f Makefile.cvs 
+
+
+How to make and install it?
+---------------------------
+
 simply untar instalation package into desired directory, enter this 
 directory and issue following commands.
 
@@ -54,6 +81,7 @@ make install
 
 How to start?
 -------------
+
 run :ortemanager &
 see :ortemanager -h for usage
 note:ortemanager have to be running during all communication. For future work can 
@@ -66,6 +94,7 @@ RT application.
 
 How to test communication?
 -------------------------
+
 in a shell try to type "orteping -p -s". So, now will be created one publisher
 and one subscriber with same topic and type. If you see messages like
 

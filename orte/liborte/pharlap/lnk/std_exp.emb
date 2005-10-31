@@ -1,0 +1,95 @@
+! std_exp.emb - Standard exported symbols from stdlib.h, stdio.h, ...s
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Exports from stdlib.h (malloc.h), ctype.h, time.h, ...
+-export _abort=abort
+-export _atexit=atexit
+-export _atoi=atoi
+-export _atol=atol
+-export _atof=atof
+-export _calloc=calloc
+-export _ctime=ctime
+-export _exit=exit
+-export _fclose=fclose
+-export _fgets=fgets
+-export _fflush=fflush
+-export _fopen=fopen
+-export _fprintf=fprintf
+-export _fread=fread
+-export _free=free
+-export _fscanf=fscanf
+-export _fseek=fseek
+-export _fwrite=fwrite
+-export _getc=getc
+-export _getenv=getenv
+-export _localtime=localtime
+-export _malloc=malloc
+-export _printf=printf
+-export _putc=putc
+-export _putchar=putchar
+-export _qsort=qsort
+-export _rand=rand
+-export _realloc=realloc
+-export _remove=remove
+-export _rename=rename
+-export _sprintf=sprintf
+-export _srand=srand
+-export _sscanf=sscanf
+-export _strerror=strerror
+-export _strftime=strftime
+-export _time=time
+-export _toupper=toupper
+-export _vfprintf=vfprintf
+-export _vprintf=vprintf
+-export _vsprintf=vsprintf
+
+-export __assert=_assert
+-export __beginthread=_beginthread
+-export __chsize=_chsize
+-export __close=_close
+-export __commit=_commit
+-export __endthread=_endthread
+-export __errno=_errno
+-export __findclose=_findclose
+-export __findfirst=_findfirst
+-export __findnext=_findnext
+-export __fsopen=_fsopen
+-export __fstati64=_fstati64
+-export __ftime=_ftime
+-export __get_osfhandle=_get_osfhandle
+-export __getcwd=_getcwd
+-export __getpid=_getpid
+-export __iob=_iob
+-export __isctype=_isctype
+-export __lseeki64=_lseeki64
+-export __open=_open
+-export __open_osfhandle=_open_osfhandle
+-export __pctype=_pctype
+-export __read=_read
+-export __snprintf=_snprintf
+-export __stat=_stat
+-export __strdate=_strdate
+-export __strtime=_strtime
+-export __vsnprintf=_vsnprintf
+-export __unlink=_unlink
+-export __write=_write
+
+-export ___mb_cur_max=__mb_cur_max
+
+-export _isalpha=isalpha
+-export _isalnum=isalnum
+-export _isspace=isspace
+-export _tolower=tolower
+
+-export _fputs=fputs
+-export _ftell=ftell
+
+-export __tzset=_tzset
+-export __timezone=_timezone
+-export __daylight=_daylight
+-export __setjmp3=_setjmp3
+-export _longjmp=longjmp
+-export _perror=perror
+-export __beginthreadex=_beginthreadex
+-export __endthreadex=_endthreadex

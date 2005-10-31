@@ -15,3 +15,9 @@ endif
 if CONFIG_ORTE_IDL
 SUBDIRS += idl-compiler
 endif
+
+EXTRA_DIST = Makefile Makefile.omk \
+contrib include java templates
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

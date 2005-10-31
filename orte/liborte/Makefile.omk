@@ -1,13 +1,10 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE=y
 default_CONFIG += CONFIG_OC_ETH_ORTE_SOLIB=n
 
-ifeq ($(CONFIG_OC_ETH_ORTE),y)
-
-lib_LIBRARIES = orte
-
-ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
-shared_LIBRARIES = orte
-endif #CONFIG_OC_ETH_ORTE_LIB
+ifeq ($(OS_TARGET),win32)
+renamed_include_HEADERS = \
+../contrib/win_pthread/pthread.dll->../lib/pthread.dll
+endif #OS_TARGET
 
 INCLUDES = -I $(srcdir)/../include
 
@@ -57,16 +54,22 @@ ul_gavl.c \
 ul_gavlprim.c \
 cdr.c
 
+ifeq ($(CONFIG_OC_ETH_ORTE),y)
+lib_LIBRARIES = orte
 endif #CONFIG_OC_ETH_ORTE
+
+ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
+shared_LIBRARIES = orte
+lib_LOADLIBES = pthread
+ifeq ($(OS_TARGET),win32)
+lib_LOADLIBES += ws2_32
+endif #OS_TARGET
+endif #CONFIG_OC_ETH_ORTE_SOLIB
 
 #############################################################################
 # RT-Linux version of build
 
 default_CONFIG += CONFIG_OC_ETH_ORTE_RTL=n
-
-ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
-
-rtlinux_LIBRARIES = orte_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../include
 
@@ -116,10 +119,9 @@ ul_gavl.c \
 ul_gavlprim.c \
 cdr.c
 
+ifeq ($(CONFIG_OC_ETH_ORTE_RTL),y)
+rtlinux_LIBRARIES = orte_rt
 rtlinux_MODULES = orte_rt
-
 orte_rt_SOURCES = $(ortert_SOURCES)
-
 SUBDIRS = rtl
-
 endif #CONFIG_OC_ETH_ORTE_RTL

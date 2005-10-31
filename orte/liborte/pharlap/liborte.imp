@@ -1,0 +1,8 @@
+! Needed imports from ETS kernel (must be imported from ETS application):
+-implib kernel32.dll
+
+@.\Lnk\cpp_imp.emb           ! Standard C++ imports
+@.\Lnk\std_imp.emb           ! Standard libraries imports
+@.\Lnk\str_imp.emb           ! String function imports
+@.\Lnk\math_imp.emb          ! Math functions imports
+@.\Lnk\misc_imp.emb          ! API and miscelaneous imports

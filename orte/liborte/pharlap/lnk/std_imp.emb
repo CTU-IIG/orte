@@ -1,0 +1,105 @@
+! std_imp.emb - Standard imported symbols from stdlib.h, stdio.h, ...
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Imports from stdlib.h (malloc.h), ctype.h, time.h, ...
+-import _abort=abort
+-import _atexit=atexit
+-import _atoi=atoi
+-import _atol=atol
+-import _atof=atof
+-import _calloc=calloc
+-import _ctime=ctime
+-import _exit=exit
+-import _fclose=fclose
+-import _fgets=fgets
+-import _fflush=fflush
+-import _fopen=fopen
+-import _fprintf=fprintf
+-import _fread=fread
+-import _free=free
+-import _fscanf=fscanf
+-import _fseek=fseek
+-import _fwrite=fwrite
+-import _getc=getc
+-import _getenv=getenv
+-import _localtime=localtime
+-import _malloc=malloc
+-import _printf=printf
+-import _putc=putc
+-import _putchar=putchar
+-import _qsort=qsort
+-import _rand=rand
+-import _realloc=realloc
+-import _remove=remove
+-import _rename=rename
+-import _sprintf=sprintf
+-import _srand=srand
+-import _sscanf=sscanf
+-import _strerror=strerror
+-import _strftime=strftime
+-import _time=time
+-import _toupper=toupper
+-import _vfprintf=vfprintf
+-import _vprintf=vprintf
+-import _vsprintf=vsprintf
+
+-import __assert=_assert
+-import __beginthread=_beginthread
+-import __chsize=_chsize
+-import __close=_close
+-import __commit=_commit
+-import __endthread=_endthread
+-import __errno=_errno
+-import __findclose=_findclose
+-import __findfirst=_findfirst
+-import __findnext=_findnext
+-import __fsopen=_fsopen
+-import __fstati64=_fstati64
+-import __ftime=_ftime
+-import __get_osfhandle=_get_osfhandle
+-import __getcwd=_getcwd
+-import __getpid=_getpid
+-import __iob=_iob
+-import __isctype=_isctype
+-import __lseeki64=_lseeki64
+-import __open=_open
+-import __open_osfhandle=_open_osfhandle
+-import __pctype=_pctype
+-import __read=_read
+-import __snprintf=_snprintf
+-import __stat=_stat
+-import __strdate=_strdate
+-import __strtime=_strtime
+-import __vsnprintf=_vsnprintf
+-import __unlink=_unlink
+-import __write=_write
+
+-import ___mb_cur_max=__mb_cur_max
+
+! Non-standard mappings (using by Berkeley DB engine)
+-import _close=_close
+-import _getpid=_getpid
+-import _open=_open
+-import _read=_read
+-import _stat=_stat
+-import _unlink=_unlink
+-import _write=_write
+
+-import _isalpha=isalpha
+-import _isalnum=isalnum
+-import _isspace=isspace
+-import _tolower=tolower
+
+-import _fputs=fputs
+-import _ftell=ftell
+
+-import __tzset=_tzset
+-import __timezone=_timezone
+-import __daylight=_daylight
+-import __setjmp3=_setjmp3
+-import _longjmp=longjmp
+-import _perror=perror
+-import __beginthreadex=_beginthreadex
+-import __endthreadex=_endthreadex
+

@@ -1,0 +1,10 @@
+! pci_exp.emb -  Exported PCI symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Export PCI symbols
+-export _EtsPCIInit=EtsPCIInit
+-export _EtsPCIReadCfgByte=EtsPCIReadCfgByte
+-export _EtsPCIReadCfgWord=EtsPCIReadCfgWord
+-export _EtsPCIReadCfgDWord=EtsPCIReadCfgDWord
+-export _EtsPCIFindDevice=EtsPCIFindDevice

@@ -8,5 +8,11 @@
 if CONFIG_ORTE_RT
 SUBDIRS = hello 
 else
-SUBDIRS	= hello multicast reliable ping spy
+SUBDIRS	= hello multicast reliable ping spy schneider mpo
 endif
+
+EXTRA_DIST = Makefile Makefile.omk \
+type
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

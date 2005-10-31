@@ -113,6 +113,8 @@ extern CORBA_boolean CDR_get_string(CDR_Codec *codec, CORBA_char **str);
 extern CORBA_boolean CDR_get_string_buff(CDR_Codec *codec, CORBA_char *str);
 extern CORBA_boolean CDR_get_string_static(CDR_Codec *codec, CORBA_char **str);
 extern CORBA_boolean CDR_get_seq_begin(CDR_Codec *codec, CORBA_unsigned_long *ul);
+extern CORBA_boolean CDR_get_float(CDR_Codec *codec, CORBA_float *f);
+extern CORBA_boolean CDR_get_double(CDR_Codec *codec, CORBA_double *d);
 
 
 /* serialization functions */

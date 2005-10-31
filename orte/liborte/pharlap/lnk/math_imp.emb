@@ -1,0 +1,24 @@
+! math_imp.emb -  Imported symbols from math.h
+!    (c) 2004 dataPartner Ltd.
+!
+
+-import _abs=abs
+-import _acos=acos
+-import _asin=asin
+-import _atan=atan
+-import _ceil=ceil
+-import _cos=cos
+-import _cosh=cosh
+-import _exp=exp
+-import _fabs=fabs
+-import _floor=floor
+-import _fmod=fmod
+-import _log=log
+-import _log10=log10
+-import _modf=modf
+-import _pow=pow
+-import _sqrt=sqrt
+-import _tan=tan
+-import _tanh=tanh
+-import _sin=sin
+-import _sinh=sinh

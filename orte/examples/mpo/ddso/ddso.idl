@@ -1,0 +1,24 @@
+struct ofb_octet {
+   long		guid;
+   octet	value;
+};
+
+struct ofb_short {
+   long		guid;
+   short	value;
+};
+
+struct ofb_long {
+   long		guid;
+   long		value;
+};
+
+struct ofb_float {
+   long		guid;
+   float	value;
+};
+
+struct ofb_double {
+   long		guid;
+   double	value;
+};

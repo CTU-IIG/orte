@@ -1,0 +1,24 @@
+! math_exp.emb -  Exported symbols from math.h
+!    (c) 2004 dataPartner Ltd.
+!
+
+-export _abs=abs
+-export _acos=acos
+-export _asin=asin
+-export _atan=atan
+-export _ceil=ceil
+-export _cos=cos
+-export _cosh=cosh
+-export _exp=exp
+-export _fabs=fabs
+-export _floor=floor
+-export _fmod=fmod
+-export _log=log
+-export _log10=log10
+-export _modf=modf
+-export _pow=pow
+-export _sqrt=sqrt
+-export _tan=tan
+-export _tanh=tanh
+-export _sin=sin
+-export _sinh=sinh

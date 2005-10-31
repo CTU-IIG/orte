@@ -36,6 +36,21 @@ libjorte_la_LDFLAGS = \
 libjorte_la_CFLAGS = $(AM_CFLAGS)
 libjorte_la_LIBADD = $(top_builddir)/orte/liborte/liborte.la 
 
+EXTRA_DIST = Makefile Makefile.omk \
+createAppInfo.c createPubInfo.c createRecvInfo.c createSubInfo.c \
+JORTEPublicationGetStatus.c \
+JORTEPublicationPropertiesGet.c \
+JORTEPublicationPropertiesSet.c \
+JORTEPublicationWaitForSubscriptions.c \
+JORTESubscriptionGetStatus.c \
+JORTESubscriptionPropertiesGet.c \
+JORTESubscriptionPropertiesSet.c \
+JORTESubscriptionWaitForPublications.c \
+JORTETypeRegisterDestroyAll.c \
+JORTEVerbositySetLogFile.c \
+JORTEVerbositySetOptions.c \
+setRecvInfo.c setTopic.c setType.c \
+temp.c
 
-
-
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

@@ -427,12 +427,14 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID) {
             NULL,
             objectEntryOID,
             &d->domainProp.baseProp.purgeTime);
-    debug(12,3) ("expired: 0x%x-0x%x-0x%x marked for remove\n",
+    debug(12,3) ("expired: 0x%x-0x%x-0x%x marked for remove(%ds)\n",
                  objectEntryOID->objectEntryHID->hid,
                  objectEntryOID->objectEntryAID->aid,
-		 objectEntryOID->oid);
+		 objectEntryOID->oid,
+		 d->domainProp.baseProp.purgeTime.seconds);
   }
   objectEntryDump(&d->objectEntry);
+  debug(12,3) ("expired: finished\n");
   if (!objectEntryOID) return 2;
   return 0;  
 }

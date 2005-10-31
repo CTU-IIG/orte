@@ -1,0 +1,21 @@
+! pci_exp.emb -  Exported interrupt handling symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Export low level programming symbols
+-export _EtsInp=EtsInp
+-export _EtsInpd=EtsInpd
+-export _EtsInpw=EtsInpw
+-export _EtsOutp=EtsOutp
+-export _EtsOutpd=EtsOutpd
+-export _EtsOutpw=EtsOutpw
+
+-export _EtsClearISRPriority=EtsClearISRPriority
+-export _EtsPicEnable=EtsPicEnable
+-export _EtsPicEOI=EtsPicEOI
+-export _EtsPicGetIRQIntNumber=EtsPicGetIRQIntNumber
+-export _EtsRestoreInterruptHandler=EtsRestoreInterruptHandler
+-export _EtsSaveInterruptHandler=EtsSaveInterruptHandler
+-export _EtsSetInterruptFlag=EtsSetInterruptFlag
+-export _EtsSetInterruptHandler=EtsSetInterruptHandler
+-export _EtsSetISRPriority=EtsSetISRPriority

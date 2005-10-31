@@ -1,0 +1,21 @@
+! intr_imp.emb -  Imported interrupt handling symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Import low level programming symbols
+-import _EtsInp=EtsInp
+-import _EtsInpd=EtsInpd
+-import _EtsInpw=EtsInpw
+-import _EtsOutp=EtsOutp
+-import _EtsOutpd=EtsOutpd
+-import _EtsOutpw=EtsOutpw
+
+-import _EtsClearISRPriority=EtsClearISRPriority
+-import _EtsPicEnable=EtsPicEnable
+-import _EtsPicEOI=EtsPicEOI
+-import _EtsPicGetIRQIntNumber=EtsPicGetIRQIntNumber
+-import _EtsRestoreInterruptHandler=EtsRestoreInterruptHandler
+-import _EtsSaveInterruptHandler=EtsSaveInterruptHandler
+-import _EtsSetInterruptFlag=EtsSetInterruptFlag
+-import _EtsSetInterruptHandler=EtsSetInterruptHandler
+-import _EtsSetISRPriority=EtsSetISRPriority

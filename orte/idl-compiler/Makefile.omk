@@ -12,9 +12,9 @@ INCLUDES += -I .
 
 lib_LOADLIBES = popt
 
-bin_PROGRAMS = orbit-idl
+bin_PROGRAMS = orte-idl
 
-orbit-idl_SOURCES =			\
+orte-idl_SOURCES =			\
 	orte-idl-main.c		        \
 	orte-idl-driver.c		\
 	orte-idl-utils.c		\

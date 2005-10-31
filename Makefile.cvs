@@ -1,4 +1,7 @@
-default: all
+default: cvs
+
+cvs:
+	autoreconf -i 
 
 all:
 	aclocal -I admin 

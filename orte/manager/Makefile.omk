@@ -6,9 +6,13 @@ bin_PROGRAMS = ortemanager
 
 INCLUDES = -I $(srcdir)/../include
 
-ortemanager_SOURCES = ortemanager.c
-
 lib_LOADLIBES =  orte pthread
+
+ortemanager_SOURCES = ortemanager.c
+ifeq ($(OS_TARGET),win32)
+ortemanager_SOURCES += service.c
+lib_LOADLIBES += ws2_32
+endif #OS_TARGET
 
 endif #CONFIG_OC_ETH_ORTE_MANAGER
 

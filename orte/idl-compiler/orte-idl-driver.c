@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    $Id: orte-idl-driver.c,v 1.2 2005/03/11 16:46:22 smolik Exp $
+    $Id: orte-idl-driver.c,v 1.3 2005/10/31 12:44:20 smolik Exp $
 
 ***************************************************************************/
 
@@ -63,7 +63,7 @@ orte_idl_to_backend (const char    *filename,
 	IDL_ns   ns;
 	IDL_tree tree;
 	int      errcode;
-	gboolean retval;
+	gboolean retval=0;
 
 	errcode = IDL_parse_filename (
 			filename, rinfo->cpp_args, NULL,

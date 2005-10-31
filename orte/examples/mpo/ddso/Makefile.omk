@@ -1,0 +1,22 @@
+IDL_COMPILER=$(USER_BIN_DIR)/orte-idl 
+
+INCLUDES = -I $(USER_OBJS_DIR) 
+
+ifeq ($(CONFIG_OC_ETH_ORTE_IDL),y)
+
+shared_LIBRARIES = ddso
+
+bin_PROGRAMS = ddsop ddsos
+
+lib_LOADLIBES =  orte pthread ddso
+ifeq ($(OS_TARGET),win32)
+lib_LOADLIBES +=  ws2_32
+endif #OS_TARGET
+
+ddso_SOURCES = ddso_cb.c 
+ddso_IDL = ddso.idl
+ddsop_SOURCES = ddsop.c
+ddsos_SOURCES = ddsos.c
+
+endif #CONFIG_OC_ETH_ORTE_IDL
+

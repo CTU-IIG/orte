@@ -1,0 +1,12 @@
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
+
+utils_PROGRAMS =  schneider_subscriber
+
+schneider_subscriber_SOURCES = schneider_subscriber.c
+
+lib_LOADLIBES =  orte pthread
+ifeq ($(OS_TARGET),win32)
+lib_LOADLIBES +=  ws2_32
+endif #OS_TARGET
+
+endif #CONFIG_OC_ETH_ORTE_EXAMPLES

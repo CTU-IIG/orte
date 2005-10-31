@@ -1,0 +1,30 @@
+! str_exp.emb -  Imported symbols from string.h (and memory.h)
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Memory functions
+-import _memchr=memchr
+-import _memcmp=memcmp
+-import _memcpy=memcpy
+-import _memmove=memmove
+-import _memset=memset
+
+!  String functions
+-import _strcmp=strcmp
+-import _strncmp=strncmp
+-import _strlen=strlen
+-import _strcpy=strcpy
+-import _strncpy=strncpy
+-import _strcat=strcat
+-import _strncat=strncat
+-import _strchr=strchr
+-import _strpbrk=strpbrk
+-import _strrchr=strrchr
+-import _strstr=strstr
+-import _strtok=strtok
+-import _strtoul=strtoul
+
+-import __strdup=_strdup
+-import __stricmp=_stricmp
+-import __strnicmp=_strnicmp
+-import __strupr=_strupr

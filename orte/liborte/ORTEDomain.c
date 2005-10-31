@@ -726,34 +726,6 @@ ORTEDomainDestroy(ORTEDomain *d,Boolean manager) {
   ORTEDomainSendThreadStop(&d->taskSend);
   debug(30,3) ("ORTEDomainDestroy: threads stoped\n");
   
-  //Sockets
-  sock_cleanup(&d->taskRecvUnicastMetatraffic.sock);
-  sock_cleanup(&d->taskRecvMulticastMetatraffic.sock);
-  sock_cleanup(&d->taskRecvUnicastUserdata.sock);
-  sock_cleanup(&d->taskRecvMulticastUserdata.sock);
-  sock_cleanup(&d->taskSend.sock);
-
-  //Signals
-  pthread_cond_destroy(&d->objectEntry.htimSendCond);
-  pthread_mutex_destroy(&d->objectEntry.htimSendMutex);
-
-  //rwLocks
-  pthread_rwlock_destroy(&d->objectEntry.objRootLock);
-  pthread_rwlock_destroy(&d->objectEntry.htimRootLock);
-  pthread_rwlock_destroy(&d->publications.lock);
-  pthread_rwlock_destroy(&d->subscriptions.lock);
-  pthread_rwlock_destroy(&d->psEntry.publicationsLock);
-  pthread_rwlock_destroy(&d->psEntry.subscriptionsLock);
-
-  //TypeRegister
-  ORTETypeRegisterDestroyAll(d);
-  pthread_rwlock_destroy(&d->typeEntry.lock);
-  
-  //Pattern
-  ORTEDomainAppSubscriptionPatternDestroy(d);
-  pthread_rwlock_unlock(&d->typeEntry.lock);    
-  pthread_rwlock_destroy(&d->patternEntry.lock);
-  
   //CSTReaders and CSTWriters
   CSTWriterDelete(d,&d->writerApplicationSelf);
   CSTReaderDelete(d,&d->readerManagers);
@@ -779,13 +751,46 @@ ORTEDomainDestroy(ORTEDomain *d,Boolean manager) {
     
   //objects in objectsEntry
   objectEntryDeleteAll(d,&d->objectEntry);
+  debug(30,3) ("ORTEDomainDestroy: deleted all objects\n");
+
+  //Sockets
+  sock_cleanup(&d->taskRecvUnicastMetatraffic.sock);
+  sock_cleanup(&d->taskRecvMulticastMetatraffic.sock);
+  sock_cleanup(&d->taskRecvUnicastUserdata.sock);
+  sock_cleanup(&d->taskRecvMulticastUserdata.sock);
+  sock_cleanup(&d->taskSend.sock);
+
+
+  //Signals
+  pthread_cond_destroy(&d->objectEntry.htimSendCond);
+  pthread_mutex_destroy(&d->objectEntry.htimSendMutex);
+
+  //rwLocks
+  pthread_rwlock_destroy(&d->objectEntry.objRootLock);
+  pthread_rwlock_destroy(&d->objectEntry.htimRootLock);
+  pthread_rwlock_destroy(&d->publications.lock);
+  pthread_rwlock_destroy(&d->subscriptions.lock);
+  pthread_rwlock_destroy(&d->psEntry.publicationsLock);
+  pthread_rwlock_destroy(&d->psEntry.subscriptionsLock);
+
+  //TypeRegister
+  ORTETypeRegisterDestroyAll(d);
   
+  //Pattern
+  ORTEDomainAppSubscriptionPatternDestroy(d);
+  pthread_rwlock_destroy(&d->patternEntry.lock);
+  
+  //Release buffers  
   CDR_codec_release_buffer(&d->taskRecvUnicastMetatraffic.mb.cdrCodec);
   CDR_codec_release_buffer(&d->taskRecvMulticastMetatraffic.mb.cdrCodec);
   CDR_codec_release_buffer(&d->taskRecvUnicastUserdata.mb.cdrCodec);
   CDR_codec_release_buffer(&d->taskRecvMulticastUserdata.mb.cdrCodec);
   CDR_codec_release_buffer(&d->taskSend.mb.cdrCodec);
+  
+  //Free domain instance
   FREE(d);
+  
   debug(30,10) ("ORTEDomainDestroy: finished\n");
+  
   return ORTE_TRUE;
 }

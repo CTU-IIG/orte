@@ -2,11 +2,13 @@ ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
 utils_PROGRAMS = m_subscriber
 
-INCLUDES = -I $(srcdir)/../../include
-
 m_subscriber_SOURCES = m_subscriber.c
 
 lib_LOADLIBES =  orte pthread
+ifeq ($(OS_TARGET),win32)
+lib_LOADLIBES +=  ws2_32
+endif #OS_TARGET
 
 endif #CONFIG_OC_ETH_ORTE_EXAMPLES
 
+EXTRA_DIST = Makefile Makefile.omk 

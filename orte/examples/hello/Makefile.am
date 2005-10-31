@@ -7,9 +7,13 @@ if CONFIG_ORTE_RT
 else
   noinst_PROGRAMS = h_publisher h_subscriber
   h_publisher_SOURCES = h_publisher.c
-  h_publisher_LDADD   = $(top_builddir)/orte/liborte/liborte.la 
-  h_publisher_LDFLAGS = -static
+  h_publisher_LDADD   = -L$(top_builddir)/orte/liborte/ -lorte 
   h_subscriber_SOURCES = h_subscriber.c
-  h_subscriber_LDADD   = $(top_builddir)/orte/liborte/liborte.la 
-  h_subscriber_LDFLAGS = -static
+  h_subscriber_LDADD   = -L$(top_builddir)/orte/liborte/ -lorte 
 endif
+
+EXTRA_DIST = Makefile Makefile.omk \
+msvc
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

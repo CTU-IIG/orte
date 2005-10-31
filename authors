@@ -34,3 +34,6 @@ Tomas Ciganek <t.ciganek@sh.cvut.cz>
 
 Jan Kelbel <jan.kelbel@centrum.cz>
     * makefiles for msvc
+
+Petr Stefka <stefka@datapartner.cz>
+    * Pharlap ports

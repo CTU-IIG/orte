@@ -9,6 +9,11 @@ ortemanager_SOURCES = ortemanager.c
 if CONFIG_ORTE_WIN
   ortemanager_SOURCES += service.c
 endif
-ortemanager_LDADD   = $(top_builddir)/orte/liborte/liborte.la 
-ortemanager_LDFLAGS = -static
+ortemanager_LDADD   = -L$(top_builddir)/orte/liborte/ -lorte 
 endif
+
+EXTRA_DIST = Makefile Makefile.omk \
+mcvs rc
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

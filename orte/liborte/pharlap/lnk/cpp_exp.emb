@@ -1,0 +1,35 @@
+! cpp_exp.emb -  Exported C++ symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Export new and delete operators
+-export ??2@YAPAXI@Z                   ! Export the new operator
+-export ??3@YAXPAX@Z                   ! Export the delete operator
+-export ??_M@YGXPAXIHP6EX0@Z@Z         ! Export the vector destructor iterator
+-export ??_L@YGXPAXIHP6EX0@Z1@Z
+
+! STL misc
+-export ?_Xlen@std@@YAXXZ              ! Export STL report a length error
+-export ?_Xran@std@@YAXXZ              ! Export STL report out of range error
+-export ??0_Lockit@std@@QAE@XZ         ! Export STL locking critical section
+-export ??1_Lockit@std@@QAE@XZ         ! Export STL unlocking critical section
+
+! RTTI
+-export ??_7type_info@@6B@             ! Export type_info class constructor for RTTI
+-export ?raw_name@type_info@@QBEPBDXZ  ! Export type_info::raw_name method
+
+! Exceptions
+-export ??0exception@@QAE@ABQBD@Z      ! Export exception class constructor
+-export ??0exception@@QAE@ABV0@@Z      ! Export exception class constructor
+-export ??0exception@@QAE@XZ           ! Export exception class constructor
+-export ??1exception@@UAE@XZ           ! Export exception class destructor
+-export ?what@exception@@UBEPBDXZ      ! Export exception::what method
+-export ?uncaught_exception@std@@YA_NXZ
+
+! IO Streams
+-export ??1_Winit@std@@QAE@XZ
+-export ??0_Winit@std@@QAE@XZ
+-export ??1Init@ios_base@std@@QAE@XZ
+-export ??0Init@ios_base@std@@QAE@XZ
+-export ?clear@ios_base@std@@QAEXH_N@Z
+-export ?cerr@std@@3V?$basic_ostream@DU?$char_traits@D@std@@@1@A

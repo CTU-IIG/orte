@@ -204,6 +204,16 @@ extern "C" {
   #include <rtai/compat.h>
 #elif defined _MSC_VER
   #define SOCK_WIN
+  #ifdef __PHARLAP
+    #define SOCK_WIN_PHARLAP
+    #define IFF_UP 0x1
+    #define IN_CLASSD(i) (((long)(i) & 0xf0000000) == 0xe0000000)
+    #define IN_MULTICAST(i) IN_CLASSD(i)
+    #include <embtcpip.h>
+  #else
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+  #endif
   #ifndef inline
     #define inline _inline
   #endif
@@ -211,10 +221,12 @@ extern "C" {
   #include <stdlib.h>
   #include <stdarg.h>
   #include <string.h>
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
   #include <windows.h>
-  #include <win32/pthread.h>
+  #ifdef __PHARLAP
+    #include <win32/pharlap/pthread.h>
+  #else
+    #include <win32/pthread.h>
+  #endif
   #include <win32/timeval.h>
   #include <win32/getopt.h>
   #define ioctl ioctlsocket

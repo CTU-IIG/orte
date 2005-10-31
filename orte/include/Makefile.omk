@@ -1,7 +1,21 @@
+ORTE_ENABLE=n
 ifeq ($(CONFIG_OC_ETH_ORTE),y)
+  ORTE_ENABLE=y
+endif
+ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
+  ORTE_ENABLE=y
+endif
 
+ifeq ($(ORTE_ENABLE),y)
+ifeq ($(OS_TARGET),linux)
 renamed_include_HEADERS = \
-orte/orte_config_omk_unix.h->orte/orte_config.h
+orte/orte_config_omk_linux.h->orte/orte_config.h
+endif
+
+ifeq ($(OS_TARGET),win32)
+renamed_include_HEADERS = \
+orte/orte_config_omk_win32.h->orte/orte_config.h
+endif
 
 nobase_include_HEADERS = \
 orte.h \
@@ -12,7 +26,7 @@ orte/defines_api.h \
 orte/typedefs_api.h \
 orte/protos_api.h
 
-endif #CONFIG_OC_ETH_ORTE
+endif #ORTE_ENABLE
 
 #############################################################################
 # RT-Linux version of build

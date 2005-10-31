@@ -2,10 +2,11 @@ ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
 bin_PROGRAMS = ortespy
 
-INCLUDES = -I $(srcdir)/../../include
-
 ortespy_SOURCES = ortespy.c
 
 lib_LOADLIBES =  orte pthread
+ifeq ($(OS_TARGET),win32)
+lib_LOADLIBES +=  ws2_32
+endif #OS_TARGET
 
 endif #CONFIG_OC_ETH_ORTE_EXAMPLES

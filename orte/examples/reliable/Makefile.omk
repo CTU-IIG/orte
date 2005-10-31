@@ -1,7 +1,5 @@
 ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
-INCLUDES = -I $(srcdir)/../../include
-
 utils_PROGRAMS = r_publisher r_subscriber_reliable r_subscriber_besteffort
 
 r_publisher_SOURCES = r_publisher.c
@@ -11,5 +9,8 @@ r_subscriber_reliable_SOURCES = r_subscriber_reliable.c
 r_subscriber_besteffort_SOURCES = r_subscriber_besteffort.c
 
 lib_LOADLIBES =  orte pthread
+ifeq ($(OS_TARGET),win32)
+lib_LOADLIBES +=  ws2_32
+endif #OS_TARGET
 
 endif #CONFIG_OC_ETH_ORTE_EXAMPLES

@@ -11,3 +11,8 @@ orte_idl_SOURCES =			\
 	orte-idl2.h
 
 bin_PROGRAMS = orte-idl
+
+EXTRA_DIST = Makefile Makefile.omk 
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

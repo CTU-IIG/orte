@@ -12,13 +12,17 @@
 
 #ifdef _WIN32
 
-#include <winsock2.h>   //there is defined struct timeval 
+#ifndef __PHARLAP
+  #include <winsock2.h>   //there is defined struct timeval
+#endif
 #include <windows.h>
 #include <time.h>
 
-//#define EPOCHFILETIME (116444736000000000i64)
-
-#define EPOCHFILETIME (116444736000000000)
+#ifndef __GNUC__
+#define EPOCHFILETIME (116444736000000000i64)
+#else
+#define EPOCHFILETIME (116444736000000000LL)
+#endif
 
 struct timezone {
     int tz_minuteswest; /* minutes W of Greenwich */

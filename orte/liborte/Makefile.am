@@ -88,4 +88,8 @@ liborte1_HEADERS= $(LIBORTE_HDRS1)
 liborte2dir=$(includedir)/orte
 liborte2_HEADERS= $(LIBORTE_HDRS2)
 
-EXTRA_DIST = usedSections.txt
+EXTRA_DIST = usedSections.txt Makefile Makefile.omk \
+msvc pharlap
+
+dist-hook:
+	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

@@ -9,6 +9,9 @@ default_CONFIG = CONFIG_OC_JAVA_ORTE=n
 
 ifeq ($(CONFIG_OC_JAVA_ORTE),y)
 
+renamed_include_HEADERS = \
+rtpseye.sh->../bin/lib/rtpseye.sh
+
 ifndef ANT
 TRY_ANT=/opt/ant/bin/ant	# Ant is searched here if it isn't found in $PATH
 ANT=$(shell if [ -n "`which ant 2>/dev/null`" ]; then which ant; else [ -x $(TRY_ANT) ] && echo $(TRY_ANT); fi)

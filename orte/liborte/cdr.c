@@ -245,9 +245,21 @@ CDR_put_float(CDR_Codec *codec, CORBA_float f)
 }
 
 inline CORBA_boolean 
+CDR_get_float(CDR_Codec *codec, CORBA_float *f)
+{
+	return CDR_buffer_get4(codec, f);
+}
+
+inline CORBA_boolean 
 CDR_put_double(CDR_Codec *codec, CORBA_double d)
 {
 	return CDR_buffer_put8(codec, &d);
+}
+
+inline CORBA_boolean 
+CDR_get_double(CDR_Codec *codec, CORBA_double *d)
+{
+	return CDR_buffer_get8(codec, d);
 }
 
 inline CORBA_boolean 

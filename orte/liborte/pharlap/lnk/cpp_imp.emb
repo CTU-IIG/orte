@@ -1,0 +1,35 @@
+! cpp_exp.emb -  Imported C++ symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Import new and delete operators
+-import ??2@YAPAXI@Z                   ! Import the new operator
+-import ??3@YAXPAX@Z                   ! Import the delete operator
+-import ??_M@YGXPAXIHP6EX0@Z@Z         ! Import the vector destructor iterator
+-import ??_L@YGXPAXIHP6EX0@Z1@Z
+
+! STL misc
+-import ?_Xlen@std@@YAXXZ              ! Import STL report a length error
+-import ?_Xran@std@@YAXXZ              ! Import STL report out of range error
+-import ??0_Lockit@std@@QAE@XZ         ! Import STL locking critical section
+-import ??1_Lockit@std@@QAE@XZ         ! Import STL unlocking critical section
+
+! RTTI
+-import ??_7type_info@@6B@             ! Import type_info class constructor for RTTI
+-import ?raw_name@type_info@@QBEPBDXZ  ! Import type_info::raw_name method
+
+! Exceptions
+-import ??0exception@@QAE@ABQBD@Z      ! Import exception class constructor
+-import ??0exception@@QAE@ABV0@@Z      ! Import exception class constructor
+-import ??0exception@@QAE@XZ           ! Import exception class constructor
+-import ??1exception@@UAE@XZ           ! Import exception class destructor
+-import ?what@exception@@UBEPBDXZ      ! Import exception::what method
+-import ?uncaught_exception@std@@YA_NXZ
+
+! IO Streams
+-import ??1_Winit@std@@QAE@XZ
+-import ??0_Winit@std@@QAE@XZ
+-import ??1Init@ios_base@std@@QAE@XZ
+-import ??0Init@ios_base@std@@QAE@XZ
+-import ?clear@ios_base@std@@QAEXH_N@Z
+-import ?cerr@std@@3V?$basic_ostream@DU?$char_traits@D@std@@@1@A

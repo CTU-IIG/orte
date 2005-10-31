@@ -29,7 +29,11 @@ sock_start(void) {
 #elif defined (SOCK_WIN)
   WORD wVersionRequested;
   WSADATA wsaData;
-  wVersionRequested = MAKEWORD(2, 0);
+  #ifdef SOCK_WIN_PHARLAP
+    wVersionRequested = MAKEWORD(1, 1);
+  #else
+    wVersionRequested = MAKEWORD(2, 0);
+  #endif
   return WSAStartup(wVersionRequested, &wsaData);
 #endif
 }
@@ -173,7 +177,7 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
   /* loopback iface is recognized if it has this address */
   char ip_address [] = "127.0.0.1";
   struct in_addr loopaddr;
-  int			  i;
+  int i;
 
   *IFCount=0;
   if (inet_aton(ip_address, &loopaddr) != 0) return -1;
@@ -186,6 +190,32 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
 	IFProp->ipAddress=ntohl(nic_table[i].ipad.s_addr);
 	IFProp++;
       }
+    }
+  }
+  return 0;
+#elif defined(SOCK_WIN_PHARLAP)
+  DEVHANDLE hDev;
+  EK_TCPIPCFG *pCfg;
+  union {
+    EK_TCPETHSTATUS eth;
+    EK_TCPSLIPSTATUS slip;
+    EK_TCPPPPSTATUS ppp;
+  } status;
+  *IFCount = 0;
+  hDev = NULL;
+
+  while (hDev = EtsTCPIterateDeviceList(hDev)) {
+    pCfg = EtsTCPGetDeviceCfg(hDev);
+
+    if (pCfg->nwIPAddress == 0x0100007F) // 127.0.0.1 localhost
+      continue;
+
+    status.eth.length = sizeof(EK_TCPETHSTATUS);
+    EtsTCPGetDeviceStatus(hDev, &status);
+    if (status.eth.DevStatus.Flags & ETS_TCP_DEV_ONLINE) {
+      IFProp->ifFlags = IFF_UP;
+      IFProp->ipAddress = ntohl(pCfg->nwIPAddress);
+      (*IFCount)++;
     }
   }
   return 0;

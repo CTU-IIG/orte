@@ -1,7 +1,8 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE_EXAMPLES=y
 default_CONFIG += CONFIG_OC_ETH_ORTE_EXAMPLES_RTL=n
 
-SUBDIRS = ping multicast spy hello reliable
+SUBDIRS = ping multicast spy hello reliable schneider mpo
 
+EXTRA_DIST = Makefile Makefile.omk 
 
 

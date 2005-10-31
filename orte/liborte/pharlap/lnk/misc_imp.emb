@@ -1,0 +1,74 @@
+! misc_exp.emb -  Imported Win32 API and other miscelaneous symbols
+!    (c) 2004 dataPartner Ltd.
+!
+
+!  Miscellaneous kernel symbols
+-import ___RTtypeid
+-import ___RTDynamicCast
+-import ___CxxFrameHandler
+-import __CxxThrowException@8
+-import __alldiv=_alldiv
+-import __allmul=_allmul
+-import __allrem=_allrem
+-import __allshl=_allshl
+-import __allshr=_allshr
+-import __aulldiv=_aulldiv
+-import __aullrem=_aullrem
+-import __aullshr=_aullshr
+-import __chkesp=_chkesp
+-import __chkstk=_chkstk
+-import __CIfmod=_CIfmod
+-import __CIpow=_CIpow
+-import __fltused=_fltused
+-import __ftol=_ftol
+-import __isnan=_isnan
+-import __purecall=_purecall
+-import __ultoa=_ultoa
+
+! Imports for TCP/IP WINSOCK32 on PharLap ETS Kernel
+-import _accept@12=accept
+-import _bind@12=bind
+-import _closesocket@4=closesocket
+-import _connect@12=connect
+-import _gethostbyname@4=gethostbyname
+-import _getpeername@12=getpeername
+-import _getservbyname@8=getservbyname
+-import _htons@4=htons
+-import _htonl@4=htonl
+-import _inet_addr@4=inet_addr
+-import _ioctlsocket@12=ioctlsocket
+-import _listen@8=listen
+-import _recv@16=recv
+-import _select@20=select
+-import _send@16=send
+-import _setsockopt@20=setsockopt
+-import _shutdown@8=shutdown
+-import _socket@12=socket
+-import _WSACleanup@0=WSACleanup
+-import _WSAGetLastError@0=WSAGetLastError
+-import _WSASetLastError@4=WSASetLastError
+-import _WSAStartup@8=WSAStartup
+-import ___WSAFDIsSet@8=__WSAFDIsSet
+-import _sendto@24=sendto
+-import _recvfrom@24=recvfrom
+-import _inet_ntoa@4=inet_ntoa
+-import _ntohl@4=ntohl
+-import _getsockopt@20=getsockopt
+-import _getsockname@12=getsockname
+-import _ntohs@4=ntohs
+
+! ETS misc functions
+-import _EtsDisplayMessage=EtsDisplayMessage
+-import _EtsGetVsbVarsPointer=EtsGetVsbVarsPointer
+-import _EtsRegisterCallback=EtsRegisterCallback
+-import _EtsSelectFileSystem=EtsSelectFileSystem
+-import _EtsSelectConsole=EtsSelectConsole
+-import _EtsSetThreadDebugName=EtsSetThreadDebugName
+
+-import _EtsTCPGetDeviceHandle=EtsTCPGetDeviceHandle
+-import _EtsTCPGetDeviceCfg=EtsTCPGetDeviceCfg
+-import _EtsTCPGetStackCfg=EtsTCPGetStackCfg
+-import _EtsTCPSetStackCfg=EtsTCPSetStackCfg
+-import _EtsTCPSetDefaultGateway=EtsTCPSetDefaultGateway
+-import _EtsTCPIterateDeviceList=EtsTCPIterateDeviceList
+-import _EtsTCPGetDeviceStatus=EtsTCPGetDeviceStatus

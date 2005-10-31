@@ -112,8 +112,15 @@ include $(SOURCES_DIR)/Makefile.omk
 OMK_INCLUDED := 1
 endif
 
+# Check for target
+OS_TARGET = linux
+ifeq ($(OS),Windows_NT)
+  OS_TARGET = win32
+endif
+
 export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
 export CONFIG_FILE OMK_SERIALIZE_INCLUDED OMK_VERBOSE OMK_SILENT
+export OS_TARGET
 
 #CFLAGS += -ggdb
 CFLAGS += -O2 
@@ -132,7 +139,15 @@ LOADLIBES += $(lib_LOADLIBES:%=-l%)
 LIB_CPPFLAGS += $(CPPFLAGS)
 LIB_CFLAGS   += $(CFLAGS)
 
-SOLIB_PICFLAGS += -shared -fpic
+SOLIB_PICFLAGS += -shared 
+ifeq ($(OS_TARGET),linux)
+  SOLIB_PICFLAGS += -fpic
+endif
+
+SOLIB_EXT = so
+ifeq ($(OS_TARGET),win32)
+  SOLIB_EXT = dll
+endif
 
 ifndef RELATIVE_DIR
 RELATIVE_DIR := $(SOURCES_DIR:$(MAKERULES_DIR)%=%)
@@ -146,6 +161,11 @@ override BACK2TOP_DIR := $(shell echo $(RELATIVE_DIR)/ | sed -e 's_//_/_g' -e 's
 #$(warning SOURCES_DIR = $(SOURCES_DIR))
 #$(warning MAKERULES_DIR = $(MAKERULES_DIR))
 #$(warning RELATIVE_DIR = $(RELATIVE_DIR))
+
+override RELATIVE_PREFIX := $(RELATIVE_DIR)/
+override RELATIVE_PREFIX := $(RELATIVE_PREFIX:/%=%)
+
+#$(warning RELATIVE_PREFIX = $(RELATIVE_PREFIX))
 
 #vpath %.c $(SOURCES_DIR)
 #vpath %.cc $(SOURCES_DIR)
@@ -250,6 +270,7 @@ c_o_COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 cc_o_COMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -DOMK_FOR_USER
 
+idl_COMPILE = $(IDL_COMPILER)
 
 # Check GCC version for user build
 ifndef CC_MAJOR_VERSION
@@ -285,9 +306,19 @@ $(2): $(1) $(LOCAL_CONFIG_H)
 	fi
 endef
 
+define COMPILE_idl_template
+$(2).c $(2).h: $(1)
+	@$(QUIET_CMD_ECHO) "  IDL     $$@"
+	$(Q) $$(idl_COMPILE) $(1)
+endef
 
 
 define PROGRAM_template
+
+USER_IDLS  += $$($(1)_IDL) 
+$(1)_OBJS += $$(filter %.o,$$($(1)_IDL:%.idl=%.o))
+USER_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
@@ -308,6 +339,11 @@ endef
 
 
 define LIBRARY_template
+
+USER_IDLS  += $$($(1)_IDL) 
+$(1)_OBJS += $$(filter %.o,$$($(1)_IDL:%.idl=%.o))
+USER_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
@@ -324,6 +360,11 @@ endef
 
 
 define SOLIB_template
+
+USER_IDLS  += $$($(1)_IDL) 
+$(1)_OBJSLO += $$(filter %.lo,$$($(1)_IDL:%.idl=%.lo))
+SOLIB_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+
 $(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.c=%.lo))
 $(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cc=%.lo))
 $(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cxx=%.lo))
@@ -332,14 +373,14 @@ $(1)_OBJSLO := $$(sort $$($(1)_OBJSLO))
 SOLIB_OBJS  += $$($(1)_OBJSLO)
 SOLIB_SOURCES += $$($(1)_SOURCES)
 
-$(USER_LIB_DIR)/lib$(1).so: $$($(1)_OBJSLO)
+$(USER_LIB_DIR)/lib$(1).$(SOLIB_EXT): $$($(1)_OBJSLO)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
-	$(Q) $(LD) --shared --soname=lib$(1).so -o $$@ $$^ $(LOADLIBES)
+	$(Q) $(LD) --shared --soname=lib$(1).$(SOLIB_EXT) -o $$@ $$^ $(LOADLIBES) 
 endef
 
 
 
-library-pass-local: $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(USER_LIB_DIR)/lib%.so)
+library-pass-local: $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(USER_LIB_DIR)/lib%.$(SOLIB_EXT))
 
 binary-pass-local: $(bin_PROGRAMS:%=$(USER_BIN_DIR)/%)
 
@@ -602,7 +643,7 @@ endif
 kernel-lib-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(KERN_OBJS_DIR)/$(dir)) ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
 	+@$(call mkdir_def,$(KERN_OBJS_DIR))
 	+@if [ -n "$(kernel_LIBRARIES)$(rtlinux_LIBRARIES)" ] ; \
@@ -614,7 +655,7 @@ kernel-lib-pass:
 kernel-mod-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(KERN_OBJS_DIR)/$(dir)) ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(KERN_OBJS_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
 	+@$(call mkdir_def,$(KERN_OBJS_DIR))
 	+@if [ -n "$(kernel_MODULES)$(rtlinux_MODULES)" ] ; \
@@ -633,16 +674,15 @@ kernel-modpost-pass:
 library-pass binary-pass utils-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(USER_OBJS_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(USER_OBJS_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
 	+@$(foreach dir, $(QT_SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
 		if [ "$@" != "binary-pass" ] ; then exit 0 ; fi ; \
 		if [ ! -e $(SOURCES_DIR)/$(dir)/Makefile ] ; then  \
 		( cd $(SOURCES_DIR)/$(dir) ; $$QTDIR/bin/qmake TOP_DIR=$(MAKERULES_DIR) \
-		     RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) QTDIR=$(QTDIR) CC=$(CC) \
-		     CXX=$(CXX) || exit 1 ;) ; fi ; \
+		     RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) || exit 1 ;) ; fi ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(SOURCES_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(SOURCES_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile || exit 1 ;)
 	+@$(call mkdir_def,$(USER_OBJS_DIR))
 	@$(MAKE) --no-print-directory -C $(USER_OBJS_DIR) \
@@ -652,7 +692,7 @@ library-pass binary-pass utils-pass:
 dep clean install check-dir include-pass default-config-pass:
 	+@$(foreach dir, $(SUBDIRS), $(call mkdir_def,$(USER_OBJS_DIR)/$(dir)) ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_DIR)/$(dir) -C $(USER_OBJS_DIR)/$(dir) \
+		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(USER_OBJS_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile $@ || exit 1 ;)
 	+@$(call mkdir_def,$(USER_OBJS_DIR))
 	@$(MAKE) --no-print-directory -C $(USER_OBJS_DIR) \
@@ -717,6 +757,8 @@ ifdef USER_RULE_TEMPLATES
 
 USER_SOURCES := $(sort $(USER_SOURCES))
 
+USER_GEN_SOURCES := $(sort $(USER_GEN_SOURCES))
+
 #$(warning USER_SOURCES = $(USER_SOURCES))
 
 $(foreach src,$(filter %.c,$(USER_SOURCES)),$(eval $(call COMPILE_c_o_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.o),)))
@@ -725,17 +767,32 @@ $(foreach src,$(filter %.cc,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template
 
 $(foreach src,$(filter %.cxx,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.o),)))
 
+$(foreach src,$(filter %.c,$(USER_GEN_SOURCES)),$(eval $(call COMPILE_c_o_template,$(src),$(src:%.c=%.o),)))
+
 # User-space shared libraries object files
 
 SOLIB_SOURCES := $(sort $(SOLIB_SOURCES))
 
+SOLIB_GEN_SOURCES := $(sort $(SOLIB_GEN_SOURCES))
+
 #$(warning SOLIB_SOURCES = $(SOLIB_SOURCES))
+#$(warning SOLIB_GEN_SOURCES = $(SOLIB_GEN_SOURCES))
 
 $(foreach src,$(filter %.c,$(SOLIB_SOURCES)),$(eval $(call COMPILE_c_o_template,$(SOURCES_DIR)/$(src),$(src:%.c=%.lo),$(SOLIB_PICFLAGS))))
 
 $(foreach src,$(filter %.cc,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.lo),$(SOLIB_PICFLAGS))))
 
 $(foreach src,$(filter %.cxx,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.lo),$(SOLIB_PICFLAGS))))
+
+$(foreach src,$(filter %.c,$(SOLIB_GEN_SOURCES)),$(eval $(call COMPILE_c_o_template,$(src),$(src:%.c=%.lo),$(SOLIB_PICFLAGS))))
+
+# IDL compilation
+
+USER_IDLS := $(sort $(USER_IDLS))
+
+#$(warning USER_IDLS = $(USER_IDLS))
+
+$(foreach src,$(filter %.idl,$(USER_IDLS)),$(eval $(call COMPILE_idl_template,$(SOURCES_DIR)/$(src),$(src:%.idl=%))))
 
 endif
 

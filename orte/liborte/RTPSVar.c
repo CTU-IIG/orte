@@ -205,7 +205,7 @@ RTPSVarManager(ORTEDomain *d,CSChange *csChange,GUID_RTPS *writerGUID,
 	}
       }
       cstRemoteWriter=CSTRemoteWriter_find(cstReader,writerGUID);
-      if (cstRemoteWriter)
+      if ((cstRemoteWriter) && (csChange->alive==ORTE_TRUE))
 	objectEntryRefreshApp(d,cstRemoteWriter->spobject);
     } else {
       //deny Manager
@@ -264,7 +264,8 @@ RTPSVarManager(ORTEDomain *d,CSChange *csChange,GUID_RTPS *writerGUID,
     if (objectEntryOID) {
       cstRemoteWriter=CSTRemoteWriter_find(cstReader,writerGUID);
       if (objectEntryOID->appMOM) {
-        objectEntryRefreshApp(d,objectEntryOID);
+        if (csChange->alive==ORTE_TRUE)
+          objectEntryRefreshApp(d,objectEntryOID);
       } else {
       //turn off expiration timer
         eventDetach(d,
@@ -498,7 +499,8 @@ RTPSVarApp(ORTEDomain *d,CSChange *csChange,GUID_RTPS *writerGUID)
         }
         pthread_rwlock_unlock(&d->readerApplications.lock);
       } 
-      objectEntryRefreshApp(d,objectEntryOID);
+      if (csChange->alive==ORTE_TRUE)
+        objectEntryRefreshApp(d,objectEntryOID);
       cstRemoteWriter=CSTRemoteWriter_find(cstReader,writerGUID);
       if ((!cstRemoteWriter) &&
           (csChange->guid.hid==writerGUID->hid) && 
