@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.cpp,v 1.7 2005/02/23 10:14:23 smolik Exp $
+** $Id: richtext.cpp,v 1.8 2005/11/03 09:27:47 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
@@ -8,14 +8,20 @@
 **
 *****************************************************************************/
 
-#include "richtext.h"
-
-#include <qhbox.h>
-#include <qhbox.h>
 #include <qpushbutton.h>
-#include <qtextview.h>
 #include <qbrush.h>
 #include <qapplication.h>
+#include <qglobal.h>
+
+#if (QT_VERSION-0 >= 0x040000)
+#include <q3hbox.h>
+#include <q3textview.h>
+#else
+#include <qhbox.h>
+#include <qtextview.h>
+#endif
+
+#include "richtext.h"
 
 static const char* publisherExamples[] = {
     "<b>Publisher Example 1:</b><br>"
@@ -23,7 +29,7 @@ static const char* publisherExamples[] = {
 
     "<pre>ORTEInit();<br>"
     "d=<b>ORTEDomainAppCreate</b>(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);<br>"
-    "<b>ORTETypeRegisterAdd</b>(d,\"HelloMsg\",NULL,NULL,64);<br>"
+    "<b>ORTETypeRegisterAdd</b>(d,\"HelloMsg\",NULL,NULL,NULL,64);<br>"
     "NTPTIME_BUILD(persistence,3);<br>"
     "p=<b>ORTEPublicationCreate</b>(<br>"
     "     d,<br>"
@@ -54,7 +60,7 @@ static const char* subscriberExamples[] = {
 
     "<pre>ORTEInit();<br>"
     "d=<b>ORTEDomainAppCreate</b>(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);<br>"
-    "<b>ORTETypeRegisterAdd</b>(d,\"HelloMsg\",NULL,NULL,64);<br>"
+    "<b>ORTETypeRegisterAdd</b>(d,\"HelloMsg\",NULL,NULL,NULL,64);<br>"
     "NTPTIME_BUILD(persistence,3);<br>"
     "s=<b>ORTESubscriptionCreate</b>(<br>"
     "    d,<br>"
@@ -66,7 +72,8 @@ static const char* subscriberExamples[] = {
     "    &deadline,              /* Deadline */<br>"
     "    &minimumSeparation,     /* Minimum Separation */<br>"
     "    recvCallBack,           /* CallBack function */<br>"
-    "    NULL);<br><br>"
+    "    NULL,<br>"
+    "    IPADDRESS_INVALID);<br><br>"
     "void <b>recvCallBack</b>(const ORTERecvInfo *info,<br>"
     "                  void *vinstance, void *recvCallBackParam) {<br>"
     "  char *instance=(char*)vinstance;<br><br>"
@@ -104,7 +111,7 @@ MyRichText::MyRichText( QWidget *parent, const char *name )
     if ( paper.pixmap() != 0 )
 	view->setPaper( paper );
     else
-	view->setPaper( white );
+	view->setPaper( Qt::white );
 
     view->setMinimumSize( 500, 250 );
 

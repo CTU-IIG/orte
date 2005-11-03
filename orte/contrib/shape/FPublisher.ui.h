@@ -9,6 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <qtimer.h> 
+#include <qapplication.h>
+#if (QT_VERSION-0 >= 0x040000)
+#include <QCloseEvent>
+#endif
+
+extern QApplication *a;
 
 void FPublisher::init()
 {
@@ -73,6 +79,7 @@ void FPublisher::destroy()
 
 void FPublisher::Timer()
 {
+    a->lock();
     if(rect.left()<=0) incx=stepx;
     if(rect.top()<=0) incy=stepy;
     if((rect.right())>=view->width()) incx=-stepx;
@@ -91,6 +98,7 @@ void FPublisher::Timer()
     boxType.rectangle.bottom_right_x=rect.right();
     boxType.rectangle.bottom_right_y=rect.bottom();
     ORTEPublicationSend(publisher);    
+    a->unlock();
 }
 
 
@@ -99,7 +107,9 @@ void FPublisher::strengthChanged()
     ORTEPublProp  pp;
     
     if (!publisher) return;
+    a->lock();
     ORTEPublicationPropertiesGet(publisher,&pp);
     pp.strength=slider->value();
     ORTEPublicationPropertiesSet(publisher,&pp);
+    a->unlock();
 }

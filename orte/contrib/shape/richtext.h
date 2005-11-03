@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.h,v 1.4 2004/04/20 08:37:21 smolik Exp $
+** $Id: richtext.h,v 1.5 2005/11/03 09:27:47 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
@@ -11,7 +11,16 @@
 #ifndef RICHTEXT_H
 #define RICHTEXT_H
 
+#include <qglobal.h>
+
+#if (QT_VERSION-0 >= 0x040000)
+#define QVBox Q3VBox
+#define QHBox Q3HBox
+#define QTextView Q3TextView
+#include <q3vbox.h>
+#else
 #include <qvbox.h>
+#endif
 
 class QTextView;
 class QPushButton;

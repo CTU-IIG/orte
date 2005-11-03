@@ -5,6 +5,11 @@
 ****************************************************************/
 
 #include "MyQFrame.h"
+#if (QT_VERSION-0 >= 0x040000)
+#include <QPolygon>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#endif
 
 MyQFrame::MyQFrame( QWidget *parent, const char *name )
         : QFrame( parent, name )
@@ -30,12 +35,12 @@ void MyQFrame::activateObject(int object,int color, int shape) {
 void MyQFrame::deactivateObject(int object) {
     if (object>4) return;
     objects[object]=0;
-    repaint();
+    update();
 }
 
 void MyQFrame::setPosition(int object,QRect position) {
     positions[object]=position;
-    repaint();
+    update();
 }
 
 void MyQFrame::paintEvent(QPaintEvent*)
@@ -45,7 +50,7 @@ void MyQFrame::paintEvent(QPaintEvent*)
     for(int i=0;i<5;i++) {
 	if (!objects[i]) continue;
 	p.setBrush(colors[i]);
-	p.setPen(NoPen);
+	p.setPen(Qt::NoPen);
   	switch(shapes[i]){
 	    case 0://rectangle
 		p.drawRect(positions[i]);
@@ -54,7 +59,11 @@ void MyQFrame::paintEvent(QPaintEvent*)
 		p.drawEllipse(positions[i]);
 		break;
 	    case 2: //triangle
+#if (QT_VERSION-0 >= 0x040000)
+		QPolygon pt;
+#else
 		QPointArray pt(3);
+#endif
 		pt.putPoints(0,3, positions[i].center().x(),positions[i].top(), 
 		                  positions[i].right(),positions[i].bottom(), 
 				  positions[i].left(),positions[i].bottom());

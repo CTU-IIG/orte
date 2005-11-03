@@ -10,10 +10,16 @@
 #include <qapplication.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <qptrlist.h>
 #include "FPublisher.h"
 #include "FSubscriber.h"
 #include "richtext.h"
+#if (QT_VERSION-0 >= 0x040000)
+#include <QCloseEvent>
+#include <QPixmap>
+#include <q3ptrlist.h>
+#else
+#include <qptrlist.h>
+#endif
 
 
 void MainForm::addPublisher()
@@ -23,6 +29,9 @@ void MainForm::addPublisher()
     fp = new FPublisher;
     connect( this, SIGNAL( sigClose() ), fp, SLOT( destroy() ) );
     fp->initPublisher(publGroup->id(publGroup->selected()),rand()%3);
+#if (QT_VERSION-0 >= 0x040000)
+    fp->setWindowIcon(QPixmap("FPublisherIcon.png"));
+#endif
     fp->show();
 }
 
@@ -37,6 +46,9 @@ void MainForm::addSubscriber()
         clRed->isChecked(),
         clBlack->isChecked(),
         clYellow->isChecked());
+#if (QT_VERSION-0 >= 0x040000)
+    fs->setWindowIcon(QPixmap("FSubscriberIcon.png"));
+#endif    
     fs->show();
 }
 

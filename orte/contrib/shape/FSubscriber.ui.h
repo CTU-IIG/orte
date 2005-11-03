@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <qtimer.h> 
 #include <qapplication.h>
+#if (QT_VERSION-0 >= 0x040000)
+#include <QCloseEvent>
+#endif
 
 extern QApplication *a;
 
@@ -32,7 +35,6 @@ void FSubscriber::destroy()
     if (domain) {
       ORTEDomainAppDestroy(domain);
       domain=NULL;
-      pthread_mutex_destroy(&mutex);
     }
 }
 
@@ -41,7 +43,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   BoxType *boxType=(BoxType*)vinstance;
   FSubscriber *s=(FSubscriber*)recvCallBackParam;
   QRect   rect;
-
 
   a->lock();
   switch (info->status) {

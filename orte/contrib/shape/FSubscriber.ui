@@ -200,7 +200,6 @@
 </connections>
 <includes>
     <include location="global" impldecl="in declaration">orte.h</include>
-    <include location="global" impldecl="in declaration">pthread.h</include>
     <include location="local" impldecl="in declaration">BoxType.h</include>
     <include location="local" impldecl="in implementation">FSubscriber.ui.h</include>
 </includes>
@@ -221,7 +220,6 @@
     <variable>NtpTime msRed;</variable>
     <variable>NtpTime msBlack;</variable>
     <variable>NtpTime msYellow;</variable>
-    <variable access="public">pthread_mutex_t mutex;</variable>
 </variables>
 <slots>
     <slot access="protected">init()</slot>
