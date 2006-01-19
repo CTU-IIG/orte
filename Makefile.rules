@@ -112,10 +112,12 @@ include $(SOURCES_DIR)/Makefile.omk
 OMK_INCLUDED := 1
 endif
 
-# Check for target
-OS_TARGET = linux
-ifeq ($(OS),Windows_NT)
-  OS_TARGET = win32
+ifeq ($(OS_TARGET),)
+  # Check for target
+  OS_TARGET = linux
+  ifeq ($(OS),Windows_NT)
+    OS_TARGET = win32
+  endif
 endif
 
 export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
@@ -139,14 +141,11 @@ LOADLIBES += $(lib_LOADLIBES:%=-l%)
 LIB_CPPFLAGS += $(CPPFLAGS)
 LIB_CFLAGS   += $(CFLAGS)
 
-SOLIB_PICFLAGS += -shared 
-ifeq ($(OS_TARGET),linux)
-  SOLIB_PICFLAGS += -fpic
-endif
-
-SOLIB_EXT = so
 ifeq ($(OS_TARGET),win32)
   SOLIB_EXT = dll
+else
+  SOLIB_EXT = so
+  SOLIB_PICFLAGS += -fpic
 endif
 
 ifndef RELATIVE_DIR
@@ -164,8 +163,6 @@ override BACK2TOP_DIR := $(shell echo $(RELATIVE_DIR)/ | sed -e 's_//_/_g' -e 's
 
 override RELATIVE_PREFIX := $(RELATIVE_DIR)/
 override RELATIVE_PREFIX := $(RELATIVE_PREFIX:/%=%)
-
-#$(warning RELATIVE_PREFIX = $(RELATIVE_PREFIX))
 
 #vpath %.c $(SOURCES_DIR)
 #vpath %.cc $(SOURCES_DIR)
@@ -428,7 +425,7 @@ include $(KERN_LIB_DIR)/kernel.mk
 ifeq ($(LINUX_SRC),)
 LINUX_SRC = $(LINUX_DIR)
 endif
-kernel_INCLUDES += -idirafter $(LINUX_SRC)/include/linux
+kernel_INCLUDES += -I $(LINUX_DIR) -idirafter $(LINUX_SRC)/include/linux
 
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
@@ -680,7 +677,8 @@ library-pass binary-pass utils-pass:
 		if [ "$@" != "binary-pass" ] ; then exit 0 ; fi ; \
 		if [ ! -e $(SOURCES_DIR)/$(dir)/Makefile ] ; then  \
 		( cd $(SOURCES_DIR)/$(dir) ; $$QTDIR/bin/qmake TOP_DIR=$(MAKERULES_DIR) \
-		     RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) || exit 1 ;) ; fi ; \
+		     RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) QTDIR=$(QTDIR) CC=$(CC) \
+		     CXX=$(CXX) || exit 1 ;) ; fi ; \
 		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
 		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(SOURCES_DIR)/$(dir) \
 		-f $(SOURCES_DIR)/$(dir)/Makefile || exit 1 ;)
