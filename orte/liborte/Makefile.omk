@@ -1,10 +1,10 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE=y
 default_CONFIG += CONFIG_OC_ETH_ORTE_SOLIB=n
 
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
 renamed_include_HEADERS = \
 ../contrib/win_pthread/pthread.dll->../lib/pthread.dll
-endif #OS_TARGET
+endif #TARGET_OS
 
 INCLUDES = -I $(srcdir)/../include
 
@@ -61,9 +61,9 @@ endif #CONFIG_OC_ETH_ORTE
 ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
 shared_LIBRARIES = orte
 lib_LOADLIBES = pthread
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
 lib_LOADLIBES += ws2_32
-endif #OS_TARGET
+endif #TARGET_OS
 endif #CONFIG_OC_ETH_ORTE_SOLIB
 
 #############################################################################

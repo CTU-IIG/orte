@@ -5,9 +5,9 @@ utils_PROGRAMS = m_subscriber
 m_subscriber_SOURCES = m_subscriber.c
 
 lib_LOADLIBES =  orte pthread
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
 lib_LOADLIBES +=  ws2_32
-endif #OS_TARGET
+endif #TARGET_OS
 
 endif #CONFIG_OC_ETH_ORTE_EXAMPLES
 

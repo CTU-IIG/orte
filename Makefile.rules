@@ -35,7 +35,7 @@
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
 #CONFIG_RTLINUX = y
-#OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
+#OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../.. ; pwd -L ) )
 -include $(MAKERULES_DIR)/OCERA_TOP_DIR
 
 BUILD_DIR_NAME = _build
@@ -112,17 +112,16 @@ include $(SOURCES_DIR)/Makefile.omk
 OMK_INCLUDED := 1
 endif
 
-ifeq ($(OS_TARGET),)
+ifeq ($(TARGET_OS),)
   # Check for target
-  OS_TARGET = linux
   ifeq ($(OS),Windows_NT)
-    OS_TARGET = win32
+    TARGET_OS = win32
   endif
 endif
 
 export SOURCES_DIR MAKERULES_DIR RELATIVE_DIR LINUX_DIR LINUX_VERSION RTL_DIR
 export CONFIG_FILE OMK_SERIALIZE_INCLUDED OMK_VERBOSE OMK_SILENT
-export OS_TARGET
+export TARGET_OS
 
 #CFLAGS += -ggdb
 CFLAGS += -O2 
@@ -141,7 +140,7 @@ LOADLIBES += $(lib_LOADLIBES:%=-l%)
 LIB_CPPFLAGS += $(CPPFLAGS)
 LIB_CFLAGS   += $(CFLAGS)
 
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
   SOLIB_EXT = dll
 else
   SOLIB_EXT = so
@@ -257,6 +256,9 @@ check-make-ver:
 
 ifdef USER_RULE_TEMPLATES
 
+USER_SOURCES2OBJS = .o/.c .o/.cc .o/.cxx .o/.o
+
+USER_SOURCES2OBJSLO = .lo/.c .lo/.cc .lo/.cxx .lo/.lo
 
 #%.lo: %.c
 #	$(CC) -o $@ $(LCFLAGS) -c $<
@@ -281,10 +283,9 @@ CC_DEPFLAGS = -MT $@ -MD -MP -MF "$@.d.tmp"
 endif
 
 
-
-
+# Syntax: $(call COMPILE_c_o_template,<source>,<target>,<additional c-flags>)
 define COMPILE_c_o_template
-$(2): $(1) $(LOCAL_CONFIG_H)
+$(2): $(1) $(LOCAL_CONFIG_H) $$(GEN_HEADERS)
 	@$(QUIET_CMD_ECHO) "  CC      $$@"
 	$(Q) if $$(c_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
@@ -293,9 +294,9 @@ $(2): $(1) $(LOCAL_CONFIG_H)
 endef
 
 
-
+# Syntax: $(call COMPILE_cc_o_template,<source>,<target>,<additional c-flags>)
 define COMPILE_cc_o_template
-$(2): $(1) $(LOCAL_CONFIG_H)
+$(2): $(1) $(LOCAL_CONFIG_H) $$(GEN_HEADERS)
 	@$(QUIET_CMD_ECHO) "  CXX     $$@"
 	$(Q) if $$(cc_o_COMPILE) $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
 	then mv -f "$$@.d.tmp" "$$@.d" ; \
@@ -303,23 +304,61 @@ $(2): $(1) $(LOCAL_CONFIG_H)
 	fi
 endef
 
+
+# Syntax: $(call COMPILE_S_o_template,<source>,<target>,<additional c-flags>)
+define COMPILE_S_o_template
+$(2): $(1) $(LOCAL_CONFIG_H) $$(GEN_HEADERS)
+        @$(QUIET_CMD_ECHO) "  AS      $$@"
+        $(Q) if $$(S_o_COMPILE) -D__ASSEMBLY__ $$(CC_DEPFLAGS) $(3) -o $$@ -c $$< ; \
+        then if [ -e "$$@.d.tmp" ] ; then mv -f "$$@.d.tmp" "$$@.d" ; fi ; \
+        else rm -f "$$@.d.tmp" ; exit 1; \
+        fi
+endef
+
+
+# Syntax: $(call CMETRIC_o_h_template,<object_file>,<target_header>)
+define CMETRIC_o_h_template
+$(2): $(1)
+	@$(QUIET_CMD_ECHO) "  CMETRIC $$@"
+	$(Q)if [ -n `dirname $$@` ] ; then \
+	      if [ ! -e `dirname $$@` ] ; then \
+	        mkdir -p `dirname $$@` ; fi ; fi
+	$(Q)echo >$$@ '/* Automatically generated from $$< */'
+	$(Q)echo >>$$@ '/* Conditionals to control compilation */'
+	$(Q)set -o pipefail ; $(NM) $$< \
+		| sed -n 's/^ *0*\(0[0-9A-Fa-f]*\) *A *_cmetric2cond_\([A-Za-z_0-9]*\) */#define \2 0x\1/p'
+		| sort >>$$@
+	$(Q)echo >>$$@ '/* Defines from the values defined to symbols */'
+	$(Q)set -o pipefail ; $(NM) $$< \
+		| sed -n 's/^ *0*\(0[0-9A-Fa-f]*\) *A *_cmetric2def_\([A-Za-z_0-9]*\) */#define \2 0x\1/p' \
+		| sort >>$$@
+endef
+
+
+
 define COMPILE_idl_template
-$(2).c $(2).h: $(1)
+$(2).c $(2)-stubs.c $(2)-skels.c $(2)-common.c $(2).h: $(1)
 	@$(QUIET_CMD_ECHO) "  IDL     $$@"
 	$(Q) $$(idl_COMPILE) $(1)
 endef
 
 
+# Syntax: $(call PROGRAM_template,<dir>,<executable-name>,<executable-suffix>,<linker-sript>)
 define PROGRAM_template
 
-USER_IDLS  += $$($(1)_IDL) 
-$(1)_OBJS += $$(filter %.o,$$($(1)_IDL:%.idl=%.o))
-USER_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+USER_IDLS  += $$($(1)_SERVER_IDL) $$($(1)_CLIENT_IDL) $$($(1)_IDL)
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_SERVER_IDL:%.idl=%-skels.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_SERVER_IDL:%.idl=%-common.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_CLIENT_IDL:%.idl=%-stubs.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_CLIENT_IDL:%.idl=%-common.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+USER_GEN_SOURCES += $$($(1)_GEN_SOURCES)
 
-$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
-$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
-$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
-$(1)_OBJS := $$(sort $$($(1)_OBJS))
+$(foreach x, $(USER_SOURCES2OBJS),
+$(1)_OBJS += $$(patsubst %$(notdir $(x)),%$(dir $(x)),$$(filter %$(notdir $(x)),\
+		$$($(1)_SOURCES) $$($(1)_GEN_SOURCES)))
+)
+$(1)_OBJS := $$(sort $$($(1)_OBJS:%/=%))
 
 USER_OBJS  += $$($(1)_OBJS)
 USER_SOURCES += $$($(1)_SOURCES)
@@ -334,17 +373,22 @@ $(2)/$(1): $$($(1)_OBJS)
 endef
 
 
-
+# Syntax: $(call LIBRARY_template,<library-name>)
 define LIBRARY_template
 
-USER_IDLS  += $$($(1)_IDL) 
-$(1)_OBJS += $$(filter %.o,$$($(1)_IDL:%.idl=%.o))
-USER_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+USER_IDLS  += $$($(1)_SERVER_IDL) $$($(1)_CLIENT_IDL) $$($(1)_IDL)
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_SERVER_IDL:%.idl=%-skels.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_SERVER_IDL:%.idl=%-common.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_CLIENT_IDL:%.idl=%-stubs.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_CLIENT_IDL:%.idl=%-common.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+USER_GEN_SOURCES += $$($(1)_GEN_SOURCES)
 
-$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
-$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
-$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
-$(1)_OBJS := $$(sort $$($(1)_OBJS))
+$(foreach x, $(USER_SOURCES2OBJS),
+$(1)_OBJS += $$(patsubst %$(notdir $(x)),%$(dir $(x)),$$(filter %$(notdir $(x)),\
+		$$($(1)_SOURCES) $$($(1)_GEN_SOURCES)))
+)
+$(1)_OBJS := $$(sort $$($(1)_OBJS:%/=%))
 
 USER_OBJS  += $$($(1)_OBJS)
 USER_SOURCES += $$($(1)_SOURCES)
@@ -355,33 +399,54 @@ $(USER_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
 endef
 
 
-
+# Syntax: $(call SOLIB_template,<library-name>)
 define SOLIB_template
 
-USER_IDLS  += $$($(1)_IDL) 
-$(1)_OBJSLO += $$(filter %.lo,$$($(1)_IDL:%.idl=%.lo))
-SOLIB_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+USER_IDLS  += $$($(1)_SERVER_IDL) $$($(1)_CLIENT_IDL) $$($(1)_IDL)
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_SERVER_IDL:%.idl=%-skels.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_SERVER_IDL:%.idl=%-common.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_CLIENT_IDL:%.idl=%-stubs.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_CLIENT_IDL:%.idl=%-common.c))
+$(1)_GEN_SOURCES += $$(filter %.c,$$($(1)_IDL:%.idl=%.c))
+SOLIB_GEN_SOURCES += $$($(1)_GEN_SOURCES)
 
-$(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.c=%.lo))
-$(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cc=%.lo))
-$(1)_OBJSLO += $$(filter %.lo,$$($(1)_SOURCES:%.cxx=%.lo))
-$(1)_OBJSLO := $$(sort $$($(1)_OBJSLO))
+$(foreach x, $(USER_SOURCES2OBJSLO),
+$(1)_OBJSLO += $$(patsubst %$(notdir $(x)),%$(dir $(x)),$$(filter %$(notdir $(x)),\
+		$$($(1)_SOURCES) $$($(1)_GEN_SOURCES)))
+)
+$(1)_OBJSLO := $$(sort $$($(1)_OBJSLO:%/=%))
 
 SOLIB_OBJS  += $$($(1)_OBJSLO)
 SOLIB_SOURCES += $$($(1)_SOURCES)
 
 $(USER_LIB_DIR)/lib$(1).$(SOLIB_EXT): $$($(1)_OBJSLO)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
-	$(Q) $(LD) --shared --soname=lib$(1).$(SOLIB_EXT) -o $$@ $$^ $(LOADLIBES) 
+	$(Q) $(LD) --shared --soname=lib$(1).$(SOLIB_EXT) -o $$@ $$^
 endef
 
 
 
-library-pass-local: $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(USER_LIB_DIR)/lib%.$(SOLIB_EXT))
+library-pass-local: $(addprefix $(USER_INCLUDE_DIR)/,$(cmetric_include_HEADERS)) \
+		    $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(USER_LIB_DIR)/lib%.$(SOLIB_EXT))
 
 binary-pass-local: $(bin_PROGRAMS:%=$(USER_BIN_DIR)/%)
 
 utils-pass-local: $(utils_PROGRAMS:%=$(USER_UTILS_DIR)/%)
+
+# Special rules for CMETRIC generated headers
+
+$(foreach cmetrh,$(cmetric_include_HEADERS),$(eval $(call COMPILE_c_o_template,\
+		$(SOURCES_DIR)/$($(basename $(notdir $(cmetrh)))_CMETRIC_SOURCES),\
+		$($(basename $(notdir $(cmetrh)))_CMETRIC_SOURCES:%.c=%.o),)))
+$(foreach cmetrh,$(cmetric_include_HEADERS),$(eval $(call CMETRIC_o_h_template,\
+		$($(basename $(notdir $(cmetrh)))_CMETRIC_SOURCES:%.c=%.o),\
+		$(addprefix $(USER_INCLUDE_DIR)/,$(cmetrh)))))
+
+GEN_HEADERS+=$(cmetric_include_HEADERS:%=$(USER_INCLUDE_DIR)/%)
+
+GEN_HEADERS+=$(filter %.h,$(USER_IDLS:%.idl=%.h))
+
+# Generate rules for compilation of programs and libraries
 
 $(foreach prog,$(utils_PROGRAMS),$(eval $(call PROGRAM_template,$(prog),$(USER_UTILS_DIR))))
 
@@ -787,8 +852,6 @@ $(foreach src,$(filter %.c,$(SOLIB_GEN_SOURCES)),$(eval $(call COMPILE_c_o_templ
 # IDL compilation
 
 USER_IDLS := $(sort $(USER_IDLS))
-
-#$(warning USER_IDLS = $(USER_IDLS))
 
 $(foreach src,$(filter %.idl,$(USER_IDLS)),$(eval $(call COMPILE_idl_template,$(SOURCES_DIR)/$(src),$(src:%.idl=%))))
 

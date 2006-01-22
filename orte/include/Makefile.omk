@@ -7,12 +7,12 @@ ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
 endif
 
 ifeq ($(ORTE_ENABLE),y)
-ifeq ($(OS_TARGET),linux)
+ifeq ($(TARGET_OS),linux)
 renamed_include_HEADERS = \
 orte/orte_config_omk_linux.h->orte/orte_config.h
 endif
 
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
 renamed_include_HEADERS = \
 orte/orte_config_omk_win32.h->orte/orte_config.h
 endif

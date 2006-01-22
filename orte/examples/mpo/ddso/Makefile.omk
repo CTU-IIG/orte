@@ -9,9 +9,9 @@ shared_LIBRARIES = ddso
 bin_PROGRAMS = ddsop ddsos
 
 lib_LOADLIBES =  orte pthread ddso
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
 lib_LOADLIBES +=  ws2_32
-endif #OS_TARGET
+endif #TARGET_OS
 
 ddso_SOURCES = ddso_cb.c 
 ddso_IDL = ddso.idl

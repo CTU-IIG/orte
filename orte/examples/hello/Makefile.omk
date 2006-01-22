@@ -7,9 +7,9 @@ h_publisher_SOURCES = h_publisher.c
 h_subscriber_SOURCES = h_subscriber.c
 
 lib_LOADLIBES =  orte pthread
-ifeq ($(OS_TARGET),win32)
+ifeq ($(TARGET_OS),win32)
 lib_LOADLIBES +=  ws2_32
-endif #OS_TARGET
+endif #TARGET_OS
 
 endif #CONFIG_OC_ETH_ORTE_EXAMPLES
 
