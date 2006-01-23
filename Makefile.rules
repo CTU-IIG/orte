@@ -116,6 +116,9 @@ ifeq ($(TARGET_OS),)
   # Check for target
   ifeq ($(OS),Windows_NT)
     TARGET_OS = win32
+  else
+    TARGET_OS = $(shell uname | tr [:upper:] [:lower:] )
+    #$(warning TARGET_OS=$(TARGET_OS))
   endif
 endif
 
