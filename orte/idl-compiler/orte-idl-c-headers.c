@@ -290,6 +290,10 @@ ch_output_type_dcl(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
 			fprintf (ci->fh, "#define %s_deserialize(x) ", ctmp);
 			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
 			fprintf (ci->fh, "_deserialize(x)\n");
+
+                        fprintf(ci->fh, "#define %s_get_max_size(x) ", ctmp);
+			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
+			fprintf (ci->fh, "_get_max_size(x)\n");
 			break;
 		case IDLN_TYPE_ARRAY: {
 			IDL_tree sub;
