@@ -69,29 +69,33 @@ case $LINUX_VERSION_MAJOR.$LINUX_VERSION_MINOR in
 	rm -f ${KERN_BUILD_DIR}/kernel.mk
 	rm -rf ${KERN_TEST_DIR}
 	mkdir ${KERN_TEST_DIR}
+	if [ $? -ne 0 ] ; then
+		echo "Cannot create Linux kernel test build directory \"${KERN_TEST_DIR}\""
+		exit 3
+	fi
 	cd ${KERN_TEST_DIR}
 
 	cat >${KERN_TEST_DIR}/Makefile <<EOF
 
 .PHONY: modules
 modules:
-	echo LINUX_ARCH="\$(ARCH)" >>flags
-	echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>flags
-	echo LINUX_LDFLAGS="" >>flags
-	echo LINUX_ARFLAGS="\$(ARFLAGS)" >>flags
-	echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>flags
-	echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>flags
-	echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>flags
-	echo LINUX_MODFLAGS="\$(MODFLAGS)"
-	echo LINUX_CC="\$(CC)" >>flags
-	echo LINUX_LD="\$(LD) \$(LDFLAGS)" >>flags
-	echo LINUX_AS="\$(AS)" >>flags
-	echo LINUX_AR="\$(AR)" >>flags
-	echo LINUX_MODULE_EXT=".o" >>flags
+	@echo LINUX_ARCH="\$(ARCH)" >>flags
+	@echo LINUX_LDFLAGS="" >>flags
+	@echo LINUX_ARFLAGS="\$(ARFLAGS)" >>flags
+	@echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>flags
+	@echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>flags
+	@echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's#Iinclude#I"\$(LINUXDIR)/include"#g'>>flags
+	@echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's#Iinclude#I"\$(LINUXDIR)/include"#g'>>flags
+	@echo LINUX_MODFLAGS="\$(MODFLAGS)"
+	@echo LINUX_CC="\$(CC)" >>flags
+	@echo LINUX_LD="\$(LD) \$(LDFLAGS)" >>flags
+	@echo LINUX_AS="\$(AS)" >>flags
+	@echo LINUX_AR="\$(AR)" >>flags
+	@echo LINUX_MODULE_EXT=".o" >>flags
 
 EOF
 
-	echo ${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} modules
+	#echo ${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} modules
 	${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} modules
 	if [ $? == 0 ] ; then
 		cp -v flags ${KERN_MODULES_DIR}/kernel.mk	
@@ -114,6 +118,10 @@ EOF
 	rm -f ${KERN_BUILD_DIR}/kernel.mk
 	rm -rf ${KERN_TEST_DIR}
 	mkdir ${KERN_TEST_DIR}
+	if [ $? -ne 0 ] ; then
+		echo "Cannot create Linux kernel test build directory \"${KERN_TEST_DIR}\""
+		exit 3
+	fi
 	cd ${KERN_TEST_DIR}
 
 	cat >${KERN_TEST_DIR}/Makefile <<EOF
@@ -122,26 +130,36 @@ obj-m += fake.o
 \$(obj)/fake.c: flags
 	touch \$(obj)/fake.c
 
+ifeq (\$(KBUILD_SRC),)
+OMK_LINUX_SRC = \$(LINUXDIR)
+else
+OMK_LINUX_SRC = \$(KBUILD_SRC)
+endif
+#\$(warning Test \$OMK_LINUX_SRC)
+
 .PHONY: flags
 flags:
-	echo LINUX_ARCH="\$(ARCH)" >>\$(obj)/flags
-	echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>\$(obj)/flags
-	echo LINUX_LDFLAGS="" >>\$(obj)/flags
-	echo LINUX_ARFLAGS="\$(ARFLAGS)" >>\$(obj)/flags
-	echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>\$(obj)/flags
-	echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>\$(obj)/flags
-	echo LINUX_CPPFLAGS="\$(CPPFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>\$(obj)/flags
-	echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's_Iinclude_I"\$(LINUXDIR)/include"_g'>>\$(obj)/flags
-	echo LINUX_CFLAGS_MODULE="\$(CFLAGS_MODULE)" >>\$(obj)/flags
-	echo LINUX_CC="\$(CC)" >>\$(obj)/flags
-	echo LINUX_LD="\$(LD) \$(LDFLAGS) \$(LDFLAGS_MODULE)" >>\$(obj)/flags
-	echo LINUX_AS="\$(AS)" >>\$(obj)/flags
-	echo LINUX_AR="\$(AR)" >>\$(obj)/flags
-	echo LINUX_MODULE_EXT=".ko" >>\$(obj)/flags
+	@echo LINUX_SRC="\$(OMK_LINUX_SRC)" >>\$(obj)/flags
+	@echo LINUX_ARCH="\$(ARCH)" >>\$(obj)/flags
+	@echo LINUX_LDFLAGS="" >>\$(obj)/flags
+	@echo LINUX_ARFLAGS="\$(ARFLAGS)" >>\$(obj)/flags
+	@echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>\$(obj)/flags
+	@echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>\$(obj)/flags
+	@echo LINUX_CPPFLAGS="\$(CPPFLAGS)" | sed 's#Iinclude#I"\$(LINUXDIR)/include"#g'>>\$(obj)/flags
+	@echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's#Iinclude#I"\$(OMK_LINUX_SRC)/include"#g'>>\$(obj)/flags
+	@echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's#Iinclude#I"\$(OMK_LINUX_SRC)/include"#g'>>\$(obj)/flags
+	@echo LINUX_CFLAGS_MODULE="\$(CFLAGS_MODULE)" >>\$(obj)/flags
+	@echo LINUX_CC="\$(CC)" >>\$(obj)/flags
+	@echo LINUX_LD="\$(LD) \$(LDFLAGS) \$(LDFLAGS_MODULE)" >>\$(obj)/flags
+	@echo LINUX_AS="\$(AS)" >>\$(obj)/flags
+	@echo LINUX_AR="\$(AR)" >>\$(obj)/flags
+	@echo LINUX_MODULE_EXT=".ko" >>\$(obj)/flags
+	@echo LINUX_QUOTE_MODNAME=\$(if \$(findstring KBUILD_STR,\$(basename_flags)),y,) >>\$(obj)/flags
 EOF
 
-	echo ${MAKE} -C ${LINUX_DIR} V=1 SUBDIRS=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR} modules
-	${MAKE} -C ${LINUX_DIR} V=1 SUBDIRS=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR} modules
+	#  V=1
+	#echo ${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR} modules
+	${MAKE} -C ${LINUX_DIR} M=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR}/modver modules
 	#if [ $? == 0 ] ; then
 		cp -v flags ${KERN_MODULES_DIR}/kernel.mk	
 		if [ ! $? == 0 ] ; then
