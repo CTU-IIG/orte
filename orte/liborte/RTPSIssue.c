@@ -122,7 +122,7 @@ RTPSIssue(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress sende
         if (cstReader->cstRemoteWriterSubscribed!=NULL) {
           pps=(ORTEPublProp*)cstReader->cstRemoteWriterSubscribed->
                             spobject->attributes;
-          if (pp->strength>pps->strength) {
+          if ((pp->strength>pps->strength) || (NtpTimeCmp(pps->persistence,zNtpTime)==0)) {
             cstReader->cstRemoteWriterSubscribed=cstRemoteWriter;
           }
         } else {
