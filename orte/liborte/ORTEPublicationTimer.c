@@ -29,17 +29,19 @@ PublicationCallBackTimer(ORTEDomain *d,void *vcstWriter) {
   ORTESendInfo     info;  
   
   pp=(ORTEPublProp*)cstWriter->objectEntryOID->attributes;
-  info.status=NEED_DATA;
-  info.topic=pp->topic;
-  info.type=pp->typeName;
-  info.senderGUID=cstWriter->objectEntryOID->guid;
-  cstWriter->objectEntryOID->sendCallBack(&info,
+  CSTWriterTryDestroyBestEffortIssue(cstWriter);
+
+  if (cstWriter->csChangesCounter<pp->sendQueueSize) {
+    info.status=NEED_DATA;
+    info.topic=pp->topic;
+    info.type=pp->typeName;
+    info.senderGUID=cstWriter->objectEntryOID->guid;
+    cstWriter->objectEntryOID->sendCallBack(&info,
                           cstWriter->objectEntryOID->instance,
                           cstWriter->objectEntryOID->callBackParam);
-  CSTWriterTryDestroyBestEffortIssue(cstWriter);
-  if (cstWriter->csChangesCounter<pp->sendQueueSize) {
     ORTEPublicationSendLocked(cstWriter,NULL);
   }
+
   eventAdd(d,
       cstWriter->objectEntryOID->objectEntryAID,
       &cstWriter->objectEntryOID->sendCallBackDelayTimer,
