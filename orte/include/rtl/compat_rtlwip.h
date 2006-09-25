@@ -3,7 +3,7 @@
  *
  *  AUTHOR: Michal Sojka                sojka1@fel.cvut.cz
  *
- *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/
+ *  ORTE - Open Real-Time Ethernet      http://www.ocera.org/
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify

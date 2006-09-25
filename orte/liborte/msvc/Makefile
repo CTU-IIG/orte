@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------
-# Ocera Real-Time Ethernet
+# Open Real-Time Ethernet
 # Makefile for the liborte library files
 # ---------------------------------------------------------------------
 

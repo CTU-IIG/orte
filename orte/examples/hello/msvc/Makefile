@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------
-# Makefile for the Ocera Real-Time Ethernet
+# Makefile for the Open Real-Time Ethernet
 # ---------------------------------------------------------------------
 
 LIBS=       kernel32.lib \

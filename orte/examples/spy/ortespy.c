@@ -2,9 +2,19 @@
  *  $Id: ortespy.c,v 0.0.0.1            2003/10/07 
  *
  *  DEBUG:  section                     ortespy
- *  AUTHOR: Petr Smolik                 petr.smolik@wo.cz
  *
- *  ORTE - OCERA Real-Time Ethernet     http://www.ocera.org/
+ *  -------------------------------------------------------------------  
+ *                                ORTE                                 
+ *                      Open Real-Time Ethernet                       
+ *                                                                    
+ *                      Copyright (C) 2001-2006                       
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic  
+ *                      http://dce.felk.cvut.cz                       
+ *                      http://www.ocera.org                          
+ *                                                                    
+ *  Author: 		 Petr Smolik	petr.smolik@wo.cz             
+ *  Advisor: 		 Pavel Pisa                                   
+ *  Project Responsible: Zdenek Hanzalek                              
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -144,7 +154,7 @@ int main(int argc,char *argv[]) {
       case 'l':
         ORTEVerbositySetLogFile(optarg);
       case 'V':
-        printf("Ocera Real-Time Ethernet (%s).\n",dp.version);
+        printf("Open Real-Time Ethernet (%s).\n",dp.version);
         exit(0);
         break;
       case 'h':
