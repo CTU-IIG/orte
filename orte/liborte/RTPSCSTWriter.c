@@ -338,76 +338,74 @@ CSTWriterAddCSChange(ORTEDomain *d,CSTWriter *cstWriter,CSChange *csChange) {
     CSChangeForReader_insert(cstRemoteReader,csChangeForReader);
     cstRemoteReader->csChangesCounter++;
     cstRemoteReader->HBRetriesCounter=0;
-    if (cstRemoteReader->commStateSend==NOTHNIGTOSEND) {
-      cstRemoteReader->commStateSend=MUSTSENDDATA;
-      if ((cstWriter->guid.oid & 0x07)!=OID_PUBLICATION) {
+    cstRemoteReader->commStateSend=MUSTSENDDATA;
+    if ((cstWriter->guid.oid & 0x07)!=OID_PUBLICATION) {
+      eventDetach(d,
+          cstRemoteReader->sobject->objectEntryAID,
+          &cstRemoteReader->delayResponceTimer,
+          1);
+      eventAdd(d,
+          cstRemoteReader->sobject->objectEntryAID,
+          &cstRemoteReader->delayResponceTimer,
+          1,   
+          "CSTWriterSendTimer",
+          CSTWriterSendTimer,
+          &cstRemoteReader->cstWriter->lock,
+          cstRemoteReader,
+          NULL);
+    } else {
+      ORTESubsProp *sp=(ORTESubsProp*)cstRemoteReader->pobject->attributes;
+
+      if ((sp->reliabilityRequested & PID_VALUE_RELIABILITY_STRICT)!=0) {
+        //Strict reliable subscription
+        csChange->remoteReaderStrict++;
         eventDetach(d,
             cstRemoteReader->sobject->objectEntryAID,
             &cstRemoteReader->delayResponceTimer,
-            1);
+            2);
         eventAdd(d,
             cstRemoteReader->sobject->objectEntryAID,
             &cstRemoteReader->delayResponceTimer,
-            1,   
-            "CSTWriterSendTimer",
-            CSTWriterSendTimer,
+            2,   
+            "CSTWriterSendStrictTimer",
+            CSTWriterSendStrictTimer,
             &cstRemoteReader->cstWriter->lock,
             cstRemoteReader,
             NULL);
       } else {
-        ORTESubsProp *sp=(ORTESubsProp*)cstRemoteReader->pobject->attributes;
-        
-        if ((sp->reliabilityRequested & PID_VALUE_RELIABILITY_STRICT)!=0) {
-          //Strict reliable subscription
-          csChange->remoteReaderStrict++;
+        if ((sp->reliabilityRequested & PID_VALUE_RELIABILITY_BEST_EFFORTS)!=0) {
+          //best efforts subscription
+          NtpTime nextIssueTime,nextIssueDelay,actTime;
+
+	  actTime=getActualNtpTime();
+          csChange->remoteReaderBest++;
+          NtpTimeAdd(nextIssueTime,
+                    cstRemoteReader->lastSentIssueTime,
+                    sp->minimumSeparation);
+          NtpTimeSub(nextIssueDelay,
+                    nextIssueTime,
+                    actTime);
+          if (NtpTimeCmp(actTime,nextIssueTime)>=0) 
+            NTPTIME_ZERO(nextIssueDelay);
           eventDetach(d,
               cstRemoteReader->sobject->objectEntryAID,
               &cstRemoteReader->delayResponceTimer,
               2);
+          //schedule sent issue 
           eventAdd(d,
               cstRemoteReader->sobject->objectEntryAID,
               &cstRemoteReader->delayResponceTimer,
               2,   
-              "CSTWriterSendStrictTimer",
-              CSTWriterSendStrictTimer,
+              "CSTWriterSendBestEffortTimer",
+              CSTWriterSendBestEffortTimer,
               &cstRemoteReader->cstWriter->lock,
               cstRemoteReader,
-              NULL);
+              &nextIssueDelay);
         } else {
-          if ((sp->reliabilityRequested & PID_VALUE_RELIABILITY_BEST_EFFORTS)!=0) {
-            //best efforts subscription
-            NtpTime nextIssueTime,nextIssueDelay,actTime;
-
-	    actTime=getActualNtpTime();
-            csChange->remoteReaderBest++;
-            NtpTimeAdd(nextIssueTime,
-                      cstRemoteReader->lastSentIssueTime,
-                      sp->minimumSeparation);
-            NtpTimeSub(nextIssueDelay,
-                      nextIssueTime,
-                      actTime);
-            if (NtpTimeCmp(actTime,nextIssueTime)>=0) 
-              NTPTIME_ZERO(nextIssueDelay);
-            eventDetach(d,
-                cstRemoteReader->sobject->objectEntryAID,
-                &cstRemoteReader->delayResponceTimer,
-                2);
-            //schedule sent issue 
-            eventAdd(d,
-                cstRemoteReader->sobject->objectEntryAID,
-                &cstRemoteReader->delayResponceTimer,
-                2,   
-                "CSTWriterSendBestEffortTimer",
-                CSTWriterSendBestEffortTimer,
-                &cstRemoteReader->cstWriter->lock,
-                cstRemoteReader,
-                &nextIssueDelay);
-          } else {
-            //!Best_Effort & !Strict_Reliable
-            CSTWriterDestroyCSChangeForReader(csChangeForReader,
-              ORTE_TRUE);
-            debug(51,5) ("CSTWriterAddCSChange: destroyed\n");	      
-          }
+          //!Best_Effort & !Strict_Reliable
+          CSTWriterDestroyCSChangeForReader(csChangeForReader,
+            ORTE_TRUE);
+          debug(51,5) ("CSTWriterAddCSChange: destroyed\n");	      
         }
       }
     }
