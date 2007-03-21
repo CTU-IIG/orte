@@ -133,6 +133,7 @@ static void usage(void) {
   printf("  -P, --purge <s>               purge time in second(s)\n");
   printf("  -I, --metaMulticast <IPAdd>   use multicast IPAddr for metatraffic comm.\n");
   printf("  -t, --timetolive <number>     time-to-live for multicast packets\n");
+  printf("  -L, --listen <IPAdd>          IP address to listen on\n");
 #ifdef CONFIG_ORTE_UNIX
   printf("  -D, --daemon                  start program like daemon\n");
 #endif
@@ -158,6 +159,7 @@ int main(int argc,char *argv[]) {
     { "purge",1,0, 'P' },
     { "metaMulticast",1,0, 'I' },
     { "timetolive",1,0, 't' },
+    { "listen",1,0, 'L' },
 #ifdef CONFIG_ORTE_UNIX
     { "daemon",1,0, 'D' },
 #endif
@@ -176,9 +178,9 @@ int main(int argc,char *argv[]) {
   ORTEDomainPropDefaultGet(&dp);
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
-  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:I:t:l:VhDesir",&long_opts[0], NULL)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:I:t:L:l:VhDesir",&long_opts[0], NULL)) != EOF) {
 #else
-  while ((opt = getopt(argc, argv, "k:p:d:v:R:E:P:I:t:l:VhDesir")) != EOF) {
+  while ((opt = getopt(argc, argv, "k:p:d:v:R:E:P:I:t:L:l:VhDesir")) != EOF) {
 #endif
     switch (opt) {
       case 'p':
@@ -202,6 +204,9 @@ int main(int argc,char *argv[]) {
       case 'I':
         dp.multicast.enabled=ORTE_TRUE;
         dp.multicast.ipAddress=StringToIPAddress(optarg);
+        break;
+      case 'L':
+        dp.listen=StringToIPAddress(optarg);
         break;
       case 't':
         dp.multicast.ttl=strtol(optarg,NULL,0);

@@ -517,9 +517,10 @@ typedef struct ORTETasksProp {
  * @mgrs: list of known managers 	       
  * @keys: access keys for managers 	       
  * @appLocalManager: IP address of local manager (default localhost)      
- * @version: string product version	       
+ * @listen: IP address to listen on
+ * @version: string product version
  * @recvBuffSize: receiving queue length
- * @sendBuffSize: transmitting queue length	    
+ * @sendBuffSize: transmitting queue length
  */
 typedef struct ORTEDomainProp {
   ORTETasksProp          tasksProp;
@@ -533,6 +534,7 @@ typedef struct ORTEDomainProp {
   char                   *mgrs;                   //managers
   char                   *keys;                   //keys
   IPAddress              appLocalManager;         //applications
+  IPAddress              listen;
   char                   version[60];             //string product version
   int                    recvBuffSize;
   int                    sendBuffSize;      

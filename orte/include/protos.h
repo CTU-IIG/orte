@@ -49,7 +49,7 @@ sock_setsockopt(sock_t *sock,int level,int optname,const char *optval, int optle
 extern int
 sock_getsockopt(sock_t *sock,int level,int optname,char *optval, int *optlen);
 extern int
-sock_bind(sock_t *sock,uint16_t port);
+sock_bind(sock_t *sock,uint16_t port, IPAddress listen);
 extern int
 sock_recvfrom(sock_t *sock, void *buf, int max_len,struct sockaddr_in *des,int des_len);
 extern int

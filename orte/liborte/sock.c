@@ -98,13 +98,13 @@ sock_getsockopt(sock_t *sock,int level,int optname,char *optval, int *optlen) {
 
 /*********************************************************************/
 int
-sock_bind(sock_t *sock,uint16_t port) {
+sock_bind(sock_t *sock,uint16_t port, IPAddress listen) {
   struct sockaddr_in name;
   int size;
 
   name.sin_family = AF_INET;
   name.sin_port = htons(port);
-  name.sin_addr.s_addr = htonl(INADDR_ANY);
+  name.sin_addr.s_addr = htonl(listen);
   if (bind(sock->fd, 
           #ifndef CONFIG_ORTE_RTL_ONETD 
             (struct sockaddr *)

@@ -120,12 +120,13 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
 
   //IFProp
   sock_init_udp(&sock);
-  sock_bind(&sock,0);
+  sock_bind(&sock,0,INADDR_ANY);
   sock_get_local_interfaces(&sock,prop->IFProp,&prop->IFCount);
   sock_cleanup(&sock); 
 
   prop->mgrs=NULL; //only from localhost
   prop->appLocalManager=StringToIPAddress("127.0.0.1");
+  prop->listen=INADDR_ANY;
   prop->keys=NULL; //are assign be orte
   sprintf(prop->version,ORTE_PACKAGE_STRING\
                         ", compiled: "\
@@ -329,10 +330,10 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
                       IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
       }
     }
-    sock_bind(&d->taskRecvUnicastMetatraffic.sock,port); 
+    sock_bind(&d->taskRecvUnicastMetatraffic.sock,port,prop->listen); 
   } else {
     /* give me receiving port (metatraffic) */
-    sock_bind(&d->taskRecvUnicastMetatraffic.sock,0); 
+    sock_bind(&d->taskRecvUnicastMetatraffic.sock,0,prop->listen); 
   }
   debug(30,2) ("ORTEDomainCreate: bind on port(RecvUnicastMetatraffic): %u\n",
                d->taskRecvUnicastMetatraffic.sock.port);
@@ -369,7 +370,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     
     /* receiving multicast port (metatraffic) */
     Domain2PortMulticastMetatraffic(d->domain,mport);
-    sock_bind(&d->taskRecvMulticastMetatraffic.sock,(uint16_t)mport); 
+    sock_bind(&d->taskRecvMulticastMetatraffic.sock,(uint16_t)mport,prop->listen); 
     debug(30,2) ("ORTEDomainCreate: bind on port(RecvMulticastMetatraffic): %u\n",
                   d->taskRecvMulticastMetatraffic.sock.port);
   }
@@ -378,7 +379,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   /* UserData */
   if (!manager) {
     /* give me receiving port (userdata) */
-    sock_bind(&d->taskRecvUnicastUserdata.sock,0); 
+    sock_bind(&d->taskRecvUnicastUserdata.sock,0,prop->listen); 
     debug(30,2) ("ORTEDomainCreate: bind on port(RecvUnicatUserdata): %u\n",
                   d->taskRecvUnicastUserdata.sock.port);
 
@@ -401,7 +402,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       
       /* receiving multicast port (userdata) */
       Domain2PortMulticastUserdata(d->domain,mport);
-      sock_bind(&d->taskRecvMulticastUserdata.sock,(uint16_t)mport); 
+      sock_bind(&d->taskRecvMulticastUserdata.sock,(uint16_t)mport,prop->listen);
       debug(30,2) ("ORTEDomainCreate: bind on port(RecvMulticastUserdata): %u\n",
                     d->taskRecvMulticastUserdata.sock.port);
     }
@@ -410,7 +411,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   /************************************************************************/
   /* Send */
   /* give me sending port */
-  sock_bind(&d->taskSend.sock,0);         
+  sock_bind(&d->taskSend.sock,0,prop->listen);
   debug(30,2) ("ORTEDomainCreate: bind on port(Send): %u\n",
                d->taskSend.sock.port);
   if (d->domainProp.multicast.enabled) {
