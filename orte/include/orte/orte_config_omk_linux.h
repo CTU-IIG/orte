@@ -204,6 +204,12 @@
   #define _GNU_SOURCE
 #endif
 
+#include <endian.h>
+#ifdef __BYTE_ORDER
+#if __BYTE_ORDER == __BIG_ENDIAN
+#define WORDS_BIGENDIAN 1
+#endif
+#endif
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
