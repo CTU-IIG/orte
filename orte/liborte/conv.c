@@ -76,12 +76,15 @@ IPAddressToString(IPAddress ipAddress,char *buff) {
 IPAddress 
 StringToIPAddress(const char *string) {
   IPAddress ipAddress=IPADDRESS_INVALID;
+  in_addr_t inetAddress = inet_addr(string);
   
-  ipAddress=ntohl(inet_addr(string));
+  if(inetAddress!=INADDR_NONE) {
+    ipAddress=ntohl(inetAddress);
+  }
 #if defined HAVE_GETHOSTBYNAME
   {
     struct hostent *hostname; 
-    if (ipAddress==0) {
+    if (ipAddress==IPADDRESS_INVALID) {
       if ((hostname=gethostbyname(string))) {
         ipAddress=ntohl(*((long*)(hostname->h_addr_list[0])));
       }
