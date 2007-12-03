@@ -96,18 +96,18 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
 
   //first case of GAP sn
   if (SeqNumberCmp(*fsn,*sn)<0) {                        //if fsn<sn  
-    if (!CSChangeFromWriter_find(cstRemoteWriter,fsn)) {
-      if (SeqNumberCmp(*fsn,cstRemoteWriter->sn)>0) {    //have to be sn>writer_sn
-        csChange=(CSChange*)MALLOC(sizeof(CSChange));
-        csChange->cdrCodec.buffer=NULL;
-        csChange->sn=*fsn;
-        csChange->guid=*guid;
-        csChange->alive=ORTE_TRUE;
-        SeqNumberSub(csChange->gapSN,*sn,*fsn);         //setup flag GAP
-        CSChangeAttributes_init_head(csChange);
-        CSTReaderAddCSChange(cstRemoteWriter,csChange);
-      }
+    if (CSChangeFromWriter_find(cstRemoteWriter,fsn)) {
+      CSTReaderDestroyCSChange(cstRemoteWriter, 
+                               fsn,ORTE_FALSE);
     }
+    csChange=(CSChange*)MALLOC(sizeof(CSChange));
+    csChange->cdrCodec.buffer=NULL;
+    csChange->sn=*fsn;
+    csChange->guid=*guid;
+    csChange->alive=ORTE_TRUE;
+    SeqNumberSub(csChange->gapSN,*sn,*fsn);            //setup flag GAP
+    CSChangeAttributes_init_head(csChange);
+    CSTReaderAddCSChange(cstRemoteWriter,csChange);
   }
 
   //second case of GAP sn
@@ -195,8 +195,8 @@ RTPSGap(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   writerGUID.aid=mi->sourceAppId;
   writerGUID.oid=woid;
 
-  debug(49,3) ("recv: RTPS_GAP(0x%x) from 0x%x-0x%x\n",
-                woid,mi->sourceHostId,mi->sourceAppId);
+  debug(49,3) ("recv: RTPS_GAP(0x%x) from 0x%x-0x%x fSN:%d, bSN:%d, numbits:%d\n",
+                woid,mi->sourceHostId,mi->sourceAppId,fsn.low,sn.low,numbits);
   
   /* Manager */
   if ((d->guid.aid & 0x03)==MANAGER) {

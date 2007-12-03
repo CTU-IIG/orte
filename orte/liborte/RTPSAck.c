@@ -88,7 +88,7 @@ RTPSAck(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   CSChangeForReader  *csChangeForReader;
   StateMachineSend   stateMachineSendNew;
   ObjectId	     roid,woid;
-  SequenceNumber     sn;   
+  SequenceNumber     sn,isn;   
   char               queue=1;
   CDR_Endianness     data_endian;
   CORBA_octet	     flags;
@@ -202,7 +202,12 @@ RTPSAck(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   stateMachineSendNew=NOTHNIGTOSEND;
   csChangeForReader=CSChangeForReader_first(cstRemoteReader);
   while(csChangeForReader) {
-    if (SeqNumberCmp(csChangeForReader->csChange->sn,sn)<0)   {   //ACK
+    isn=csChangeForReader->csChange->sn;
+    if (SeqNumberCmp(csChangeForReader->csChange->gapSN,noneSN)>0) {
+      SeqNumberAdd(isn,csChangeForReader->csChange->sn,csChangeForReader->csChange->gapSN);
+      SeqNumberDec(isn,isn);
+    }
+    if (SeqNumberCmp(isn,sn)<0)   {   //ACK
       if (csChangeForReader->commStateChFReader!=ACKNOWLEDGED) {
         CSChangeForReader *csChangeForReaderDestroyed;
         csChangeForReaderDestroyed=csChangeForReader;
