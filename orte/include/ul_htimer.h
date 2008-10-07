@@ -123,6 +123,7 @@ cust_prefix##_get_expire(cust_timer_t *timer){\
 void cust_prefix##_init_queue(cust_queue_t *queue)\
 {\
   ul_htim_queue_init_root_field(&queue->cust_queue_field);\
+  queue->cust_queue_field.first_changed=0;\
 }\
 cust_timer_t *cust_prefix##_cut_expired(cust_queue_t *queue, ul_htim_time_t *pact_time)\
 { /*little faster equivalent to ul_htim_queue_first(&queue->cust_queue_field);*/\
