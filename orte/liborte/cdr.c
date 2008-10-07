@@ -337,7 +337,7 @@ CDR_get_string_static(CDR_Codec *codec,CORBA_char **str)
 {
 	CORBA_unsigned_long len;
 
-	if(CDR_get_ulong(codec, &len)==CORBA_FALSE)
+	if(CDR_get_ulong(codec, (CORBA_unsigned_long *)&len)==CORBA_FALSE)
 		return CORBA_FALSE;
 
 	if((codec->rptr + len) > codec->buf_len)
@@ -355,7 +355,7 @@ CDR_get_string(CDR_Codec *codec, CORBA_char **str)
 {
 	CORBA_unsigned_long len;
 
-	if(CDR_get_ulong(codec, &len)==CORBA_FALSE)
+	if(CDR_get_ulong(codec, (CORBA_unsigned_long *)&len)==CORBA_FALSE)
 		return(CORBA_FALSE);
 
 	if(len==0)
@@ -380,7 +380,7 @@ CDR_get_string_buff(CDR_Codec *codec, CORBA_char *str)
 {
 	CORBA_unsigned_long len;
 
-	if(CDR_get_ulong(codec, &len)==CORBA_FALSE)
+	if(CDR_get_ulong(codec, (CORBA_unsigned_long *)&len)==CORBA_FALSE)
 		return(CORBA_FALSE);
 
 	if(len==0)
@@ -400,7 +400,7 @@ CDR_get_string_buff(CDR_Codec *codec, CORBA_char *str)
 CORBA_boolean 
 CDR_get_seq_begin(CDR_Codec *codec, CORBA_unsigned_long *ul)
 {
-	return(CDR_get_ulong(codec, ul));
+	return(CDR_get_ulong(codec, (CORBA_unsigned_long *)ul));
 }
 
 CDR_Codec *

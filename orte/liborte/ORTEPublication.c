@@ -71,8 +71,8 @@ ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
   guid.oid=(d->publications.counter<<8)|OID_PUBLICATION;
   pp=(ORTEPublProp*)MALLOC(sizeof(ORTEPublProp));
   memcpy(pp,&d->domainProp.publPropDefault,sizeof(ORTEPublProp));
-  strcpy(pp->topic,topic);
-  strcpy(pp->typeName,typeName);
+  strcpy((char *)pp->topic,topic);
+  strcpy((char *)pp->typeName,typeName);
   pp->persistence=*persistence;
   pp->strength=strength;
   pp->reliabilityOffered=PID_VALUE_RELIABILITY_BEST_EFFORTS | 

@@ -74,32 +74,32 @@ RTPSHeaderCheck(CDR_Codec *cdrCodec,int32_t len,MessageInterpret *mi) {
   CORBA_octet c;
 
   if (len<16) return -1;                            /* message is too small */
-  CDR_get_octet(cdrCodec,&c);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&c);
   if (c!='R') return -2;                            /* header is invalid */
-  CDR_get_octet(cdrCodec,&c);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&c);
   if (c!='T') return -2;                            
-  CDR_get_octet(cdrCodec,&c);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&c);
   if (c!='P') return -2;                            
-  CDR_get_octet(cdrCodec,&c);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&c);
   if (c!='S') return -2;                            
 
   /* Protocol Version */
-  CDR_get_octet(cdrCodec,&mi->sourceVersion.major);
-  CDR_get_octet(cdrCodec,&mi->sourceVersion.minor);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&mi->sourceVersion.major);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&mi->sourceVersion.minor);
 
    /* Vendor Id */
-  CDR_get_octet(cdrCodec,&mi->sourceVendorId.major);
-  CDR_get_octet(cdrCodec,&mi->sourceVendorId.minor);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&mi->sourceVendorId.major);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&mi->sourceVendorId.minor);
 
   /* next data are sent in big endianing */
   data_endian=cdrCodec->data_endian;
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* Host Id */
-  CDR_get_ulong(cdrCodec,&mi->sourceHostId);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&mi->sourceHostId);
 
   /* App Id */
-  CDR_get_ulong(cdrCodec,&mi->sourceAppId);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&mi->sourceAppId);
 
   cdrCodec->data_endian=data_endian;
 

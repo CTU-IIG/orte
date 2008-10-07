@@ -1,22 +1,7 @@
-/****************************************************************************
-** ui.h extension file, included from the uic-generated form implementation.
-**
-** If you wish to add, delete or rename functions or slots use
-** Qt Designer which will update this file, preserving your code. Create an
-** init() function in place of a constructor, and a destroy() function in
-** place of a destructor.
-*****************************************************************************/
-#include <stdio.h>
-#include <stdlib.h>
-#include <qtimer.h> 
-#include <qapplication.h>
-#if (QT_VERSION-0 >= 0x040000)
-#include <QCloseEvent>
-#endif
+#include "FPublisher.h"
 
-extern QApplication *a;
-
-void FPublisher::init()
+FPublisher::FPublisher(QWidget *parent)
+    : QDialog(parent)
 {
     stepx=rand()%2+1;stepy=rand()%2+1;
     incx=incy=0;
@@ -27,20 +12,20 @@ void FPublisher::init()
     domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
     BoxType_type_register(domain);
     publisher=NULL;
+    /* setup UI */
+    setupUi(this);
 }
 
 void FPublisher::initPublisher(int icolor,int istrength)
 {
     NtpTime	persistence;
-    QString	topic;
+    const char 	*topic;
 
     color=icolor;
     strength=istrength;
     boxType.color=color;
     boxType.shape=strength;
-    timer = new QTimer(this);
-    connect( timer, SIGNAL(timeout()), SLOT(Timer()));
-    timer->start( 50, FALSE );
+
     view->activateObject(0,color,strength);//color,shape
     NtpTimeAssembFromMs(persistence, 5, 0);
     switch(color) {
@@ -60,11 +45,17 @@ void FPublisher::initPublisher(int icolor,int istrength)
 	NULL,
 	NULL,
 	NULL);
+
+    timer = new QTimer();
+    connect( timer, SIGNAL(timeout()), this, SLOT(Timer()));
+    timer->start( 50 );
 }
+
 
 void FPublisher::closeEvent( QCloseEvent *e )
 {
-    destroy();
+    if (domain!=NULL)
+       destroy();
     e->accept();
 }
 
@@ -74,12 +65,12 @@ void FPublisher::destroy()
       delete timer;
       ORTEDomainAppDestroy(domain);
       domain=NULL;
+      close();
     }
 }
 
 void FPublisher::Timer()
 {
-    a->lock();
     if(rect.left()<=0) incx=stepx;
     if(rect.top()<=0) incy=stepy;
     if((rect.right())>=view->width()) incx=-stepx;
@@ -89,7 +80,7 @@ void FPublisher::Timer()
 	int tmpH=rect.height();
 	rect.setRect(view->mouseX-tmpW/2,view->mouseY-tmpH/2,tmpW,tmpH);
     } else {
-	rect.moveBy(incx,incy);
+	rect.moveTo(rect.left()+incx,rect.top()+incy);
     }
     view->setPosition(0,rect);
     //prepare published data
@@ -98,7 +89,6 @@ void FPublisher::Timer()
     boxType.rectangle.bottom_right_x=rect.right();
     boxType.rectangle.bottom_right_y=rect.bottom();
     ORTEPublicationSend(publisher);    
-    a->unlock();
 }
 
 
@@ -107,9 +97,8 @@ void FPublisher::strengthChanged()
     ORTEPublProp  pp;
     
     if (!publisher) return;
-    a->lock();
     ORTEPublicationPropertiesGet(publisher,&pp);
     pp.strength=slider->value();
     ORTEPublicationPropertiesSet(publisher,&pp);
-    a->unlock();
 }
+

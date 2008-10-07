@@ -78,8 +78,8 @@ ORTEDomainAppSubscriptionPatternAdd(ORTEDomain *d,const char *topic,
   
   if (!d) return ORTE_FALSE;
   pnode=(PatternNode*)MALLOC(sizeof(PatternNode));
-  strcpy(pnode->topic,topic);
-  strcpy(pnode->type,type);
+  strcpy((char *)pnode->topic,topic);
+  strcpy((char *)pnode->type,type);
   pnode->subscriptionCallBack=subscriptionCallBack;
   pnode->param=param;
   pthread_rwlock_wrlock(&d->patternEntry.lock);
@@ -97,8 +97,8 @@ ORTEDomainAppSubscriptionPatternRemove(ORTEDomain *d,const char *topic,
   if (!d) return ORTE_FALSE;
   pthread_rwlock_wrlock(&d->patternEntry.lock);
   ul_list_for_each(Pattern,&d->patternEntry,pnode) {
-    if ((strcmp(pnode->topic,topic)==0) &&
-        (strcmp(pnode->type,type)==0)) {
+    if ((strcmp((const char *)pnode->topic, (const char*)topic)==0) &&
+        (strcmp((const char *)pnode->type, (const char*)type)==0)) {
       Pattern_delete(&d->patternEntry,pnode);
       FREE(pnode);
       return ORTE_TRUE;

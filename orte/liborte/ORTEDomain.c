@@ -121,7 +121,7 @@ ORTEDomainPropDefaultGet(ORTEDomainProp *prop) {
   //IFProp
   sock_init_udp(&sock);
   sock_bind(&sock,0,INADDR_ANY);
-  sock_get_local_interfaces(&sock,prop->IFProp,&prop->IFCount);
+  sock_get_local_interfaces(&sock,prop->IFProp, (char *)&prop->IFCount);
   sock_cleanup(&sock); 
 
   prop->mgrs=NULL; //only from localhost
@@ -219,6 +219,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   pthread_cond_init(&d->objectEntry.htimSendCond,NULL);
   pthread_mutex_init(&d->objectEntry.htimSendMutex,NULL);
   d->objectEntry.htimSendCondValue=0;
+  d->objectEntry.htimNeedWakeUp=ORTE_TRUE;
   //publication,subscriptions
   d->publications.counter=d->subscriptions.counter=0;
   CSTWriter_init_root_field(&d->publications);
@@ -310,13 +311,13 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     
       //reuseaddr
       sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock, SOL_SOCKET, 
-		    SO_REUSEADDR, (char*)&reuse, sizeof(reuse));
+		    SO_REUSEADDR, (const char *)&reuse, sizeof(reuse));
       debug(30,2) ("ORTEDomainCreate: set value SO_REUSEADDR: %u\n",
   		    reuse);
 
       //multicast loop
       sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock, IPPROTO_IP, 
- 		    IP_MULTICAST_LOOP, (char*)&loop, 
+ 		    IP_MULTICAST_LOOP, (const char *)&loop, 
 		    sizeof(loop));
       debug(30,2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
 		  loop);
@@ -325,7 +326,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       mreq.imr_multiaddr.s_addr=htonl(d->domainProp.multicast.ipAddress);
       mreq.imr_interface.s_addr=htonl(INADDR_ANY);
       if(sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock,IPPROTO_IP,
-  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+  	  IP_ADD_MEMBERSHIP, (const char *)&mreq, sizeof(mreq))>=0) {
         debug(30,2) ("ORTEDomainCreate: joint to mgroup %s\n",
                       IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
       }
@@ -348,13 +349,13 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     
     //reuseaddr
     sock_setsockopt(&d->taskRecvMulticastMetatraffic.sock, SOL_SOCKET, 
-		    SO_REUSEADDR, (char*)&reuse, sizeof(reuse));
+		    SO_REUSEADDR, (const char *)&reuse, sizeof(reuse));
     debug(30,2) ("ORTEDomainCreate: set value SO_REUSEADDR: %u\n",
 		  reuse);
 
     //multicast loop
     sock_setsockopt(&d->taskRecvMulticastMetatraffic.sock, IPPROTO_IP, 
-		    IP_MULTICAST_LOOP, &d->domainProp.multicast.loopBackEnabled, 
+		    IP_MULTICAST_LOOP, (const char *)&d->domainProp.multicast.loopBackEnabled, 
 		    sizeof(d->domainProp.multicast.loopBackEnabled));
     debug(30,2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
 		  d->domainProp.multicast.loopBackEnabled);
@@ -363,7 +364,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     mreq.imr_multiaddr.s_addr=htonl(d->domainProp.multicast.ipAddress);
     mreq.imr_interface.s_addr=htonl(INADDR_ANY);
     if(sock_setsockopt(&d->taskRecvMulticastMetatraffic.sock,IPPROTO_IP,
-        IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+        IP_ADD_MEMBERSHIP, (const char *)&mreq, sizeof(mreq))>=0) {
       debug(30,2) ("ORTEDomainCreate: joint to mgroup %s\n",
                     IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
     }
@@ -389,13 +390,13 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     
       //reuseaddr
       sock_setsockopt(&d->taskRecvMulticastUserdata.sock, SOL_SOCKET, 
-  		      SO_REUSEADDR, (char*)&reuse, sizeof(reuse));
+  		      SO_REUSEADDR, (const char *)&reuse, sizeof(reuse));
       debug(30,2) ("ORTEDomainCreate: set value SO_REUSEADDR: %u\n",
  		      reuse);
 
       //multicast loop
       sock_setsockopt(&d->taskRecvMulticastUserdata.sock, IPPROTO_IP, 
- 		      IP_MULTICAST_LOOP, &d->domainProp.multicast.loopBackEnabled, 
+ 		      IP_MULTICAST_LOOP, (const char *)&d->domainProp.multicast.loopBackEnabled, 
 		      sizeof(d->domainProp.multicast.loopBackEnabled));
       debug(30,2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
 		    d->domainProp.multicast.loopBackEnabled);
@@ -416,8 +417,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
                d->taskSend.sock.port);
   if (d->domainProp.multicast.enabled) {
     //ttl
-    if(sock_setsockopt(&d->taskSend.sock,IPPROTO_IP,IP_MULTICAST_TTL, 
-        &d->domainProp.multicast.ttl,sizeof(d->domainProp.multicast.ttl))>=0) {
+    if(sock_setsockopt(&d->taskSend.sock,IPPROTO_IP,IP_MULTICAST_TTL, (const char *)&d->domainProp.multicast.ttl,sizeof(d->domainProp.multicast.ttl))>=0) {
       debug(30,2) ("ORTEDomainCreate: ttl set on: %u\n",
            d->domainProp.multicast.ttl);
     } 

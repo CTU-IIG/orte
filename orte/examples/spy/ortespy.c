@@ -73,7 +73,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 ORTESubscription*
 subscriptionCallBack(const char *topic, const char *type, void *param) {
   ORTETypeRegisterAdd(d,type,NULL,NULL,NULL,0);   
-  if (strcmp(topic,"Red")==0) return NULL;
+  if (strcmp((const char *)topic, (const char*)"Red")==0) return NULL;
   return ORTESubscriptionCreate(
         d,
         IMMEDIATE,

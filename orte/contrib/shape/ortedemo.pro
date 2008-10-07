@@ -1,10 +1,18 @@
 SOURCES	+= main.cpp \
+        MainForm.cpp \
 	MyQFrame.cpp \
 	richtext.cpp \
-	BoxType.c
+	FPublisher.cpp \
+	FSubscriber.cpp \
+	BoxType.c 
+
 HEADERS	+= richtext.h \
-	MyQFrame.h
-TARGET		= ortedemo
+	MyQFrame.h \
+	MainForm.h \
+	FPublisher.h \
+	FSubscriber.h
+
+TARGET	= ortedemo
 
 unix {
   UI_DIR = .ui
@@ -15,21 +23,13 @@ unix {
 FORMS	= MainForm.ui \
 	FPublisher.ui \
 	FSubscriber.ui
-IMAGES	= ocera_logo.png \
-	shapes.png \
-	marble.png \
-	FMainIcon.png \
-	FPublisherIcon.png \
-	FSubscriberIcon.png
+
+RESOURCES += shapes.qrc
+
 TEMPLATE	=app
 CONFIG	+= qt-mt 
-INCLUDEPATH	+= .
+INCLUDEPATH	+= . ../../../_compiled/include
 DEFINES += HAVE_STDINT_H QT_THREAD_SUPPORT
-LIBS	+= -lorte -lpthread 
+LIBS	+= -L../../../_compiled/lib -lorte -lpthread 
 win32:LIBS	+= -lws2_32 
 LANGUAGE	= C++
-
-#The following line was inserted by qt3to4
-QT +=  qt3support 
-#The following line was inserted by qt3to4
-CONFIG += uic3

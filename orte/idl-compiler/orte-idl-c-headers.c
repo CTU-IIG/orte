@@ -495,7 +495,7 @@ ch_prep_sequence(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
       g_free(ctmp2);
       ctmp2 = g_strdup("CORBA_Object");
     }
-  separate_defs = strcmp(ctmp, ctmp2);
+  separate_defs = strcmp((const char *)ctmp, (const char*)ctmp2);
   fullname = orte_cbe_get_typespec_str(tree);
 
   if(separate_defs)
@@ -528,7 +528,7 @@ ch_prep_sequence(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
     {
       fprintf(ci->fh, "#if !defined(_%s_defined)\n#define _%s_defined 1\n",
 	      fullname, fullname);
-      if(!strcmp(ctmp, "CORBA_RepositoryId"))
+      if(!strcmp((const char *)ctmp, (const char*)"CORBA_RepositoryId"))
 	fprintf(ci->fh, "/* CRACKHEADS */\n");
       fprintf(ci->fh, "typedef %s %s;\n", fullname_def, fullname);
       fprintf(ci->fh, "#endif\n");

@@ -32,7 +32,7 @@
 
 /* macro for comparing 2 strings */
 /* if(a==b) -> strcmp = 0 */
-#define compare(a,b) ((strcmp((a),(b)) == 0) ? 1 : 0)
+#define compare(a,b) ((strcmp((const char *)(a), (const char*)(b)) == 0) ? 1 : 0)
 
 
 /* global variables */
@@ -143,7 +143,7 @@ const char *c = "MAX";
 
 int get_const(char *konstanta)
 {
-#define xxx(name) if (strcmp(konstanta, #name )) return name
+#define xxx(name) if (strcmp((const char *)konstanta, (const char*)#name)) return name
         xxx(MAX);
         xxx(MIN);
 }

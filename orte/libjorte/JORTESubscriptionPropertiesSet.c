@@ -94,7 +94,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     }
     str = (*env)->GetStringUTFChars(env,obj_str,0);
     // Set the structure field.
-    strncpy((char *) subs_prop->topic, str, strlen(str) + 1);
+    strncpy((char *)subs_prop->topic, (const char*)str, strlen(str) + 1);
     #ifdef TEST_STAGE
       printf(":c: topic = %s, subs_prop->topic = %s \n",
              str, subs_prop->topic);
@@ -124,7 +124,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     }
     str = (*env)->GetStringUTFChars(env,obj_str,0);
     // Set the structure field.
-    strncpy((char *) subs_prop->typeName, str, strlen(str) + 1);
+    strncpy((char *)subs_prop->typeName, (const char*)str, strlen(str) + 1);
     #ifdef TEST_STAGE
       printf(":c: typeName = %s, subs_prop->typeName = %s \n",
              str, subs_prop->typeName);

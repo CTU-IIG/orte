@@ -61,8 +61,8 @@ PublParamsInit(ORTEPublProp *pp) {
   pp->reliabilityOffered=0;
   pp->sendQueueSize=1;
   pp->strength=1;
-  strcpy(pp->topic,"DefaultTopic");
-  strcpy(pp->typeName,"");
+  strcpy((char *)pp->topic,"DefaultTopic");
+  strcpy((char *)pp->typeName,"");
   pp->typeChecksum=0;
   //additional params
   NTPTIME_BUILD(pp->maxBlockTime,30);
@@ -82,8 +82,8 @@ SubsParamsInit(ORTESubsProp *sp) {
   NTPTIME_ZERO(sp->minimumSeparation);
   sp->recvQueueSize=1;
   sp->reliabilityRequested=0;
-  strcpy(sp->topic,"DefaultTopic");
-  strcpy(sp->typeName,"");
+  strcpy((char *)sp->topic,"DefaultTopic");
+  strcpy((char *)sp->typeName,"");
   sp->typeChecksum=0;
 //  s->rcvMessageCallBack=NULL;
 //  s->deadline=NTPTIME_ZERO;
@@ -160,8 +160,8 @@ generateEvent(ORTEDomain *d,GUID_RTPS *guid,void *params,Boolean live) {
       objectEntryOID=objectEntryFind(d,&guidapp);
       if (!objectEntryOID) return ORTE_FALSE;
       updateORTEAppInfo((AppParams*)objectEntryOID->attributes,&d->appInfo);   
-      d->pubInfo.topic=((ORTEPublProp*)params)->topic;
-      d->pubInfo.type=((ORTEPublProp*)params)->typeName;
+      d->pubInfo.topic=(char*)((ORTEPublProp*)params)->topic;
+      d->pubInfo.type=(char*)((ORTEPublProp*)params)->typeName;
       d->pubInfo.objectId=guid->oid;
       if ((d->domainEvents.onPubRemoteNew) && live) 
         result=d->domainEvents.onPubRemoteNew(&d->appInfo,&d->pubInfo,
@@ -178,8 +178,8 @@ generateEvent(ORTEDomain *d,GUID_RTPS *guid,void *params,Boolean live) {
       objectEntryOID=objectEntryFind(d,&guidapp);
       if (!objectEntryOID) return ORTE_FALSE;
       updateORTEAppInfo((AppParams*)objectEntryOID->attributes,&d->appInfo);   
-      d->subInfo.topic=((ORTESubsProp*)params)->topic;
-      d->subInfo.type=((ORTESubsProp*)params)->typeName;
+      d->subInfo.topic=(char*)((ORTESubsProp*)params)->topic;
+      d->subInfo.type=(char*)((ORTESubsProp*)params)->typeName;
       d->subInfo.objectId=guid->oid;
       if ((d->domainEvents.onSubRemoteNew) && (live))
         result=d->domainEvents.onSubRemoteNew(&d->appInfo,&d->subInfo,

@@ -79,6 +79,18 @@ JAVA compilation:
 make
 make install
 
+
+Another way, how to compile ORTE project is used OMK compilation method. See file readme.makerules about 
+details of OMK. For standalone compilation (without OCERA), just copy folder orte to other (private)
+destination. Run
+./switch2standalone
+in the root of orte directory.
+
+Now just type a run
+make
+
+in the root of the ORTE project will be create two direcories, which contains compilation results.
+
 How to start?
 -------------
 

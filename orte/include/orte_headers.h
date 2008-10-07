@@ -194,7 +194,9 @@ extern "C" {
   #ifndef __GETOPT_H__  //mingw
     #include <win32/getopt.h>
   #endif
-  #include <win32/timeval.h>
+  #ifndef HAVE_TIMEVAL_H
+    #include <win32/timeval.h>
+  #endif
   #include <orte/ew_types.h>
   #define ioctl ioctlsocket
 #elif defined CONFIG_ORTE_RTL
@@ -239,7 +241,7 @@ extern "C" {
   #include <win32/timeval.h>
   #include <win32/getopt.h>
   #define ioctl ioctlsocket
-  #define ORTE_PACKAGE_STRING "orte 0.3.0"
+  #define ORTE_PACKAGE_STRING "orte 0.3.2"
   #define CONFIG_ORTE_WIN
 #endif
 

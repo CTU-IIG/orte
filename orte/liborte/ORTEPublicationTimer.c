@@ -43,8 +43,8 @@ PublicationCallBackTimer(ORTEDomain *d,void *vcstWriter) {
 
   if (cstWriter->csChangesCounter<pp->sendQueueSize) {
     info.status=NEED_DATA;
-    info.topic=pp->topic;
-    info.type=pp->typeName;
+    info.topic=(char*)pp->topic;
+    info.type=(char*)pp->typeName;
     info.senderGUID=cstWriter->objectEntryOID->guid;
     cstWriter->objectEntryOID->sendCallBack(&info,
                           cstWriter->objectEntryOID->instance,

@@ -83,7 +83,7 @@ RTPSIssue(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress sende
   cdrCodec->rptr-=3;
 
   /* flags */
-  CDR_get_octet(cdrCodec,&flags);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
 
   /* submessage length */
   CDR_get_ushort(cdrCodec,&submsg_len);
@@ -93,16 +93,16 @@ RTPSIssue(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress sende
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* readerObjectId */
-  CDR_get_ulong(cdrCodec,&roid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&roid);
 
   /* writerObjectId */
-  CDR_get_ulong(cdrCodec,&woid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&woid);
 
   cdrCodec->data_endian=data_endian;
 
   /* sn */
-  CDR_get_ulong(cdrCodec,&sn.high);
-  CDR_get_ulong(cdrCodec,&sn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.low);
 
   /* at this moment is not supported p_bit */
   if (flags & 0x02) return;                     /* p_bit */

@@ -144,7 +144,7 @@ RTPSHeartBeat(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi) {
   cdrCodec->rptr-=3;
 
   /* flags */
-  CDR_get_octet(cdrCodec,&flags);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
   f_bit=flags & 2;
 
   /* move reading possition to begin of submessage */
@@ -155,20 +155,20 @@ RTPSHeartBeat(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi) {
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* readerObjectId */
-  CDR_get_ulong(cdrCodec,&roid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&roid);
   
   /* writerObjectId */
-  CDR_get_ulong(cdrCodec,&woid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&woid);
 
   cdrCodec->data_endian=data_endian;
 
   /* firstSeqNumber */
-  CDR_get_ulong(cdrCodec,&fsn.high);
-  CDR_get_ulong(cdrCodec,&fsn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&fsn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&fsn.low);
 
   /* lastSeqNumber */
-  CDR_get_ulong(cdrCodec,&lsn.high);
-  CDR_get_ulong(cdrCodec,&lsn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&lsn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&lsn.low);
 
   if (SeqNumberCmp(fsn,lsn)==1) return;	        // lsn<fsn -> break
   writerGUID.hid=mi->sourceHostId;

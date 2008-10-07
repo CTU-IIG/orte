@@ -53,7 +53,7 @@ getStringPart(char *string,char divChar,int *iterator,char *buff) {
     if (!dcp) dcp=cp+strlen(cp);
     tcp=*dcp;         //save ending value
     *dcp=0;           //temporary end of string
-    strcpy(buff,cp);  
+    strcpy((char *)buff,cp);  
     *dcp=tcp;         //restore value
     if (dcp[0]!=0) (*iterator)+=dcp-cp+1;//next value
     else (*iterator)=len;
@@ -76,7 +76,11 @@ IPAddressToString(IPAddress ipAddress,char *buff) {
 IPAddress 
 StringToIPAddress(const char *string) {
   IPAddress ipAddress=IPADDRESS_INVALID;
+#ifdef CONFIG_ORTE_MINGW   
+  unsigned long inetAddress = inet_addr(string);
+#else
   in_addr_t inetAddress = inet_addr(string);
+#endif
   
   if(inetAddress!=INADDR_NONE) {
     ipAddress=ntohl(inetAddress);

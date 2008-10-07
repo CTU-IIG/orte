@@ -93,8 +93,8 @@ void ORTEAppRecvThread(TaskProp *tp) {
         CORBA_char flags,sub_id;
 	CORBA_unsigned_short sub_len;
 
-	CDR_get_octet(cdrCodec,&sub_id);
-	CDR_get_octet(cdrCodec,&flags);
+	CDR_get_octet(cdrCodec, (CORBA_octet *)&sub_id);
+	CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
 	if (flags & 0x01) 	  
            cdrCodec->data_endian=FLAG_LITTLE_ENDIAN;
         else

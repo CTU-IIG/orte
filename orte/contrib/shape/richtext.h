@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.h,v 1.5 2005/11/03 09:27:47 smolik Exp $
+** $Id: richtext.h,v 1.6 2008/10/07 21:19:07 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
@@ -12,31 +12,24 @@
 #define RICHTEXT_H
 
 #include <qglobal.h>
+#include <QPushButton>
+#include <QTextBrowser>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
-#if (QT_VERSION-0 >= 0x040000)
-#define QVBox Q3VBox
-#define QHBox Q3HBox
-#define QTextView Q3TextView
-#include <q3vbox.h>
-#else
-#include <qvbox.h>
-#endif
-
-class QTextView;
-class QPushButton;
-
-class MyRichText : public QVBox
+class MyRichText : public QWidget
 {
     Q_OBJECT
 
 public:
-    MyRichText( QWidget *parent = 0, const char *name = 0);
+    MyRichText( QWidget *parent = 0, Qt::WindowFlags f = 0);
     void setTextPublisher();
     void setTextSubscriber();
     const char **sayings;
 
 protected:
-    QTextView *view;
+    QTextBrowser *view;
     QPushButton *bClose, *bNext, *bPrev;
     int num;
 

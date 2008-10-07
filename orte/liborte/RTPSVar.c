@@ -313,24 +313,24 @@ NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
     if (cstReader->createdByPattern) {
       ORTESubsProp       *sp;
       sp=(ORTESubsProp*)cstReader->objectEntryOID->attributes;
-      if ((strcmp(sp->topic,pp->topic)==0) &&
-          (strcmp(sp->typeName,pp->typeName)==0)) 
+      if ((strcmp((const char *)sp->topic, (const char*)pp->topic)==0) &&
+          (strcmp((const char *)sp->typeName, (const char*)pp->typeName)==0)) 
         break; //found
     }
   }
   pthread_rwlock_unlock(&d->subscriptions.lock);
   if (!cstReader) { //not exists
     ul_list_for_each(Pattern,&d->patternEntry,pnode) {
-      if ((fnmatch(pnode->topic,pp->topic,0)==0) &&
-          (fnmatch(pnode->type,pp->typeName,0)==0)) {
+      if ((fnmatch((const char *)pnode->topic, (const char*)pp->topic,0)==0) &&
+          (fnmatch((const char *)pnode->type, (const char*)pp->typeName,0)==0)) {
         //pattern matched
         // free resources
         pthread_rwlock_unlock(&d->readerPublications.lock);        
         pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
         pthread_rwlock_unlock(&d->objectEntry.objRootLock);    
         cstReader=pnode->subscriptionCallBack(
-            pp->topic,
-            pp->typeName,
+            (char *)pp->topic,
+            (char *)pp->typeName,
             pnode->param);
         if (cstReader) {
           cstReader->createdByPattern=ORTE_TRUE;
@@ -347,8 +347,8 @@ NewPublisher(ORTEDomain *d,ObjectEntryOID *op) {
   pthread_rwlock_rdlock(&d->psEntry.subscriptionsLock);
   gavl_cust_for_each(SubscriptionList,&d->psEntry,o) {
     ORTESubsProp *sp=(ORTESubsProp*)o->attributes;
-    if ((strcmp(pp->topic,sp->topic)==0) &&
-        (strcmp(pp->typeName,sp->typeName)==0) &&
+    if ((strcmp((const char *)pp->topic, (const char*)sp->topic)==0) &&
+        (strcmp((const char *)pp->typeName, (const char*)sp->typeName)==0) &&
         (pp->typeChecksum==sp->typeChecksum)) {
       //add Subscription to Publisher (only if private)
       if (op->privateCreated) {
@@ -402,8 +402,8 @@ NewSubscriber(ORTEDomain *d,ObjectEntryOID *os) {
   pthread_rwlock_rdlock(&d->psEntry.publicationsLock);
   gavl_cust_for_each(PublicationList,&d->psEntry,o) {
     ORTEPublProp *pp=(ORTEPublProp*)o->attributes;
-    if ((strcmp(sp->topic,pp->topic)==0) &&
-        (strcmp(sp->typeName,pp->typeName)==0) &&
+    if ((strcmp((const char *)sp->topic, (const char*)pp->topic)==0) &&
+        (strcmp((const char *)sp->typeName, (const char*)pp->typeName)==0) &&
         (sp->typeChecksum==pp->typeChecksum)) {
       //add Publication to Subscription (only if private)
       if (os->privateCreated) {
@@ -670,7 +670,7 @@ RTPSVar(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   cdrCodec->rptr-=3;
 
   /* flags */
-  CDR_get_octet(cdrCodec,&flags);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
   p_bit=flags & 2;
   a_bit=flags & 4;
   h_bit=flags & 8;
@@ -683,17 +683,17 @@ RTPSVar(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* readerObjectId */
-  CDR_get_ulong(cdrCodec,&roid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&roid);
   
   /* writerObjectId */
-  CDR_get_ulong(cdrCodec,&woid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&woid);
 
   if (h_bit) {
      /* HostId         */
-     CDR_get_ulong(cdrCodec,&objectGUID.hid);
+     CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&objectGUID.hid);
 
      /* AppId          */
-     CDR_get_ulong(cdrCodec,&objectGUID.aid);
+     CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&objectGUID.aid);
 
   } else {
     objectGUID.hid=mi->sourceHostId;
@@ -701,13 +701,13 @@ RTPSVar(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   }
 
    /* ObjectId       */
-  CDR_get_ulong(cdrCodec,&objectGUID.oid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&objectGUID.oid);
 
   cdrCodec->data_endian=data_endian;
 
   /* writerSN       */
-  CDR_get_ulong(cdrCodec,&sn.high);
-  CDR_get_ulong(cdrCodec,&sn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.low);
 
   writerGUID.hid=mi->sourceHostId;
   writerGUID.aid=mi->sourceAppId;

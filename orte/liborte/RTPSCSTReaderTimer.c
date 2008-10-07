@@ -196,8 +196,8 @@ CSTReaderDeadlineTimer(ORTEDomain *d,void *vcstReader) {
   sp=(ORTESubsProp*)cstReader->objectEntryOID->attributes;
   memset(&info,0,sizeof(info));
   info.status=DEADLINE;
-  info.topic=sp->topic;
-  info.type=sp->typeName;
+  info.topic=(char*)sp->topic;
+  info.type=(char*)sp->typeName;
   if (cstReader->objectEntryOID->recvCallBack) {
     cstReader->objectEntryOID->recvCallBack(&info,
         cstReader->objectEntryOID->instance,

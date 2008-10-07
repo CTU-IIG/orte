@@ -1,32 +1,22 @@
-/****************************************************************************
-** ui.h extension file, included from the uic-generated form implementation.
-**
-** If you wish to add, delete or rename functions or slots use
-** Qt Designer which will update this file, preserving your code. Create an
-** init() function in place of a constructor, and a destroy() function in
-** place of a destructor.
-*****************************************************************************/
-#include <stdio.h>
-#include <qtimer.h> 
-#include <qapplication.h>
-#if (QT_VERSION-0 >= 0x040000)
-#include <QCloseEvent>
-#endif
+#include "FSubscriber.h"
 
-extern QApplication *a;
 
-void FSubscriber::init()
+FSubscriber::FSubscriber(QWidget *parent)
+    : QDialog(parent)
 {
     ORTEInit(); 
     domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
     BoxType_type_register(domain);
     subscriberBlue=subscriberGreen=subscriberRed=NULL;
     subscriberBlack=subscriberYellow=NULL;
+    /* setup UI */
+    setupUi(this);
 }
 
 void FSubscriber::closeEvent( QCloseEvent *e )
 {
-    destroy();
+    if (domain)
+      destroy();
     e->accept();
 }
 
@@ -35,6 +25,7 @@ void FSubscriber::destroy()
     if (domain) {
       ORTEDomainAppDestroy(domain);
       domain=NULL;
+      close();
     }
 }
 
@@ -44,7 +35,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   FSubscriber *s=(FSubscriber*)recvCallBackParam;
   QRect   rect;
 
-  a->lock();
   switch (info->status) {
     case NEW_DATA:
       rect.setCoords(
@@ -68,7 +58,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
         s->view->deactivateObject(CL_YELLOW);
       break;
   }
-  a->unlock();
 }
 
 
@@ -95,7 +84,7 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
 	    recvCallBack,
 	    this,
             IPADDRESS_INVALID);
-	combo->insertItem("Blue",combo->count());
+	combo->addItem("Blue");
     }
     if (iGreen) {
 	subscriberGreen=ORTESubscriptionCreate(
@@ -110,7 +99,7 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             recvCallBack,
             this,
 	    IPADDRESS_INVALID);
-	combo->insertItem("Green",combo->count());
+	combo->addItem("Green");
     }
     if (iRed) {
 	subscriberRed=ORTESubscriptionCreate(
@@ -125,7 +114,7 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             recvCallBack,
             this,
 	    IPADDRESS_INVALID);
-	combo->insertItem("Red",combo->count());
+	combo->addItem("Red");
     }
     if (iBlack) {
 	subscriberBlack=ORTESubscriptionCreate(
@@ -140,7 +129,7 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             recvCallBack,
             this,
 	    IPADDRESS_INVALID);
-	combo->insertItem("Black",combo->count());
+	combo->addItem("Black");
     }
     if (iYellow) {
 	subscriberYellow=ORTESubscriptionCreate(
@@ -155,14 +144,13 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
             recvCallBack,
             this,
 	    IPADDRESS_INVALID);
-	combo->insertItem("Yellow",combo->count());
+	combo->addItem("Yellow");
      }
 }
 
 
 void FSubscriber::comboActivated( int )
 {
-    a->lock();
     if  (combo->currentText()==QString("Blue")) 
 	slider->setValue(msBlue.seconds);
     if  (combo->currentText()==QString("Green")) 
@@ -173,7 +161,6 @@ void FSubscriber::comboActivated( int )
 	slider->setValue(msBlack.seconds);
     if  (combo->currentText()==QString("Yellow")) 
 	slider->setValue(msYellow.seconds);
-    a->unlock();
 }
 
 
@@ -182,7 +169,6 @@ void FSubscriber::sliderValueChanged( int  value)
     NtpTime minSep;
     ORTESubsProp  sp;
   
-    a->lock();
     NtpTimeAssembFromMs(minSep, value, 0);
     if  (combo->currentText()==QString("Blue")) {
 	 msBlue=minSep;
@@ -214,5 +200,5 @@ void FSubscriber::sliderValueChanged( int  value)
 	 sp.minimumSeparation=msYellow;
 	 ORTESubscriptionPropertiesSet(subscriberYellow,&sp);    
     }
-    a->unlock();
 }
+

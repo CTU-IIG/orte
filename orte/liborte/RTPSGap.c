@@ -114,7 +114,7 @@ RTPSGapAdd(CSTRemoteWriter *cstRemoteWriter,GUID_RTPS *guid,SequenceNumber *fsn,
   lsn=ssn=*sn;bit=0;
   for(i=0;i<numbits;i++) {
     if ((i%32)==0) 
-      CDR_get_ulong(cdrCodec,&bitmap);
+      CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&bitmap);
 
     bit=(bitmap & (1<<(31-i%32))) ? 1:0;
     if (i>0) {
@@ -173,23 +173,23 @@ RTPSGap(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* readerObjectId */
-  CDR_get_ulong(cdrCodec,&roid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&roid);
   
   /* writerObjectId */
-  CDR_get_ulong(cdrCodec,&woid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&woid);
 
   cdrCodec->data_endian=data_endian;
 
   /* firstSeqNumber */
-  CDR_get_ulong(cdrCodec,&fsn.high);
-  CDR_get_ulong(cdrCodec,&fsn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&fsn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&fsn.low);
 
   /* Bitmap - SN  */
-  CDR_get_ulong(cdrCodec,&sn.high);
-  CDR_get_ulong(cdrCodec,&sn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.low);
 
   /* numbits  */
-  CDR_get_ulong(cdrCodec,&numbits);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&numbits);
 
   writerGUID.hid=mi->sourceHostId;
   writerGUID.aid=mi->sourceAppId;

@@ -1,5 +1,5 @@
 /****************************************************************************
-** $Id: richtext.cpp,v 1.8 2005/11/03 09:27:47 smolik Exp $
+** $Id: richtext.cpp,v 1.9 2008/10/07 21:19:07 smolik Exp $
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
@@ -8,18 +8,8 @@
 **
 *****************************************************************************/
 
-#include <qpushbutton.h>
 #include <qbrush.h>
 #include <qapplication.h>
-#include <qglobal.h>
-
-#if (QT_VERSION-0 >= 0x040000)
-#include <q3hbox.h>
-#include <q3textview.h>
-#else
-#include <qhbox.h>
-#include <qtextview.h>
-#endif
 
 #include "richtext.h"
 
@@ -100,29 +90,33 @@ static const char* subscriberExamples[] = {
 };
 
 
-MyRichText::MyRichText( QWidget *parent, const char *name )
-    : QVBox( parent, name )
+MyRichText::MyRichText( QWidget *parent, Qt::WindowFlags f)
+    : QWidget( parent, f)
 {
-    setMargin( 5 );
-    
-    view = new QTextView( this );
-    QBrush paper;
-    paper.setPixmap( QPixmap( "marble.png" ) );
-    if ( paper.pixmap() != 0 )
-	view->setPaper( paper );
-    else
-	view->setPaper( Qt::white );
+    QVBoxLayout *vboxLayout;
+    QHBoxLayout *buttons;
 
-    view->setMinimumSize( 500, 250 );
+    vboxLayout = new QVBoxLayout(this);
+    vboxLayout->setSpacing(6);
+    vboxLayout->setMargin(11);
 
-    QHBox *buttons = new QHBox( this );
-    buttons->setMargin( 5 );
+    view = new QTextBrowser();
+    view->setMinimumSize( 700, 450 );
 
-    bClose = new QPushButton( "&Close", buttons );
-    bPrev = new QPushButton( "<< &Prev", buttons );
-    bNext = new QPushButton( "&Next >>", buttons );
+    vboxLayout->addWidget(view);
 
+    bClose = new QPushButton( "&Close");
+    bPrev = new QPushButton( "<< &Prev");
     bPrev->setEnabled( FALSE );
+    bNext = new QPushButton( "&Next >>");
+
+    buttons = new QHBoxLayout();
+    buttons->setMargin( 5 );
+    buttons->addWidget(bClose);
+    buttons->addWidget(bPrev);
+    buttons->addWidget(bNext);
+
+    vboxLayout->addLayout(buttons);
 
     connect( bClose, SIGNAL(clicked()), this, SLOT(close()) );
     connect( bPrev, SIGNAL( clicked() ), this, SLOT( prev() ) );

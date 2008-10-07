@@ -9,4 +9,7 @@ default:
 
 clean:
 	rm -f Makefile.qmake
-	rm -fd .ui
+	rm -fr .ui
+	rm -fr .moc
+	rm -fr .obj
+	rm -f ortedemo

@@ -98,7 +98,7 @@ RTPSAck(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   cdrCodec->rptr-=3;
 
   /* flags */
-  CDR_get_octet(cdrCodec,&flags);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
   f_bit=flags & 2;
 
   /* move reading possition to begin of submessage */
@@ -109,16 +109,16 @@ RTPSAck(ORTEDomain *d,CDR_Codec *cdrCodec,MessageInterpret *mi,IPAddress senderI
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* readerObjectId */
-  CDR_get_ulong(cdrCodec,&roid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&roid);
   
   /* writerObjectId */
-  CDR_get_ulong(cdrCodec,&woid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&woid);
 
   cdrCodec->data_endian=data_endian;
 
   /* SeqNumber */
-  CDR_get_ulong(cdrCodec,&sn.high);
-  CDR_get_ulong(cdrCodec,&sn.low);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.high);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&sn.low);
 
   readerGUID.hid=mi->sourceHostId;
   readerGUID.aid=mi->sourceAppId;

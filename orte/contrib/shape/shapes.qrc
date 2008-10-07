@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>ocera_logo.png</file>
+        <file>shapes.png</file>
+        <file>marble.png</file>
+        <file>FMainIcon.png</file>
+        <file>FPublisherIcon.png</file>
+        <file>FSubscriberIcon.png</file>
+    </qresource>
+</RCC>

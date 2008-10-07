@@ -42,25 +42,25 @@ void RTPSInfoSRC(CDR_Codec *cdrCodec,MessageInterpret *mi) {
   CDR_Endianness     data_endian;
 
   /* appIPAddress */
-  CDR_get_ulong(cdrCodec,&ipa);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&ipa);
   
   /* ProtocolVersion */
-  CDR_get_octet(cdrCodec,&protocol.major);
-  CDR_get_octet(cdrCodec,&protocol.minor);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&protocol.major);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&protocol.minor);
 
   /* Vendor Id */
-  CDR_get_octet(cdrCodec,&vid.major);
-  CDR_get_octet(cdrCodec,&vid.minor);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&vid.major);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&vid.minor);
 
   /* next data are sent in big endianing */
   data_endian=cdrCodec->data_endian;
   cdrCodec->data_endian=FLAG_BIG_ENDIAN;
 
   /* HostId */
-  CDR_get_ulong(cdrCodec,&hid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&hid);
 
   /* AppId */
-  CDR_get_ulong(cdrCodec,&aid);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&aid);
 
   cdrCodec->data_endian=data_endian;
 

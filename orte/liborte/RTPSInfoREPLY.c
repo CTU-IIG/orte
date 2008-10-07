@@ -69,16 +69,16 @@ RTPSInfoREPLY(CDR_Codec *cdrCodec,MessageInterpret *mi)
   cdrCodec->rptr-=3;
 
   /* flags */
-  CDR_get_octet(cdrCodec,&flags);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
 
   /* move reading possition to begin of submessage */
   cdrCodec->rptr+=2;
 
   /* unicastReplyIPAddress */
-  CDR_get_ulong(cdrCodec,&ipa);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&ipa);
   
   /* unicastReplyPort */
-  CDR_get_ulong(cdrCodec,&port);
+  CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&port);
   
   debug(43,3) ("recv: RTPS InfoREPLY from 0x%x-0x%x\n",
                 mi->sourceHostId,mi->sourceAppId);
@@ -90,10 +90,10 @@ RTPSInfoREPLY(CDR_Codec *cdrCodec,MessageInterpret *mi)
 
   if (flags & 0x02) {
     /* multicastReplyIPAddress */
-    CDR_get_ulong(cdrCodec,&ipa);
+    CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&ipa);
 
     /* multicastReplyPort */
-    CDR_get_ulong(cdrCodec,&port);
+    CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&port);
 
     mi->multicastReplyIPAddress=ipa;
     mi->multicastReplyPort=port;

@@ -31,6 +31,8 @@
 /* Define if is target a unix system */
 /* #undef CONFIG_ORTE_UNIX */
 
+#define HAVE_TIMEVAL_H 1
+
 /* Define if is target windows */
 #define CONFIG_ORTE_WIN 1
 
@@ -212,13 +214,13 @@
 #define ORTE_PACKAGE_NAME "orte"
 
 /* Define to the full name and version of this package. */
-#define ORTE_PACKAGE_STRING "orte 0.3.1"
+#define ORTE_PACKAGE_STRING "orte 0.3.2"
 
 /* Define to the one symbol short name of this package. */
 #define ORTE_PACKAGE_TARNAME "orte"
 
 /* Define to the version of this package. */
-#define ORTE_PACKAGE_VERSION "0.3.1"
+#define ORTE_PACKAGE_VERSION "0.3.2"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1

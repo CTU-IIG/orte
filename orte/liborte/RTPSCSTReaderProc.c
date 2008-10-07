@@ -230,8 +230,8 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
              max_size);
     }
     info.status=NEW_DATA;
-    info.topic=sp->topic;
-    info.type=sp->typeName;
+    info.topic=(char*)sp->topic;
+    info.type=(char*)sp->typeName;
     info.senderGUID=csChange->guid;
     info.localTimeReceived=csChange->localTimeReceived;
     info.remoteTimePublished=csChange->remoteTimePublished;

@@ -5,14 +5,12 @@
 ****************************************************************/
 
 #include "MyQFrame.h"
-#if (QT_VERSION-0 >= 0x040000)
 #include <QPolygon>
 #include <QMouseEvent>
 #include <QPaintEvent>
-#endif
 
-MyQFrame::MyQFrame( QWidget *parent, const char *name )
-        : QFrame( parent, name )
+MyQFrame::MyQFrame( QWidget *parent)
+        : QFrame( parent)
 {
     mousePressed=0;
     objects[0]=objects[1]=objects[2]=objects[3]=objects[4]=0;
@@ -59,11 +57,7 @@ void MyQFrame::paintEvent(QPaintEvent*)
 		p.drawEllipse(positions[i]);
 		break;
 	    case 2: //triangle
-#if (QT_VERSION-0 >= 0x040000)
 		QPolygon pt;
-#else
-		QPointArray pt(3);
-#endif
 		pt.putPoints(0,3, positions[i].center().x(),positions[i].top(), 
 		                  positions[i].right(),positions[i].bottom(), 
 				  positions[i].left(),positions[i].bottom());

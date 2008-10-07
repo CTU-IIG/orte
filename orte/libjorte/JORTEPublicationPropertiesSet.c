@@ -96,7 +96,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     str = (*env)->GetStringUTFChars(env,obj_str,0);
     // set structure's field
-    strncpy((char *) publ_prop->topic, str, strlen(str) + 1);
+    strncpy((char *)publ_prop->topic, (const char*)str, strlen(str) + 1);
     #ifdef TEST_STAGE
       printf(":c: topic = %s, publ_prop->topic = %s \n",
              str, publ_prop->topic);
@@ -126,7 +126,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     str = (*env)->GetStringUTFChars(env,obj_str,0);
     // set structure's field
-    strncpy((char *) publ_prop->typeName, str, strlen(str) + 1);
+    strncpy((char *)publ_prop->typeName, (const char*)str, strlen(str) + 1);
     #ifdef TEST_STAGE
       printf(":c: typeName = %s, publ_prop->typeName = %s \n",
              str, publ_prop->typeName);

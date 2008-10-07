@@ -42,7 +42,7 @@ ORTEPatternCheckDefault(const char *topic) {
 /**********************************************************************************/
 Boolean
 ORTEPatternMatchDefault(const char *topic,const char *pattern,void *param) {
-  fnmatch(pattern,topic,0);
+  fnmatch((const char *)pattern, (const char*)topic,0);
   return ORTE_FALSE;
 }
 

@@ -89,7 +89,7 @@ sock_setsockopt(sock_t *sock,int level,int optname,const char *optval, int optle
 /*********************************************************************/
 inline int
 sock_getsockopt(sock_t *sock,int level,int optname,char *optval, int *optlen) {
-  if (getsockopt(sock->fd, level, optname,(void *)optval, optlen)) {
+  if (getsockopt(sock->fd, level, optname,(void *)optval, (socklen_t *)optlen)) {
     sock_cleanup(sock);
     return -1;
   }
@@ -120,7 +120,7 @@ sock_bind(sock_t *sock,uint16_t port, IPAddress listen) {
          #endif
 	 &name, 
          #ifndef CONFIG_ORTE_RTL_ONETD 
-           &size
+           (socklen_t *)&size
          #else
 	   size 
          #endif
@@ -139,7 +139,7 @@ sock_recvfrom(sock_t *sock, void *buf, int max_len,struct sockaddr_in *des,int d
     #ifndef CONFIG_ORTE_RTL_ONETD 
       (struct sockaddr*)
     #endif
-    des,&des_len);
+    des,(socklen_t *)&des_len);
 }
 
 /*********************************************************************/

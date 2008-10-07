@@ -37,16 +37,16 @@ parameterPutString(ParameterSequence *ps,int8_t id,int8_t *sstr)
 {
   int               len;
 
-  len=strlen(sstr)+1;
+  len=strlen((char*)sstr)+1;
   ps->parameterID=id;
   ps->parameterLength=len;
   ps->parameter=NULL;
 
   if (MAX_PARAMETER_LOCAL_LENGTH<len) {
-     ps->parameter=(int8_t*)MALLOC(len);
-     strncpy(ps->parameter,sstr,len);
+     ps->parameter=(u_char*)MALLOC(len);
+     strncpy((char *)ps->parameter, (const char*)sstr,len);
   } else {
-     strncpy(ps->parameterLocal,sstr,len);
+     strncpy((char *)ps->parameterLocal, (const char*)sstr,len);
   } 
 }
 
@@ -230,7 +230,7 @@ parameterDecodeCodecToCSChange(CSChange *csChange,CDR_Codec *cdrCodec)
         /* time in seconds */
         CDR_get_long(cdrCodec,&(((NtpTime*)ps->parameterLocal)->seconds));
         /* time in seconds / 2^32 */
-        CDR_get_ulong(cdrCodec,&(((NtpTime*)ps->parameterLocal)->fraction));
+        CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&(((NtpTime*)ps->parameterLocal)->fraction));
         break;
       //CORBA_unsigned_long
       case PID_TYPE_CHECKSUM:
@@ -245,36 +245,36 @@ parameterDecodeCodecToCSChange(CSChange *csChange,CDR_Codec *cdrCodec)
       case PID_USERDATA_MULTICAST_IPADDRESS:
       case PID_METATRAFFIC_UNICAST_PORT:
       case PID_USERDATA_UNICAST_PORT:
-        CDR_get_ulong(cdrCodec,(CORBA_unsigned_long*)ps->parameterLocal);
+        CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)ps->parameterLocal);
         break;
       //VendorId
       case PID_VENDOR_ID:
-        CDR_get_octet(cdrCodec,&((VendorId*)ps->parameterLocal)->major);
-        CDR_get_octet(cdrCodec,&((VendorId*)ps->parameterLocal)->minor);
+        CDR_get_octet(cdrCodec, (CORBA_octet *)&((VendorId*)ps->parameterLocal)->major);
+        CDR_get_octet(cdrCodec, (CORBA_octet *)&((VendorId*)ps->parameterLocal)->minor);
         break;
       //ProtocolVersion
       case PID_PROTOCOL_VERSION:
-        CDR_get_octet(cdrCodec,&((ProtocolVersion*)ps->parameterLocal)->major);
-        CDR_get_octet(cdrCodec,&((ProtocolVersion*)ps->parameterLocal)->minor);
+        CDR_get_octet(cdrCodec, (CORBA_octet *)&((ProtocolVersion*)ps->parameterLocal)->major);
+        CDR_get_octet(cdrCodec, (CORBA_octet *)&((ProtocolVersion*)ps->parameterLocal)->minor);
         break;
       //SequenceNumber
       case PID_VARGAPPS_SEQUENCE_NUMBER_LAST:
-        CDR_get_ulong(cdrCodec,&((SequenceNumber*)ps->parameterLocal)->high);
-        CDR_get_ulong(cdrCodec,&((SequenceNumber*)ps->parameterLocal)->low);
+        CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&((SequenceNumber*)ps->parameterLocal)->high);
+        CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&((SequenceNumber*)ps->parameterLocal)->low);
         break;
       //Boolean
       case PID_EXPECTS_ACK:
-        CDR_get_octet(cdrCodec,(CORBA_octet*)ps->parameterLocal);
+        CDR_get_octet(cdrCodec, (CORBA_octet *)ps->parameterLocal);
         break;
       //PathName,TypeName
       case PID_TOPIC:
       case PID_TYPE_NAME:{
         CORBA_unsigned_long len;
 
-	CDR_get_ulong(cdrCodec,&len);  
+	CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&len);  
         cdrCodec->rptr-=4;
 	ps->parameterLength=(uint16_t)len;
-        if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH) {
+        if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH) {	    
           CDR_get_string(cdrCodec,(CORBA_char**)&ps->parameter);
         } else {
           CDR_get_string_buff(cdrCodec,(CORBA_char*)ps->parameterLocal);
@@ -585,18 +585,18 @@ parameterUpdatePublication(CSChange *csChange,ORTEPublProp *pp) {
       break;
       case PID_TOPIC:
         if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH)
-          strncpy(pp->topic,ps->parameter,ps->parameterLength);
+          strncpy((char *)pp->topic, (const char*)ps->parameter,ps->parameterLength);
         else
-          strncpy(pp->topic,ps->parameterLocal,ps->parameterLength);
+          strncpy((char *)pp->topic, (const char*)ps->parameterLocal,ps->parameterLength);
       break;
       case PID_TYPE_CHECKSUM:
         pp->typeChecksum=*(TypeChecksum*)&ps->parameterLocal;
       break;
       case PID_TYPE_NAME:
         if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH)
-          strncpy(pp->typeName,ps->parameter,ps->parameterLength);
+          strncpy((char *)pp->typeName, (const char*)ps->parameter,ps->parameterLength);
         else
-          strncpy(pp->typeName,ps->parameterLocal,ps->parameterLength);
+          strncpy((char *)pp->typeName, (const char*)ps->parameterLocal,ps->parameterLength);
       break;      
     }
   }
@@ -621,18 +621,18 @@ parameterUpdateSubscription(CSChange *csChange,ORTESubsProp *sp) {
       break;
       case PID_TOPIC:
         if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH)
-          strncpy(sp->topic,ps->parameter,ps->parameterLength);
+          strncpy((char *)sp->topic, (const char*)ps->parameter,ps->parameterLength);
         else
-          strncpy(sp->topic,ps->parameterLocal,ps->parameterLength);
+          strncpy((char *)sp->topic, (const char*)ps->parameterLocal,ps->parameterLength);
       break;
       case PID_TYPE_CHECKSUM:
         sp->typeChecksum=*(TypeChecksum*)&ps->parameterLocal;
       break;
       case PID_TYPE_NAME:
         if (ps->parameterLength>MAX_PARAMETER_LOCAL_LENGTH)
-          strncpy(sp->typeName,ps->parameter,ps->parameterLength);
+          strncpy((char *)sp->typeName, (const char*)ps->parameter,ps->parameterLength);
         else
-          strncpy(sp->typeName,ps->parameterLocal,ps->parameterLength);
+          strncpy((char *)sp->typeName, (const char*)ps->parameterLocal,ps->parameterLength);
       break;
       case PID_USERDATA_MULTICAST_IPADDRESS:
         sp->multicast=*(IPAddress*)&ps->parameterLocal;

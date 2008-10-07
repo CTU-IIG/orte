@@ -40,3 +40,6 @@ Petr Stefka <stefka@datapartner.cz>
 
 Virgil Ansems <virgil.ansems@imtech.nl>
     * IMTECH, used the ORTE in different projects
+
+Tran Duy Khanh <trandk1@fel.cvut.cz>
+    * code cleaing, removed warings under gcc 4.x

@@ -16,7 +16,7 @@ class MyQFrame : public QFrame
 {
     Q_OBJECT
 public:
-    MyQFrame( QWidget *parent=0, const char *name=0 );
+    MyQFrame( QWidget *parent=0);
     
 protected:
     void mouseMoveEvent(QMouseEvent *e);

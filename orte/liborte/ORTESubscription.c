@@ -71,7 +71,7 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
     mreq.imr_multiaddr.s_addr=htonl(multicastIPAddress);
     mreq.imr_interface.s_addr=htonl(INADDR_ANY);
     if(sock_setsockopt(&d->taskRecvMulticastUserdata.sock,IPPROTO_IP,
-  	  IP_ADD_MEMBERSHIP,(void *) &mreq, sizeof(mreq))>=0) {
+  	  IP_ADD_MEMBERSHIP, (const char *)&mreq, sizeof(mreq))>=0) {
         debug(33,2) ("ORTESubscriptionCreate: listening to mgroup %s\n",
                       IPAddressToString(multicastIPAddress,sIPAddress));
     }
@@ -82,8 +82,8 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
   guid.oid=(d->subscriptions.counter<<8)|OID_SUBSCRIPTION;
   sp=(ORTESubsProp*)MALLOC(sizeof(ORTESubsProp));
   memcpy(sp,&d->domainProp.subsPropDefault,sizeof(ORTESubsProp));
-  strcpy(sp->topic,topic);
-  strcpy(sp->typeName,typeName);
+  strcpy((char *)sp->topic,topic);
+  strcpy((char *)sp->typeName,typeName);
   sp->deadline=*deadline;
   sp->minimumSeparation=*minimumSeparation;
   sp->multicast=multicastIPAddress;
@@ -261,8 +261,8 @@ ORTESubscriptionPull(ORTESubscription *cstReader) {
           htimerUnicastCommon_get_expire(&cstReader->deadlineTimer))>=0) {
       memset(&info,0,sizeof(info));
       info.status=DEADLINE;
-      info.topic=sp->topic;
-      info.type=sp->typeName;
+      info.topic=(char*)sp->topic;
+      info.type=(char*)sp->typeName;
       cstReader->objectEntryOID->recvCallBack(&info,
           cstReader->objectEntryOID->instance,
           cstReader->objectEntryOID->callBackParam);

@@ -67,7 +67,7 @@ RTPSInfoTS(CDR_Codec *cdrCodec,MessageInterpret *mi) {
   cdrCodec->rptr-=3;
 
   /* flags */
-  CDR_get_octet(cdrCodec,&flags);
+  CDR_get_octet(cdrCodec, (CORBA_octet *)&flags);
 
   /* move reading possition to begin of submessage */
   cdrCodec->rptr+=2;
@@ -80,7 +80,7 @@ RTPSInfoTS(CDR_Codec *cdrCodec,MessageInterpret *mi) {
     CDR_get_long(cdrCodec,&mi->timestamp.seconds);
 
     /* time in seconds / 2^32 */
-    CDR_get_ulong(cdrCodec,&mi->timestamp.fraction);
+    CDR_get_ulong(cdrCodec, (CORBA_unsigned_long *)&mi->timestamp.fraction);
   } else {
     mi->haveTimestamp=ORTE_FALSE;
     NTPTIME_ZERO(mi->timestamp);
