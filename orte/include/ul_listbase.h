@@ -1,8 +1,3 @@
-#ifndef __KERNEL__
-
-/* In RT-Linux this functions collide with Linux lists functions, so
- * we use Linux functions instead. */
-
 #ifndef _UL_LISTBASE_H
 #define _UL_LISTBASE_H
 
@@ -10,10 +5,10 @@
 extern "C" {
 #endif
 
+#ifndef __KERNEL__
+
 #define LIST_POISON1  ((void *) 0)
 #define LIST_POISON2  ((void *) 0)
-
-#undef LIST_HEAD
 
 /*
  * Simple doubly linked list implementation.
@@ -153,13 +148,13 @@ static inline void __list_splice(struct list_head *list,
 {
 	struct list_head *first = list->next;
 	struct list_head *last = list->prev;
-	struct list_head *at = head->next;
+	struct list_head *where = head->next;
 
 	first->prev = head;
 	head->next = first;
 
-	last->next = at;
-	at->prev = last;
+	last->next = where;
+	where->prev = last;
 }
 
 /**
@@ -279,10 +274,14 @@ static inline void list_splice_init(struct list_head *list,
 	     &pos->member != (head); 					\
 	     pos = n, n = list_entry(n->member.next, typeof(*n), member))
 
+#else /*__KERNEL__*/
+
+#include <linux/list.h>
+
+#endif /*__KERNEL__*/
+
 #ifdef __cplusplus
 } /* extern "C"*/
 #endif
 
 #endif /* _UL_LISTBASE_H */
-
-#endif /* __RTL__ */

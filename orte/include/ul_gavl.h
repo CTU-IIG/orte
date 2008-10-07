@@ -1,17 +1,24 @@
 /*******************************************************************
-  uLan Communication - C interface library
+  uLan Utilities Library - C library of basic reusable constructions
 
   ul_gavl.h	- generic AVL tree
 
   (C) Copyright 2001 by Pavel Pisa - Originator
 
-  The uLan driver is distributed under the Gnu General Public License. 
-  See file COPYING for details.
+  The uLan utilities library can be used, copied and modified under
+  next licenses
+    - GPL - GNU General Public License
+    - LGPL - GNU Lesser General Public License
+    - MPL - Mozilla Public License
+    - and other licenses added by project originators
+  Code can be modified and re-distributed under any combination
+  of the above listed licenses. If contributor does not agree with
+  some of the licenses, he/she can delete appropriate line.
+  Warning, if you delete all lines, you are not allowed to
+  distribute source code and/or binaries utilizing code.
+  
+  See files COPYING and README for details.
 
-  Originator reserve the right to use and publish sources
-  under different conditions too. If third party contributors
-  do not accept this condition, they can delete this statement
-  and only GNU license will apply.
  *******************************************************************/
 
 #ifndef _UL_GAVL_H
@@ -160,7 +167,7 @@ gavl_node2item(const gavl_root_t *root, const gavl_node_t *node)
 {
   if(root->node_offs<0) return *(void**)(node+1);
   return (void*)((char*)node-root->node_offs);
-};
+}
 
 /**
  * gavl_node2item_safe - Conversion from GAVL Tree Node to User Defined Item
@@ -174,7 +181,7 @@ gavl_node2item_safe(const gavl_root_t *root, const gavl_node_t *node)
 {
   if(!node) return 0;
   return gavl_node2item(root, node);
-};
+}
 
 /**
  * gavl_node2key - Conversion from GAVL Tree Node to Ordering Key
@@ -189,7 +196,7 @@ gavl_node2key(const gavl_root_t *root, const gavl_node_t *node)
   char *p;
   p=(char*)gavl_node2item(root, node);
   return (void*)(p+root->key_offs);
-};
+}
 
 int
 gavl_balance_one(gavl_node_t **subtree);
@@ -427,6 +434,10 @@ int cust_prefix##_delete(cust_root_t *root, cust_item_t *item);\
 gavl_node_t *cust_prefix##_first_node(const cust_root_t *root);\
 gavl_node_t *cust_prefix##_last_node(const cust_root_t *root);\
 \
+static inline void \
+cust_prefix##_init_detached(cust_item_t *item){\
+  item->cust_item_node.parent=NULL;\
+}\
 static inline cust_item_t *\
 cust_prefix##_first(const cust_root_t *root)\
 {\

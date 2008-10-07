@@ -1,17 +1,24 @@
 /*******************************************************************
-  uLan Communication - C interface library
+  uLan Utilities Library - C library of basic reusable constructions
 
   ul_gavlprim.c	- primitives for generic AVL tree
 
   (C) Copyright 2003 by Pavel Pisa - Originator
 
-  The uLan driver is distributed under the Gnu General Public License. 
-  See file COPYING for details.
+  The uLan utilities library can be used, copied and modified under
+  next licenses
+    - GPL - GNU General Public License
+    - LGPL - GNU Lesser General Public License
+    - MPL - Mozilla Public License
+    - and other licenses added by project originators
+  Code can be modified and re-distributed under any combination
+  of the above listed licenses. If contributor does not agree with
+  some of the licenses, he/she can delete appropriate line.
+  Warning, if you delete all lines, you are not allowed to
+  distribute source code and/or binaries utilizing code.
+  
+  See files COPYING and README for details.
 
-  Originator reserve the right to use and publish sources
-  under different conditions too. If third party contributors
-  do not accept this condition, they can delete this statement
-  and only GNU license will apply.
  *******************************************************************/
 
 //#include <string.h>

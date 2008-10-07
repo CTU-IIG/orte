@@ -24,6 +24,10 @@ cust_prefix##_init_head(cust_head_t *head)\
 {\
   INIT_LIST_HEAD(&head->cust_head_field);\
 }\
+static inline void \
+cust_prefix##_init_detached(cust_item_t *item){\
+  INIT_LIST_HEAD(&item->cust_node_field);\
+}\
 static inline cust_item_t *\
 cust_prefix##_first(const cust_head_t *head)\
 {\
@@ -71,19 +75,19 @@ cust_prefix##_insert(cust_head_t *head, cust_item_t *item)\
 static inline void \
 cust_prefix##_delete(cust_head_t *head, cust_item_t *item)\
 {\
-  list_del(&item->cust_node_field);\
+  list_del_init(&item->cust_node_field);\
 }\
 static inline void \
 cust_prefix##_del_item(cust_item_t *item)\
 {\
-  list_del(&item->cust_node_field);\
+  list_del_init(&item->cust_node_field);\
 }\
 static inline cust_item_t *\
 cust_prefix##_cut_first(cust_head_t *head)\
 {\
   ul_list_node_t *n=head->cust_head_field.next;\
   if(n==&head->cust_head_field) return NULL;\
-  list_del(n);\
+  list_del_init(n);\
   return cust_prefix##_node2item(head,n);\
 }\
 /*** Iterators ***/\

@@ -1,3 +1,27 @@
+/*******************************************************************
+  uLan Utilities Library - C library of basic reusable constructions
+
+  ul_gavlflesint.h  - custom trees with allowed repeat of keys
+                      and fast access to the first and last item
+
+  (C) Copyright 2003-2004 by Pavel Pisa - Originator
+
+  The uLan utilities library can be used, copied and modified under
+  next licenses
+    - GPL - GNU General Public License
+    - LGPL - GNU Lesser General Public License
+    - MPL - Mozilla Public License
+    - and other licenses added by project originators
+  Code can be modified and re-distributed under any combination
+  of the above listed licenses. If contributor does not agree with
+  some of the licenses, he/she can delete appropriate line.
+  Warning, if you delete all lines, you are not allowed to
+  distribute source code and/or binaries utilizing code.
+  
+  See files COPYING and README for details.
+
+ *******************************************************************/
+
 #ifndef _UL_GAVLFLESINT_H
 #define _UL_GAVLFLESINT_H
 
@@ -28,6 +52,11 @@ int cust_prefix##_insert(cust_root_t *root, cust_item_t *item);\
 cust_item_t *cust_prefix##_cut_first(cust_root_t *root);\
 int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node);\
 int cust_prefix##_delete(cust_root_t *root, cust_item_t *item);\
+\
+static inline void \
+cust_prefix##_init_detached(cust_item_t *item){\
+  item->cust_item_node.parent=NULL;\
+}\
 static inline gavl_node_t *\
 cust_prefix##_first_node(const cust_root_t *root)\
 {\

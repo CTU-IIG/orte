@@ -1,3 +1,26 @@
+/*******************************************************************
+  uLan Utilities Library - C library of basic reusable constructions
+
+  ul_htimer.h  - hierarchical timer basic declarations
+
+  (C) Copyright 2003-2004 by Pavel Pisa - Originator
+
+  The uLan utilities library can be used, copied and modified under
+  next licenses
+    - GPL - GNU General Public License
+    - LGPL - GNU Lesser General Public License
+    - MPL - Mozilla Public License
+    - and other licenses added by project originators
+  Code can be modified and re-distributed under any combination
+  of the above listed licenses. If contributor does not agree with
+  some of the licenses, he/she can delete appropriate line.
+  Warning, if you delete all lines, you are not allowed to
+  distribute source code and/or binaries utilizing code.
+  
+  See files COPYING and README for details.
+
+ *******************************************************************/
+
 #ifndef _UL_HTIMER_H
 #define _UL_HTIMER_H
 
@@ -56,7 +79,11 @@ void ul_htim_queue_init_root_field(ul_htim_queue_t *queue);
 
 static inline void 
 ul_htim_queue_init_detached(ul_htim_node_t *htim)
+#ifndef UL_HTIMER_INC_FROM_BASE
   {htim->node.parent=NULL;}
+#else /*UL_HTIMER_INC_FROM_BASE*/
+  ;
+#endif /*UL_HTIMER_INC_FROM_BASE*/
 
 static inline int
 ul_htim_queue_inline_first(ul_htim_queue_t *queue, ul_htim_node_t **phtim)
@@ -73,7 +100,11 @@ int ul_htim_queue_init_root_field(ul_htim_queue_t *queue);
 
 static inline void 
 ul_htim_queue_init_detached(ul_htim_node_t *htim)
+#ifndef UL_HTIMER_INC_FROM_BASE
   {;}
+#else /*UL_HTIMER_INC_FROM_BASE*/
+  ;
+#endif /*UL_HTIMER_INC_FROM_BASE*/
 
 static inline int
 ul_htim_queue_inline_first(ul_htim_queue_t *queue, ul_htim_node_t **phtim)
@@ -168,11 +199,9 @@ typedef struct ul_htimer {
 
 /**
  * struct ul_htimer_queue - Standard timer queue
- * @htim:     basic timer queue head
- * @function: user provided function to call at trigger time
- * @data:     user selected data
+ * @htim_queue: the structure wraps &ul_htim_queue structure
  *
- * This is standard timer type, wghich requires @data casting
+ * This is standard timer type, which requires @data casting
  * in many cases
  */
 typedef struct ul_htimer_queue {
@@ -203,6 +232,7 @@ ul_htimer_queue_t ul_root_htimer;
 ul_mstime_t ul_mstime_last;
 ul_mstime_t ul_mstime_next;
 
+void ul_mstime_now(ul_mstime_t *mstm);
 void ul_mstime_update(void);
 void ul_mstime_init(void);
 void ul_get_log_time_str(char str[30]);

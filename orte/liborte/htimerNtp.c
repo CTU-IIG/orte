@@ -29,6 +29,8 @@
  *  
  */ 
 
+#define UL_HTIMER_INC_FROM_BASE
+
 #include "orte_all.h"
 
 GAVL_FLES_INT_DEC(ul_htim_queue, ul_htim_queue_t, ul_htim_node_t, ul_htim_time_t,

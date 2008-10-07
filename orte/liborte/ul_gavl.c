@@ -1,22 +1,30 @@
 /*******************************************************************
-  uLan Communication - C interface library
+  uLan Utilities Library - C library of basic reusable constructions
 
   ul_gavl.c	- generic AVL tree
 
-  (C) Copyright 2003 by Pavel Pisa - Originator
+  (C) Copyright 2003-2004 by Pavel Pisa - Originator
 
-  The uLan driver is distributed under the Gnu General Public License.
-  See file COPYING for details.
+  The uLan utilities library can be used, copied and modified under
+  next licenses
+    - GPL - GNU General Public License
+    - LGPL - GNU Lesser General Public License
+    - MPL - Mozilla Public License
+    - and other licenses added by project originators
+  Code can be modified and re-distributed under any combination
+  of the above listed licenses. If contributor does not agree with
+  some of the licenses, he/she can delete appropriate line.
+  Warning, if you delete all lines, you are not allowed to
+  distribute source code and/or binaries utilizing code.
+  
+  See files COPYING and README for details.
 
-  Originator reserve the right to use and publish sources
-  under different conditions too. If third party contributors
-  do not accept this condition, they can delete this statement
-  and only GNU license will apply.
  *******************************************************************/
 
-//#include <malloc.h>
 #include <orte_all.h>
 //#include <string.h>
+//#include "ul_utmalloc.h"
+
 #include "ul_gavl.h"
 
 int 
@@ -144,7 +152,7 @@ gavl_search_node(const gavl_root_t *root, const void *key,
     cmp=0;
   }
   *nodep=p;
-  return cmp;
+  return (mode&GAVL_FCMP)?cmp:1;
 }
 
 /**
@@ -185,14 +193,14 @@ gavl_find_first(const gavl_root_t *root, const void *key)
  * @root:	GAVL tree root
  * @key:	key value searched for
  *
- * same as above, but first matching item is found.
+ * same as above, but points to item with first key value above searched @key.
  * Return Value: pointer to the first item associated to key value.
  */
 void * 
 gavl_find_after(const gavl_root_t *root, const void *key)
 {
   gavl_node_t *n;
-  n=gavl_find_after(root, key);
+  n=gavl_find_after_node(root, key);
   return n?gavl_node2item(root,n):NULL;
 }
 
