@@ -291,9 +291,9 @@ ch_output_type_dcl(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
 			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
 			fprintf (ci->fh, "_deserialize(x)\n");
 
-                        fprintf(ci->fh, "#define %s_get_max_size(x) ", ctmp);
+                        fprintf(ci->fh, "#define %s_get_max_size(x, num) ", ctmp);
 			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
-			fprintf (ci->fh, "_get_max_size(x)\n");
+			fprintf (ci->fh, "_get_max_size(x, num)\n");
 			break;
 		case IDLN_TYPE_ARRAY: {
 			IDL_tree sub;
@@ -610,7 +610,7 @@ ch_output_decl(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
     "_", 0);
   fprintf(ci->fh, "void %s_serialize(CDR_Codec *cdrCodec,%s *object);\n", id, id);
   fprintf(ci->fh, "void %s_deserialize(CDR_Codec *cdrCodec,%s *object);\n", id, id);
-  fprintf(ci->fh, "int %s_get_max_size(ORTEGetMaxSizeParam *gms);\n", id);
+  fprintf(ci->fh, "int %s_get_max_size(ORTEGetMaxSizeParam *gms, int num);\n", id);
   fprintf(ci->fh, "Boolean %s_type_register(ORTEDomain *d);\n", id);
   fprintf(ci->fh, "\n");
 

@@ -59,12 +59,12 @@ BoxRect rectangle;
 /** impls declarations **/
 void BoxRect_serialize(CDR_Codec *cdrCodec,BoxRect *object);
 void BoxRect_deserialize(CDR_Codec *cdrCodec,BoxRect *object);
-int BoxRect_get_max_size(ORTEGetMaxSizeParam *gms);
+int BoxRect_get_max_size(ORTEGetMaxSizeParam *gms, int num);
 Boolean BoxRect_type_register(ORTEDomain *d);
 
 void BoxType_serialize(CDR_Codec *cdrCodec,BoxType *object);
 void BoxType_deserialize(CDR_Codec *cdrCodec,BoxType *object);
-int BoxType_get_max_size(ORTEGetMaxSizeParam *gms);
+int BoxType_get_max_size(ORTEGetMaxSizeParam *gms, int num);
 Boolean BoxType_type_register(ORTEDomain *d);
 
 

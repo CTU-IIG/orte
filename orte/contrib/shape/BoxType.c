@@ -10,25 +10,43 @@
 
 void BoxRect_serialize(CDR_Codec *cdrCodec,BoxRect *object) {
   CORBA_short_serialize(cdrCodec,&(object->top_left_x));
+
   CORBA_short_serialize(cdrCodec,&(object->top_left_y));
+
   CORBA_short_serialize(cdrCodec,&(object->bottom_right_x));
+
   CORBA_short_serialize(cdrCodec,&(object->bottom_right_y));
+
 }
 
 void
 BoxRect_deserialize(CDR_Codec *cdrCodec,BoxRect *object) {
   CORBA_short_deserialize(cdrCodec,&(object->top_left_x));
+
   CORBA_short_deserialize(cdrCodec,&(object->top_left_y));
+
   CORBA_short_deserialize(cdrCodec,&(object->bottom_right_x));
+
   CORBA_short_deserialize(cdrCodec,&(object->bottom_right_y));
+
 }
 
 int
-BoxRect_get_max_size(ORTEGetMaxSizeParam *gms) {
-  CORBA_short_get_max_size(gms);
-  CORBA_short_get_max_size(gms);
-  CORBA_short_get_max_size(gms);
-  CORBA_short_get_max_size(gms);
+BoxRect_get_max_size(ORTEGetMaxSizeParam *gms, int num) {
+  int loop_lim=2;
+  int csize_save;
+  while(num) {
+    if (!loop_lim--) {
+      gms->csize+=num*(gms->csize-csize_save);
+      return gms->csize;
+    }
+    num--;
+    csize_save=gms->csize;
+    CORBA_short_get_max_size(gms, 1);
+    CORBA_short_get_max_size(gms, 1);
+    CORBA_short_get_max_size(gms, 1);
+    CORBA_short_get_max_size(gms, 1);
+  }
   return gms->csize;
 }
 
@@ -51,22 +69,38 @@ BoxRect_type_register(ORTEDomain *d) {
 
 void BoxType_serialize(CDR_Codec *cdrCodec,BoxType *object) {
   CORBA_octet_serialize(cdrCodec,&(object->color));
+
   CORBA_long_serialize(cdrCodec,&(object->shape));
+
   BoxRect_serialize(cdrCodec,&(object->rectangle));
+
 }
 
 void
 BoxType_deserialize(CDR_Codec *cdrCodec,BoxType *object) {
   CORBA_octet_deserialize(cdrCodec,&(object->color));
+
   CORBA_long_deserialize(cdrCodec,&(object->shape));
+
   BoxRect_deserialize(cdrCodec,&(object->rectangle));
+
 }
 
 int
-BoxType_get_max_size(ORTEGetMaxSizeParam *gms) {
-  CORBA_octet_get_max_size(gms);
-  CORBA_long_get_max_size(gms);
-  BoxRect_get_max_size(gms);
+BoxType_get_max_size(ORTEGetMaxSizeParam *gms, int num) {
+  int loop_lim=2;
+  int csize_save;
+  while(num) {
+    if (!loop_lim--) {
+      gms->csize+=num*(gms->csize-csize_save);
+      return gms->csize;
+    }
+    num--;
+    csize_save=gms->csize;
+    CORBA_octet_get_max_size(gms, 1);
+    CORBA_long_get_max_size(gms, 1);
+    BoxRect_get_max_size(gms, 1);
+  }
   return gms->csize;
 }
 

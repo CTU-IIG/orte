@@ -116,12 +116,23 @@ ci_output_impls_struct(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
   fprintf(ci->fh, "}\n\n");
 
   /* get_max_size */
-  fprintf(ci->fh, "int\n%s_get_max_size(ORTEGetMaxSizeParam *gms) {\n", id);
+  fprintf(ci->fh, "int\n%s_get_max_size(ORTEGetMaxSizeParam *gms, int num) {\n", id);
+
+  fprintf(ci->fh, "  int loop_lim=2;\n");
+  fprintf(ci->fh, "  int csize_save;\n");
+
+  fprintf(ci->fh, "  while(num) {\n");
+  fprintf(ci->fh, "    if (!loop_lim--) {\n");
+  fprintf(ci->fh, "      gms->csize+=num*(gms->csize-csize_save);\n");
+  fprintf(ci->fh, "      return gms->csize;\n");
+  fprintf(ci->fh, "    }\n");
+  fprintf(ci->fh, "    num--;\n");
+  fprintf(ci->fh, "    csize_save=gms->csize;\n");
 
   for(cur = IDL_TYPE_STRUCT(tree).member_list; cur; cur = IDL_LIST(cur).next) {
     for(curmem = IDL_MEMBER(IDL_LIST(cur).data).dcls; curmem; curmem = IDL_LIST(curmem).next) {
       IDL_tree name = IDL_LIST(curmem).data;
-       fprintf(ci->fh, "  ");
+       fprintf(ci->fh, "    ");
        orte_cbe_write_typespec(ci->fh, IDL_MEMBER(IDL_LIST(cur).data).type_spec);
        fprintf(ci->fh, "_get_max_size(gms, ");
 
@@ -147,6 +158,7 @@ ci_output_impls_struct(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
        fprintf(ci->fh, ");\n");
     }
   }
+  fprintf(ci->fh, "  }\n");
   fprintf(ci->fh, "  return gms->csize;\n");
   fprintf(ci->fh, "}\n\n");
 
