@@ -55,7 +55,7 @@ char* TK2S(TaskProp *tp)
 /*****************************************************************************/
 void ORTEAppRecvThread(TaskProp *tp) {
   struct sockaddr_in    des;
-  uint32_t		RTPS_Codec_len;
+  int32_t		RTPS_Codec_len;
   MessageInterpret      mi; 
   CDR_Codec		*cdrCodec=&tp->mb.cdrCodec;
   ORTEDomain		*d=tp->d;
@@ -75,7 +75,8 @@ void ORTEAppRecvThread(TaskProp *tp) {
                   &des,sizeof(des));             //info from sending host
 
     if (RTPS_Codec_len == -1) {
-	    perror("sock_recvfrom");
+	    perror("ORTEAppRecvThread: sock_recvfrom");
+	    return;
     }
 
     debug(22,7) ("ORTEAppRecvThread %s: fired, msg_len: 0x%x\n",TK2S(tp),RTPS_Codec_len);
