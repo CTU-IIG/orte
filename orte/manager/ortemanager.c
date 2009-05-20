@@ -258,8 +258,10 @@ int main(int argc,char *argv[]) {
   }
   
   d=ORTEDomainMgrCreate(domain,&dp,events,ORTE_TRUE);
-  if (!d)
+  if (!d) {
+    perror("ORTEDomainMgrCreate");
     exit(1);
+  }
 
   #ifdef CONFIG_ORTE_UNIX
   if (orteDaemon)
