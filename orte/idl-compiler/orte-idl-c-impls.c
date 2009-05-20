@@ -23,7 +23,20 @@ orte_idl_output_c_impls (IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
 static void
 ci_output_var(IDL_tree val, IDL_tree name, OIDL_C_Info *ci, int type)
 {
-
+  IDL_tree curitem;
+  unsigned dim=0;
+  if (IDL_NODE_TYPE(name) == IDLN_TYPE_ARRAY) {
+    for(curitem = IDL_TYPE_ARRAY(name).size_list, dim=0;
+	curitem;
+	curitem = IDL_LIST(curitem).next, dim++) {
+	/* For each dimension */
+      fprintf(ci->fh, "  unsigned i%d;\n", dim);
+      fprintf(ci->fh, "  for (i%d=0; i%d < %" IDL_LL "d; i%d++) {\n",
+	      dim, dim, IDL_INTEGER(IDL_LIST(curitem).data).value,
+	      dim);
+      }
+  }
+  
   fprintf(ci->fh, "  ");
   orte_cbe_write_typespec(ci->fh, val);
 
@@ -42,16 +55,16 @@ ci_output_var(IDL_tree val, IDL_tree name, OIDL_C_Info *ci, int type)
   case IDLN_IDENT:
     fprintf(ci->fh, "%s", IDL_IDENT(name).str);
     break;
-/*  case IDLN_TYPE_ARRAY:
+  case IDLN_TYPE_ARRAY:
     {
-      IDL_tree curitem;
-
       fprintf(ci->fh, "%s", IDL_IDENT(IDL_TYPE_ARRAY(name).ident).str);
-      for(curitem = IDL_TYPE_ARRAY(name).size_list; curitem; curitem = IDL_LIST(curitem).next) {
-	fprintf(ci->fh, "[%" IDL_LL "d]", IDL_INTEGER(IDL_LIST(curitem).data).value);
+      for(curitem = IDL_TYPE_ARRAY(name).size_list, dim=0;
+	  curitem;
+	  curitem = IDL_LIST(curitem).next, dim++) {
+	fprintf(ci->fh, "[i%d]", dim);
       }
     }
-    break;*/
+    break;
   default:
     g_error("Weird varname - %s", IDL_tree_type_names[IDL_NODE_TYPE(name)]);
     break;
@@ -61,6 +74,10 @@ ci_output_var(IDL_tree val, IDL_tree name, OIDL_C_Info *ci, int type)
     fprintf(ci->fh, ")");
 
   fprintf(ci->fh, ");\n");
+  while (dim-- > 0)
+    fprintf(ci->fh, "  }");
+  fprintf(ci->fh, "\n");
+    
 }
 
 static void
@@ -103,20 +120,29 @@ ci_output_impls_struct(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
 
   for(cur = IDL_TYPE_STRUCT(tree).member_list; cur; cur = IDL_LIST(cur).next) {
     for(curmem = IDL_MEMBER(IDL_LIST(cur).data).dcls; curmem; curmem = IDL_LIST(curmem).next) {
+      IDL_tree name = IDL_LIST(curmem).data;
        fprintf(ci->fh, "  ");
        orte_cbe_write_typespec(ci->fh, IDL_MEMBER(IDL_LIST(cur).data).type_spec);
-       fprintf(ci->fh, "_get_max_size(gms");
+       fprintf(ci->fh, "_get_max_size(gms, ");
 
        cur_tspec=IDL_MEMBER(IDL_LIST(cur).data).type_spec;
-       switch (IDL_NODE_TYPE (cur_tspec)) {
-       case IDLN_TYPE_STRING:
+       if (IDL_NODE_TYPE (cur_tspec) == IDLN_TYPE_STRING) {
 	    if (IDL_TYPE_STRING (cur_tspec).positive_int_const) {
 		int length = IDL_INTEGER (IDL_TYPE_STRING (cur_tspec).positive_int_const).value;
-                fprintf(ci->fh, ",%d",length);                 
+                fprintf(ci->fh, "%d",length);                 
             }
-	    break;
-       default:
-	    break;
+       } else if (IDL_NODE_TYPE(name) == IDLN_TYPE_ARRAY) {
+	 unsigned dim;
+	 IDL_tree curitem;
+	 for(curitem = IDL_TYPE_ARRAY(name).size_list, dim=0;
+	     curitem;
+	     curitem = IDL_LIST(curitem).next, dim++) {
+	   if (dim>0) fprintf(ci->fh, "*");
+	   fprintf(ci->fh, "%" IDL_LL "d",
+		   IDL_INTEGER(IDL_LIST(curitem).data).value);
+	 }
+       } else {
+	 fprintf(ci->fh, "1");                 
        }
        fprintf(ci->fh, ");\n");
     }
