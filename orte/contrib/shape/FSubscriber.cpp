@@ -4,9 +4,6 @@
 FSubscriber::FSubscriber(QWidget *parent)
     : QDialog(parent)
 {
-    ORTEInit(); 
-    domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
-    BoxType_type_register(domain);
     subscriberBlue=subscriberGreen=subscriberRed=NULL;
     subscriberBlack=subscriberYellow=NULL;
     /* setup UI */
@@ -61,10 +58,16 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 }
 
 
-void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, int iYellow )
+bool FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, int iYellow )
 {
     NtpTime deadline;
     
+    ORTEInit(); 
+    domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+    if (!domain)
+	return false;
+    BoxType_type_register(domain);
+
     NtpTimeAssembFromMs(msBlue, 0, 0);
     NtpTimeAssembFromMs(msGreen, 0, 0);
     NtpTimeAssembFromMs(msRed, 0, 0);
@@ -146,6 +149,7 @@ void FSubscriber::initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, 
 	    IPADDRESS_INVALID);
 	combo->addItem("Yellow");
      }
+     return true;
 }
 
 

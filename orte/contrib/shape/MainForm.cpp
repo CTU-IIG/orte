@@ -55,7 +55,11 @@ void MainForm::addPublisher()
     if (radioButton2->isChecked())
       color=4;
     fp = new FPublisher();
-    fp->initPublisher(color,rand()%3);
+    if (!fp->initPublisher(color,rand()%3)) {
+	QMessageBox::critical(this, "ORTE error", "Publisher initialization failed");
+	delete fp;
+	return;
+    }
     connect( this, SIGNAL( rejected() ), fp, SLOT( destroy() ) );
     fp->setWindowIcon(QPixmap(":/FPublisherIcon.png"));
     fp->show();
@@ -66,12 +70,17 @@ void MainForm::addSubscriber()
     FSubscriber *fs;
     fs = new FSubscriber;
     connect( this, SIGNAL( rejected() ), fs, SLOT( destroy() ) );
-    fs->initSubscribers(
+    if (!fs->initSubscribers(
 	clBlue->isChecked(),
         clGreen->isChecked(),
         clRed->isChecked(),
         clBlack->isChecked(),
-        clYellow->isChecked());
+        clYellow->isChecked()))
+    {
+	QMessageBox::critical(this, "ORTE error", "Subscriber initialization failed");
+	delete fs;
+	return;
+    }
     fs->setWindowIcon(QPixmap(":/FSubscriberIcon.png"));
     fs->show();
 }

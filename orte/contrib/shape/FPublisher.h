@@ -32,7 +32,7 @@ class FPublisher : public QDialog , public Ui::FPublisher
 public:
     FPublisher(QWidget *parent = 0);
 
-    void initPublisher(int icolor,int istrength);
+    bool initPublisher(int icolor,int istrength);
 
 private slots:
     void Timer();

@@ -8,18 +8,22 @@ FPublisher::FPublisher(QWidget *parent)
     while(incx==0) incx=(rand()%3-1)*stepx;
     while(incy==0) incy=(rand()%3-1)*stepy;
     rect.setRect(0,0,25,45);
-    ORTEInit(); 
-    domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
-    BoxType_type_register(domain);
     publisher=NULL;
     /* setup UI */
     setupUi(this);
 }
 
-void FPublisher::initPublisher(int icolor,int istrength)
+bool FPublisher::initPublisher(int icolor,int istrength)
 {
     NtpTime	persistence;
     const char 	*topic;
+
+    ORTEInit();
+    domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+    if (!domain)
+	return false;
+    
+    BoxType_type_register(domain);
 
     color=icolor;
     strength=istrength;
@@ -49,6 +53,7 @@ void FPublisher::initPublisher(int icolor,int istrength)
     timer = new QTimer();
     connect( timer, SIGNAL(timeout()), this, SLOT(Timer()));
     timer->start( 50 );
+    return true;
 }
 
 

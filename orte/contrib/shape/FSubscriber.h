@@ -36,7 +36,7 @@ class FSubscriber : public QDialog , public Ui::FSubscriber
 public:
     FSubscriber(QWidget *parent = 0);
 
-    void initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, int iYellow );
+    bool initSubscribers( int iBlue, int iGreen, int iRed, int iBlack, int iYellow );
 
 
 private slots:
