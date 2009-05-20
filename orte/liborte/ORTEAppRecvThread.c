@@ -74,6 +74,10 @@ void ORTEAppRecvThread(TaskProp *tp) {
                   cdrCodec->buf_len,            //max length of message
                   &des,sizeof(des));             //info from sending host
 
+    if (RTPS_Codec_len == -1) {
+	    perror("sock_recvfrom");
+    }
+
     debug(22,7) ("ORTEAppRecvThread %s: fired, msg_len: 0x%x\n",TK2S(tp),RTPS_Codec_len);
 
     //is it header of valid RTPS packet?
