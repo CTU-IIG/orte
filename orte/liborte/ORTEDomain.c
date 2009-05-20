@@ -448,7 +448,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     debug(30,0) ("ORTEDomainCreate: Error creating buffer(s).\n");
     error=ORTE_TRUE;
   } 
-  /* a problem occure with resources */
+  /* a problem occured with resources */
   if (error) {
     sock_cleanup(&d->taskRecvUnicastMetatraffic.sock);
     sock_cleanup(&d->taskRecvMulticastMetatraffic.sock);
@@ -461,6 +461,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     CDR_codec_release_buffer(&d->taskRecvMulticastUserdata.mb.cdrCodec);
     CDR_codec_release_buffer(&d->taskSend.mb.cdrCodec);
     FREE(d);
+    return NULL;
   }
 
   /************************************************************************/
