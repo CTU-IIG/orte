@@ -50,6 +50,10 @@ RETVAL="0"
 
 LINUX_VERSION=$(grep UTS_RELEASE ${LINUX_DIR}/include/linux/version.h | \
                sed 's/[^"]*"\(.*\)\{1\}"/\1/')
+if [ -z "$LINUX_VERSION" ] ; then
+  LINUX_VERSION=$(grep UTS_RELEASE ${LINUX_DIR}/include/linux/utsrelease.h | \
+                 sed 's/[^"]*"\(.*\)\{1\}"/\1/')
+fi
 
 LINUX_VERSION_MAJOR=$(echo ${LINUX_VERSION} | cut -d. -f1)
 LINUX_VERSION_MINOR=$(echo ${LINUX_VERSION} | cut -d. -f2)
@@ -141,23 +145,48 @@ endif
 flags:
 	@echo LINUX_SRC="\$(OMK_LINUX_SRC)" >>\$(obj)/flags
 	@echo LINUX_ARCH="\$(ARCH)" >>\$(obj)/flags
+	@echo LINUX_BUILDHOST="\$(KBUILD_BUILDHOST)" >>\$(obj)/flags
 	@echo LINUX_LDFLAGS="" >>\$(obj)/flags
 	@echo LINUX_ARFLAGS="\$(ARFLAGS)" >>\$(obj)/flags
 	@echo LINUX_CROSS_COMPILE="\$(CROSS_COMPILE)" >>\$(obj)/flags
 	@echo LINUX_KERNELRELEASE="\$(KERNELRELEASE)" >>\$(obj)/flags
+ifdef KBUILD_CFLAGS
+	@echo LINUX_CPPFLAGS="\$(KBUILD_CPPFLAGS)\$(if \$(filter -I,\$(KBUILD_CPPFLAGS)),, \$(LINUXINCLUDE))" | sed 's#-I\(include\|arch\)#-I"\$(LINUXDIR)/\1"#g'>>\$(obj)/flags
+	@echo LINUX_AFLAGS="\$(KBUILD_AFLAGS)" | sed 's#-I\(include\|arch\)#-I"\$(OMK_LINUX_SRC)/\1"#g'>>\$(obj)/flags
+	@echo LINUX_CFLAGS="\$(KBUILD_CFLAGS)" | sed 's#-I\(include\|arch\)#-I"\$(OMK_LINUX_SRC)/\1"#g'>>\$(obj)/flags
+else
 	@echo LINUX_CPPFLAGS="\$(CPPFLAGS)" | sed 's#Iinclude#I"\$(LINUXDIR)/include"#g'>>\$(obj)/flags
 	@echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's#Iinclude#I"\$(OMK_LINUX_SRC)/include"#g'>>\$(obj)/flags
 	@echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's#Iinclude#I"\$(OMK_LINUX_SRC)/include"#g'>>\$(obj)/flags
+endif
 	@echo LINUX_CFLAGS_MODULE="\$(CFLAGS_MODULE)" >>\$(obj)/flags
 	@echo LINUX_CC="\$(CC)" >>\$(obj)/flags
-	@echo LINUX_LD="\$(LD) \$(LDFLAGS) \$(LDFLAGS_MODULE)" >>\$(obj)/flags
+	@echo LINUX_LD="\$(LD) \$(LDFLAGS) \$(LDFLAGS_MODULE)" | sed 's#\(\<arch/[^ ]*\.o\>\)#"\$(LINUXDIR)/\1"#g' >>\$(obj)/flags
 	@echo LINUX_AS="\$(AS)" >>\$(obj)/flags
 	@echo LINUX_AR="\$(AR)" >>\$(obj)/flags
 	@echo LINUX_MODULE_EXT=".ko" >>\$(obj)/flags
 	@echo LINUX_QUOTE_MODNAME=\$(if \$(findstring KBUILD_STR,\$(basename_flags)),y,) >>\$(obj)/flags
+	@echo LINUX_CONFIG_MODVERSIONS=\$(CONFIG_MODVERSIONS) >>\$(obj)/flags
+	@echo LINUX_CONFIG_MODULE_SRCVERSION_ALL=\$(CONFIG_MODULE_SRCVERSION_ALL) >>\$(obj)/flags
+	@echo LINUX_CONFIG_DEBUG_SECTION_MISMATCH=\$(CONFIG_DEBUG_SECTION_MISMATCH) >>\$(obj)/flags
+	@echo LINUX_CONFIG_MARKERS=\$(CONFIG_MARKERS) >>\$(obj)/flags
+	@echo LINUX_KBUILD_EXTMOD=\$(KBUILD_EXTMOD) >>\$(obj)/flags
+	@echo LINUX_KBUILD_EXTRA_SYMBOLS=\$(KBUILD_EXTRA_SYMBOLS) >>\$(obj)/flags
+	@echo LINUX_KBUILD_MODPOST_WARN=\$(KBUILD_MODPOST_WARN) >>\$(obj)/flags
+	@echo LINUX_CROSS_BUILD=\$(cross_build) >>\$(obj)/flags
 EOF
 
-	#  V=1
+	# modkern_cflags := $(CFLAGS_KERNEL) / $(CFLAGS_MODULE)
+
+	# _c_flags       = $(KBUILD_CFLAGS) $(ccflags-y) $(CFLAGS_$(basetarget).o)
+	# _a_flags       = $(KBUILD_AFLAGS) $(asflags-y) $(AFLAGS_$(basetarget).o)
+	# _cpp_flags     = $(KBUILD_CPPFLAGS) $(cppflags-y) $(CPPFLAGS_$(@F))
+
+	# export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
+	# export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE
+	# export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
+
+	#  -p V=1
 	#echo ${MAKE} -C ${LINUX_DIR} SUBDIRS=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR} modules
 	${MAKE} -C ${LINUX_DIR} M=${KERN_TEST_DIR} LINUXDIR=${LINUX_DIR} MODVERDIR=${KERN_TEST_DIR}/modver modules
 	#if [ $? == 0 ] ; then

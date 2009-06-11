@@ -1,23 +1,25 @@
-#                   Version for Linux/RTLinux builds.        #OMK@linux
-#
-#  Makefile.rules - OCERA make framework common project rules -*- makefile -*- #OMK@base
+#  Makefile.rules - OCERA make framework common project rules -*- makefile-gmake -*- #OMK:base.omk
 #
 #  (C) Copyright 2003 by Pavel Pisa - OCERA team member
 #  (C) Copyright 2006 by Michal Sojka - Czech Technical University, FEE, DCE
 #
 #  Homepage: http://rtime.felk.cvut.cz/omk/
+#  Version:  0.1-85-gcc2a6bd
 #
 # The OMK build system is distributed under the GNU General Public
 # License.  See file COPYING for details.
 #
-# input variables
+#
+#                   Version for Linux/RTLinux builds.                            #OMK:linux.omk
+#
+#
+# input variables                                                                #OMK:base.omk
 # V                .. if set to 1, full command text is shown else short form is used
 # W                .. whole tree - if set to 1, make is always called from the top-level directory
 # SUBDIRS          .. list of subdirectories intended for make from actual directory
 # default_CONFIG   .. list of default config assignments CONFIG_XXX=y/n ...
-# LN_HEADERS       .. if "y", header files are symbolicaly linked instead of copied. #OMK@include
-#                                                            #OMK@linux
-# input variables
+# LN_HEADERS       .. if "y", header files are symbolicaly linked instead of copied. #OMK:include.omk
+# input variables                                                                #OMK:linux.omk
 # lib_LIBRARIES    .. list of the user-space libraries
 # shared_LIBRARIES .. list of the user-space shared libraries
 # kernel_LIBRARIES .. list of the kernel-space libraries
@@ -33,7 +35,9 @@
 # kernel_MODULES   .. list of the kernel side modules/applications
 # rtlinux_MODULES  .. list of RT-Linux the kernel side modules/applications
 # xxx_SOURCES      .. list of specific target sources
-# xxx_LIBS         .. list of specific target libraries
+# xxx_LIBS         .. list of specific target libraries (-l prefix is automatically added)
+# xxx_LDFLAGS      .. list of specific target LDFLAGS
+# lib_LOADLIBES    .. list of libraries linked to each executable
 # INCLUDES         .. additional include directories and defines for user-space
 # kernel_INCLUDES  .. additional include directories and defines for kernel-space
 # rtlinux_INCLUDES .. additional include directories and defines for RT-Linux
@@ -45,7 +49,7 @@
 # CXXFLAGS         .. C++ compiler flags
 # CPPFLAGS	   .. C preprocessor flags
 # LDFLAGS	   .. linker flags for programs linking
-# LOCAL_CONFIG_H   .. name of local config.h file generated from values #OMK@config_h
+# LOCAL_CONFIG_H   .. name of local config.h file generated from values          #OMK:config_h.omk
 #                     of options defined in the current directory
 # config_include_HEADERS .. names of global config files (possibly
 #                     with subdirectories)
@@ -54,10 +58,11 @@
 # DOXYGEN          .. if non-empty, generated headers includes Doxygen's @file
 # 		      command, so it is possible to document config
 # 		      variables.
-# QT_SUBDIRS       .. subdirectories where to build QT applications using qmake #OMK@qt
+# QT_PROJECTS	   .. list of QT .pro file to use for compilation                  #OMK:qt.omk
+# QT_SUBDIRS       .. subdirectories where to build QT applications using qmake (depricated)
 # QTDIR		   .. where QT resides
-OMK_RULES_TYPE=linux                                         #OMK@__type
-                                                             #OMK@base
+OMK_RULES_TYPE=linux                                                             #OMK:Makefile.rules.linux@
+                                                                                 #OMK:base.omk@Makefile.rules.linux
 # We need to ensure definition of sources directory first
 ifndef SOURCES_DIR
 # Only shell built-in pwd understands -L
@@ -249,7 +254,7 @@ $(pass)-$(3)-subdir:
 		RELATIVE_DIR=$(RELATIVE_PREFIX)$(3) -C $(2)/$(3) \
 		-f $(SUBDIR_MAKEFILE) $(pass)-submakes
 # In subdirectories we can call submakes directly since passes are
-# already searialized on the toplevel make.
+# already serialized on the toplevel make.
 endef
 
 ifdef OMK_TESTSROOT
@@ -321,12 +326,12 @@ omkize:
 	fi
 	$(Q)for i in `find -L . -name Makefile.omk` ; do \
 	   d=`dirname $${i}`; \
-	   if ! test -f "$${d}/Makefile.rules" && ( ! test -f "$${d}/Makefile" || ! cmp --silent Makefile "$${d}/Makefile" ); then \
+	   if ! test -f "$${d}/Makefile.rules" && ( test -f "$${d}/Makefile" && ! cmp --silent Makefile "$${d}/Makefile" ); then \
 	      rm -f "$${d}/Makefile"; \
 	      cp -v Makefile "$${d}/Makefile"; \
 	   fi \
 	done
-ifeq ($(OMK_VERBOSE),1)                                      #OMK@include
+ifeq ($(OMK_VERBOSE),1)                                                          #OMK:include.omk@Makefile.rules.linux
 CPHEADER_FLAGS += -v
 LNHEADER_FLAGS += -v
 endif
@@ -363,11 +368,7 @@ include-pass-local-$(2): $$($(2)_GEN_HEADERS) $$(foreach f,$$(renamed_$(2)_GEN_H
 	   cmp --quiet $$$${srcfname} $(1)/$$$${destfname} \
 	   || ( mkdir -p `dirname $(1)/$$$${destfname}` && $$(call cp_cmd,$$(LOCAL_BUILD_DIR)/$$$${srcfname},$(1)/$$$${destfname}) ) || exit 1 ; )
 endef
-
-# Local Variables:
-# mode:makefile
-# End:
-                                                             #OMK@linux
+                                                                                 #OMK:linux.omk@Makefile.rules.linux
 # Hack to check RT-Linux rules
 #LINUX_DIR := /home/cvs/ocera/ocera-build/kernel/linux
 #RTL_DIR := /home/cvs/ocera/ocera-build/kernel/rtlinux
@@ -442,6 +443,7 @@ ifeq ($(TARGET_OS),)
 endif
 
 export TARGET_OS
+export BUILD_OS
 
 LOCAL_BUILD_DIR  = $(USER_OBJS_DIR)
 
@@ -449,6 +451,7 @@ LOCAL_BUILD_DIR  = $(USER_OBJS_DIR)
 # earlier (i.g. in config.omk), it is not overriden here.
 CFLAGS ?= -O2 -Wall
 CXXFLAGS ?= -O2 -Wall
+
 
 CPPFLAGS  += -I $(USER_INCLUDE_DIR)
 
@@ -466,16 +469,13 @@ else
   SOLIB_PICFLAGS += -fpic
 endif
 
-ifeq ($(TARGET_OS),win32)
-OMIT_KERNEL_PASSES=1
-endif
-
 #vpath %.c $(SOURCES_DIR)
 #vpath %.cc $(SOURCES_DIR)
 #vpath %.cxx $(SOURCES_DIR)
 
 USER_OBJS_DIR = $(USER_BUILD_DIR)/$(RELATIVE_DIR)
 KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
+OMK_WORK_DIR  = $(USER_OBJS_DIR)
 
 .PHONY: dep subdirs clean clean-custom cleandepend check-dir
 
@@ -483,7 +483,7 @@ KERN_OBJS_DIR = $(KERN_BUILD_DIR)/$(RELATIVE_DIR)
 ifneq ($(OMK_SERIALIZE_INCLUDED),y)
 include-pass: check-dir
 library-pass: include-pass
-binary-pass: library-pass
+binary-pass: library-pass link-pseudo-pass
 kernel-lib-pass: include-pass
 kernel-mod-pass: kernel-lib-pass
 kernel-modpost-pass: kernel-mod-pass
@@ -589,9 +589,9 @@ endef
 
 
 define COMPILE_idl_template
-$(2).c $(2)-stubs.c $(2)-skels.c $(2)-common.c $(2).h: $(1)
+$(2).c $(2)-stubs.c $(2)-skels.c $(2)-common.c $(2).h: $(1) $$(wildcard $$(firstword $$(idl_COMPILE)))
 	@$(QUIET_CMD_ECHO) "  IDL     $$@"
-	$(Q) $$(idl_COMPILE) $(1)
+	$(Q) $$(idl_COMPILE) $$($(2)_IDLFLAGS) $(1)
 endef
 
 
@@ -619,7 +619,7 @@ USER_SOURCES += $$($(1)_SOURCES)
 $(2)/$(1)$(3): $$($(1)_OBJS)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
 	$(Q) $$(if $$(filter %.cc,$$($(1)_SOURCES:%.cxx=%.cc)),$$(CXX),$$(CC)) \
-	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) $$(LDFLAGS) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $$@
+	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) $$(LDFLAGS) $$($(1)_LDFLAGS) -Wl,-rpath-link,$(USER_LIB_DIR) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $$@
 	@echo "$(2)/$(1)$(3): \\" >$(USER_OBJS_DIR)/$(1).exe.d
 	@sed -n -e 's|^LOAD \(.*\)$$$$|  \1  \&|p' $(USER_OBJS_DIR)/$(1).exe.map|tr '&' '\134'  >>$(USER_OBJS_DIR)/$(1).exe.d
 	@echo >>$(USER_OBJS_DIR)/$(1).exe.d
@@ -651,6 +651,7 @@ $(USER_LIB_DIR)/lib$(1).a: $$($(1)_OBJS)
 	$(Q) $(AR) rcs $$@ $$^
 endef
 
+.PHONY: FORCE
 
 # Syntax: $(call SOLIB_template,<library-name>)
 define SOLIB_template
@@ -672,15 +673,16 @@ $(1)_OBJSLO := $$(sort $$($(1)_OBJSLO:%/=%))
 SOLIB_OBJS  += $$($(1)_OBJSLO)
 SOLIB_SOURCES += $$($(1)_SOURCES)
 
-$(USER_LIB_DIR)/lib$(1).$(SOLIB_EXT): $$($(1)_OBJSLO)
-	@$(QUIET_CMD_ECHO) "  LINK    $$@"
-	$(Q) $(CC) --shared -Xlinker -soname=lib$(1).$(SOLIB_EXT) -o $$@ $$^ $$(LOADLIBES) $$($(1)_LIBS:%=-l%)
+$(OMK_WORK_DIR)/lib$(1).$(SOLIB_EXT).omkvar: $$($(1)_OBJSLO) FORCE
+	$(Q)echo '$(1)_objslo += $$$$(addprefix $(USER_OBJS_DIR)/,$$($(1)_OBJSLO))' > $$@.tmp; \
+	    echo '$(1)_libs += $$($(1)_LIBS) $$(lib_LOADLIBES)' >> $$@.tmp; \
+	    echo '$(1)_ldflags += $$($(1)_LDFLAGS) $$(lib_LDFLAGS)' >> $$@.tmp; \
+	    echo 'shared_libs := $$$$(sort $(1) $$$$(shared_libs))' >> $$@.tmp; \
+	    if cmp -s $$@.tmp $$@; then rm $$@.tmp; else mv $$@.tmp $$@; fi
 endef
 
-
-
 library-pass-local: $(addprefix $(USER_INCLUDE_DIR)/,$(cmetric_include_HEADERS)) \
-		    $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(USER_LIB_DIR)/lib%.$(SOLIB_EXT))
+		    $(lib_LIBRARIES:%=$(USER_LIB_DIR)/lib%.a) $(shared_LIBRARIES:%=$(OMK_WORK_DIR)/lib%.$(SOLIB_EXT).omkvar)
 
 binary-pass-local: $(bin_PROGRAMS:%=$(USER_BIN_DIR)/%$(EXE_SUFFIX)) $(utils_PROGRAMS:%=$(USER_UTILS_DIR)/%$(EXE_SUFFIX)) $(test_PROGRAMS:%=$(USER_TESTS_DIR)/%$(EXE_SUFFIX))
 
@@ -711,7 +713,30 @@ $(foreach lib,$(shared_LIBRARIES),$(eval $(call SOLIB_template,$(lib))))
 
 -include $(USER_OBJS_DIR)/*.d
 
-endif
+endif # USER_RULE_TEMPLATES
+
+.PHONY: link-pseudo-pass
+link-pseudo-pass:
+	$(Q)$(MAKE) $(NO_PRINT_DIRECTORY) -C $(USER_BUILD_DIR) -f $(SOURCESDIR_MAKEFILE) link-shared-libs
+
+ifeq ($(MAKECMDGOALS),link-shared-libs)
+
+# Syntax: $(call solib_link_template,<library-name>)
+define solib_link_template
+$(1)_shared_libs = $$(patsubst %,$(USER_LIB_DIR)/lib%.$(SOLIB_EXT),$$(filter $$(shared_libs),$$($(1)_libs)))
+#$$(warning $(1)_shared_libs = $$($(1)_shared_libs))
+$(USER_LIB_DIR)/lib$(1).$(SOLIB_EXT): $$($(1)_shared_libs) $$($(1)_objslo)
+	@$(QUIET_CMD_ECHO) "  LINK    $$@"
+	$(Q)$(CC) --shared -Xlinker -soname=lib$(1).$(SOLIB_EXT) -Wl,-Map,$(USER_OBJS_DIR)/lib$(1).$(SOLIB_EXT).map -o $$@ $$($(1)_objslo) $$(LOADLIBES) $$($(1)_libs:%=-l%) $$(lib_ldflags) $$($(1)_ldflags)
+endef
+
+-include $(shell true; find $(USER_BUILD_DIR) -name 'lib*.omkvar') # `true' is a hack for MinGW
+#$(warning $(shared_libs))
+$(foreach lib,$(shared_libs),$(eval $(call solib_link_template,$(lib))))
+
+.PHONY: link-shared-libs
+link-shared-libs: $(shared_libs:%=$(USER_LIB_DIR)/lib%.$(SOLIB_EXT))
+endif # link-shared-libs
 
 #=====================================================================
 # Kernel-space rules and templates to compile modules, libraries etc.
@@ -719,7 +744,7 @@ endif
 ifdef KERN_RULE_TEMPLATES
 
 $(KERN_LIB_DIR)/kernel.mk: $(LINUX_DIR)/.config $(MAKERULES_DIR)/kernelcfg2mk
-	@$(QUIET_CMD_ECHO) "  KCFG2MK $$@"
+	@$(QUIET_CMD_ECHO) "  KCFG2MK $@"
 	$(Q) $(MAKERULES_DIR)/kernelcfg2mk $(LINUX_DIR) $(KERN_LIB_DIR)
 
 ifeq ($(CONFIG_RTLINUX),y)
@@ -743,7 +768,7 @@ include $(KERN_LIB_DIR)/kernel.mk
 ifeq ($(LINUX_SRC),)
 LINUX_SRC = $(LINUX_DIR)
 endif
-kernel_INCLUDES += -I $(LINUX_DIR) -idirafter $(LINUX_SRC)/include/linux
+kernel_INCLUDES += -I $(KERN_INCLUDE_DIR) -I $(LINUX_DIR) -idirafter $(LINUX_SRC)/include/linux
 
 ifdef LINUX_CC
 KERN_CC = $(LINUX_CC)
@@ -753,7 +778,7 @@ KERN_CC = echo KERN_CC not defined - compilation skipped
 endif
 c_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CPPFLAGS) $(LINUX_CFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB -nostdinc
 cc_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CPPFLAGS) $(LINUX_CFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB
-S_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CPPFLAGS) $(LINUX_AFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB
+S_o_kern_COMPILE = $(KERN_CC) $(kernel_INCLUDES) -idirafter $(kern_GCCLIB_DIR)/include $(LINUX_CPPFLAGS) $(LINUX_AFLAGS) $(LINUX_CFLAGS_MODULE) -DOMK_FOR_KERNEL -DEXPORT_SYMTAB -nostdinc
 KERN_EXE_SUFFIX := $(LINUX_MODULE_EXT)
 KERN_LDFLAGS = $(LINUX_LDFLAGS)
 ifdef LINUX_ARCH
@@ -806,6 +831,34 @@ KERN_LINK_SUFFIX = .o
 else
 KERN_MODULES_LINK_DIR = $(KERN_MODULES_DIR)
 KERN_LINK_SUFFIX = $(KERN_EXE_SUFFIX)
+endif
+
+ifeq ($(LINUX_CONFIG_MODVERSIONS),y)
+MODPOST_OPTS += -m
+MODPOST_OPTS += -i $(LINUX_DIR)/Module.symvers
+ifneq ($(LINUX_BUILDHOST),) # this is not correct point, it should look for 2.6.17 kernel
+MODPOST_OPTS += -I $(KERN_LIB_DIR)/Module.symvers
+endif
+MODPOST_OPTS += -o $(KERN_LIB_DIR)/Module.symvers
+endif
+
+ifeq ($(LINUX_CONFIG_DEBUG_SECTION_MISMATCH),y)
+MODPOST_OPTS += -S
+endif
+
+ifeq ($(LINUX_CONFIG_MARKERS),y)
+MODPOST_OPTS += -K $(LINUX_DIR)/Module.markers
+MODPOST_OPTS += -M $(KERN_LIB_DIR)/Module.markers
+endif
+
+ifeq ($(LINUX_KBUILD_MODPOST_WARN),y)
+MODPOST_OPTS += -w
+endif
+
+ifneq ($(LINUX_BUILDHOST),)
+ifneq ($(LINUX_BUILDHOST),$(LINUX_ARCH))
+MODPOST_OPTS += -c
+endif
 endif
 
 define COMPILE_c_o_kern_template
@@ -895,7 +948,7 @@ $(2)/$(1)$(KERN_LINK_SUFFIX): $$($(1)_OBJS)
 	@echo >>$(KERN_OBJS_DIR)/$(1).mod.d
 	@if [ "$(KERN_EXE_SUFFIX)" = ".ko" ] ; then \
 	  echo $(1) >>$(KERN_MODPOST_DIR)/module-changes ; \
-	  echo $(1) >>$(KERN_MODPOST_DIR)/$(1).mod.stamp ; \
+	  echo $(1) >$(KERN_MODPOST_DIR)/$(1).mod.stamp ; \
 	fi
 
 endef
@@ -950,7 +1003,7 @@ MODULES_LIST := $(MODULES_LIST:%.mod.stamp=%)
 define MODPOST_kern_template
 $(2) : $(1)$(KERN_LINK_SUFFIX) $(1).mod.c
 	@$(QUIET_CMD_ECHO) "  LD [M]  $$@"
-	$(Q) $$(cc_o_kern_COMPILE) -D"KBUILD_BASENAME=$(KERN_MQ)$(1)$(KERN_MQ)" \
+	$(Q) $$(c_o_kern_COMPILE) -D"KBUILD_BASENAME=$(KERN_MQ)$(1)$(KERN_MQ)" \
 		-D"KBUILD_MODNAME=$(KERN_MQ)$(1)$(KERN_MQ)" \
 		-o $(1).mod.o -c $(1).mod.c
 	$(Q) $$(KERN_LD) $$(KERN_LDFLAGS) $(1)$(KERN_LINK_SUFFIX) $(1).mod.o -r -o $$@
@@ -960,7 +1013,7 @@ kernel-modpost-versions: $(wildcard $(LINUX_DIR)/Module.symvers)
 	@$(QUIET_CMD_ECHO) "  MODPOST    $(KERN_MODPOST_DIR)"
 	@echo  >$(KERN_MODPOST_DIR)/modpost-running
 	@rm -f $(KERN_MODPOST_DIR)/module-changes
-	$(Q) $(KERN_MODPOST) $(MODULES_LIST:%=%$(KERN_LINK_SUFFIX)) $(^:%=-i %)
+	$(Q) $(KERN_MODPOST) $(MODPOST_OPTS) $(MODULES_LIST:%=%$(KERN_LINK_SUFFIX))
 
 $(MODULES_LIST:%=%.mod.c) : kernel-modpost-versions
 
@@ -999,7 +1052,7 @@ $(eval $(call omk_pass_template,clean,$(USER_OBJS_DIR),,always))
 $(eval $(call omk_pass_template,install,$(USER_OBJS_DIR),,always))
 $(eval $(call omk_pass_template,include-pass,$(USER_OBJS_DIR),USER_RULE_TEMPLATES=y,always))
 
-check-dir:
+check-dir::
 	@$(call mkdir_def,$(USER_BUILD_DIR))
 	@$(call mkdir_def,$(KERN_BUILD_DIR))
 	@$(call mkdir_def,$(USER_INCLUDE_DIR))
@@ -1098,7 +1151,7 @@ clean-local: clean-custom
 
 include-pass-submakes: extra-rules-subdirs
 
-# We must go to EXTRA_RULES_SUBDIRS beofre going to any other
+# We must go to EXTRA_RULES_SUBDIRS before going to any other
 # directory, since the executables compiled in EXTRA_RULES_SUBDIRS
 # might be needed there.
 include-pass-this-dir $(foreach subdir,$(SUBDIRS),include-pass-$(subdir)-subdir): extra-rules-subdirs
@@ -1108,16 +1161,12 @@ ifndef OMIT_KERNEL_PASSES
 # Also make kernel passes if not disabled
 default: kernel-lib-pass kernel-pass
 endif
-
-# Local Variables:
-# mode:makefile
-# End:
-                                                             #OMK@config_h
+                                                                                 #OMK:config_h.omk@Makefile.rules.linux
 # Syntax: $(call BUILD_CONFIG_H_template,<stamp_dir>,<header_file_path>,<list_of_options_to_export>,<header_barrier>)
 define BUILD_CONFIG_H_template
 
 $(addprefix $(1)/,$(notdir $(addsuffix .stamp,$(2)))) : $(CONFIG_FILES)
-	@$(QUIET_CMD_ECHO) "  CONFGEN $$(@:%.stamp=%)"
+	@$(QUIET_CMD_ECHO) "  CONFGEN $(notdir $(2))"
 	@if [ ! -d `dirname $(2).tmp` ] ; then \
 		mkdir -p `dirname $(2).tmp` ; fi
 	@echo "/* Automatically generated from */" > "$(2).tmp"
@@ -1183,63 +1232,52 @@ clean-local-config-h:
 	@$(foreach confh,$(config_h_stamp_files) $(kern_config_h_stamp_files),\
 	    if [ -e $(confh) ] ; then rm $(confh) ; fi ; \
 	)
+                                                                                 #OMK:qt.omk@Makefile.rules.linux
+ifneq ($(QT_SUBDIRS)$(QT_PROJECTS),)
 
+# Usage: $(call qt_project_template,<.pro_file relative to SOURCES_DIR>)
+define qt_project_template
 
-# Local Variables:
-# mode:makefile
-# End:
-                                                             #OMK@qt
-ifneq ($(QT_SUBDIRS),)
+.PHONY: qt-subpass-$(1) clean-qt-$(dir $(1))
 
-.PHONY: qt-subpass clean-qt distclean-qt
+# FIXME: Handle multiple .pro files correctly
+$(LOCAL_BUILD_DIR)/$(dir $(1))Makefile: $(SOURCES_DIR)/$(1)
+	$(Q)mkdir -p $$(dir $$(@)) && cd $$(dir $$(@)) &&		\
+	$(QTDIR:%=%/bin/)qmake						\
+	     TOP_DIR=$(OUTPUT_DIR)					\
+	     RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir $(1))			\
+	     $(QTDIR:%=QTDIR=%) CC=$(CC) CXX=$(CXX)			\
+	     LIBS+="-L$(USER_LIB_DIR)" DESTDIR=$(USER_BIN_DIR)		\
+	     INCLUDEPATH+="$(USER_INCLUDE_DIR)"				\
+	     QMAKE_LFLAGS="-Wl,-rpath-link,$(USER_LIB_DIR) $$(QMAKE_LFLAGS)" \
+	     $(SOURCES_DIR)/$(1)
 
-# Usage: $(call qt_makefile_template,<qt-subdir>)
-define qt_makefile_template
-$(SOURCES_DIR)/$(1)/Makefile: $(wildcard $(SOURCES_DIR)/$(1)/*.pro)
-	cd $(SOURCES_DIR)/$(1); $(QTDIR:%=%/bin/)qmake TOP_DIR=$(OUTPUT_DIR) \
-	     RELATIVE_DIR=$(RELATIVE_PREFIX)$(1) $(QTDIR:%=QTDIR=%) CC=$(CC) \
-	     CXX=$(CXX) LIBS+="-L$(USER_LIB_DIR)" INCLUDEPATH+="$(USER_INCLUDE_DIR)"
-endef
-$(foreach dir,$(QT_SUBDIRS), $(eval $(call qt_makefile_template,$(dir))))
-
-qt-subpass: $(foreach dir,$(QT_SUBDIRS), $(SOURCES_DIR)/$(dir)/Makefile)
-	$(foreach dir,$(QT_SUBDIRS),\
-		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(SOURCES_DIR)/$(dir) \
-		-f $(SOURCES_DIR)/$(dir)/Makefile || exit 1 ;)
+# This horrible substitution is here to properly escape
+# -Wl,-rpath,$ORIGIN flags. It includes escaping for make, shell,
+# qmake and again make and shell run on qmake generated makefile.
+QMAKE_LFLAGS = $$(subst $$$$,\\\\\\$$$$\$$$$,$$(LDFLAGS))
 
 # Hook to binary pass
-binary-pass-submakes: qt-subpass
+binary-pass-submakes: qt-subpass-$(1)
+qt-subpass-$(1): $(LOCAL_BUILD_DIR)/$(dir $(1))Makefile
+	$(Q)$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir $(1)) \
+		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir $(1)) -C $(LOCAL_BUILD_DIR)/$(dir $(1)) || exit 1 ;
 
 # Hook to clean pass
-clean-local: clean-qt
-clean-qt:
-	+@$(foreach dir, $(QT_SUBDIRS), \
-		$(if $(wildcard $(SOURCES_DIR)/$(dir)/Makefile), \
-		@$(QUIET_CMD_ECHO) "  CLEAN   $(dir)"; \
-		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(SOURCES_DIR)/$(dir) \
-		-f $(SOURCES_DIR)/$(dir)/Makefile clean|| exit 1 ;))
+clean-local: clean-qt-$(dir $(1))
+clean-qt-$(dir $(1)): $(LOCAL_BUILD_DIR)/$(dir $(1))Makefile
+	@$(QUIET_CMD_ECHO) "  QT CLEAN $(dir $(1))"
+	$(Q)$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir $(1)) \
+	  RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir $(1)) \
+	  -C $(LOCAL_BUILD_DIR)/$(dir $(1)) clean
+	$(Q)rm $(LOCAL_BUILD_DIR)/$(dir $(1))Makefile
+endef
 
+$(foreach pro,$(QT_PROJECTS), $(eval $(call qt_project_template,$(pro))))
+$(foreach pro,$(foreach dir,$(QT_SUBDIRS), $(wildcard $(dir)/*.pro)), $(eval $(call qt_project_template,$(pro))))
 
-# Hook to distclean
-distclean: distclean-qt
-
-# TODO: Add distclean-qt-pass to handle QT_SUBDIRS in the whole
-# tree. This way we only distclean toplevel subdirs.
-distclean-qt:
-	+@$(foreach dir, $(QT_SUBDIRS), \
-		$(if $(wildcard $(SOURCES_DIR)/$(dir)/Makefile), \
-		@$(QUIET_CMD_ECHO) "  DISTCLEAN $(dir)"; \
-		$(MAKE) SOURCES_DIR=$(SOURCES_DIR)/$(dir) \
-		RELATIVE_DIR=$(RELATIVE_PREFIX)$(dir) -C $(SOURCES_DIR)/$(dir) \
-		-f $(SOURCES_DIR)/$(dir)/Makefile distclean|| exit 1 ;))
 endif
-
-# Local Variables:
-# mode:makefile
-# End:
-                                                             #OMK@sources-list
+                                                                                 #OMK:sources-list.omk@Makefile.rules.linux
 # Rules that creates the list of files which are used during
 # compilation. The list reflects conditional compilation depending on
 # config.omk and other variables.
@@ -1252,13 +1290,7 @@ SOURCES_LIST_D := $(LOCAL_BUILD_DIR)/$(SOURCES_LIST_FN).d
 export SOURCES_LIST SOURCES_LIST_DIR SOURCES_LIST_D
 endif
 
-ifeq ($(MAKECMDGOALS),sources-list)
-NEED_SOURCES_LIST=y
-endif
-ifeq ($(MAKECMDGOALS),TAGS)
-NEED_SOURCES_LIST=y
-endif
-ifeq ($(MAKECMDGOALS),tags)
+ifneq ($(filter sources-list TAGS tags cscope,$(MAKECMDGOALS)),)
 NEED_SOURCES_LIST=y
 endif
 
@@ -1322,9 +1354,6 @@ endif
 
 cscope: $(SOURCES_LIST)
 	@$(QUIET_CMD_ECHO) "  CSCOPE  < $(SOURCES_LIST_FN)"
-	$(Q)sed -e '/^#/d' $(SOURCES_LIST)|cscope -b -i-
+	$(Q)sed -e '/^#/d' $(SOURCES_LIST) > cscope.files
+	$(Q)cscope -b -icscope.files
 #FIXME: see doc to -i in cscope(1)
-
-# Local Variables:
-# mode:makefile
-# End:
