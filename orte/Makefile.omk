@@ -1,4 +1,5 @@
-SUBDIRS = include liborte manager examples libjorte java 
+SUBDIRS = include liborte manager examples libjorte java
+SUBDIRS += contrib
 EXTRA_RULES_SUBDIRS = idl-compiler
 
 
