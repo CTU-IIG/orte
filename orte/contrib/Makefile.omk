@@ -1,0 +1,5 @@
+override USE_LEAF_MAKEFILES=n
+
+SUBDIRS = shape
+
+
