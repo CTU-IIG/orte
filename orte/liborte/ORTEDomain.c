@@ -326,6 +326,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		  loop);
       
       //joint to multicast group
+      memset(&mreq, 0, sizeof(mreq));
       mreq.imr_multiaddr.s_addr=htonl(d->domainProp.multicast.ipAddress);
       mreq.imr_interface.s_addr=htonl(INADDR_ANY);
       if(sock_setsockopt(&d->taskRecvUnicastMetatraffic.sock,IPPROTO_IP,
