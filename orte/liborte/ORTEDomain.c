@@ -332,7 +332,8 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   	  IP_ADD_MEMBERSHIP, (const char *)&mreq, sizeof(mreq))>=0) {
         debug(30,2) ("ORTEDomainCreate: joint to mgroup %s\n",
                       IPAddressToString(d->domainProp.multicast.ipAddress,sIPAddress));
-      }
+      } else
+	      goto err_sock;
     }
     if (sock_bind(&d->taskRecvUnicastMetatraffic.sock,port,d->domainProp.listen) == -1) {
       goto err_sock;
