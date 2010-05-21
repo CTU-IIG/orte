@@ -283,13 +283,13 @@ ch_output_type_dcl(IDL_tree tree, OIDL_Run_Info *rinfo, OIDL_C_Info *ci)
 		switch (IDL_NODE_TYPE (ent)) {
 		case IDLN_IDENT:
 			fprintf (ci->fh, " %s;\n", ctmp);
-			fprintf (ci->fh, "#define %s_serialize(x) ", ctmp);
+			fprintf (ci->fh, "#define %s_serialize(codec, obj) ", ctmp);
 			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
-			fprintf (ci->fh, "_serialize(x)\n");
+			fprintf (ci->fh, "_serialize(codec, obj)\n");
 
-			fprintf (ci->fh, "#define %s_deserialize(x) ", ctmp);
+			fprintf (ci->fh, "#define %s_deserialize(codec, obj) ", ctmp);
 			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
-			fprintf (ci->fh, "_deserialize(x)\n");
+			fprintf (ci->fh, "_deserialize(codec, obj)\n");
 
                         fprintf(ci->fh, "#define %s_get_max_size(x, num) ", ctmp);
 			orte_cbe_write_typespec (ci->fh, IDL_TYPE_DCL (tree).type_spec);
