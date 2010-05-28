@@ -245,6 +245,14 @@ ch_output_type_enum (IDL_tree       tree,
 
 //	ch_type_alloc_and_tc (tree, rinfo, ci, FALSE);
 
+	fprintf (ci->fh, "#define %s_serialize(codec, obj) CORBA_long_serialize((codec), (obj))\n", enumid);
+	fprintf (ci->fh,
+		 "static inline void\n"
+		 "%s_deserialize(CDR_Codec *codec, %s *object) {\n"
+		 "  CORBA_long_deserialize(codec, (CORBA_long*)object);\n"
+		 "}\n", enumid, enumid);
+	fprintf(ci->fh, "#define %s_get_max_size(x, num) CORBA_long_get_max_size((x), (num))\n", enumid);
+
 	fprintf (ci->fh, "#endif\n");
 
 	g_free (enumid);
