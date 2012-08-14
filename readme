@@ -20,29 +20,7 @@ note: was tested on
 sparc-sun-solaris2.9
 powerpc-apple-darwin6.8
 
-Obtaining the code from Git repository
---------------------------------------
-
-This seems redundant, since if you're reading this you most likely
-have already performed this step; however, for completeness, you can
-obtain the latest ORTE source code from Git repository by running:
-
-  $ git clone git://orte.git.sourceforge.net/gitroot/orte/orte
-
-Building From Git
------------------
-
-To build ORTE code from Git, you will need Autoconf, Automake, and any
-tools that those utilities require (GNU m4, Perl, etc.). See the
-configure.in file to find the minimum versions of each of these tools.
-
-After checking out the code, you will need to perform these steps to get
-to the point where you can run "make".
-
- $ make -f Makefile.cvs 
-
-
-How to make and install it?
+How to compile and install it?
 ---------------------------
 
 simply untar instalation package into desired directory, enter this 
@@ -120,6 +98,26 @@ is not probably running.
 See "orteping -h" for usaged.
 
 Now, you can develop self applications (see documentation).
+
+Obtaining the code from Git repository
+--------------------------------------
+
+You can obtain the latest ORTE source code from Git repository by
+running:
+
+  $ git clone git://orte.git.sourceforge.net/gitroot/orte/orte
+
+Building From Git
+-----------------
+
+To build ORTE code from Git, you will need Autoconf, Automake, and any
+tools that those utilities require (GNU m4, Perl, etc.). See the
+configure.in file to find the minimum versions of each of these tools.
+
+After checking out the code, you will need to perform these steps to get
+to the point where you can run "make".
+
+ $ make -f Makefile.cvs 
 
 Feedback is welcome - send bug reports, enhancements, checks, money
 orders, etc. to the address below.
