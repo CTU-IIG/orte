@@ -3,7 +3,7 @@
 
 What is it?
 -----------
-The ORTE is open source implementation of RTPS communication protocol 
+ORTE is open source implementation of RTPS communication protocol 
 defined by Real Time Innovations (http://www.rti.com). 
 RTPS is new application layer protocol targeted to real-time communication 
 area, which is build on top of standard UDP stack.
@@ -20,24 +20,21 @@ note: was tested on
 sparc-sun-solaris2.9
 powerpc-apple-darwin6.8
 
-Obtaining CVS Code
-------------------
+Obtaining the code from Git repository
+--------------------------------------
 
-This seems redundant, since if you're reading this you most likely have
-already performed this step; however, for completeness, you can obtain
-the ORTE source code via anonymous CVS from the Sourceforge
-project <http://sf.org/projects/ocera/>:
+This seems redundant, since if you're reading this you most likely
+have already performed this step; however, for completeness, you can
+obtain the latest ORTE source code from Git repository by running:
 
-  $ cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/ocera login
-  $ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/ocera co -P ocera/components/comm/eth/orte
+  $ git clone git://orte.git.sourceforge.net/gitroot/orte/orte
 
-Building From CVS
+Building From Git
 -----------------
 
-To build ORTE from CVS, you will need Autoconf, Automake, 
-and any tools that those utilities require (GNU m4, Perl,
-etc.).  See the configure.in file to find the minimum versions of each
-of these tools. 
+To build ORTE code from Git, you will need Autoconf, Automake, and any
+tools that those utilities require (GNU m4, Perl, etc.). See the
+configure.in file to find the minimum versions of each of these tools.
 
 After checking out the code, you will need to perform these steps to get
 to the point where you can run "make".
@@ -56,35 +53,35 @@ UserSpace compilation:
 make 
 make install
 
-after this procedure ortemanager and orteping are placed in /usr/local/bin
-, library in /usr/local/lib and include headers /usr/local/include
+After this procedure ortemanager and orteping are placed in /usr/local/bin,
+library is placed in /usr/local/lib and include headers in /usr/local/include.
 
-RTLinux compilation with wIP:
-./configure --with-linux=/patched linux dir/ --with-rtlinux=/rtlinux dir/ --with-rtlinuxwip=/wip dir/
+RTLinux compilation with wIP: (DEPRICATED)
+./configure --with-linux=/patched_linux_dir/ --with-rtlinux=/rtlinux_dir/ --with-rtlinuxwip=/wip_dir/
 make 
 make install
 
-RTLinux compilation with onetd:
-./configure --with-linux=/patched linux dir/ --with-rtlinux=/rtlinux dir/ --with-rtlinuxonetd=/onetd dir/
+RTLinux compilation with onetd: (DEPRICATED)
+./configure --with-linux=/patched_linux_dir/ --with-rtlinux=/rtlinuxh_dir/ --with-rtlinuxonetd=/onetd_dir/
 make 
 make install
 
 RTAI compilation:
-./configure --with-linux=/patched linux dir/ --with-rtai=/rtai dir/ --with-rtnet=/rtnet dir/ 
+./configure --with-linux=/patched_linux_dir/ --with-rtai=/rtai dir/ --with-rtnet=/rtnet dir/ 
 make 
 make install
 
 JAVA compilation:
-./configure --with-java=/java home dir/ 
+./configure --with-java=/java_home_dir/ 
 make
 make install
 
 
-Another way, how to compile ORTE project is used OMK compilation method. See file readme.makerules about 
-details of OMK. For standalone compilation (without OCERA), just copy folder orte to other (private)
-destination. Run
-./switch2standalone
-in the root of orte directory.
+Another way, how to compile ORTE project is to use OMK compilation
+method. See https://rtime.felk.cvut.cz/omk/ for details about OMK. For
+standalone compilation (without OCERA), just copy folder orte to other
+(private) destination. Run ./switch2standalone in the root of orte
+directory.
 
 Now just type a run
 make
@@ -127,4 +124,5 @@ Now, you can develop self applications (see documentation).
 Feedback is welcome - send bug reports, enhancements, checks, money
 orders, etc. to the address below.
 
-Petr Smolik             petr.smolik@wo.cz  
+Petr Smolik             petr.smolik@wo.cz
+Michal Sojka		sojkam1@fel.cvut.cz
