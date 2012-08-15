@@ -29,19 +29,16 @@
       <title>Downloading </title>
 
        <para>
-	The ORTE component can be obtained from OCERA SourceForge web page
-	(<ulink url="http://www.sf.net/projects/ocera/"></ulink>). Here is the component 
-	located also in self distribution branch as well as in OCERA distribution.
-	Before developing any application check if there is a new file release.
+	ORTE can be obtained from its web site
+	(<ulink url="http://orte.sf.net/"></ulink>).
        </para>
        <para>
-	The CVS version of ORTE repository can be checked out be anonymous (pserver)
-	CVS with the following commands.
+	The development version of ORTE can be cloned from a Git
+	repository with the following command.
          <programlisting>
-cvs -d:pserver:anonymous@cvs.ocera.sourceforge.net:/cvsroot/ocera login
-cvs -z3 -d:pserver:anonymous@cvs.ocera.sourceforge.net:/cvsroot/ocera co ocera/components/comm/eth/orte/
+	   git clone git://orte.git.sourceforge.net/gitroot/orte/orte
          </programlisting>
-	Attention, there is developing version and can't be stable!
+	Attention, this is developing version and may not be stable!
        </para>
     </section>
 
