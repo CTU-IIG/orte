@@ -25,10 +25,10 @@
     &orte_rtps_model;  
   </section>
 
-  &orte_api;
   &orte_internals;
   &orte_examples;
   &orte_tests;
   &orte_usage;
+  &orte_api;
 
 </chapter>
