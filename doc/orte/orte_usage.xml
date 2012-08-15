@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-usage">
+  <title>ORTE Usage Information</title>
+
+  <section id="orte-installation">
+    <title>Installation and Setup</title>
+    
+    <para>
+    In this chapter is described basic steps how to makes installation
+    and setup process of the ORTE. The process includes next steps:
+    </para>
+
+    <para>
+      <orderedlist>
+        <listitem><para>Downloading the ORTE distribution</para></listitem>
+        <listitem><para>Compilation</para></listitem>
+        <listitem><para>Installing the ORTE library and utilities</para></listitem>
+        <listitem><para>Testing the installation</para></listitem>
+      </orderedlist>
+    </para>
+    
+    <para><phrase role="strong">Note:</phrase></para>
+    <para>
+    On windows systems we are recommend to use Mingw or Cygwin systems. The
+    ORTE support also MSVC compilation, but this kind of installation is not 
+    described here.
+    </para>
+    <section id="orte-installation-downloading">
+      <title>Downloading </title>
+
+       <para>
+	The ORTE component can be obtained from OCERA SourceForge web page
+	(<ulink url="http://www.sf.net/projects/ocera/"></ulink>). Here is the component 
+	located also in self distribution branch as well as in OCERA distribution.
+	Before developing any application check if there is a new file release.
+       </para>
+       <para>
+	The CVS version of ORTE repository can be checked out be anonymous (pserver)
+	CVS with the following commands.
+         <programlisting>
+cvs -d:pserver:anonymous@cvs.ocera.sourceforge.net:/cvsroot/ocera login
+cvs -z3 -d:pserver:anonymous@cvs.ocera.sourceforge.net:/cvsroot/ocera co ocera/components/comm/eth/orte/
+         </programlisting>
+	Attention, there is developing version and can't be stable!
+       </para>
+    </section>
+
+    <section id="orte-installation-compilation">
+      <title>Compilation</title>
+	<para>
+	Before the compilation process is necessary to prepare the source.
+	Create a new directory for ORTE distribution. We will assume name of this 
+	directory <filename>/orte</filename> for Linux case. Copy or move downloaded
+	ORTE sources to <filename>/orte</filename> (assume the name of sources
+	<filename>orte-0.2.3.tar.gz</filename>). Untar and unzip this files by using 
+	next commands:
+        <programlisting>
+gunzip orte-0.2.3.tar.gz
+tar xvf orte-0.2.3.tar
+        </programlisting>
+	Now is the source prepared for compilation. Infrastructure of the ORTE is 
+	designed to support GNU make (needs version 3.81) as well as autoconf compilation. In 
+	next we will continue with description of autoconf compilation, which is more
+	general. The compilation can follows with commands:
+        <programlisting>
+mkdir build
+cd build
+../configure
+make
+        </programlisting>
+	This is the case of outside autoconf compilation. In directory <filename>build</filename> 
+	are all changes made over ORTE project. The source can be easy move to original
+	state be removing of directory <filename>build</filename>.
+	</para>
+    </section>
+
+    <section id="orte-installation-installing">
+       <title>Installing</title>
+
+       <para>
+       The result of compilation process are binary programs and ORTE library. For the
+       next developing is necessary to install this result. It can be easy done be typing:
+       <programlisting>
+make install
+       </programlisting>
+       All developing support is transferred into directories with direct access of 
+       design tools.
+       </para>
+       <informaltable frame='none'>
+          <tgroup cols='2'>
+          <colspec align="left" colwidth="1*"/>
+          <colspec align="left" colwidth="1*"/>
+          <thead>
+          <row>
+            <entry align="center">name</entry>
+            <entry align="center">target path</entry>
+          </row>
+          </thead>
+          <tbody>
+          <row><entry>ortemanager, orteping, ortespy</entry>
+               <entry><filename>/usr/local/bin</filename></entry></row>
+          <row><entry>library</entry>
+               <entry><filename>/usr/local/lib</filename></entry></row>
+          <row><entry>include</entry>
+               <entry><filename>/usr/local/include</filename></entry></row>
+          </tbody>
+          </tgroup>
+       </informaltable> 
+       <para>
+       The installation prefix <filename>/usr/local/</filename> can be changed
+       during configuration. Use command <command>../configure --help</command> for
+       check more autoconf options.
+       </para>
+    </section>
+
+    <section id="orte-installation-testing">
+       <title>Testing the Installation</title>
+
+       <para>
+       To check of correct installation of ORTE open three shells. 
+       </para>
+
+       <para>
+        <orderedlist>
+          <listitem>
+	    <para>In first shell type</para>
+	    <programlisting>ortemanager</programlisting>
+	  </listitem>
+          <listitem>
+	    <para>In second shell type</para>
+	    <programlisting>orteping -s</programlisting>
+ 	    <para>
+	    This command will invoked creation of a subscription. You should see:
+	    </para>
+	    <programlisting>
+deadline occurred
+deadline occurred
+...
+	    </programlisting>
+	  </listitem>
+          <listitem>
+	    <para>In third shell type</para>
+	    <programlisting>orteping -p</programlisting>
+ 	    <para>
+	    This command will invoked creation of a publication. You should see:
+	    </para>
+	    <programlisting>
+sent issue 1
+sent issue 2
+sent issue 3
+sent issue 4
+...
+	    </programlisting>
+ 	    <para>
+	    If the ORTE installation is properly, you will see incoming messages
+	    in second shell (<command>orteping -s</command>).
+	    </para>
+	    <programlisting>
+received fresh issue 1
+received fresh issue 2
+received fresh issue 3
+received fresh issue 4
+...
+	    </programlisting>
+	    <para>
+	    It's sign, that communication is working correctly.
+	    </para>
+	  </listitem>
+        </orderedlist>
+      </para>
+
+    </section>
+  </section>
+
+  <section id="orte-manager">
+    <title>The ORTE Manager</title>
+
+    <para>
+    A manager is special application that helps
+    applications automatically discover each other on the Network. 
+    Each time an object is created or destroyed, the manager
+    propagate new information to the objects that are internally
+    registered.
+    </para>
+    <para>
+    Every application precipitate in communication is managed by least
+    one manager. The manager should be designed like separated application
+    as well as part of designed application.
+    </para>
+
+    <figure id="cap:orte_managers_img">
+      <title>Position of Managers in RTPS communication
+      </title>
+      <mediaobject>
+	<imageobject>
+          <imagedata align="center" fileref="&orte_managers_img;"
+            format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+	</imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>
+    The ORTE provides one instance of a manager. Name of this utility
+    is <filename>ortemanager</filename> and is located
+    in directory <filename>orte/ortemanager</filename>. Normally is necessary to
+    start <filename>ortemanager</filename> manually or use a script on 
+    UNIX systems. For Mandrake and Red-hat distribution is this script created
+    in subdirectory <filename>rc</filename>. Windows 
+    users can install <filename>ortemanager</filename> like service by 
+    using option <parameter class='option'>/install_service</parameter>. 
+    </para>
+    <para><phrase role="strong">Note:</phrase></para>
+    <para>
+    Don't forget to run a manager (ortemanager) on each RTPS participate node.
+    During live of applications is necessary to be running this manager. 
+    </para>
+
+    <section id="orte-manager-example">
+      <title>Example of Usage ortemanager</title>
+      
+      <para>
+      Each manager has to know where are other managers in the network.
+      Their IP addresses are therefore specified as IPAddressX parameters of
+      ortemanager. All managers participate in one kind of communication use 
+      the same domain number. The domain number is transferred to port number by
+      equation defined in RTPS specification (normally domain 0 is transferred to 
+      7400 port).
+      </para>
+      <para>
+      Let's want to distribute the RTPS communication of nodes with IP addresses
+      192.168.0.2 and 192.168.0.3. Private IP address is 192.168.0.1.
+      The ortemanager can be execute with parameters:
+      </para>
+      <programlisting>
+ortemanager -p 192.168.0.2:192.168.0.3
+      </programlisting>
+      <para>
+      To communicate in different domain use (parameter -d):  
+      </para>
+      <programlisting>
+ortemanager -d 1 -p 192.168.0.2:192.168.0.3
+      </programlisting>
+      <para>
+      Very nice feature of ortemanager is use event system to inform
+      of creation/destruction objects (parameter -e).
+      </para>
+      <programlisting>
+ortemanager -e -p 192.168.0.2:192.168.0.3
+      </programlisting>
+      <para>
+      Now, you can see messages:
+      </para>
+      <programlisting>
+[smolik@localhost smolik]$ortemanager -e -p 192.168.0.2:192.168.0.3
+manager 0xc0a80001-0x123402 was accepted
+application 0xc0a80002-0x800301 was accepted
+application 0xc0a80002-0x800501 was accepted
+application 0xc0a80002-0x800501 was deleted
+manager 0xc0a80001-0x123402 was deleted
+      </programlisting>
+      
+      &orte_ortemanager;  
+    </section>
+  </section>
+
+  <section id="orte-utils">
+    <title>Simple Utilities</title>
+      <para>
+      The simple utilities can be found in the <filename>orte/examples</filename>
+      subdirectory of the ORTE source subtree. These utilities are useful
+      for testing and monitoring RTPS communication.
+      </para>
+      
+      <para>
+      The utilities provided directly by ORTE are:
+      </para>
+
+      <variablelist>
+	<varlistentry>
+          <term>orteping</term>
+
+          <listitem>
+            <para>the utility for easy creating of publications and subscriptions.
+	    </para>
+          </listitem>
+	</varlistentry>
+
+	<varlistentry>
+          <term>ortespy</term>
+
+          <listitem>
+	    <para>monitors issues produced by other application in specific domain.
+	    </para>
+          </listitem>
+	</varlistentry>
+
+      </variablelist>
+
+    &orte_orteping;
+    &orte_ortespy;
+
+  </section>
+</section>

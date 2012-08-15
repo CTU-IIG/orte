@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-intro">
+  <title>Introduction</title>
+
+  <para id="ORTE" xreflabel="ORTE">
+  The Open Real-Time Ethernet (ORTE) is
+  open source implementation of RTPS communication protocol. This protocol
+  is being to submit to IETF as an informational RFC and has been adopted
+  by the IDA group.
+  </para>
+</section>

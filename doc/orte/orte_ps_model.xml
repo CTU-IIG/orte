@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-ps">
+  <title>The Publish-Subscribe Architecture </title>
+
+  <para>
+  The publish-subscribe architecture is designed to
+  simplify one-to-many data-distribution requirements.
+  In this model, an application <quote>publishes</quote> data and
+  <quote>subscribes</quote> to data. Publishers and subscribers are
+  decoupled from each other too. That is:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>Publishers simply send data anonymously, they
+      do not need any knowledge of the number or
+      network location of subscribers.
+      </para>
+    </listitem>
+    <listitem>
+      <para>Subscribers simply receive data anonymously,
+      they do not need any knowledge of the number or
+      network location of the publisher.
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+  An application can be a publisher, subscriber, or both a
+  publisher and a subscriber.
+  </para>
+
+  <figure id="cap:orte_ps_model_img">
+    <title>Publish-Subscribe Architecture
+    </title>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center" fileref="&orte_ps_model_img;"
+          format="EPS" scale="45" srccredit="OCERA CTU 2004" />
+      </imageobject>
+    <caption><para>
+      <emphasis role="italic">
+      Publish-subscribe supports anonymous, event-driven
+      transfer between many nodes. The developer simply writes
+      the application to send or receive the data.
+      </emphasis>
+    </para></caption>
+    </mediaobject>
+  </figure>
+
+  <para>
+  Publish-subscribe architectures are best-suited to
+  distributed applications with complex data flows. The
+  primary advantages of publish-subscribe to
+  applications developers are:
+  </para>
+
+  <itemizedlist>
+    <listitem>
+      <para>Publish-subscribe applications are modular and
+      scalable. The data flow is easy to manage
+      regardless of the number of publishers and subscribers.
+      </para>
+    </listitem>
+    <listitem>
+      <para>The application subscribes to the data by name
+      rather than to a specific publisher or publisher
+      location. It can thus accommodate configuration
+      changes without disrupting the data flow.
+      </para>
+    </listitem>
+    <listitem>
+      <para>Redundant publishers and subscribers can be
+      supported, allowing programs to be replicated
+      (e.g. multiple control stations) and moved transparently.
+      </para>
+    </listitem>
+    <listitem>
+      <para>Publish-subscribe is much more efficient,
+      especially over client-server, with bandwidth utilization.
+      </para>
+    </listitem>
+  </itemizedlist>
+
+  <para>
+  Publish-subscribe architectures are not good at
+  sporadic request/response traffic, such as file transfers.
+  However, this architecture offers practical advantages
+  for applications with repetitive, time-critical data
+  flows.
+  </para>
+
+  <section id="orte-ps-model">
+    <title>The Publish-Subscribe Model</title>
+
+    <para>
+    Publish-subscribe (PS) data distribution is gaining popularity in many 
+    distributed applications, such as financial communications, command 
+    and control systems. PS popularity can be attributed to the dramatically 
+    reduced system development, deployment and maintenance effort and the 
+    performance advantages for applications with one-to-many and 
+    many-to-many data flows.
+    </para>
+
+    <para>
+      Several main features characterize all publish-subscribe architectures:
+    </para>
+    <para>
+      <emphasis role="bold">Distinct declaration and delivery.</emphasis>
+      Communications occur in three simple steps:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>Publisher declares intent to publish a publication.</para>
+      </listitem>
+      <listitem>
+        <para>Subscriber declares interest in a publication.</para>
+      </listitem>
+      <listitem>
+        <para>Publisher sends a publication issue.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>
+    The publish-subscribe services are typically made available to 
+    applications through middleware that sits on top of the operating 
+    system s network interface and presents an application programming 
+    interface. 
+    </para>
+
+    <figure id="cap:orte_ps_architecture_img">
+      <title>Generic Publish-Subscribe Architecture
+      </title>
+      <mediaobject>
+	<imageobject>
+          <imagedata align="center" fileref="&orte_ps_architecture_img;"
+            format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+	</imageobject>
+      <caption><para>
+	<emphasis role="italic">
+        Publish-subscribe is typically implemented through middleware that 
+	sits on top of the operating system s network interface. The 
+	middleware presents a publishsubscribe API so that applications 
+	make just a few simple calls to send and receive publications. The 
+	middleware performs the many and complex network functions that 
+	physically distribute the data.
+	</emphasis>
+      </para></caption>
+      </mediaobject>
+    </figure>
+    
+    <para>
+    The middleware handles three basic programming chores:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+        Maintain the database that maps publishers to subscribers 
+	resulting in logical data channels for each publication 
+	between publishers and subscribers.    
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	Serialize (also called marshal) and deserialize (demarshal) the data 
+	on its way to and from the network to reconcile publisher 
+	and subscriber platform differences.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	Deliver the data when it is published.
+	</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section id="orte-ps-in-RT">
+    <title>Publish-Subscribe in Real Time</title>
+
+    <para>
+      Publish-subscribe offers some clear advantages for real-time applications:
+    </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Because it is very efficient in both bandwidth and
+	    latency for periodic data exchange, PS offers the
+	    best transport for distributing data quickly.
+	  </para>
+        </listitem>
+        <listitem>
+          <para>
+	    Because it provides many-to-many connectivity,
+	    PS is ideal for applications in which publishers
+	    and subscribers are added and removed
+	    dynamically.
+	  </para>
+        </listitem>
+      </itemizedlist>
+    
+    <para>
+    Real-time applications require more functionality than what is provided 
+    by desktop and Internet publish-subscribe semantics. For instance, real-time
+    applications often require:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+	<emphasis role="bold">Delivery timing control:</emphasis>
+	Real-time subscribers are concerned with timing; for example, when the
+	data is delivered and how long it remains valid.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Reliability control:</emphasis>
+	Reliable delivery conflicts with deterministic timing. Each subscriber
+	typically requires the ability to specify its own reliability 
+	characteristics.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Request-reply semantics:</emphasis>
+	Complex real-time applications often have one-time requests for
+	actions or data. These do not fit well into the PS semantics.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Flexible delivery bandwidth:</emphasis>
+	Typical real-time applications include both real-time and 
+	non-realtime subscribers. Each subscriber s bandwidth requirements - even
+        for the same publication - can be different.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Fault tolerance:</emphasis>
+	Real-time applications often require <quote>hot standby</quote> publishers 
+	and/or subscribers.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Thread priority awareness:</emphasis>
+	Real-time communications often must work without
+	affecting publisher or subscriber threads.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Robustness:</emphasis>
+	The communications layer should not introduce any single-node 
+	points-of-failure to the application.
+	</para>
+      </listitem>
+      <listitem>
+        <para>
+	<emphasis role="bold">Efficiency:</emphasis>
+	Real-time systems require efficient data collection and delivery. 
+	Only minimal delays should be introduced into the critical 
+	data-transfer path.
+	</para>
+      </listitem>
+    </itemizedlist>
+
+  </section>
+
+</section>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-api">
+  <title>ORTE API</title>
+  
+  <section><!--sect1-->
+  <title>Data types</title>
+    &orte_typedefs_api;
+  </section><!--/sect1-->
+
+  <section><!--sect2-->
+  <title>Functions</title>
+    &orte_protos_api;
+  </section><!--/sect2-->
+
+  <section><!--sect3-->
+  <title>Macros</title>
+    &orte_defines_api;
+  </section><!--/sect3-->
+
+</section>

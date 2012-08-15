@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-rtps">
+  <title>The Real-Time Publish-Subscribe Model</title>
+
+  <para>
+  The Real-Time Publish-Subscribe (RTPS) communications model was developed 
+  to address these limitations of PS. RTPS adds publication and subscription timing 
+  parameters and properties so the developer can control the different types 
+  of data flows and achieve their application s performance and 
+  reliability goals.
+  </para>
+
+  <section id="orte-rtps-publication">
+    <title>Publication Parameters</title>
+    
+    <para>
+    Each publication is characterized by four 
+    parameters: topic, type, strength and persistence. The topic is the label 
+    that identifies each data flow. The type describes the data format. 
+    The strength indicates a publisher s weight relative to other publishers 
+    of the same topic. The persistence indicates how long each publication 
+    issue is valid. Next figure illustrates how a subscriber arbitrates 
+    among publications using the strength and persistence properties.
+    </para>
+
+    <figure id="cap:orte_pub_arbitration_img">
+      <title>Publication Arbitration
+      </title>
+      <mediaobject>
+	<imageobject>
+          <imagedata align="center" fileref="&orte_pub_arbitration_img;"
+            format="EPS" scale="45" srccredit="OCERA CTU 2004" />
+	</imageobject>
+      <caption><para>
+	<emphasis role="italic">
+	Fault tolerant applications use redundant publishers sending 
+	publications with the same topic to ensure continuous 
+	operation. Subscribers arbitrate among the publications 
+	on an issue-by-issue basis based on the strength and persistence 
+	of each issue.
+	</emphasis>
+      </para></caption>
+      </mediaobject>
+    </figure>
+    
+    <para>
+    When there are multiple publishers sending the same 
+    publication, the subscriber accepts the issue if its strength 
+    is greater than the last-received issue or if the last issue s 
+    persistence has expired. Typically, a publisher that sends issues 
+    with a period of length T will set its persistence to some 
+    time Tp where Tp > T. Thus, while the  strongest  publisher is 
+    functional, its issues will take precedence over publication 
+    issues of lesser strength. Should the strongest publisher stop 
+    sending issues (willingly or due to a failure), other publisher(s) 
+    sending issues for the same publication will take over after Tp elapses. This 
+    mechanism establishes an inherently robust, quasi-stateless communications 
+    channel between the then-strongest publisher of a publication 
+    and all its subscribers.
+    </para>
+  </section>
+
+  <section id="orte-rtps-subscription">
+    <title>Subscription Paramters</title>
+
+    <para>
+    Subscriptions are identified by four 
+    parameters: topic, type, minimum separation and deadline. The topic 
+    the label that identifies the data flow, and type describes the 
+    data format (same as the publication properties). Minimum separation 
+    defines a period during which no new issues are accepted for 
+    that subscription. The deadline specifies how long the subscriber is 
+    willing to wait for the next issue. Next figure illustrates the use 
+    of these parameters.
+    </para>
+
+    <figure id="cap:orte_sub_issue_separation_img">
+      <title>Subscription Issue Separation
+      </title>
+      <mediaobject>
+	<imageobject>
+          <imagedata align="center" fileref="&orte_sub_issue_separation_img;"
+            format="EPS" scale="45" srccredit="OCERA CTU 2004" />
+	</imageobject>
+      <caption><para>
+	<emphasis role="italic">
+	Once the subscriber has received an issue, it will not receive 
+	another issue for at least the minimum separation time. If a 
+	new issue does not arrive by the deadline, the application 
+	is notified.
+	</emphasis>
+      </para></caption>
+      </mediaobject>
+    </figure>
+
+    <para>
+    The minimum separation protects a slow subscriber against publishers 
+    that are publishing too fast. The deadline provides a guaranteed wait 
+    time that can be used to take appropriate action in case of 
+    communication delays.
+    </para>
+  </section>
+
+  <section id="orte-rtps-reliability-determinism">
+    <title>Reliability and Time-Determinism</title>
+
+    <para>
+    Publish-subscribe can support a variety of message delivery reliability 
+    models, not all of which are suitable to real-time applications. The 
+    RTPS reliability model recognizes that the optimal balance between 
+    time determinism and data-delivery reliability varies between real-time 
+    applications, and often among different subscriptions within the 
+    same application. For example, signal subscribers will want only 
+    the most up-to-date issues and will not care about missed issues. Command 
+    subscribers, on the other hand, must get every issue in 
+    sequence. Therefore, RTPS provides a mechanism for the application to 
+    customize the determinism versus reliability trade-off on a per subscription 
+    basis.    
+    </para>
+    <para>
+    The RTPS determinism vs. reliability model is subscriber-driven. Publishers 
+    simply send publication issues. However, to provide message delivery 
+    reliability, publishers must be prepared to resend missed issues to subscriptions 
+    that require reliable delivery.
+    </para>
+    <para>
+    The RTPS reliability model uses publication buffers publisher and subscriber and 
+    retries to ensure that subscribers who need each issue receive them in the proper 
+    sequence. In addition, the publisher applies sequence number to each 
+    publication issue.
+    </para>
+    <para>
+    The publisher uses the publication buffer to store history of the most 
+    recently sent issues. The subscriber uses its publication buffer to cache the 
+    most recently received issues. The subscriber acknowledges issues received in 
+    order and sends a request for the missing issue when the most recent 
+    issue s sequence number out of order. The publisher responds by sending the 
+    missed update again.
+    </para>
+    <para>
+    Publishers remove an issue from their history buffers in two cases: the issue has been 
+    acknowledged by all reliable subscribers or the publisher overflows the history buffer 
+    space. Flow control can be implemented by setting high and low watermarks for 
+    the buffer. These publication-specific parameters let the publisher balance 
+    the subscribers need for issues against its need to 
+    maintain a set publication rate.
+    </para>
+  </section>
+  
+</section>

@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+#warn "No digit found.\n";
+
+use Env qw(PATH TMPL2SGML KERNELDOC);
+
+warn "Processing $ARGV[0]\n" ;
+#warn "PATH=$PATH\n" ;
+warn "KERNELDOC=$KERNELDOC\n" ;
+
+open (TMPLFILE, "$ARGV[0]");
+
+while (<TMPLFILE>) {
+	$line=$_;
+	if($line=~m/^![EIF]/){
+		($srctype,$srcfile)= $line =~ /^!([EIF])(.*)$/ ;
+		warn "Found $srctype : $srcfile\n" ;
+		system "$KERNELDOC -docbook $srcfile";
+	}else{
+		print $line
+	}
+}
+
+close TMPLFILE;

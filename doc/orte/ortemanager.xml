@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry>
+  <!--
+  <refentryinfo>
+    <address>
+      <email>petr.smolik@wo.cz</email>
+    </address>
+    <author>
+      <firstname>Petr</firstname>
+      <surname>Smolik</surname>
+    </author>
+    <date>2004-11-02</date>
+  </refentryinfo>
+  -->
+  <refmeta>
+    <refentrytitle>ortemanager</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>ortemanager</refname>
+    <refpurpose>the utility for discovery others applications and managers on the network</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>ortemanager</command>
+      <arg><option>-d <replaceable>domain</replaceable></option></arg>
+      <arg><option>-p <replaceable>ip addresses</replaceable></option></arg>
+      <arg><option>-k <replaceable>ip addresses</replaceable></option></arg>
+      <arg><option>-R <replaceable>refresh</replaceable></option></arg>
+      <arg><option>-P <replaceable>purge</replaceable></option></arg>
+      <arg><option>-D <replaceable></replaceable></option></arg>
+      <arg><option>-E <replaceable>expiration</replaceable></option></arg>
+      <arg><option>-e <replaceable></replaceable></option></arg>
+      <arg><option>-v <replaceable>verbosity</replaceable></option></arg>
+      <arg><option>-l <replaceable>filename</replaceable></option></arg>
+      <arg><option>-V</option></arg>
+      <arg><option>-h</option></arg>
+      <!-- <arg rep='repeat'><option><replaceable>file</replaceable></option></arg> -->
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>Description</title>
+    <para>
+      Main purpose of the utility <command>ortemanager</command> is debug and
+      test ORTE communication. 
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>-d</option> <option>--domain</option></term>
+        <listitem>
+          <para>
+	    The number of working ORTE domain. Default is 0.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-p</option> <option>--peers</option></term>
+        <listitem>
+          <para>
+	    The IP addresses parsipiates in RTPS communication. 
+	    See <xref linkend="orte-manager"/> for example of usage.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-R</option> <option>--refresh</option></term>
+        <listitem>
+          <para>
+	    The refresh time in manager. Default 60 seconds.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-P</option> <option>--purge</option></term>
+        <listitem>
+          <para>
+	    The searching time in local database for finding expired application.
+	    Default 60 seconds.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-E</option> <option>--expiration</option></term>
+        <listitem>
+          <para>
+	    Expiration time in other applications.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-m</option> <option>--minimumSeparation</option></term>
+        <listitem>
+          <para>
+            The minimum time between two issues.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-v</option> <option>--verbosity</option></term>
+        <listitem>
+          <para>
+            Set verbosity level.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-l</option> <option>--logfile</option></term>
+        <listitem>
+          <para>
+            All debug messages can be redirect into specific file.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-V</option> <option>--version</option>
+        </term>
+        <listitem>
+          <para>
+            Print the version of <command>ortemanager</command>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-h</option> <option>--help</option>
+        </term>
+        <listitem>
+          <para>
+            Print usage screen.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <!--
+  <refsect1>
+    <title>BACKWARDS COMPATIBILITY</title>
+
+    <para>
+      This.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>ENVIRONMENT</title>
+    <para>
+      The.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>COPYRIGHT</title>
+    <para>
+      This.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry>
+	<refentrytitle>readburst</refentrytitle><manvolnum>5</manvolnum>
+      </citerefentry>
+    </para>
+  </refsect1>
+  -->
+</refentry>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-tests">
+  <title>ORTE Tests</title>
+
+  <para>
+  There were not any serious tests performed yet. Current version
+  has been intensively tested against reference implementation of the
+  protocol. Results of these test indicate that ORTE is fully
+  interoperable with implementation provided by another vendor.
+  </para>
+</section>
+

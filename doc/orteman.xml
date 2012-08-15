@@ -1,0 +1,111 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//Norman Walsh//DTD DocBk XML V4.1.2//EN"
+               "/usr/share/xml/docbook/schema/dtd/4.4/docbookx.dtd"
+	[
+	<!ENTITY % entities SYSTEM "orteman.ent">
+	%entities;
+	<!-- Add other entries here	-->
+	]
+>
+<book lang="en">
+<!--
+<bookinfo>
+	<title>D7.4_rep - Communication Components</title>
+	<authorgroup>
+	<author>
+	 <firstname>Jan</firstname>
+	 <surname>Krakora</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	<author>
+	 <firstname>Pavel</firstname>
+	 <surname>Pisa</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	<author>
+	 <firstname>Frantisek</firstname>
+	 <surname>Vacek</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	<author>
+	 <firstname>Zdenek</firstname>
+	 <surname>Sebek</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	<author>
+	 <firstname>Petr</firstname>
+	 <surname>Smolik</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	<author>
+	 <firstname>Zdenek</firstname>
+	 <surname>Hanzalek</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	</authorgroup>
+	<pubdate>February 2004</pubdate>
+	<copyright>
+		<year>2004</year>
+		<holder>Ocera</holder>
+	</copyright>
+	<legalnotice>
+	 <para>
+	  You can (in fact you must!) use, modify, copy and distribute
+	  this document, of course free of charge, and think about the
+	  appropriate license we will use for the documentation.
+	 </para>	 
+	</legalnotice>
+</bookinfo>
+
+<preface>
+	<title>Preface</title>
+	<para>
+ This document presents elaborated version of communication component design report. 
+ It is composed of three chapters. The first and second chapters deal with design of communication 
+ stacks - RT Ethernet or CAN/CANopen respectively including analysis tools. The third chapter 
+ presents Basic features of verification methodology of distributed systems based on standard verification tools.
+	</para>
+</preface>
+-->
+
+<bookinfo>
+	<title>ORTE - Open Real-Time Ethernet</title>
+<!--	<authorgroup>
+	<author>
+	 <firstname>Petr</firstname>
+	 <surname>Smolik</surname>
+	 <affiliation>
+	  <orgname>CTU</orgname>
+	 </affiliation>
+	</author>
+	</authorgroup>
+	<pubdate>November 2005</pubdate>
+	<copyright>
+		<year>2005</year>
+		<holder>MPO</holder>
+	</copyright>
+	<legalnotice>
+	 <para>
+	  You can (in fact you must!) use, modify, copy and distribute
+	  this document, of course free of charge, and think about the
+	  appropriate license we will use for the documentation.
+	 </para>	 
+	</legalnotice>-->
+</bookinfo>
+
+&orte;
+<!-- Add other entries here	-->
+
+</book>

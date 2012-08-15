@@ -1,0 +1,7 @@
+<!ENTITY % ortepath ".">
+
+<!ENTITY % orte_entities SYSTEM "orte_incl.ent">
+
+%orte_entities
+
+

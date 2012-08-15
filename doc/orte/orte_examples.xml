@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-examples">
+  <title>ORTE Examples</title>
+
+  <para>
+  This chapter expect that you are familiar with RTPS communication 
+  architecture described in <xref linkend="orte-description"/>. 
+  </para>
+  <para>
+  Publications can offer multiple reliability policies ranging from 
+  best-efforts to strict (blocking) reliability. Subscription can 
+  request multiple policies of desired reliability and specify the 
+  relative precedence of each policy. Publications will automatically 
+  select among the highest precedence requested policy that is 
+  offered by the publication.
+  </para>
+
+  <itemizedlist>
+    <listitem>
+      <para>
+      <emphasis role="bold">BestEffort:</emphasis>
+      This reliability policy is suitable for data that are sending
+      with a period.  There are no message resending when a message is lost. 
+      On other hand, this policy offer maximal predictable behaviour. 
+      For instance, consider a publication which send data from a sensor
+      (pressure, temperature, ...).
+      </para>
+
+      <figure id="cap:orte_pub_snapshots">
+	<title>Periodic Snapshots of a BestEffort Publisher 
+	</title>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata align="center" fileref="&orte_pub_snapshots_img;"
+	      format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+	  </imageobject>
+	</mediaobject>
+      </figure>
+      
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">StrictReliable:</emphasis>
+      The ORTE supports the reliable delivery of issues. This kind of communication
+      is used where a publication want to be sure that all data will be delivered to
+      subscriptions.  For instance, consider a publication which send commands.
+      </para>
+      <para>
+      Command data flow requires that each instruction in the sequence is 
+      delivered reliably once and only once. Commands are often not time critical.
+      </para>
+    </listitem>
+  </itemizedlist>
+
+  <section id="orte-example1">
+    <title>BestEffort Communication</title>
+    
+  <para>
+  Before creating a Publication or Subscription is necessary to
+  create a domain by using function 
+  <parameter class='function'>ORTEDomainAppCreate</parameter>.
+  The code should looks like:
+  </para>
+  <programlisting>
+int main(int argc, char *argv[]) 
+{
+  ORTEDomain *d = NULL;
+  ORTEBoolean suspended= ORTE_FALSE;
+
+  ORTEInit();
+
+  d = ORTEDomainAppCreate(ORTE_DEFAUL_DOMAIN, NULL, NULL, suspended);
+  if (!d)
+  {
+    printf(&#34;ORTEDomainAppCreate failed\n&#34;);
+    return -1;
+  }
+}
+  </programlisting>
+
+  <para>
+  The ORTEDomainAppCreate allocates and initializes resources that are needed
+  for communication. The parameter <parameter class='command'>suspended</parameter> says 
+  if ORTEDomain takes suspend communicating threads. In 
+  positive case you have to start threads manually by using
+  <parameter class='function'>ORTEDomainStart</parameter>.
+  </para>
+
+  
+  <para>
+  Next step in creation of a application is registration serialization and 
+  deserialization routines for the specific type. You can't specify this functions, 
+  but the incoming data will be only copied to output buffer.
+  </para>
+  <programlisting>
+ORTETypeRegisterAdd(d, &#34;HelloMsg&#34;, NULL, NULL, 64);
+  </programlisting>
+
+  <para>
+  To create a publication in specific domain use the function 
+  ORTEPublicationCreate.
+  </para>
+  <programlisting>
+char instance2send[64];
+NtpTime persistence, delay;
+
+NTPTIME_BUILD(persistence, 3);  /* this issue is valid for 3 seconds */
+NTPTIME_DELAY(delay, 1);        /* a callback function will be called every 1 second */
+p = ORTEPublicationCreate( d,
+                         &#34;Example HelloMsg&#34;,
+                         &#34;HelloMsg&#34;,
+                         &#38;instance2Send,
+                         &#38;persistence,
+                         1,
+                         sendCallBack,
+                         NULL,
+                         &#38;delay);   
+  </programlisting>
+
+  <para>
+  The callback function will be then called when a new issue from
+  publisher has to be sent. It's the case when you specify callback routine in 
+  <parameter class='function'>ORTEPublicationCreate</parameter>. When 
+  there isn't a routine you have to send data manually by call function
+  <parameter class='function'>ORTEPublicationSend</parameter>. This option
+  is useful for sending periodic data.
+  </para>
+  <programlisting>  
+void sendCallBack(const ORTESendInfo *info, void *vinstance, void *sendCallBackParam)
+{
+  char *instance = (char *) vinstance;
+  switch (info-&#62;status)
+  {
+    case NEED_DATA:
+      printf(&#34;Sending publication, count %d\n&#34;, counter);
+      sprintf(instance, &#34;Hello world (%d)&#34;, counter++);
+      break;
+
+    case CQL:  //criticalQueueLevel has been reached
+      break;
+  }
+}
+  </programlisting>
+
+  <para>
+  Subscribing application needs to create a subscription with
+  publication&#39;s Topic and TypeName. A callback function will be then
+  called when a new issue from publisher will be received. 
+  </para>
+  <programlisting>  
+ORTESubscription *s;
+NtpTime deadline, minimumSeparation;
+  
+NTPTIME_BUILD(deadline, 20);  
+NTPTIME_BUILD(minimumSeparation, 0);        
+p = ORTESubscriptionCreate( d,
+                          IMMEDIATE,
+                          BEST_EFFORTS,
+                          &#34;Example HelloMsg&#34;,
+                          &#34;HelloMsg&#34;,
+                          &#38;instance2Recv,
+                          &#38;deadline,
+                          &#38;minimumSeparation,
+                          recvCallBack,
+                          NULL);   
+   </programlisting>
+
+   <para>
+   The callback function is shown in the following example:
+   </para>
+   <programlisting>  
+void recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
+{
+  char *instance = (char *) vinstance;
+  switch (info-&#62;status)
+  {
+    case NEW_DATA:
+      printf(&#34;%s\n&#34;, instance);
+      break;
+
+    case DEADLINE:  //deadline occurred
+      break;
+  }
+}
+    </programlisting>
+    
+    <para>
+    Similarly examples are located in ORTE subdirectory 
+    <filename>orte/examples/hello</filename>. There are 
+    demonstrating programs how to create an application
+    which will publish some data and another application, which will
+    subscribe to this publication.
+    </para>
+
+  </section>
+
+  <section id="orte-example2">
+    <title>Reliable communication</title>
+
+    <para>
+    The reliable communication is used especially in situations
+    where we need guarantee data delivery. The ORTE supports the inorder
+    delivery of issues with built-in retry mechanism
+    </para>
+    <para>
+    The creation of reliable communication starts like besteffort communication.
+    Difference is in creation a subscription. Third parameter is just only changed 
+    to STRICT_RELIABLE.
+    </para>
+  
+  <programlisting>  
+ORTESubscription *s;
+NtpTime deadline, minimumSeparation;
+  
+NTPTIME_BUILD(deadline, 20);  
+NTPTIME_BUILD(minimumSeparation, 0);        
+p = ORTESubscriptionCreate( d,
+                          IMMEDIATE,
+                          STRICT_RELIABLE,
+                          &#34;Example HelloMsg&#34;,
+                          &#34;HelloMsg&#34;,
+                          &#38;instance2Recv,
+                          &#38;deadline,
+                          &#38;minimumSeparation,
+                          recvCallBack,
+                          NULL);   
+  </programlisting>
+
+  <para><phrase role="strong">Note:</phrase></para>
+  <para>
+  Strict reliable subscription must set minimumSeparation to zero! The middleware
+  can't guarantee that the data will be delivered on first attempt (retry mechanism).
+  </para>
+
+  <para>
+  Sending of a data is blocking operation. It's strongly recommended to
+  setup sending queue to higher value. Default value is 1.
+  </para>
+  <programlisting>
+ORTEPublProp *pp;  
+  
+ORTEPublicationPropertiesGet(publisher,pp);
+pp->sendQueueSize=10;
+pp->criticalQueueLevel=8;
+ORTEPublicationPropertiesSet(publisher,pp);
+  </programlisting>
+  
+  <para>
+  An example of reliable communication is in ORTE subdirectory 
+  <filename>orte/examples/reliable</filename>. There are located 
+  a strictreliable subscription and publication.
+  </para>
+   
+  </section>
+
+  <section id="orte-example3">
+    <title>Serialization/Deserialization</title>
+
+    <para>
+    Actually the ORTE doesn't support any automatic creation of 
+    serialization/deserializaction routines. 
+    This routines have to be designed manually by the user. In next is
+    shown, how should looks both for the structure BoxType.
+    </para>
+<programlisting>
+typedef struct BoxType {
+    int32_t  color;
+    int32_t  shape;
+} BoxType;
+
+void
+BoxTypeSerialize(CDR_Codec *cdrCodec, void *instance) {
+  BoxType  *boxType=(BoxType*)instance;
+
+  CDR_put_long(cdrCodec,boxType->color);
+  CDR_put_long(cdrCodec,boxType->shape);
+}
+
+void
+BoxTypeDeserialize(CDR_Codec *cdrCodec, void *instance) {
+  BoxType  *boxType=(BoxType*)instance;
+
+  CDR_get_long(cdrCodec,&#38;boxType->color);
+  CDR_get_long(cdrCodec,&#38;boxType->shape);
+}
+</programlisting>
+
+  <para>
+  When we have written a serialization/deserialization routine we need to
+  register this routines to midleware by function 
+  <function>ORTETypeRegisterAdd</function>
+  </para>
+
+<programlisting>
+   ORTETypeRegisterAdd(
+                domain,
+                "BoxType",
+                BoxTypeSerialize,
+                BoxTypeDeserialize,
+                sizeof(BoxType));
+</programlisting>
+
+  <para>
+  The registration must be called before creation a publication or subscription.
+  Normally is <function>ORTETypeRegisterAdd</function> called immediately after
+  creation of a domain (<function>ORTEDomainCreate</function>). 
+  </para>
+  
+  <para>
+  All of codes are part of the Shapedemo located in subdirectory
+  <filename>orte/contrib/shape</filename>.
+  </para>
+  </section>
+
+</section>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-summary">
+  <title>Summary</title>
+
+  <variablelist>
+    <varlistentry>
+      <term>Name of the component</term>
+
+      <listitem>
+        <para>Open Real-Time Ethernet (ORTE)</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Author</term>
+
+      <listitem>
+        <para><author><firstname>Petr</firstname> <surname>Smolik</surname></author></para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>ORTE Internet resources</term>
+
+      <listitem>
+        <para><ulink url="http://www.ocera.org"></ulink> OCERA project home page</para>
+
+        <para><ulink url="http://sourceforge.net/projects/ocera"></ulink>
+        OCERA SourceForge project page. The OCERA CVS relative path to ORTE
+        driver sources is</para>
+        <para><ulink url="http://cvs.sourceforge.net/viewcvs.py/ocera/ocera/components/comm/eth/orte/">
+        <filename>ocera/components/comm/eth/orte</filename></ulink>.</para>
+
+        <para><ulink url="http://www.rti.com"></ulink> Real-Time Innovation home page</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Reviewer</term>
+
+      <listitem>
+        <para>not validated</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Layer</term>
+
+      <listitem>
+        <para>High-level</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Version</term>
+
+      <listitem>
+        <para>orte-0.3.1</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Status</term>
+
+      <listitem>
+        <para>Beta</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Dependencies</term>
+
+      <listitem>
+        <para>Ethernet adapter with a UDP stack.</para>
+        <para>Multi-threaded operating system OS</para>
+        <para>Memory allocator (functions malloc, free)</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Supported OS</term>
+
+      <listitem>
+        <itemizedlist>
+          <listitem>
+            <para>Unix - Linux, FreeBSD, Solaris, MacOS, PharLap</para>
+          </listitem>
+          <listitem>
+            <para>Windows</para>
+          </listitem>
+          <listitem>
+            <para>RTAI with RTNet</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>Release date</term>
+
+      <listitem>
+        <para>September 2004</para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+</section>

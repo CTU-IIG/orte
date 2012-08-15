@@ -1,0 +1,33 @@
+<!ENTITY orte SYSTEM "ortedoc.xml">
+<!--<!ENTITY % ortepath "">-->
+
+<!ENTITY orte_summary   SYSTEM "orte/orte_summary.xml">
+<!ENTITY orte_intro     SYSTEM "orte/orte_intro.xml">
+<!ENTITY orte_api       SYSTEM "orte/orte_api.xml">
+<!ENTITY orte_typedefs_api SYSTEM "orte/typedefs_api.xml">
+<!ENTITY orte_protos_api SYSTEM "orte/protos_api.xml">
+<!ENTITY orte_defines_api SYSTEM "orte/defines_api.xml">
+<!ENTITY orte_usage     SYSTEM "orte/orte_usage.xml">
+<!ENTITY orte_ortemanager SYSTEM "orte/ortemanager.xml">
+<!ENTITY orte_orteping  SYSTEM "orte/orteping.xml">
+<!ENTITY orte_ortespy   SYSTEM "orte/ortespy.xml">
+<!ENTITY orte_ps_model  SYSTEM "orte/orte_ps_model.xml">
+<!ENTITY orte_rtps_model SYSTEM "orte/orte_rtps_model.xml">
+<!ENTITY orte_examples  SYSTEM "orte/orte_examples.xml">
+<!ENTITY orte_tests     SYSTEM "orte/orte_tests.xml">
+<!ENTITY orte_internals SYSTEM "orte/orte_internals.xml">
+
+<!ENTITY orte_int_fig  "%ortepath;/img/orte_int">
+<!ENTITY orte_anal_fig "%ortepath;/img/orte_analyzer">
+<!ENTITY orte_ps_model_img "%ortepath;/img/orte_ps_model">
+<!ENTITY orte_pub_arbitration_img "%ortepath;/img/orte_pub_arbitration">
+<!ENTITY orte_sub_issue_separation_img "%ortepath;/img/orte_sub_issue_separation">
+<!ENTITY orte_ps_architecture_img "%ortepath;/img/orte_ps_architecture">
+<!ENTITY orte_managers_img "%ortepath;/img/orte_managers">
+<!ENTITY orte_pub_snapshots_img "%ortepath;/img/orte_pub_snapshots">
+<!ENTITY orte_architecture_img "%ortepath;/img/orte_architecture">
+<!ENTITY orte_attributes_img "%ortepath;/img/orte_attributes">
+<!ENTITY orte_internal_architecture_img "%ortepath;/img/orte_internal_architecture">
+<!ENTITY orte_rtps_communication_img "%ortepath;/img/orte_rtps_communication">
+
+

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="orte-internals">
+  <title>ORTE Implementation Issues</title>
+
+  <para>
+  ORTE is network middleware for distributed, real-time application development 
+  that uses the real-time, publish-subscribe model. The middleware is available 
+  for a variety of platforms including RTAI, RTLinux, Windows, and a several 
+  versions of Unix. The compilation system is mainly based on autoconf.
+  </para>
+  
+  <para>
+  ORTE is middleware composed of a database, and tasks. 
+  On the top of ORTE architecture is application interface (API). By using API
+  users should write self application. The tasks perform all of the message
+  addressing serialization/deserialization, and transporting. The ORTE components
+  are shown in <xref linkend="cap:orte_internal_architecture"/>
+  </para>
+  <figure id="cap:orte_internal_architecture">
+  <title>ORTE Architecture 
+  </title>
+  <mediaobject>
+    <imageobject>
+      <imagedata align="center" fileref="&orte_internal_architecture_img;"
+	format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+    </imageobject>
+  </mediaobject>
+  </figure>
+
+
+  <para>
+  The RTPS protocol defines two kinds of Applications:
+  </para>
+  
+  <itemizedlist>
+    <listitem>
+      <para>
+      <emphasis role="bold">Manager:</emphasis>
+      The manager is a special Application that helps applications automatically 
+      discover each other on the Network.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ManagedApplication:</emphasis>
+      A ManagedApplication is an Application that is managed by one or more 
+      Managers. Every ManagedApplication is managed by at least one Manager.      
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+  The manager is mostly designed like separate application. In RTPS architecture
+  is able to create application which contains manager and managedapplication, but
+  for easy managing is better split both. The ORTE contains a separate instance
+  of manager located in directory <filename>orte/manager</filename>.  
+  </para>
+  
+  <para>The manager is composed from five kinds of objects:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+      <emphasis role="bold">WriterApplicationSelf:</emphasis>
+      through which the Manager provides information about its own parameters
+      to Managers on other nodes.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ReaderManagers:</emphasis>
+      CSTReader through which the
+      Manager obtains information on the state of all other Managers on the
+      Network.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ReaderApplications:</emphasis>
+      CSTReader which is used for the registration of local and remote
+      managedApplications.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">WriterManagers:</emphasis>
+      CSTWriter through which the Manager will send the
+      state of all Managers in the Network to all its managees. 
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">WriterApplications:</emphasis>
+      CSTWriter through which the Manager will
+      send information about its managees to other Managers in the Network.
+      </para>
+    </listitem>
+  </itemizedlist>
+  
+  <para>
+  A Manager that discovers a new ManagedApplication
+  through its readerApplications must decide whether it must manage this
+  ManagedApplication or not. For this purpose, the attribute
+  managerKeyList of the Application is used. If one of the
+  ManagedApplication&#39;s keys (in the attribute managerKeyList) is equal
+  to one of the Manager&#39;s keys, the Manager accepts the Application as
+  a managee. If none of the keys are equal, the managed application is
+  ignored. At the end of this process all Managers have discovered their
+  managees and the ManagedApplications know all Managers in the Network.
+  </para>
+  
+  <para>The managedApplication is composed from seven kinds of objects:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+      <emphasis role="bold">WriterApplicationSelf:</emphasis>
+      a CSTWriter through which the ManagedApplication registers
+      itself with the local Manager.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ReaderApplications:</emphasis>
+      a CSTReader through which the ManagedApplication receives
+      information about another ManagedApplications in the network.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ReaderManagers:</emphasis>
+      a CSTReader through which the ManagedApplication receives
+      information about Managers.     
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">WriterPublications:</emphasis>
+      CSTWriter through which the Manager will send the
+      state of all Managers in the Network to all its managees. 
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ReaderPublications:</emphasis>
+      a Reader through which the Publication receives information
+      about Subscriptions.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">WriterSubscriptions:</emphasis>
+      a Writer that provides information about Subscription to
+      Publications.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      <emphasis role="bold">ReaderSubscriptions:</emphasis>
+      a Reader that receives issues from one or more instances of
+      Publication, using the publish-subscribe service.
+      </para>
+    </listitem>
+  </itemizedlist>
+
+  <para>
+  The ManagedApplication has a special CSTWriter writerApplicationSelf. The
+  Composite State (CS) of the ManagedApplication&#39;s writerApplicationSelf
+  object contains only one NetworkObject - the application itself. The
+  writerApplicationSelf of the ManagedApplication must be configured to
+  announce its presence repeatedly and does not request nor expect
+  acknowledgments.
+  </para>
+  <para>
+  The ManagedApplications now use the CST Protocol between the
+  writerApplications of the Managers and the readerApplications of the
+  ManagedApplications in order to discover other ManagedApplications in
+  the Network. Every ManagedApplication has two special CSTWriters,
+  writerPublications and writerSubscriptions, and two special CSTReaders,
+  readerPublications and readerSubscriptions.
+  </para>
+  <para>
+  Once ManagedApplications have discovered each other, they use the
+  standard CST protocol through these special CSTReaders and CSTWriter to
+  transfer the attributes of all Publications and Subscriptions in the
+  Network.
+  </para>
+  
+  <para>The ORTE stores all data in local database per application. There isn't
+  central store where are data saved. If an application comes into communication, 
+  than will be created local mirror of all applications parameters. 
+  Parts of internal structures are shown in <xref linkend="cap:orte_attributes"/>.
+  </para>
+  <figure id="cap:orte_attributes">
+  <title>ORTE Internal Attributes
+  </title>
+  <mediaobject>
+    <imageobject>
+      <imagedata align="center" fileref="&orte_attributes_img;"
+	format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+    </imageobject>
+  </mediaobject>
+  </figure>
+  
+  <para>
+  Following example shows communication between two nodes (N1, N2).
+  There are applications running on each node - MA1.2 on node
+  N1 and MA2.1, MA2.2 on node N2. Each node has it own manager (M1, M2). The 
+  example shows, what's happen when a new application comes into communication
+  (MA1.1).
+  </para>
+
+  <orderedlist>
+    <listitem><para>
+    MA1.1 introduces itself to local manager M1
+    </para></listitem>
+    <listitem><para>
+    M1 sends back list of remote managers Mx and other local applications MA1.x
+    </para></listitem>
+    <listitem><para>
+    MA1.1 is introduced to all Mx by M1
+    </para></listitem>
+    <listitem><para>
+    All remote MAs are reported now to M1.1
+    </para></listitem>
+    <listitem><para>
+    MA1.1 is queried for self services (publishers and subscriberes) from others MAx.
+    </para></listitem>
+    <listitem><para>
+    MA1.1 asks for services to others MAx.
+    </para></listitem>
+    <listitem><para>
+    All MAs know information about others.
+    </para></listitem>
+  </orderedlist>
+
+  <para>
+  The corresponding publishers and subscribers with matching Topic
+  and Type are connected and starts their data communication.
+  </para>
+
+  <figure id="cap:orte_rtps_communication">
+  <title>RTPS Communication among Network Objects
+  </title>
+  <mediaobject>
+    <imageobject>
+      <imagedata align="center" fileref="&orte_rtps_communication_img;"
+	format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+    </imageobject>
+  </mediaobject>
+  </figure>
+
+</section>

@@ -1,0 +1,34 @@
+<?xml version='1.0'?>
+<chapter>
+  <title>Open Real-Time Ethernet</title>
+
+  <para>The Open Real-Time Ethernet (ORTE) is open source implementation of
+  RTPS communication protocol. RTPS is new application layer protocol
+  targeted to real-time communication area, which is build on the top of
+  standard UDP stack. Since there are many TCP/IP stack implementations
+  under many operating systems and RTPS protocol does not have any other
+  special HW/SW requirements, it should be easily ported to many HW/SW
+  target platforms. Because it uses only UDP protocol, it retains control of
+  timing and reliability.</para>
+
+  <section>
+    <title>ORTE Summary</title>
+    
+    &orte_summary;
+  </section>
+
+  <section id="orte-description">
+    <title>ORTE Description</title>
+    
+    &orte_intro;
+    &orte_ps_model;  
+    &orte_rtps_model;  
+  </section>
+
+  &orte_api;
+  &orte_internals;
+  &orte_examples;
+  &orte_tests;
+  &orte_usage;
+
+</chapter>
