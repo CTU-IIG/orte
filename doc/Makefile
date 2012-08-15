@@ -36,11 +36,11 @@ XML_ENTITIES = $(shell cat $(XML_ENT_INCS) | \
 
 
 clean:
-	@rm -f  ${XML_BASENAMES:%=%.html}
-	@rm -f  ${XML_BASENAMES:%=%.pdf}
-	@rm -f ./*.log
-	@rm -f ./*.out
-	@rm -f ./*~
+	rm -f  ${XML_BASENAMES:%=%.html}
+	rm -f  ${XML_BASENAMES:%=%.pdf} $(FIGS:%.fig=%.pdf) $(ORTE_DOC_SOURCES)
+	rm -f ./*.log
+	rm -f ./*.out
+	rm -f ./*~
 
 %.pdf: %.fig
 	fig2dev -L pdf $^ $@

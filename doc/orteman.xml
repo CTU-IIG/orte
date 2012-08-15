@@ -81,7 +81,7 @@
 -->
 
 <bookinfo>
-	<title>ORTE - Open Real-Time Ethernet</title>
+	<title>ORTE &ndash; Open Real-Time Ethernet</title>
 <!--	<authorgroup>
 	<author>
 	 <firstname>Petr</firstname>
@@ -105,7 +105,20 @@
 	</legalnotice>-->
 </bookinfo>
 
-&orte;
+<chapter id="orte-description">
+    <title>ORTE Description</title>
+    
+    &orte_intro;
+    &orte_ps_model;  
+    &orte_rtps_model;  
+</chapter>
+
+  &orte_internals;
+  &orte_examples;
+  &orte_tests;
+  &orte_usage;
+  &orte_api;
+
 <!-- Add other entries here	-->
 
 </book>

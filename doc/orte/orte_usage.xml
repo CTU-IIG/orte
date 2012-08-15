@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section id="orte-usage">
+<chapter id="orte-usage">
   <title>ORTE Usage Information</title>
 
   <section id="orte-installation">
@@ -300,4 +300,4 @@ manager 0xc0a80001-0x123402 was deleted
     &orte_ortespy;
 
   </section>
-</section>
+</chapter>

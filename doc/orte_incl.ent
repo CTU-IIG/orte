@@ -1,4 +1,3 @@
-<!ENTITY orte SYSTEM "ortedoc.xml">
 <!--<!ENTITY % ortepath "">-->
 
 <!ENTITY orte_summary   SYSTEM "orte/orte_summary.xml">
@@ -29,5 +28,3 @@
 <!ENTITY orte_attributes_img "%ortepath;/img/orte_attributes">
 <!ENTITY orte_internal_architecture_img "%ortepath;/img/orte_internal_architecture">
 <!ENTITY orte_rtps_communication_img "%ortepath;/img/orte_rtps_communication">
-
-

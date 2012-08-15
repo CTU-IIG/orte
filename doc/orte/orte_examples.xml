@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section id="orte-examples">
+<chapter id="orte-examples">
   <title>ORTE Examples</title>
 
   <para>
@@ -312,4 +312,4 @@ BoxTypeDeserialize(CDR_Codec *cdrCodec, void *instance) {
   </para>
   </section>
 
-</section>
+</chapter>

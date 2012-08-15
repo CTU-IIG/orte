@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section id="orte-api">
+<chapter id="orte-api">
   <title>ORTE API</title>
   
   <section><!--sect1-->
@@ -17,4 +17,4 @@
     &orte_defines_api;
   </section><!--/sect3-->
 
-</section>
+</chapter>

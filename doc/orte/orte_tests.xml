@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section id="orte-tests">
+<chapter id="orte-tests">
   <title>ORTE Tests</title>
 
   <para>
@@ -8,5 +8,4 @@
   protocol. Results of these test indicate that ORTE is fully
   interoperable with implementation provided by another vendor.
   </para>
-</section>
-
+</chapter>

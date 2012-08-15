@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section id="orte-internals">
-  <title>ORTE Implementation Issues</title>
+<chapter id="orte-internals">
+  <title>ORTE Internals</title>
 
   <para>
   ORTE is network middleware for distributed, real-time application development 
@@ -247,4 +247,4 @@
   </mediaobject>
   </figure>
 
-</section>
+</chapter>
