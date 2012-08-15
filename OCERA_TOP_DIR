@@ -1,7 +1,0 @@
-# Position of the OCERA top direcotory relative to Makefile.rules file
-
-ifndef OCERA_DIR
-OCERA_DIR := $(shell ( cd -L $(MAKERULES_DIR)/../../../.. ; pwd -L ) )
-endif
-
-GROUP_DIR_NAME = orte
