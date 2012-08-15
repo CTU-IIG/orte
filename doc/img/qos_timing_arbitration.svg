@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2 Patchlevel 5 -->
+<!-- CreationDate: Thu Apr 17 23:25:24 2008 -->
+<!-- Magnification: 2.250 -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="15.0in"
+   height="3.6in"
+   viewBox="3759 4846 17961 4340"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="qos_timing_arbitration.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/smolik/projects/skola/ocera/orte-0.3.X-dev/doc/img/orte_sub_issue_separation.png"
+   inkscape:export-xdpi="100"
+   inkscape:export-ydpi="100">
+  <metadata
+     id="metadata65">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs63">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 162 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1350 : 162 : 1"
+       inkscape:persp3d-origin="675 : 108 : 1"
+       id="perspective67" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="980"
+     inkscape:window-width="1400"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showgrid="false"
+     inkscape:zoom="1.1295942"
+     inkscape:cx="415.37924"
+     inkscape:cy="169.58302"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:current-layer="svg2" />
+  <g
+     id="g2777"
+     inkscape:export-xdpi="75"
+     inkscape:export-ydpi="75">
+    <g
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:none;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="g2468">
+      <polyline
+         id="polyline6"
+         style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:none;stroke:#0000ff;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+         points="6223,8966 6075,9112 4050,9112 " />
+    </g>
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="6286,8995 6430,8757 6189,8898 6286,8995 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#0000ff;stroke:#0000ff;stroke-width:34;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon8" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="6412,6075 11711,6075 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#ff0000;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline10" />
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="11740,6142 12010,6075 11740,6007 11740,6142 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#ff0000;stroke:#ff0000;stroke-width:34;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon12" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="6412,7425 11711,7425 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#00ff00;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline14" />
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="11740,7492 12010,7425 11740,7357 11740,7492 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:34;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon16" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="11981,5568 11981,8606 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#0000ff;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline18" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="3881,6750 21330,6750 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#8c8c8c;stroke-width:135;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline20" />
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="21280,6817 21550,6750 21280,6682 21280,6817 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#8c8c8c;stroke:#8c8c8c;stroke-width:102;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon22" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="11981,6075 17280,6075 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#ff0000;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline24" />
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="17309,6142 17579,6075 17309,6007 17309,6142 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#ff0000;stroke:#ff0000;stroke-width:34;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon26" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="17550,6075 20148,6075 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#ff0000;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline28" />
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="20178,6142 20448,6075 20178,6007 20178,6142 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#ff0000;stroke:#ff0000;stroke-width:34;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon30" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="6412,8268 17111,8268 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#00ff00;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline32" />
+    <polygon
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="17140,8336 17410,8268 17140,8201 17140,8336 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:34;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon34" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="17381,5568 17381,8606 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#0000ff;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline36" />
+    <polyline
+       transform="matrix(0.4448254,0,0,0.4079606,2176.4163,3042.602)"
+       points="6412,5568 6412,8606 "
+       style="font-size:440.21907315px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#0000ff;stroke-width:68;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline38" />
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="3809.5583"
+       y="6771.2144"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text40"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Last issue</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="3809.5583"
+       y="6986.7676"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text42"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">received</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="3809.5583"
+       y="5908.5757"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text44"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Time</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5031.3105"
+       y="5405.4761"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text46"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Subscriber receives</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5031.3105"
+       y="5621.0293"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text48"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">no new issues</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="7403.6733"
+       y="5405.4761"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text50"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Subscriber gets</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="7403.6733"
+       y="5621.0293"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text52"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">new issues</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="9776.0361"
+       y="5405.4761"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text54"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Error, deadline</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="9776.0361"
+       y="5621.0293"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text56"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">exceeded</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5031.3105"
+       y="6268.1152"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text58"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Minimum separation</text>
+    <text
+       transform="scale(1.0442048,0.9576666)"
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5031.3105"
+       y="6627.6543"
+       font-style="normal"
+       font-weight="normal"
+       font-size="324"
+       id="text60"
+       style="font-size:187.53085852px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.01064986000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Deadline</text>
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="2766,3610 2700,3675 1800,3675 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:none;stroke:#0000ff;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline2700" />
+    <polygon
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="2794,3623 2858,3517 2751,3580 2794,3623 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#0000ff;stroke:#0000ff;stroke-width:15;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon2702" />
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="2850,2700 5205,2700 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#ff0000;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline2704" />
+    <polygon
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="5218,2730 5338,2700 5218,2670 5218,2730 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#ff0000;stroke:#ff0000;stroke-width:15;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon2706" />
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="2850,3300 5205,3300 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#00ff00;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline2708" />
+    <polygon
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="5218,3330 5338,3300 5218,3270 5218,3330 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#00ff00;stroke:#00ff00;stroke-width:15;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon2710" />
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="5325,2700 7005,2700 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#ff0000;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline2712" />
+    <polygon
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="7018,2730 7138,2700 7018,2670 7018,2730 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#ff0000;stroke:#ff0000;stroke-width:15;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon20" />
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="1725,3000 7155,3000 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#8c8c8c;stroke-width:60;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline22" />
+    <polygon
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="7133,3030 7253,3000 7133,2970 7133,3030 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#8c8c8c;stroke:#8c8c8c;stroke-width:45;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polygon24" />
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="5325,2475 5325,3525 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#0000ff;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline26" />
+    <polyline
+       transform="matrix(1.0014335,0,0,1.0014335,2183.4989,4955.9342)"
+       points="2850,2475 2850,3525 "
+       style="font-size:187.26242351px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;stroke:#0000ff;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;font-family:Arial;-inkscape-font-specification:Arial Bold"
+       id="polyline2718" />
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="7741.4546"
+       y="7284.2671"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text30"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Accept any issue</text>
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5262.9067"
+       y="7284.2671"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text32"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Accept issues of equal</text>
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5262.9067"
+       y="7509.5898"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text34"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">or higher strength</text>
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="5262.9067"
+       y="8561.0947"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text36"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Persistence</text>
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="3986.0791"
+       y="7810.0195"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text38"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Time</text>
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="3986.0791"
+       y="8335.7725"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text2725"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">Last issue</text>
+    <text
+       sodipodi:linespacing="125%"
+       xml:space="preserve"
+       x="3986.0791"
+       y="8561.0947"
+       font-style="normal"
+       font-weight="normal"
+       font-size="144"
+       id="text2727"
+       style="font-size:187.5308642px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;fill:#000000;stroke:#000000;stroke-width:0.02503584000000000in;font-family:Arial;-inkscape-font-specification:Arial Bold">received</text>
+  </g>
+</svg>
