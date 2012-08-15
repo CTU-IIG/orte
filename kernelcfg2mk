@@ -54,6 +54,10 @@ if [ -z "$LINUX_VERSION" ] ; then
   LINUX_VERSION=$(grep UTS_RELEASE ${LINUX_DIR}/include/linux/utsrelease.h | \
                  sed 's/[^"]*"\(.*\)\{1\}"/\1/')
 fi
+if [ -z "$LINUX_VERSION" ] ; then
+  LINUX_VERSION=$(grep UTS_RELEASE ${LINUX_DIR}/include/generated/utsrelease.h | \
+                 sed 's/[^"]*"\(.*\)\{1\}"/\1/')
+fi
 
 LINUX_VERSION_MAJOR=$(echo ${LINUX_VERSION} | cut -d. -f1)
 LINUX_VERSION_MINOR=$(echo ${LINUX_VERSION} | cut -d. -f2)
@@ -115,9 +119,9 @@ EOF
 	;;
 
 #=====================================================================
-# test for 2.6.x kernels
+# test for 2.6.x and 3.x kernels
 
-    2.6)
+    2.6 | 3.* )
 
 	rm -f ${KERN_BUILD_DIR}/kernel.mk
 	rm -rf ${KERN_TEST_DIR}
@@ -159,7 +163,14 @@ else
 	@echo LINUX_AFLAGS="\$(AFLAGS)" | sed 's#Iinclude#I"\$(OMK_LINUX_SRC)/include"#g'>>\$(obj)/flags
 	@echo LINUX_CFLAGS="\$(CFLAGS)" | sed 's#Iinclude#I"\$(OMK_LINUX_SRC)/include"#g'>>\$(obj)/flags
 endif
+ifdef KBUILD_CFLAGS_MODULE
+	@echo LINUX_CFLAGS_MODULE="\$(KBUILD_CFLAGS_MODULE)" >>\$(obj)/flags
+	@echo LINUX_AFLAGS_MODULE="\$(KBUILD_AFLAGS_MODULE)" >>\$(obj)/flags
+	@echo LINUX_LDFLAGS_MODULE="\$(KBUILD_LDFLAGS_MODULE)" >>\$(obj)/flags
+else
 	@echo LINUX_CFLAGS_MODULE="\$(CFLAGS_MODULE)" >>\$(obj)/flags
+	@echo LINUX_AFLAGS_MODULE="\$(CFLAGS_MODULE)" >>\$(obj)/flags
+endif
 	@echo LINUX_CC="\$(CC)" >>\$(obj)/flags
 	@echo LINUX_LD="\$(LD) \$(LDFLAGS) \$(LDFLAGS_MODULE)" | sed 's#\(\<arch/[^ ]*\.o\>\)#"\$(LINUXDIR)/\1"#g' >>\$(obj)/flags
 	@echo LINUX_AS="\$(AS)" >>\$(obj)/flags
