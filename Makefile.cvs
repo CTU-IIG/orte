@@ -11,10 +11,21 @@ all:
 
 dist: VER=$(shell git describe --match='v*' | sed -e 's/^v\(.*\)/\1/')
 dist:
+# Export clean sources and run autoreconf
 	test ! -d orte-$(VER)
 	git archive --format=tar --prefix=orte-$(VER)/ HEAD | tar x
 	make -C orte-$(VER) -f Makefile.cvs
 	rm -rf orte-$(VER)/autom4te.cache
+# Export sources again for building of documentation and copy generated orte manual to release dir
+	test ! -d orte-$(VER)-doc
+	git archive --format=tar --prefix=orte-$(VER)-doc/ HEAD | tar x
+	make -C orte-$(VER)-doc/doc
+	cp orte-$(VER)-doc/doc/orteman.pdf orte-$(VER)/doc
+	rm -rf orte-$(VER)-doc
+# Create tarball
 	tar czf orte-$(VER).tar.gz orte-$(VER)
-	cd orte-$(VER) && ./configure && make # Check that we can compile the content of the archive
+# Check that we can compile the content of the tarball
+	cd orte-$(VER) && ./configure && make
+# Done
+	rm -rf orte-$(VER)
 	@echo "Tarball stored as orte-$(VER).tar.gz"
