@@ -1,7 +1,7 @@
 KERNELDOC=scripts/kernel-doc
 export KERNELDOC
 
-XML_BASENAMES = ortedoc
+XML_BASENAMES = orteman
 
 DSL_DIR = ../../../dsl
 
@@ -16,7 +16,11 @@ orte/defines_api.xml
 
 default: all
 
-all: $(ORTE_DOC_SOURCES) orteman.pdf
+all: $(ORTE_DOC_SOURCES) $(XML_BASENAMES:%=%.pdf)
+
+FIGS=$(wildcard img/*.fig)
+
+$(XML_BASENAMES:%=%.pdf): $(FIGS:%.fig=%.pdf)
 
 XML_ENT_INCS = $(wildcard *.ent)
 XML_ENTITIES = $(shell cat $(XML_ENT_INCS) | \
@@ -37,3 +41,6 @@ clean:
 	@rm -f ./*.log
 	@rm -f ./*.out
 	@rm -f ./*~
+
+%.pdf: %.fig
+	fig2dev -L pdf $^ $@
