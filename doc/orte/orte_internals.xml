@@ -194,7 +194,7 @@
   <mediaobject>
     <imageobject>
       <imagedata align="center" fileref="&orte_attributes_img;"
-	format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+	format="EPS" scale="55" srccredit="OCERA CTU 2004" />
     </imageobject>
   </mediaobject>
   </figure>
@@ -242,7 +242,7 @@
   <mediaobject>
     <imageobject>
       <imagedata align="center" fileref="&orte_rtps_communication_img;"
-	format="EPS" scale="35" srccredit="OCERA CTU 2004" />
+	format="EPS" scale="55" srccredit="OCERA CTU 2004" />
     </imageobject>
   </mediaobject>
   </figure>
