@@ -14,6 +14,7 @@ dist:
 	test ! -d orte-$(VER)
 	git archive --format=tar --prefix=orte-$(VER)/ HEAD | tar x
 	make -C orte-$(VER) -f Makefile.cvs
+	rm -rf orte-$(VER)/autom4te.cache
 	tar czf orte-$(VER).tar.gz orte-$(VER)
 	cd orte-$(VER) && ./configure && make # Check that we can compile the content of the archive
 	@echo "Tarball stored as orte-$(VER).tar.gz"
