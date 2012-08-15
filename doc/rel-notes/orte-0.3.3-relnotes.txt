@@ -1,0 +1,60 @@
+ORTE 0.3.3 Release Notes
+========================
+
+This is mostly a bugfix release. The last version was released almost
+four years ago so it is definitely time for a new release. One big
+change since the last release is that ORTE is no longer distributed as
+a part of OCERA project. We created a new project at sourceforge
+specifically for ORTE. With this change we also moved the source
+repository from CVS to Git and created a new homepage.
+
+This release does not contain Windows binaries. If you have trouble
+compiling them from sources, let us know.
+
+Changes since 0.3.2 release
+---------------------------
+
+Michal Sojka (32):
+      IDL compiler is compiled before anything else
+      Fixed error handling in ORTEDomainCreate()
+      Better error handling in ORTEDomainCreate()
+      ortedemo checks for errors in publisher/subscriber creation
+      Removed circular make dependency in libddso
+      Complain verbosely if something goes wrong in receiver
+      Better fix of receive errors
+      Corrected termination of ortemanager
+      ORTE IDL learned how to handle arrays
+      CORBA_char redefined to char
+      Fix for gcc-4.4
+      Report correct errno in case of multicast problem
+      Zero mreq structure before using it
+      IDL: Fix *_(de)serialize macros for typedefed types
+      idl: Generate (de)serialization functions for enum types
+      Rename .cvsignore to .gitignore
+      Update readme
+      readme: Put compile/install section in front of Git specific sections
+      Bump version to 0.3.3
+      Prepare for release
+      Remove automatically generated file orte_config.h.in
+      Do not distribute autom4te.cache
+      Add documentation from  0.3.2 release tarball
+      Add sources of figures
+      Update Makefile to properly generate documentation
+      doc: Move API reference to the end
+      doc: Update sizes of figures to have readable text
+      doc: Restructure - split it to multiple chapters
+      Update download instructions
+      doc: Add bookinfo
+      Put compiled ORTE manual to the distribution tarballs
+
+Pavel Pisa (7):
+      The ORTE demo can be compiled by OMK Makefiles now.
+      Added helper makefile to the contrib to allow direct ORTE demo build.
+      Makefile.rules updated to work correctly with QT build of shape demo.
+      The Shape Demo is now optional part of OMK build.
+      Update version to 0.3.3 even in header files for OMK build.
+      Remove pointer to OCERA_TOP_DIR, ORTE is used only as standalone in current projects.
+      Update Makefile.rules for OMK build to the actual version.
+
+Petr Smolik (1):
+      fixed counting of get_max_size
