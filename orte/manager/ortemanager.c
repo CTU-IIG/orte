@@ -30,6 +30,7 @@
  */
  
 #include "orte_all.h"
+#include <sys/stat.h>
 
 #ifndef CONFIG_ORTE_RT
 //global variables
@@ -83,7 +84,7 @@ void waitForEndingCommand(void) {
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGINT);
 	sigaddset(&sigset, SIGTERM);
-	sigwaitinfo(&sigset, NULL);
+	sigwait(&sigset, NULL);
 }
 static int daemonInit(void) {
   pid_t pid;
