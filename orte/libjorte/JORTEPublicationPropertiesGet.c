@@ -71,7 +71,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
       break;
     }
     // find class
-    cls_pp = (*env)->FindClass(env, "org/ocera/orte/types/PublProp");
+    cls_pp = findClass(env, "org.ocera.orte.types.PublProp");
     if(cls_pp == 0)
     {
       #ifdef TEST_STAGE
@@ -158,7 +158,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
                             jbool);
     /////////////////////////////////////////////////
     // fieldID - persistence
-    cls_ntpT = (*env)->FindClass(env, "org/ocera/orte/types/NtpTime");
+    cls_ntpT = findClass(env, "org.ocera.orte.types.NtpTime");
     if(cls_ntpT == 0)
     {
       #ifdef TEST_STAGE

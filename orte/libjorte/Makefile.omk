@@ -15,6 +15,7 @@ lib_LOADLIBES = orte
 INCLUDES = -I $(srcdir)/../include -I $(JAVA_HOME)/include  -I $(JAVA_HOME)/include/linux
 
 jorte_SOURCES = \
+onLoad.c \
 getNtpTime.c \
 setType.c \
 setTopic.c \

@@ -64,7 +64,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationGetStatus
      break;
     }
     // find cls
-    cls_ps = (*env)->FindClass(env,"org/ocera/orte/types/Status");
+    cls_ps = findClass(env,"org.ocera.orte.types.Status");
     if(cls_ps == 0)
     {
       #ifdef TEST_STAGE

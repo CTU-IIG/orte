@@ -116,7 +116,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
     if(rinfo == 0)
     {
       // find cls
-      cls = (*env)->FindClass(env, "org/ocera/orte/types/RecvInfo");
+      cls = findClass(env, "org.ocera.orte.types.RecvInfo");
       if(cls == 0)
       {
         #ifdef TEST_STAGE

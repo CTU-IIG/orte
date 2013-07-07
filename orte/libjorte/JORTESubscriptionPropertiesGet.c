@@ -68,7 +68,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
      break;
     }
     // get cls
-    cls_sp = (*env)->FindClass(env, "org/ocera/orte/types/SubsProp");
+    cls_sp = findClass(env, "org.ocera.orte.types.SubsProp");
     if(cls_sp == 0)
     {
       #ifdef TEST_STAGE
@@ -136,7 +136,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
                         (jint) subs_prop->typeChecksum);
     /////////////////////////////////////////////////
     // fieldID - minSeparation
-    cls_ntpT = (*env)->FindClass(env, "org/ocera/orte/types/NtpTime");
+    cls_ntpT = findClass(env, "org.ocera.orte.types.NtpTime");
     if(cls_ntpT == 0)
     {
       #ifdef TEST_STAGE

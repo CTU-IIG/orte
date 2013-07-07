@@ -19,7 +19,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
   do
   {
     // find cls
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/AppInfo");
+    cls = findClass(env, "org.ocera.orte.types.AppInfo");
     if(cls == 0)
     {
       #ifdef TEST_STAGE
@@ -183,7 +183,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
                          (jlong) ainfo->userdataUnicastPort);
 
     // find cls - VendorID
-    cls_tmp = (*env)->FindClass(env, "org/ocera/orte/types/VendorId");
+    cls_tmp = findClass(env, "org.ocera.orte.types.VendorId");
     if(cls_tmp == 0)
     {
       #ifdef TEST_STAGE
@@ -238,7 +238,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
                            obj_tmp);
 
     // find cls - VendorID
-    cls_tmp = (*env)->FindClass(env, "org/ocera/orte/types/ProtocolVersion");
+    cls_tmp = findClass(env, "org.ocera.orte.types.ProtocolVersion");
     if(cls_tmp == 0)
     {
       #ifdef TEST_STAGE

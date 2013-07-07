@@ -16,7 +16,7 @@ jobject createPubInfo(JNIEnv *env, const ORTEPubInfo *pinfo)
   do
   {
     // find cls
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/PubInfo");
+    cls = findClass(env, "org.ocera.orte.types.PubInfo");
     if(cls == 0)
     {
       #ifdef TEST_STAGE
