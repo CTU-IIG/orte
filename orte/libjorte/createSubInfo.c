@@ -17,7 +17,7 @@ jobject createSubInfo(JNIEnv *env, const ORTESubInfo *sinfo)
   do
   {
     // find cls
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/SubInfo");
+    cls = findClass(env, "org.ocera.orte.types.SubInfo");
     if(cls == 0)
     {
       #ifdef TEST_STAGE

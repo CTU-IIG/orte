@@ -76,7 +76,7 @@ onRegFail(void *param)
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -158,7 +158,7 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -250,7 +250,7 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -343,7 +343,7 @@ onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -436,7 +436,7 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -531,7 +531,7 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -636,7 +636,7 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -743,7 +743,7 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -848,7 +848,7 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -953,7 +953,7 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE
@@ -1058,7 +1058,7 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
      break;
     }
     // find class
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/DomainEvents");
+    cls = findClass(env, "org.ocera.orte.types.DomainEvents");
     if(cls == 0)
     {
      #ifdef TEST_STAGE

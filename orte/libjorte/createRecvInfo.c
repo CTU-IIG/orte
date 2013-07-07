@@ -20,7 +20,7 @@ jobject setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo)
   do
   {
     // find cls
-    cls = (*env)->FindClass(env, "org/ocera/orte/types/RecvInfo");
+    cls = findClass(env, "org.ocera.orte.types.RecvInfo");
     if(cls == 0)
     {
       #ifdef TEST_STAGE
@@ -92,7 +92,7 @@ jobject setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo)
     }
 /////////////////////////////////////////////////
     // find cls - GUID_RTPS
-    cls_tmp = (*env)->FindClass(env, "org/ocera/orte/types/GUID_RTPS");
+    cls_tmp = findClass(env, "org.ocera.orte.types.GUID_RTPS");
     if(cls_tmp == 0)
     {
       #ifdef TEST_STAGE
@@ -148,7 +148,7 @@ jobject setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo)
                            obj_tmp);
 /////////////////////////////////////////////////
     // find cls - NtpTime
-    cls_tmp = (*env)->FindClass(env, "org/ocera/orte/types/NtpTime");
+    cls_tmp = findClass(env, "org.ocera.orte.types.NtpTime");
     if(cls_tmp == 0)
     {
       #ifdef TEST_STAGE
@@ -262,7 +262,7 @@ jobject setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo)
                            obj_tmp);
 /////////////////////////////////////////////////
     // find cls - SequenceNumber
-    cls_tmp = (*env)->FindClass(env,"org/ocera/orte/types/SequenceNumber");
+    cls_tmp = findClass(env,"org.ocera.orte.types.SequenceNumber");
     if(cls_tmp == 0)
     {
       #ifdef TEST_STAGE

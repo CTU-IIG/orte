@@ -9,5 +9,16 @@ typedef struct
 } JORTECallbackContext_t;
 */
 // pro test purposes only
-//#define TEST_STAGE
+#ifndef Included4all
+#define Included4all
 
+#define TEST_STAGE
+
+#include "onLoad.h"
+#ifdef __ANDROID__
+
+#include <android/log.h>
+#define printf(...)		__android_log_print(ANDROID_LOG_INFO, "ORTE", __VA_ARGS__)
+
+#endif
+#endif
