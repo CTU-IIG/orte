@@ -104,11 +104,13 @@ onRegFail(void *param)
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -194,11 +196,13 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -284,11 +288,13 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -376,11 +382,13 @@ onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -466,11 +474,13 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -569,11 +579,13 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -672,11 +684,13 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -777,11 +791,13 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -880,11 +896,13 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -983,11 +1001,13 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
@@ -1086,11 +1106,13 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
     flag_ok = 1;
   } while(0);
   // while broken
-  if(!flag_ok)
+  if(flag_ok)
   {
     if((*jvm)->DetachCurrentThread(jvm) != 0)
+    {
       printf(":c!: DetachCurrentThread fault! \n");
-    return  ORTE_FALSE;
+      return  ORTE_FALSE;
+    }
   }
 
   return ORTE_TRUE;
