@@ -51,6 +51,6 @@ Java_org_ocera_orte_Publication_jORTEPublicationDestroy
   #ifdef TEST_STAGE
     printf(":c: publication destroyed successfully.. \n");
   #endif
-  return 0;
+  return 1;
 }
 
