@@ -48,9 +48,9 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
 
   switch (info->status) {
     case NEED_DATA:
-      printf(":c:PUB: Sampling publication, count %d\n", counter);
+      printf(":c:PUB: Sampling publication, count %d\n", counter++);
       printf(":c:PUB: !! DOCASNE - ZRUSIT!! - callback() u Publishera \n");
-	  sprintf(instance,"Hello Universe! (%d)",counter++);
+	  //sprintf(instance,"Hello Universe! (%d)",counter++);
       break;
     case CQL:  //criticalQueueLevel
       break;
