@@ -33,7 +33,7 @@ public class Domain {
    }
 
    /* domain fields */
-   protected int               handle;
+   protected long              handle;
    public DomainProp           props;
    public DomainEvents         events;
 
@@ -51,7 +51,7 @@ public class Domain {
    * Get handle of the Application Domain.   
    * @return Handle of the Application Domain. 
    */
-   public int getHandle()
+   public long getHandle()
    {
      return this.handle;
    }
@@ -81,7 +81,7 @@ public class Domain {
    * @return
    */
    private static native
-   void jORTEDomainStart(int dhandle,
+   void jORTEDomainStart(long dhandle,
                          boolean recvMetatrafficThread,
                          boolean recvUserDataThread,
   	                     boolean sendThread);

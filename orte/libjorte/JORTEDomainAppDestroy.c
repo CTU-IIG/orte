@@ -34,7 +34,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_DomainApp_jORTEDomainAppDestroy
-(JNIEnv *env, jclass cls, jint dhandle)
+(JNIEnv *env, jclass cls, jlong dhandle)
 {
   // check domain handle
   if (dhandle == 0)

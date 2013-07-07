@@ -386,11 +386,11 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
 /* ****************************************************************** *
  *                            native method                           *
  * ****************************************************************** */
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
 (JNIEnv   *env,
  jobject   obj,
- jint      dhandle,   // appDomain handle
+ jlong     dhandle,   // appDomain handle
  jint      jsmode,    // subs mode
  jint      jstype,    // subs type
  jstring   jtopic,    // subs topic
@@ -488,7 +488,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     fid = (*env)->GetFieldID(env,
                              cls,
                              "callbackContextHandle",
-                             "I");
+                             "J");
     if(fid == 0)
     {
       #ifdef TEST_STAGE
@@ -496,10 +496,10 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
       #endif
       break;
     }
-    (*env)->SetIntField(env,
+    (*env)->SetLongField(env,
                         obj,
                         fid,
-                        (int) callback_cont);
+                        (jlong) callback_cont);
     #ifdef TEST_STAGE
        printf(":c: ORTESubscriptionCreate() calling..\n");
     #endif
@@ -548,6 +548,6 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   (*env)->ReleaseStringUTFChars(env, jtname, typename);
   // returns handle of new created Subscription
   if(flag_ok == 0) return 0;
-  return ((jint) s);
+  return ((jlong) s);
 
 }

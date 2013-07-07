@@ -37,7 +37,7 @@
 
 JNIEXPORT jobject JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationGetStatus
-(JNIEnv *env, jobject obj, jint j_appDomain_handle)
+(JNIEnv *env, jobject obj, jlong j_appDomain_handle)
 {
   // jni types
   jclass           cls_ps = NULL; // class of PubStatus

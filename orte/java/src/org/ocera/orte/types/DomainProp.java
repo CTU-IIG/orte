@@ -34,7 +34,7 @@ public class DomainProp {
 
 
  /* handler to C struct with default domain properties  */
-  public int handle = 0;
+  public long handle = 0;
 
 
  /**
@@ -46,7 +46,7 @@ public class DomainProp {
   public static
   DomainProp defaultPropsCreate() {
      DomainProp prop = new DomainProp();
-     int handle = jORTEDomainPropDefaultGet();
+     long handle = jORTEDomainPropDefaultGet();
      prop.handle = handle;
      return prop;
   }
@@ -66,7 +66,7 @@ public class DomainProp {
   * @return handler to default properties of a domain, NULL if error
   */
   private static native
-  int jORTEDomainPropDefaultGet();
+  long jORTEDomainPropDefaultGet();
 
 }
 

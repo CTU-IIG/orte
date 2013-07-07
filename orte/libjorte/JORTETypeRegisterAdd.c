@@ -34,7 +34,7 @@
 
 JNIEXPORT jint JNICALL
 Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
-(JNIEnv *env, jclass cls, jint handle, jstring jname, jlong jlength)
+(JNIEnv *env, jclass cls, jlong handle, jstring jname, jlong jlength)
 {
   const char     *name;
   int            b;

@@ -36,7 +36,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
-(JNIEnv *env, jclass cls, jint dhandle)
+(JNIEnv *env, jclass cls, jlong dhandle)
 {
   int8_t     b;
 

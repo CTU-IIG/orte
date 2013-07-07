@@ -42,10 +42,10 @@ JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEVerbositySetLogFile
 /*
  * Class:     org_ocera_orte_JOrte
  * Method:    jORTEAppSendThread
- * Signature: (I)V
+ * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEAppSendThread
-  (JNIEnv *, jclass, jint);
+  (JNIEnv *, jclass, jlong);
 
 #ifdef __cplusplus
 }

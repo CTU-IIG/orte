@@ -35,14 +35,14 @@
 /* ****************************** *
  *  create default manager domain *
  * ****************************** */
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreate
 (JNIEnv *env, jclass cls, jint jdomain, jboolean susp)
 {
-  jint       d;
+  jlong      d;
 
   // call ORTE function
-  d = (jint) ORTEDomainMgrCreate((int)jdomain,
+  d = (jlong) ORTEDomainMgrCreate((int)jdomain,
                                  NULL,
                                  NULL,
                                  (Boolean) susp);
@@ -61,18 +61,18 @@ Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreate
 /* *************************** *
  *  create user manager domain *
  * *************************** */
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_DomainMg_jORTEDomainMgrCreate
-(JNIEnv *env, jclass cls, jint jdomain, jint propHandle,
- jint eventsHandle, jboolean susp)
+(JNIEnv *env, jclass cls, jint jdomain, jlong propHandle,
+ jlong eventsHandle, jboolean susp)
 {
-  jint        d;
+  jlong       d;
 
   // call ORTE function
-  d = (jint) ORTEDomainMgrCreate((int)jdomain,
-                                 (ORTEDomainProp *) propHandle,
-                                 (ORTEDomainAppEvents *) eventsHandle,
-                                 (Boolean) susp);
+  d = (jlong) ORTEDomainMgrCreate((int)jdomain,
+                                  (ORTEDomainProp *) propHandle,
+                                  (ORTEDomainAppEvents *) eventsHandle,
+                                  (Boolean) susp);
   if(d == 0)
   {
     printf(":!c: creating mgrDomain failed! \n");

@@ -1122,17 +1122,17 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 // create default application domain
 // /////////////////////////////////////////////////////////////////////
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
 (JNIEnv *env, jclass class, jint jdomain, jboolean jsusp)
 {
-  jint      d;
+  jlong     d;
 
   #ifdef TEST_STAGE
     printf(":c: jsem pred ORTEDomainDefaultAppCreate() \n");
   #endif
   // call ORTE function
-  d = (jint) ORTEDomainAppCreate((int)jdomain,
+  d = (jlong) ORTEDomainAppCreate((int)jdomain,
                                  NULL,
                                  NULL,
                                  (Boolean) jsusp);
@@ -1149,18 +1149,18 @@ Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
 // //////////////////////////////////////////////////////////////////////
 // create user application domain
 // //////////////////////////////////////////////////////////////////////
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
 (JNIEnv *env, jclass cls,
  jint jdomain,
- jint propHandle,
- jint eventsHandle,
+ jlong propHandle,
+ jlong eventsHandle,
  jobject obj_de,
  jboolean jsusp)
 {
   // jni varibles
   JavaVM                 *jvm;
-  jint                    d;
+  jlong                   d;
   //
   ORTEDomainAppEvents    *dom_events;
   JORTEDomainEventsContext_t  *domain_events_cont;
@@ -1221,7 +1221,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
   dom_events->onSubDeleteParam = (void *) domain_events_cont;
   ////////////////////////////////////////////////
   // call ORTE function
-  d = (jint) ORTEDomainAppCreate((int)jdomain,
+  d = (jlong) ORTEDomainAppCreate((int)jdomain,
                                  (ORTEDomainProp *) propHandle,
                                  (ORTEDomainAppEvents *) eventsHandle,
                                  (Boolean) jsusp);

@@ -39,7 +39,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
-(JNIEnv *env, jobject obj, jint j_appDomain_handle, jobject obj_sp)
+(JNIEnv *env, jobject obj, jlong j_appDomain_handle, jobject obj_sp)
 {
   // jni types
   jclass         cls_sp = NULL;

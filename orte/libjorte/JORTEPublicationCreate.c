@@ -28,6 +28,7 @@
 #include <stdlib.h>
 // origin orte headers
 #include "orte.h"
+#include "orte_all.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Publication.h"
 #include "jorte/jorte_protos_api.h"
@@ -61,11 +62,11 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
 
 
 // native method
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationCreate
 (JNIEnv   *env ,
  jobject   obj,
- jint      dom_handle,
+ jlong     dom_handle,
  jstring   j_topic,
  jstring   j_type_name,
  jint      jbufflen,
@@ -154,6 +155,6 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
     if(buffer != 0) free(buffer);
     return 0;
   }
-  return ((jint) p);
+  return ((jlong) p);
 
 }

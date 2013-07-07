@@ -36,7 +36,7 @@
 // ve fci chybi 2 Multicast argumenty - maji se dodat???
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_Domain_jORTEDomainStart
-(JNIEnv *env, jclass cls, jint dom_handle,
+(JNIEnv *env, jclass cls, jlong dom_handle,
  jboolean recvUnicastMetatrafficThread,
  jboolean recvUnicastUserDataThread,
  jboolean sendThread)

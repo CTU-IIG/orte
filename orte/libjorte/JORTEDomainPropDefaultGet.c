@@ -34,7 +34,7 @@
 #include "jorte/org_ocera_orte_types_DomainProp.h"
 #include "jorte/4all.h"
 
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
 (JNIEnv *env, jclass cls)
 {
@@ -58,5 +58,5 @@ Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
   #ifdef TEST_STAGE
     printf(":c: default domain properties created.. \n");
   #endif
-  return ((jint) dprop);
+  return ((jlong) dprop);
 }

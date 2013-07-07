@@ -53,7 +53,7 @@ public class JOrte {
    }
 
    public static
-   void appSendThread(int dhandle)
+   void appSendThread(long dhandle)
    {
     jORTEAppSendThread(dhandle);
    }
@@ -115,7 +115,7 @@ public class JOrte {
    * @return void
    */
    private static native
-   void jORTEAppSendThread(int dhandle);
+   void jORTEAppSendThread(long dhandle);
 
 
 }

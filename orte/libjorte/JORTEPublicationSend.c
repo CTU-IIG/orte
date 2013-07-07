@@ -37,7 +37,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationSend
-(JNIEnv *env, jobject obj, jint pub_handle, jobject obj_msg)
+(JNIEnv *env, jobject obj, jlong pub_handle, jobject obj_msg)
 {
   jclass    cls;
   jobject   obj_bb;

@@ -38,7 +38,7 @@
 
 JNIEXPORT jobject JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
-(JNIEnv *env, jobject obj, jint j_appDomain_handle)
+(JNIEnv *env, jobject obj, jlong j_appDomain_handle)
 {
   // jni types
   jclass         cls_pp   = NULL; // PublProp class

@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     org_ocera_orte_Domain
  * Method:    jORTEDomainStart
- * Signature: (IZZZ)V
+ * Signature: (JZZZ)V
  */
 JNIEXPORT void JNICALL Java_org_ocera_orte_Domain_jORTEDomainStart
-  (JNIEnv *, jclass, jint, jboolean, jboolean, jboolean);
+  (JNIEnv *, jclass, jlong, jboolean, jboolean, jboolean);
 
 #ifdef __cplusplus
 }

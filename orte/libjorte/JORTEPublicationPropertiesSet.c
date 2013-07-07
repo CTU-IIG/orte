@@ -39,7 +39,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
-(JNIEnv *env, jobject obj, jint j_appDomain_handle, jobject obj_pp)
+(JNIEnv *env, jobject obj, jlong j_appDomain_handle, jobject obj_pp)
 {
   // jni types
   jclass         cls_pp = NULL;
