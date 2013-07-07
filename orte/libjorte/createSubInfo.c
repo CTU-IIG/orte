@@ -5,7 +5,7 @@
 #include "jorte/4all.h"
 #include "jorte/jorte_protos_api.h"
 
-jobject createSubInfo(JNIEnv *env, ORTESubInfo *sinfo)
+jobject createSubInfo(JNIEnv *env, const ORTESubInfo *sinfo)
 {
   jclass    cls;
   jobject   obj;
