@@ -29,11 +29,11 @@
 // library header file's path
 #include "orte.h"
 // pregenerated header
-#include "jorte/org_ocera_orte_Domain.h"
+#include "jorte/org_ocera_orte_DomainApp.h"
 
 
 JNIEXPORT jboolean JNICALL
-Java_org_ocera_orte_Domain_jORTETypeRegisterDestroyAll
+Java_org_ocera_orte_DomainApp_jORTETypeRegisterDestroyAll
 (JNIEnv *env, jclass cls, jint j_app_domain_handle)
 {
   int b;
