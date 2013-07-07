@@ -166,7 +166,7 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
     }
     #ifdef TEST_STAGE
        printf(":c: rinfo.NtpTime: %d (sec = %d fract = %d) \n",
-              (rinfo->localTimeReceived.seconds + rinfo->localTimeReceived.fraction/2^32),
+              (rinfo->localTimeReceived.seconds + rinfo->localTimeReceived.fraction/(2^32)),
               rinfo->localTimeReceived.seconds,rinfo->localTimeReceived.fraction);
     #endif
     (*env)->SetObjectField(env,
@@ -224,7 +224,7 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
     }
     #ifdef TEST_STAGE
        printf(":c: rinfo.remoteTimePub: %d (sec = %d fract = %d) \n",
-              (rinfo->remoteTimePublished.seconds + rinfo->remoteTimePublished.fraction/2^32),
+              (rinfo->remoteTimePublished.seconds + rinfo->remoteTimePublished.fraction/(2^32)),
               rinfo->remoteTimePublished.seconds,rinfo->remoteTimePublished.fraction);
     #endif
     (*env)->SetObjectField(env,
@@ -280,7 +280,7 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
     }
     #ifdef TEST_STAGE
        printf(":c: rinfo.sn: %d (high = %d low = %d) \n",
-              (rinfo->sn.high*2^32 + rinfo->sn.low),rinfo->sn.high,rinfo->sn.low);
+              (rinfo->sn.high*(2^32) + rinfo->sn.low),rinfo->sn.high,rinfo->sn.low);
     #endif
     (*env)->SetObjectField(env,
                            obj,
