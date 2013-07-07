@@ -1208,7 +1208,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
   dom_events->onPubRemoteChanged = (ORTEOnPubRemote) onPubRemoteChanged;
   dom_events->onPubRemoteChangedParam = (void *) domain_events_cont;
   // onPubDelete
-  dom_events->onPubDelete = (ORTEOnPubRemote) onPubDelete;
+  dom_events->onPubDelete = (ORTEOnPubDelete) onPubDelete;
   dom_events->onPubDeleteParam = (void *) domain_events_cont;
   // onSubRemoteNew
   dom_events->onSubRemoteNew = (ORTEOnSubRemote) onSubRemoteNew;
@@ -1217,7 +1217,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
   dom_events->onSubRemoteChanged = (ORTEOnSubRemote) onSubRemoteChanged;
   dom_events->onSubRemoteChangedParam = (void *) domain_events_cont;
   // onSubDelete
-  dom_events->onSubDelete = (ORTEOnSubRemote) onSubDelete;
+  dom_events->onSubDelete = (ORTEOnSubDelete) onSubDelete;
   dom_events->onSubDeleteParam = (void *) domain_events_cont;
   ////////////////////////////////////////////////
   // call ORTE function
