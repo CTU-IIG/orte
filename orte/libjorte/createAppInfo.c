@@ -4,6 +4,7 @@
 #include "orte.h"
 #include "jorte/4all.h"
 #include "jorte/jorte_protos_api.h"
+#include <inttypes.h>
 
 jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
 {
@@ -88,7 +89,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.unicastIPAddressList = %d \n",ainfo->unicastIPAddressList);
+       printf(":c: ainfo.unicastIPAddressList = %"PRIoPTR"\n",(intptr_t)ainfo->unicastIPAddressList);
     #endif
     (*env)->SetLongField(env,
                          obj,
@@ -121,8 +122,8 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.multicastIPAddressList = %d \n",
-              ainfo->metatrafficMulticastIPAddressList);
+       printf(":c: ainfo.multicastIPAddressList = %"PRIoPTR"\n",
+              (intptr_t)ainfo->metatrafficMulticastIPAddressList);
     #endif
     (*env)->SetLongField(env,
                          obj,
