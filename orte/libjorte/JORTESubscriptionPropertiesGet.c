@@ -37,7 +37,7 @@
 
 JNIEXPORT jobject JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
-(JNIEnv *env, jobject obj, jint j_appDomain_handle)
+(JNIEnv *env, jobject obj, jlong j_appDomain_handle)
 {
   // jni types
   jclass         cls_sp   = NULL; // SubsProp class

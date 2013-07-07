@@ -34,7 +34,7 @@
 #include "jorte/org_ocera_orte_types_DomainEvents.h"
 #include "jorte/4all.h"
 
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
 (JNIEnv *env, jclass cls)
 {
@@ -58,6 +58,6 @@ Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
      printf(":c: events initialized.. \n");
   #endif
 
-  return ((jint) evs);
+  return ((jlong) evs);
 
 }

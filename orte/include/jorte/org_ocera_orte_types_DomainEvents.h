@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     org_ocera_orte_types_DomainEvents
  * Method:    jORTEDomainInitEvents
- * Signature: ()I
+ * Signature: ()J
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
+JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus

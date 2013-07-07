@@ -38,10 +38,10 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
-(JNIEnv *env, jobject obj, jint subs_handle)
+(JNIEnv *env, jobject obj, jlong subs_handle)
 {
   int8_t        b;
-  jint          h;
+  jlong         h;
   jclass        cls;
   jfieldID      fid;
   int           flag_ok = 0;
@@ -66,7 +66,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
     fid = (*env)->GetFieldID(env,
                              cls,
                              "callbackContextHandle",
-                             "I");
+                             "J");
     if(fid == 0)
     {
      #ifdef TEST_STAGE
@@ -75,7 +75,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
      break;
     }
     // get value
-    h = (*env)->GetIntField(env, obj, fid);
+    h = (*env)->GetLongField(env, obj, fid);
     if(h)
     {
       //JavaVM *jvm;

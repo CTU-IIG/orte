@@ -26,7 +26,7 @@ package org.ocera.orte.types;
 
 public class DomainEvents {
   /* handler to C struct with default domain properties  */
-  private int handle = 0;
+  private long handle = 0;
 
 
  /* load native library 'libjorte.so' */
@@ -52,7 +52,7 @@ public class DomainEvents {
   }
 
   
-  public int getHandle()
+  public long getHandle()
   {
   	return this.handle;
   }
@@ -83,7 +83,7 @@ public class DomainEvents {
   * @return handler to default properties of a domain, NULL if error
   */
   private static native
-  int jORTEDomainInitEvents();
+  long jORTEDomainInitEvents();
 
 
 

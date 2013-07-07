@@ -35,7 +35,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationDestroy
-(JNIEnv *env, jclass cls, jint pub_handle)
+(JNIEnv *env, jclass cls, jlong pub_handle)
 {
   int8_t    b;
 

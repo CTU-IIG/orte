@@ -28,15 +28,16 @@ import  org.ocera.orte.types.*;
 
 public class Subscription {
 
-   private int handle;
-   private int callbackContextHandle = 0;
+   private long handle;
+   private long callbackContextHandle = 0;
+
    private Domain appDomain;
 
   /**
    * Get Subscription's handle.
    * @return Handle of the subscription.
    */
-   public int getHandle()
+   public long getHandle()
    {
      return this.handle;
    }
@@ -173,7 +174,7 @@ public class Subscription {
    * @return ORTE_OK if succesful, ORTE_BAD_HANDLE if bad subscription handle, 
    *         ORTE_TIMEOUT if number of retries has been exhausted.   
    */
-  public boolean pull(int subsHandle)   
+  public boolean pull(long subsHandle)
   { 
     int b = jORTESubscriptionPull(subsHandle);
     if (b == ORTEConstant.ORTE_BAD_HANDLE) 
@@ -203,38 +204,38 @@ public class Subscription {
  * ****************************************************************** */
 
   private native
-  int jORTESubscriptionCreate(int appDomainHandle,
-                              int subsmode,  /*! union */
-                              int substype,  /*! union */
-                              String topic,
-                              String typeName,
-                              int bufflength,
-                              MessageData message,
-							  NtpTime deadline,
-                              NtpTime minSeparation,
-                              SubscriptionCallback cb,
-                            // recvCallBackParam
-                              long multicastIPAddress);
+  long jORTESubscriptionCreate(long appDomainHandle,
+                               int subsmode,  /*! union */
+                               int substype,  /*! union */
+                               String topic,
+                               String typeName,
+                               int bufflength,
+                               MessageData message,
+		 					  NtpTime deadline,
+                               NtpTime minSeparation,
+                               SubscriptionCallback cb,
+                             // recvCallBackParam
+                               long multicastIPAddress);
 
   private native
-  boolean jORTESubscriptionDestroy(int subsHandle);
+  boolean jORTESubscriptionDestroy(long subsHandle);
 
   private native
-  SubsProp jORTESubscriptionPropertiesGet(int subsHandle);
+  SubsProp jORTESubscriptionPropertiesGet(long subsHandle);
   
   private native
-  boolean jORTESubscriptionPropertiesSet(int subsHandle, SubsProp subProps);
+  boolean jORTESubscriptionPropertiesSet(long subsHandle, SubsProp subProps);
 
   private native
-  Status jORTESubscriptionGetStatus(int subsHandle);
+  Status jORTESubscriptionGetStatus(long subsHandle);
 
   private native
-  int jORTESubscriptionWaitForPublications(int subsHandle, 
+  int jORTESubscriptionWaitForPublications(long subsHandle, 
   	                                       NtpTime wait,
 	                					   long retries,
 										   long noPublications);  
   private native
-  int jORTESubscriptionPull(int subsHandle);  
+  int jORTESubscriptionPull(long subsHandle);  
  
   
   

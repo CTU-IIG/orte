@@ -30,7 +30,7 @@ import org.ocera.orte.types.*;
 
 public class Publication {
 
-  private int handle;
+  private long handle;
   private org.ocera.orte.types.MessageData msgData;
 
   private boolean b;
@@ -42,7 +42,7 @@ public class Publication {
    *
    * @return handler of the publication
    */
-   public int getHandle()
+   public long getHandle()
    {
      return this.handle;
    }
@@ -184,7 +184,7 @@ public class Publication {
   * ****************************************************************** */
 
   private native
-  int jORTEPublicationCreate(int appDomainHandle,
+  long jORTEPublicationCreate(long appDomainHandle,
                              String topic,
                              String typeName,
                              int bufflen,
@@ -196,25 +196,25 @@ public class Publication {
                           // NtpTime sendCallBackDelay
 
   private native
-  boolean jORTEPublicationDestroy(int publHandle);
+  boolean jORTEPublicationDestroy(long publHandle);
 
   private native
-  boolean jORTEPublicationSend(int publHandle, 
+  boolean jORTEPublicationSend(long publHandle, 
   		                       MessageData instance);
   		                       
 
   private native
-  PublProp jORTEPublicationPropertiesGet(int publHandle);
+  PublProp jORTEPublicationPropertiesGet(long publHandle);
   
   private native
-  boolean jORTEPublicationPropertiesSet(int publHandle,
+  boolean jORTEPublicationPropertiesSet(long publHandle,
   		                                PublProp publProps);
 
   private native
-  Status jORTEPublicationGetStatus(int publHandle);
+  Status jORTEPublicationGetStatus(long publHandle);
 
   private native
-  int jORTEPublicationWaitForSubscriptions(int publHandle,
+  int jORTEPublicationWaitForSubscriptions(long publHandle,
   	                                       NtpTime wait,
 	     								   long retries,
 										   long noSubscription);

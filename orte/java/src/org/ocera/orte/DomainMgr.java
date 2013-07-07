@@ -99,7 +99,7 @@ public class DomainMgr extends Domain
    * @return handle of the Manager
    **/
    private static native
-   int jORTEDomainDefaultMgrCreate(int dhandle,boolean suspend);
+   long jORTEDomainDefaultMgrCreate(int dhandle,boolean suspend);
 
 
   /**
@@ -110,10 +110,10 @@ public class DomainMgr extends Domain
    * @return handle of the Manager
    **/
    private static native
-   int jORTEDomainMgrCreate(int dhandle,
-                            int propsHandle,
-                            int eventsHandle,
-                            boolean suspend);
+   long jORTEDomainMgrCreate(int dhandle,
+                             long propsHandle,
+                             long eventsHandle,
+                             boolean suspend);
 
   /**
    * jORTEDomainMgrDestroy - destroy manager object
@@ -121,6 +121,6 @@ public class DomainMgr extends Domain
    * @return if some error occures return False, otherwise True
    **/
    private static native
-   boolean jORTEDomainMgrDestroy(int dhandle);  
+   boolean jORTEDomainMgrDestroy(long dhandle);  
 	
 }

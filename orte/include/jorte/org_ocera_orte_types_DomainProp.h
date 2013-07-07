@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     org_ocera_orte_types_DomainProp
  * Method:    jORTEDomainPropDefaultGet
- * Signature: ()I
+ * Signature: ()J
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
+JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus

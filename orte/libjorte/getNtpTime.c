@@ -50,7 +50,7 @@ NtpTime getNtpTime(JNIEnv *env, jobject obj)
   fieldID = (*env)->GetFieldID(env,ntpTimeClass,"fraction","J");
 //  if(fieldID == NULL) return(NTPTIME_ZERO(time)); // NEFUNGUJE
   /* get object's value */
-  time.fraction = (uint32_t) (*env)->GetIntField(env,obj,fieldID);
+  time.fraction = (uint32_t) (*env)->GetLongField(env,obj,fieldID);
 
   return(time);
 

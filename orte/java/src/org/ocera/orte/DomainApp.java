@@ -185,7 +185,7 @@ public class DomainApp extends Domain
  * @param domain given domain
  * @return addres value (from C environment) of the created domain
  */
- private static native int jORTEDomainDefaultAppCreate(int domain,boolean suspend);
+ private static native long jORTEDomainDefaultAppCreate(int domain,boolean suspend);
 
 
 /**
@@ -202,9 +202,9 @@ public class DomainApp extends Domain
  */
 
  private static native
- int jORTEDomainAppCreate(int domain,
-                          int propHandle,
-                          int eventsHandle,
+ long jORTEDomainAppCreate(int  domain,
+                           long propHandle,
+                           long eventsHandle,
 						  DomainEvents ev,
 						  boolean suspend);
 
@@ -218,7 +218,7 @@ public class DomainApp extends Domain
  * @return boolean value, False when some error occures, otherwise True
  */
  private static native
- boolean jORTEDomainAppDestroy(int dhandle);
+ boolean jORTEDomainAppDestroy(long dhandle);
 
  
  /**
@@ -232,9 +232,9 @@ public class DomainApp extends Domain
   * @return
   */
   private static native
-  int jORTETypeRegisterAdd(int dhandle,
-                           String typeName,
-                           long maxlenght);
+  int jORTETypeRegisterAdd(long dhandle,
+                            String typeName,
+                            long maxlenght);
 
 
  /**
@@ -245,7 +245,6 @@ public class DomainApp extends Domain
   * @return boolean value, False when some error occures, otherwise True
   */
   private static native
-  boolean jORTETypeRegisterDestroyAll(int dhandle);
+  boolean jORTETypeRegisterDestroyAll(long dhandle);
 
 }
- 
