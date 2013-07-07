@@ -5,7 +5,7 @@
 #include "jorte/4all.h"
 #include "jorte/jorte_protos_api.h"
 
-jobject createPubInfo(JNIEnv *env, ORTEPubInfo *pinfo)
+jobject createPubInfo(JNIEnv *env, const ORTEPubInfo *pinfo)
 {
   jclass    cls;
   jobject   obj;

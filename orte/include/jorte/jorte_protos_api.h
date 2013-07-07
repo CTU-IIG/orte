@@ -13,13 +13,13 @@ extern int
 setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj);
 
 extern jobject
-createAppInfo(JNIEnv *env, ORTEAppInfo *ainfo);
+createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo);
 
 extern jobject
-createPubInfo(JNIEnv *env, ORTEPubInfo *pinfo);
+createPubInfo(JNIEnv *env, const ORTEPubInfo *pinfo);
 
 extern jobject
-createSubInfo(JNIEnv *env, ORTESubInfo *sinfo);
+createSubInfo(JNIEnv *env, const ORTESubInfo *sinfo);
 
 extern NtpTime
 getNtpTime(JNIEnv *env, jobject obj);

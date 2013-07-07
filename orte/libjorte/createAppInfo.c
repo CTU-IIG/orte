@@ -5,7 +5,7 @@
 #include "jorte/4all.h"
 #include "jorte/jorte_protos_api.h"
 
-jobject createAppInfo(JNIEnv *env, ORTEAppInfo *ainfo)
+jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
 {
   jclass    cls;
   jclass    cls_tmp;
