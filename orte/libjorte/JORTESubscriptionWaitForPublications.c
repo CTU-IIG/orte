@@ -38,7 +38,7 @@
 
 
 JNIEXPORT jint JNICALL
-Java_org_ocera_orte_Subscription_jORTESubscriptionWaitForSubscriptions
+Java_org_ocera_orte_Subscription_jORTESubscriptionWaitForPublications
 (JNIEnv *env, jobject obj, jint j_appDomain_handle,
  jobject obj_ntpT, jlong jretries, jlong jnoPublications)
 {
