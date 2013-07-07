@@ -147,7 +147,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationSend
     }
     /////////////////////////////////////////////////
     psp.instance = (void *) orte_instance;
-    psp.data_endian = 0; /* BIG -pak tahat z headeru !!*/
+    psp.data_endian = 1; /* BIG -pak tahat z headeru !!*/
     #ifdef TEST_STAGE
       printf(":c: endian? \n");
     #endif
