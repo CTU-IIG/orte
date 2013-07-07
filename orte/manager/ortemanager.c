@@ -81,10 +81,11 @@ int managerStop(void) {
 //Unix daemon support
 void waitForEndingCommand(void) {
 	sigset_t sigset;
+	int sig;
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGINT);
 	sigaddset(&sigset, SIGTERM);
-	sigwait(&sigset, NULL);
+	sigwait(&sigset, &sig);
 }
 static int daemonInit(void) {
   pid_t pid;

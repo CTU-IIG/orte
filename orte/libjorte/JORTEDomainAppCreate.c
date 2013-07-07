@@ -35,6 +35,7 @@
 // new data types
 #include "jorte/jorte_typedefs_defines.h"
 #include "jorte/jorte_protos_api.h"
+#include <inttypes.h>
 
 // /////////////////////////////////////////////////////////////////////
 //  public void onRegFail()
@@ -1141,7 +1142,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainDefautlAppCreate() ok.. + %d \n", d);
+    printf(":c: ORTEDomainDefautlAppCreate() ok.. + %"PRIiPTR"\n", d);
   #endif
   return (d);
 }
@@ -1230,7 +1231,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainAppCreate() ok.. + %d \n", d);
+    printf(":c: ORTEDomainAppCreate() ok.. + %"PRIiPTR"\n", d);
   #endif
   return (d);
 }
