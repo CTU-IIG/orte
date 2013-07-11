@@ -1,15 +1,9 @@
 package org.ocera.orte.demo;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.JOrte;
+import org.ocera.orte.Manager;
 import org.ocera.orte.Publication;
-import org.ocera.orte.R;
 import org.ocera.orte.types.DomainProp;
 import org.ocera.orte.types.NtpTime;
 import org.ocera.orte.types.ORTEConstant;
@@ -36,7 +30,7 @@ public class MainActivity extends Activity {
 	Button start_pub = null;
 	Button stop_pub = null;
 	TextView textview = null;
-	Process manager = null;
+	Manager manager = null;
 	Thread publisher = null;
 	boolean tContinue = true;
 	
@@ -119,35 +113,6 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public void copyManager() {
-		BufferedInputStream bis = null;
-		BufferedOutputStream bos = null;
-		
-		String path = getFilesDir().getAbsolutePath() + "/ortemanager";
-		
-		if (!new File(path).exists()) {
-			try {
-				bis = new BufferedInputStream(getAssets().open("ortemanager"));
-				bos = new BufferedOutputStream(new FileOutputStream(path));
-				
-				int delka;
-				byte[] buffer = new byte[4096];
-				
-				while((delka = bis.read(buffer, 0, 4096)) > 0) {
-					bos.write(buffer, 0, delka);
-				}
-				
-				bos.flush();
-				bos.close();
-				bis.close();
-				
-				Runtime.getRuntime().exec("chmod 744 " + path);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
     @Override
     protected void onResume() {
         super.onResume();
@@ -194,21 +159,16 @@ public class MainActivity extends Activity {
         mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
     	
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        
-        copyManager();
 
 		start.setOnClickListener(new View.OnClickListener() {
-		    String[] orte = {getFilesDir().getAbsolutePath() + "/ortemanager","-p 192.168.1.5:192.168.1.8"};
+		    String[] mgrs = {"192.168.1.5","192.168.1.8"};
 			
 		    @Override
 			public void onClick(View v) {
 				start.setEnabled(false);
 				stop.setEnabled(true);
-				try {
-					manager = Runtime.getRuntime().exec(orte);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				manager = new Manager(mgrs);
+				
 				start_pub.setEnabled(true);
 			}
 		});
@@ -221,7 +181,8 @@ public class MainActivity extends Activity {
 				stop.setEnabled(false);
 				start_pub.setEnabled(false);
 				stop_pub.setEnabled(false);
-				manager.destroy();
+				manager = null;
+				System.gc();
 			}
 		});
 		
