@@ -76,6 +76,7 @@ libjorte/JORTEDomainInitEvents.c \
 libjorte/JORTEDomainMgrCreate.c \
 libjorte/JORTEDomainMgrDestroy.c \
 libjorte/JORTEDomainPropDefaultGet.c \
+libjorte/JORTEDomainPropMgrsSet.c \
 libjorte/JORTEDomainStart.c \
 libjorte/JORTEInit.c \
 libjorte/JORTEPublicationCreate.c \
@@ -101,13 +102,3 @@ libjorte/JStringToIPAddress.c
 LOCAL_STATIC_LIBRARIES := orte
 
 include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE    := ortemanager
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
-LOCAL_LDLIBS := -llog
-LOCAL_SRC_FILES := manager/ortemanager.c
-LOCAL_STATIC_LIBRARIES := orte
-
-include $(BUILD_EXECUTABLE)
