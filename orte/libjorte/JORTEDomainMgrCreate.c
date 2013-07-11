@@ -62,7 +62,7 @@ Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreate
  *  create user manager domain *
  * *************************** */
 JNIEXPORT jlong JNICALL
-Java_org_ocera_orte_DomainMg_jORTEDomainMgrCreate
+Java_org_ocera_orte_DomainMgr_jORTEDomainMgrCreate
 (JNIEnv *env, jclass cls, jint jdomain, jlong propHandle,
  jlong eventsHandle, jboolean susp)
 {

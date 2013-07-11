@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
   (JNIEnv *, jclass);
 
+/*
+ * Class:     org_ocera_orte_types_DomainProp
+ * Method:    jORTEDomainPropMgrsSet
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropMgrsSet
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
