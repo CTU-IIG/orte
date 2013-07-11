@@ -38,7 +38,7 @@
     <target name="compile-orte" depends="prepare-compile">
         <javac srcdir="${src}" destdir="${class}"
             classpath=""
-            source="1.4"
+            source="1.5"
             debug="true"
             optimize="false"
             />
