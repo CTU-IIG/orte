@@ -36,6 +36,7 @@ public class DomainMgr extends Domain
 	**/
    public DomainMgr()
    {
+	 super();
      handle = jORTEDomainDefaultMgrCreate(ORTEConstant.ORTE_DEFAULT_DOMAIN,
      		                              false);
    }
@@ -56,7 +57,7 @@ public class DomainMgr extends Domain
     {
 	   handle = jORTEDomainMgrCreate(domain,
 	                                 props.handle,
-		                             events.getHandle(),
+		                             events==null ? 0 : events.getHandle(),
 			     					 suspend);
     }
 

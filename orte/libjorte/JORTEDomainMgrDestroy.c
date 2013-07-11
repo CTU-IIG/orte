@@ -42,14 +42,14 @@ Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
 
   // call ORTE function
   b = ORTEDomainMgrDestroy((ORTEDomain *) dhandle);
-  if(b == ORTE_OK)
+  if(b == ORTE_TRUE)
   {
     #ifdef TEST_STAGE
       printf(":c: mgrDomain destroy successfully.. \n");
     #endif
     return 1;
   }
-  if (b == ORTE_BAD_HANDLE)
+  else
     printf(":!c: mgrDomain destroy failed! [bad domain handle] \n");
   return 0;
 }

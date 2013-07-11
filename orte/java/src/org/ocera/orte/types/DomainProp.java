@@ -25,8 +25,7 @@ package org.ocera.orte.types;
 
 
 public class DomainProp {
-
-
+	
  /* load native library 'libjorte.so' */
   static {
      System.loadLibrary("jorte");
@@ -35,8 +34,19 @@ public class DomainProp {
 
  /* handler to C struct with default domain properties  */
   public long handle = 0;
-
-
+  private String mgrs = "";
+  
+  public void setMgrs(String[] mgrs) {
+	  for (String item : mgrs) {
+		  this.mgrs += item + ":";
+	  }
+	  
+	  this.mgrs = this.mgrs.substring(0, this.mgrs.length()-1);
+	  
+	  if(!jORTEDomainPropMgrsSet())
+		  System.out.println(":j: Mgrs not set !!!");
+  }
+  
  /**
   * defaultPropsCreate - create DomainProp with handle to default
   * domain properties
@@ -67,6 +77,9 @@ public class DomainProp {
   */
   private static native
   long jORTEDomainPropDefaultGet();
+  
+  private native
+  boolean jORTEDomainPropMgrsSet();
 
 }
 

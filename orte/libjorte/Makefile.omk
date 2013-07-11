@@ -33,6 +33,7 @@ JORTEDomainInitEvents.c \
 JORTEDomainMgrCreate.c \
 JORTEDomainMgrDestroy.c \
 JORTEDomainPropDefaultGet.c \
+JORTEDomainPropMgrsSet.c \
 JORTEDomainStart.c \
 JORTEInit.c \
 JORTEPublicationCreate.c \
