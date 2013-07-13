@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 #include "orte.h"
 
 typedef struct motion_speed_type motion_speed;
@@ -17,7 +18,7 @@ struct robottype_orte_data {
 };
 
 struct robottype_orte_data orte;
-
+ORTESubscription *s;
 
 int robottype_roboorte_init(struct robottype_orte_data *data) {
 	int rv = 0;
@@ -83,7 +84,6 @@ motion_speed_type_register(ORTEDomain *d) {
 }
 
 void robottype_subscriber_motion_speed_create(struct robottype_orte_data *data, ORTERecvCallBack callback, void *arg) {
-	ORTESubscription *s;
 	NtpTime deadline, minimumSeparation;
 
 	motion_speed_type_register(data->orte_domain);
@@ -112,14 +112,20 @@ void rcv_motion_speed_cb(const ORTERecvInfo *info, void *vinstance,
 	}
 }
 
+void destroy(int sig) {
+	ORTESubscriptionDestroy(s);
+	ORTETypeRegisterDestroyAll(orte.orte_domain);
+	ORTEDomainAppDestroy(orte.orte_domain);
+}
+
 int main(void) {
 	orte.strength = 30;
 	robottype_roboorte_init(&orte);
 	robottype_subscriber_motion_speed_create(&orte, rcv_motion_speed_cb, &orte);
 
-	while (1) {
-		ORTESleepMs(1000);
-	}
+	signal(SIGINT, &destroy);
+	signal(SIGTERM, &destroy);
+	pause();
 
 	return 0;
 }

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 #include "orte.h"
 
 typedef struct motion_speed_type motion_speed;
@@ -20,7 +21,16 @@ struct robottype_orte_data orte;
 
 void send_dummy_cb(const ORTESendInfo *info, void *vinstance, void *sendCallBackParam)
 {
-printf("sent1\n");
+	struct motion_speed_type *m = (struct motion_speed_type *)vinstance;
+
+	switch(info->status) {
+		case NEED_DATA:
+			printf("Odeslana data: left: %d, right: %d\n", m->left, m->right);
+			break;
+		case CQL:
+			printf("Kriticka uroven fronty zprav na odeslani.\n");
+			break;
+	}
 }
 
 int robottype_roboorte_init(struct robottype_orte_data *data) {
@@ -96,6 +106,12 @@ void robottype_publisher_motion_speed_create(struct robottype_orte_data *data, O
 	data->publication_motion_speed = ORTEPublicationCreate(data->orte_domain, "motion_speed", "motion_speed", &data->motion_speed, &persistance, data->strength, callback, arg, &delay);
 }
 
+void destroy(int sig) {
+	ORTEPublicationDestroy(orte.publication_motion_speed);
+	ORTETypeRegisterDestroyAll(orte.orte_domain);
+	ORTEDomainAppDestroy(orte.orte_domain);
+}
+
 int main(void) {
 	orte.strength = 30;
 	robottype_roboorte_init(&orte);
@@ -105,9 +121,9 @@ int main(void) {
 	orte.motion_speed.left = 20000;
 	ORTEPublicationSend(orte.publication_motion_speed);
 
-	while (1) {
-		ORTESleepMs(1000);
-	}
+	signal(SIGINT, &destroy);
+	signal(SIGTERM, &destroy);
+	pause();
 
 	return 0;
 }
