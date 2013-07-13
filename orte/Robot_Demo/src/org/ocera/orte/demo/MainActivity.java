@@ -24,101 +24,124 @@ import android.widget.Button;
 import android.widget.TextView;
  
 public class MainActivity extends Activity {
-
-	Button start = null;
-	Button stop = null;
-	Button start_pub = null;
-	Button stop_pub = null;
-	TextView textview = null;
-	Manager manager = null;
-	Thread publisher = null;
-	boolean tContinue = true;
 	
-    private SensorManager mSensorManager;
-    private PowerManager mPowerManager;
-    private WakeLock mWakeLock;
-    private Sensor mGravity;
-    
-    private AsyncTask<Void, Short, Void> accel;
-    
-    private short mLeft;
-    private short mRight;
-    
+	private Button start_mgr = null;
+	private Button stop_mgr = null;
+	private Button start_pub = null;
+	private Button stop_pub = null;
+	private TextView textview = null;
+	
+	private Manager manager = null;
+	private AsyncTask<Void, Short, Void> publisher = null;
+	
+    private SensorManager mSensorManager = null;
+    private Sensor mGravity = null;
+    private SensorEventListener accel = null;
+    private float accelData[] = new float[2];
     private Object lock = new Object();
     
-     static 
-    {
-      System.loadLibrary("jorte");     
+    private PowerManager mPowerManager = null;
+    private WakeLock mWakeLock = null;
+
+    static {
+    	System.loadLibrary("jorte");     
     }
     
-    private class HandleAccelerometer extends AsyncTask<Void, Short, Void> implements SensorEventListener {
-        
+    private class ComputeOnBackground extends AsyncTask<Void, Short, Void> {
+    	
     	public static final int VMAX = 16000;
-    	//private int count = 0;
-        
-		@Override
-		protected Void doInBackground(Void... params) {
-			return null;
-		}
+    	
+    	private short[] calculateSpeed(float[] mAccel) {
+    		short[] speed = new short[2];
 
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		}
-
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			 if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
-	             return;
-			 
-			 //if (count > 1) {
-				 calculateSpeed(event.values[0],event.values[1]);
-				 //count = 0;
-			 //}
-			 //else
-				 //count++;
-		}
-		
-		private void calculateSpeed(float mAccelX, float mAccelY) {
-	    	short right = 0;
-	    	short left = 0;
-	    	
 			double r=0.15;
 			double angle = 0, lenght, v, omega; 
 
-			v = (double)mAccelY/mGravity.getMaximumRange();
-			omega = (double)mAccelX/mGravity.getMaximumRange();
+			v = (double)mAccel[1]/mGravity.getMaximumRange();
+			omega = (double)mAccel[0]/mGravity.getMaximumRange();
 			lenght = Math.sqrt(Math.pow(v,2) + Math.pow(omega,2));
-			/* if lenght si more than 1 is used unit circle */
+			/* if length is more than 1 is used unit circle */
 			if (lenght >= 1) {
 				/* computing new speed and omega */
-				angle = Math.atan2(mAccelY, mAccelX);	
+				angle = Math.atan2(mAccel[1], mAccel[0]);	
 				v = Math.sin(angle);
 				omega = Math.cos(angle);
 			}
 			omega *= 2;
-
-			right = (short)(-((v + r*omega))*VMAX);
-			left = (short)(-(v - r*omega)*VMAX);
+    		 
+			speed[0] = (short)(-((v + r*omega))*VMAX);
+			speed[1] = (short)(-(v - r*omega)*VMAX);
 			
-			publishProgress(right, left);
+			return speed;
+    	}
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+		    NtpTime persistence = new NtpTime(3);
+		    int strength = 100;
+		    MyEvents events = new MyEvents();
+		    
+		    DomainApp appDomain = new DomainApp(ORTEConstant.ORTE_DEFAULT_DOMAIN,
+                    DomainProp.defaultPropsCreate(),
+                    events,
+                    false);	
+		    
+		    HelloMsg hellomsg = new HelloMsg(appDomain,"motion_speed");
+		    
+		    PublProp publProp = new PublProp(hellomsg.getTopic(),
+                     "motion_speed",                       		
+                    persistence,
+					 strength);
+		    
+		    Publication pub = appDomain.createPublication(publProp,
+                    hellomsg);
+		    
+		    while(!isCancelled())
+			{
+		      synchronized(lock) {
+		    	  short speed[] = calculateSpeed(accelData);
+		    	  
+		    	  hellomsg.left = speed[0];
+		    	  hellomsg.right = speed[1];
+		    	  pub.send(hellomsg);
+		    	  publishProgress(speed[0],speed[1]);
+		      }
+	    	  JOrte.sleepMs(100);
+			}
+		    
+		    pub = null;
+		    System.gc();
+		    appDomain = null;
+		    System.gc();
+		    
+			return null;
 		}
 		
 		@Override
 		protected void onProgressUpdate(Short... input) {
-			synchronized(lock) {
-				mRight = input[0];
-				mLeft = input[1];
-				textview.setText("Values: left = " + input[1] + ", right = " + input[0]);
-			}
+			textview.setText("Values: left = " + input[0] + ", right = " + input[1]);
+		}
+	}
+    
+    private class HandleAccelerometer implements SensorEventListener {
+
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+				 synchronized(lock) {
+					 accelData[0] = event.values[0];
+					 accelData[1] = event.values[1];
+				 }
+			 }
 		}
 	}
 	
     @Override
     protected void onResume() {
         super.onResume();
-
-        accel = new HandleAccelerometer().execute();
-        mSensorManager.registerListener((SensorEventListener)accel, mGravity, SensorManager.SENSOR_DELAY_UI);
         
         mWakeLock.acquire();
     }
@@ -127,11 +150,21 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         
-        mSensorManager.unregisterListener((SensorEventListener)accel);
-        accel.cancel(true);
-        accel = null;
+        if (publisher != null) {
+        	publisher.cancel(false);
+        	publisher = null;
+        }
+        
+        if (accel != null) {
+        	mSensorManager.unregisterListener(accel);
+        	accel = null;
+        }
+        
+        manager = null;
         
         mWakeLock.release();
+        
+        System.gc();
     }
 	
     @Override
@@ -141,46 +174,42 @@ public class MainActivity extends Activity {
         
 		textview = (TextView)findViewById(R.id.textView1);
 	   	
-		start = (Button)findViewById(R.id.button1);
-		stop = (Button)findViewById(R.id.button2);
-		stop.setEnabled(false);
+		start_mgr = (Button)findViewById(R.id.button1);
+		stop_mgr = (Button)findViewById(R.id.button2);
+		stop_mgr.setEnabled(false);
 		start_pub = (Button)findViewById(R.id.button3);
 		start_pub.setEnabled(false);
 		stop_pub = (Button)findViewById(R.id.button4);
 		stop_pub.setEnabled(false);
     	
-        // Get an instance of the SensorManager
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-        // Get an instance of the PowerManager
-        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        
-        // Create a bright wake lock
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
-    	
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        
+        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
 
-		start.setOnClickListener(new View.OnClickListener() {
+        start_mgr.setOnClickListener(new View.OnClickListener() {
 		    String[] mgrs = {"192.168.1.5","192.168.1.8"};
 			
 		    @Override
 			public void onClick(View v) {
-				start.setEnabled(false);
-				stop.setEnabled(true);
-				manager = new Manager(mgrs);
-				
+				start_mgr.setEnabled(false);
+				stop_mgr.setEnabled(true);
 				start_pub.setEnabled(true);
+				
+				manager = new Manager(mgrs);
 			}
 		});
 
-		stop.setOnClickListener(new View.OnClickListener() {
+		stop_mgr.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				start.setEnabled(true);
-				stop.setEnabled(false);
+				start_mgr.setEnabled(true);
+				stop_mgr.setEnabled(false);
 				start_pub.setEnabled(false);
 				stop_pub.setEnabled(false);
+				
 				manager = null;
 				System.gc();
 			}
@@ -192,50 +221,10 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				start_pub.setEnabled(false);
 				stop_pub.setEnabled(true);
-				tContinue = true;
-				
-				publisher = new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-					    NtpTime persistence = new NtpTime(3);
-					    int strength = 1;
-					    MyEvents events = new MyEvents();
-					    
-					    DomainApp appDomain = new DomainApp(ORTEConstant.ORTE_DEFAULT_DOMAIN,
-                                DomainProp.defaultPropsCreate(),
-                                events,
-                                false);	
-					    
-					    HelloMsg hellomsg = new HelloMsg(appDomain,"motion_speed");
-					    
-					    PublProp publProp = new PublProp(hellomsg.getTopic(),
-		                         "motion_speed",                       		
-                                persistence,
-								 strength);
-					    
-					    Publication pub = appDomain.createPublication(publProp,
-                                hellomsg);
-					    
-					    while(tContinue)
-						{
-					      synchronized(lock) {
-					    	  hellomsg.left = mLeft;
-					    	  hellomsg.right = mRight;
-					      }
-				    	  pub.send(hellomsg); 
-				    	  System.out.println("<<  data to send: " + hellomsg);
-				    	  JOrte.sleepMs(100);
-				    	  System.out.println(" ");
-						}
-					    
-					    pub = null;
-					    System.gc();
-					    appDomain = null;
-					    System.gc();
-					}
-				});
-				publisher.start();
+
+				accel = new HandleAccelerometer();
+				mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_UI);
+				publisher = new ComputeOnBackground().execute();
 			}
 		});
 		
@@ -245,10 +234,13 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				start_pub.setEnabled(true);
 				stop_pub.setEnabled(false);
-				tContinue = false;
+
+				publisher.cancel(false);
+				mSensorManager.unregisterListener(accel);
+				publisher = null;
+				accel = null;
+				System.gc();
 			}
 		});
-		
-
     }
 }
