@@ -76,8 +76,8 @@
 	} while (0);
 
 	if(flag_ok) {
-	  return  ORTE_FALSE;
+	  return  ORTE_TRUE;
 	}
 
-	return ORTE_TRUE;
+	return ORTE_FALSE;
   }
