@@ -69,7 +69,6 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
  jlong     dom_handle,
  jstring   j_topic,
  jstring   j_type_name,
- jint      jbufflen,
  jobject   j_instance,
  jobject   j_persistence,
  jint      j_strength)
@@ -78,7 +77,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
   ORTEDomain       *d;
   const char       *topic;
   const char       *typeName;
-  char             *buffer;
+  void             *buffer;
   NtpTime           persistence;
   int               strength;
   int               flag_ok = 0;
@@ -119,8 +118,8 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
     persistence = getNtpTime(env, j_persistence);
     // get strenght
     strength = (int) j_strength;
-    // create buffer
-    buffer = (char*) malloc((int32_t) jbufflen);
+    // get direct ByteBuffer pointer from Java
+    buffer = (*env)->GetDirectBufferAddress(env, j_instance);
     if(buffer == 0)
     {
       printf(":!c: buffer create failed! \n");
@@ -130,11 +129,11 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
     p = ORTEPublicationCreate(d,
                               topic,
                               typeName,
-                              (void *) buffer,
+                              buffer,
                               &persistence,
                               strength,
                               sendCallBack, // BUDE NULL!!
-                              j_instance,
+                              NULL,
                               NULL);
     if(p == 0)
     {
@@ -151,8 +150,6 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
   //
   if (flag_ok == 0)
   {
-    // free memory
-    if(buffer != 0) free(buffer);
     return 0;
   }
   return ((jlong) p);

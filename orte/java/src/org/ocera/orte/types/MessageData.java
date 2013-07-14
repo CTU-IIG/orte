@@ -38,7 +38,7 @@ public class MessageData
     * */
    public MessageData() 
    {
-     this.buffer = ByteBuffer.allocate(getMaxDataLength());
+     this.buffer = ByteBuffer.allocateDirect(getMaxDataLength());
      this.buffer.order(ByteOrder.nativeOrder());
      //System.out.println(":j: instance MessageData created..");	
    }   	

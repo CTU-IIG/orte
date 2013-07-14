@@ -101,8 +101,6 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
     //
     if(subs_handle)
     {
-      // free data buffer
-      free(ORTESubscriptionGetInstance((ORTESubscription *) subs_handle));
       // call ORTE function
       b = ORTESubscriptionDestroy((ORTESubscription *) subs_handle);
       if (b == ORTE_BAD_HANDLE)

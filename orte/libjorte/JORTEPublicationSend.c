@@ -37,19 +37,11 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationSend
-(JNIEnv *env, jobject obj, jlong pub_handle, jobject obj_msg)
+(JNIEnv *env, jobject obj, jlong pub_handle)
 {
-  jclass    cls;
-  jobject   obj_bb;
-  jfieldID  fid;
-  jmethodID  mid;
-  //
   int       flag_ok = 0;
   int8_t    b;
-  int       buff_length,i = 0;
-  char     *orte_instance;
   //
-  ORTEPublicationSendParam psp;
 
   #ifdef TEST_STAGE
     printf(":c: jORTEPublicationSend() called.. \n");
@@ -57,113 +49,11 @@ Java_org_ocera_orte_Publication_jORTEPublicationSend
 
   do
   {
-    // get class MessageData
-    cls = (*env)->GetObjectClass(env, obj_msg);
-    if(cls == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: cls = NULL \n");
-     #endif
-     break;
-    }
-    // methodID
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "getMaxDataLength",
-                              "()I");
-    if(mid == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: mid = NULL \n");
-     #endif
-     break;
-    }
-    // call method
-    buff_length = (*env)->CallIntMethod(env,
-                                        obj_msg,
-                                        mid);
-    // get fieldID - buffer
-    fid = (*env)->GetFieldID(env,
-                             cls,
-                             "buffer",
-                             "Ljava/nio/ByteBuffer;");
-    if(fid == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: fid = NULL \n");
-     #endif
-     break;
-    }
-    // get object
-    obj_bb = (*env)->GetObjectField(env,obj_msg,fid);
-    if(obj_bb == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: obj_bb = NULL \n");
-     #endif
-     break;
-    }
-    // get obj class
-    cls = (*env)->GetObjectClass(env, obj_bb);
-    if(cls == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: cls = NULL \n");
-     #endif
-     break;
-    }
-    // methodID
-    mid = (*env)->GetMethodID(env,
-                              cls,
-                              "get",
-                              "(I)B");
-    if(mid == 0)
-    {
-     #ifdef TEST_STAGE
-       printf(":!c: mid = NULL \n");
-     #endif
-     break;
-    }
-    /////////////////////////////////////////////////
-    // get handle to data buffer
-    orte_instance = ORTEPublicationGetInstance((ORTEPublication *) pub_handle);
-    // copy the bytes from JAVA to C buffer
-    /////////////////////////////////////////////////
-    for(i = 0; i < buff_length; i++)
-    {
-      // calling method
-      char b;
-
-      b = (*env)->CallByteMethod(env,
-                                 obj_bb,
-                                 mid,
-                                 i);
-      orte_instance[i] = b;
-
-      #ifdef TEST_STAGE
-        printf(":c: #7.%d: znak %c [%d] \n",
-               i,orte_instance[i],orte_instance[i]);
-      #endif
-    }
-    /////////////////////////////////////////////////
-    psp.instance = (void *) orte_instance;
-    #ifdef __BYTE_ORDER__
-      #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-        psp.data_endian = BigEndian;
-      #elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-        psp.data_endian = LittleEndian;
-      #else
-        #error "Unknown endianness"
-      #endif
-    #endif
-    #ifdef TEST_STAGE
-      printf(":c: endian? \n");
-    #endif
     /////////////////////////////////////////////////
     // call ORTE function
-    b = ORTEPublicationSendEx((ORTEPublication *) pub_handle, &psp);
+    b = ORTEPublicationSend((ORTEPublication *) pub_handle);
     #ifdef TEST_STAGE
-      printf(":c: b = ORTEPublicationSendEx() = %d \n",b);
+      printf(":c: b = ORTEPublicationSend() = %d \n",b);
     #endif
     if (b == ORTE_BAD_HANDLE)
     {
