@@ -147,7 +147,15 @@ Java_org_ocera_orte_Publication_jORTEPublicationSend
     }
     /////////////////////////////////////////////////
     psp.instance = (void *) orte_instance;
-    psp.data_endian = 1; /* BIG -pak tahat z headeru !!*/
+    #ifdef __BYTE_ORDER__
+      #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        psp.data_endian = BigEndian;
+      #elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        psp.data_endian = LittleEndian;
+      #else
+        #error "Unknown endianness"
+      #endif
+    #endif
     #ifdef TEST_STAGE
       printf(":c: endian? \n");
     #endif

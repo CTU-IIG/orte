@@ -24,7 +24,7 @@
 
 package org.ocera.orte.types;
 import java.nio.ByteBuffer;
-
+import java.nio.ByteOrder;
 
 public class MessageData
 {
@@ -39,6 +39,7 @@ public class MessageData
    public MessageData() 
    {
      this.buffer = ByteBuffer.allocate(getMaxDataLength());
+     this.buffer.order(ByteOrder.nativeOrder());
      //System.out.println(":j: instance MessageData created..");	
    }   	
 

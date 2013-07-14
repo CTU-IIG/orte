@@ -8,8 +8,6 @@
 
 import org.ocera.orte.*;
 import org.ocera.orte.types.*;
-import java.nio.ByteOrder;
-
 
 public class HelloMsg extends org.ocera.orte.types.MessageData
 {
@@ -30,7 +28,6 @@ public class HelloMsg extends org.ocera.orte.types.MessageData
   public HelloMsg(DomainApp domainApp, String newTopic)
   {
     super();
-    buffer.order(ByteOrder.LITTLE_ENDIAN);
  
     // typeName registration
 	if(counter == 0)
