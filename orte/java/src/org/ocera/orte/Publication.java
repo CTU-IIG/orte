@@ -66,7 +66,6 @@ public class Publication {
 	this.handle = jORTEPublicationCreate(d.handle,
 	                                     publProp.getTopic(),
 	                                     publProp.getTypeName(),
-                                         instance.getMaxDataLength(),
 										 instance.getBuffer(),
                                          publProp.getPersistence(),
 									     publProp.getStrength());
@@ -108,7 +107,7 @@ public class Publication {
     //this.msgData.write(); // volat v Publisher.java
     instance.write(); 
 
-    b = jORTEPublicationSend(this.handle, instance);
+    b = jORTEPublicationSend(this.handle);
     if(!b) System.out.println(":j!: Sending Publication Fault!");
     return;
   }
@@ -187,7 +186,6 @@ public class Publication {
   long jORTEPublicationCreate(long appDomainHandle,
                              String topic,
                              String typeName,
-                             int bufflen,
 							 ByteBuffer buffer,
 							 NtpTime persistence,
                              int strength);
@@ -199,8 +197,7 @@ public class Publication {
   boolean jORTEPublicationDestroy(long publHandle);
 
   private native
-  boolean jORTEPublicationSend(long publHandle, 
-  		                       MessageData instance);
+  boolean jORTEPublicationSend(long publHandle);
   		                       
 
   private native

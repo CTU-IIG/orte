@@ -23,6 +23,8 @@
  */
 
 package org.ocera.orte;
+import java.nio.ByteBuffer;
+
 import  org.ocera.orte.types.*;
 
 
@@ -58,7 +60,7 @@ public class Subscription {
 	                                      subsProp.getType(),
 	                                      subsProp.getTopic(),
 	                                      subsProp.getTypeName(),
-	                                      message.getMaxDataLength(),
+	                                      message.getBuffer(),
 	                                      message,
 										  subsProp.getDeadline(),
 					                      subsProp.getMinSeparation(),
@@ -209,7 +211,7 @@ public class Subscription {
                                int substype,  /*! union */
                                String topic,
                                String typeName,
-                               int bufflength,
+                               ByteBuffer buffer,
                                MessageData message,
 		 					  NtpTime deadline,
                                NtpTime minSeparation,

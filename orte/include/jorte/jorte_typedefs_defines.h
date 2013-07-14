@@ -31,7 +31,6 @@ typedef struct
  jobject        obj;
  jobject        rinfo;
  jobject        msg;
- jobject        bbuff; // byteBuffer
 } JORTECallbackContext_t;
 
 

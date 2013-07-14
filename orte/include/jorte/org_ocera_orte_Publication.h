@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (JLjava/lang/String;Ljava/lang/String;ILjava/nio/ByteBuffer;Lorg/ocera/orte/types/NtpTime;I)J
  */
 JNIEXPORT jlong JNICALL Java_org_ocera_orte_Publication_jORTEPublicationCreate
-  (JNIEnv *, jobject, jlong, jstring, jstring, jint, jobject, jobject, jint);
+  (JNIEnv *, jobject, jlong, jstring, jstring, jobject, jobject, jint);
 
 /*
  * Class:     org_ocera_orte_Publication
@@ -29,7 +29,7 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationDestr
  * Signature: (JLorg/ocera/orte/types/MessageData;)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationSend
-  (JNIEnv *, jobject, jlong, jobject);
+  (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     org_ocera_orte_Publication

@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (JIILjava/lang/String;Ljava/lang/String;ILorg/ocera/orte/types/MessageData;Lorg/ocera/orte/types/NtpTime;Lorg/ocera/orte/types/NtpTime;Lorg/ocera/orte/SubscriptionCallback;J)J
  */
 JNIEXPORT jlong JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
-  (JNIEnv *, jobject, jlong, jint, jint, jstring, jstring, jint, jobject, jobject, jobject, jobject, jlong);
+  (JNIEnv *, jobject, jlong, jint, jint, jstring, jstring, jobject, jobject, jobject, jobject, jobject, jlong);
 
 /*
  * Class:     org_ocera_orte_Subscription

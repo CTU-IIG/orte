@@ -50,17 +50,14 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
   JNIEnv          *env = 0;
   jclass           cls = 0; // local reference!
   jclass           cls_msg = 0;
-  jclass           cls_bb;
   jclass           cls_tmp = 0;
   jobject          obj = 0;
   jobject          rinfo = 0;
   jobject          obj_msg;
-  jobject          obj_bb;
   jmethodID        mid = 0;
   jmethodID        mid_callback = 0;
   jfieldID         fid = 0;
   //
-  char            *buffer;
   int              i;
   int              buff_length;
   int              flag_ok = 0;
@@ -103,7 +100,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
     obj = callback_cont->obj;
     rinfo = callback_cont->rinfo;
     obj_msg = callback_cont->msg;
-    obj_bb = callback_cont->bbuff;
 
 
       #ifdef TEST_STAGE
@@ -182,134 +178,12 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
     // update MessageData instance
     // get cls
     cls_msg = (*env)->GetObjectClass(env, obj_msg);
-    //cls_tmp = (*env)->FindClass(env, "org/ocera/orte/types/MessageData");
     if(cls_msg == 0)
     {
       #ifdef TEST_STAGE
          printf(":!c: cls_msg = NULL \n");
       #endif
       break;
-    }
-    //
-    if (obj_bb == 0)
-    {
-      // get buff's fieldID
-      fid = (*env)->GetFieldID(env,
-                               cls_msg,
-                               "buffer",
-                               "Ljava/nio/ByteBuffer;");
-      if (fid == NULL)
-      {
-        #ifdef TEST_STAGE
-           printf(":!c: fid = NULL \n");
-        #endif
-        break;
-      }
-      // get buff's object
-      obj_bb = (*env)->GetObjectField(env, obj_msg, fid);
-      if(obj_bb == NULL)
-      {
-        #ifdef TEST_STAGE
-           printf(":!c: obj_bb = NULL \n");
-        #endif
-        break;
-      }
-      // create global reference
-      callback_cont->bbuff = (*env)->NewGlobalRef(env, obj_bb);
-      if (callback_cont->bbuff == 0)
-      {
-        #ifdef TEST_STAGE
-           printf(":!c: callback_cont->bbuff = NULL \n");
-        #endif
-        break;
-      }
-      #ifdef TEST_STAGE
-         printf(":c: global reference created.. \n");
-      #endif
-    }
-    // get class ByteBuffer
-    cls_bb = (*env)->GetObjectClass(env, obj_bb);
-    if(cls_bb == 0)
-    {
-      #ifdef TEST_STAGE
-         printf(":!c: cls_bb = NULL \n");
-      #endif
-      break;
-    }
-    // get buff's length
-    mid = (*env)->GetMethodID(env,
-                              cls_msg,
-                              "getMaxDataLength",
-                              "()I");
-    if(mid == 0)
-    {
-      #ifdef TEST_STAGE
-         printf(":!c: mid = NULL \n");
-      #endif
-      break;
-    }
-    buff_length = (*env)->CallIntMethod(env,
-                                        obj_msg,
-                                        mid);
-    // needs rewind buffer before working with it!!
-    // (needs cls Buffer not ByteBuffer!)
-    // get class Buffer
-    cls_tmp = (*env)->FindClass(env, "java/nio/Buffer");
-    if(cls_tmp == 0)
-    {
-      #ifdef TEST_STAGE
-         printf(":!c: cls_tmp = NULL \n");
-      #endif
-      break;
-    }
-    // methodID - rewind()
-    mid = (*env)->GetMethodID(env,
-                            cls_tmp,
-                            "rewind",
-                            "()Ljava/nio/Buffer;");
-    if(mid == 0)
-    {
-      #ifdef TEST_STAGE
-         printf(":!c: mid = NULL \n");
-      #endif
-      break;
-    }
-    // call method
-    (*env)->CallObjectMethod(env,
-                             obj_bb,
-                             mid);
-    #ifdef TEST_STAGE
-       printf(":c: buffer successfully rewind..\n");
-    #endif
-    // methodID - put()
-    mid = (*env)->GetMethodID(env,
-                              cls_bb,
-                              "put",
-                              "(B)Ljava/nio/ByteBuffer;");
-    if(mid == 0)
-    {
-      #ifdef TEST_STAGE
-         printf(":!c: mid = NULL \n");
-      #endif
-      break;
-    }
-    // copy the bytes from C to JAVA buffer
-    /////////////////////////////////////////////////////
-    buffer = (char *) vinstance;
-    //
-    for(i = 0; i < buff_length; i++)
-    {
-      #ifdef TEST_STAGE
-        printf(":c: i = %d kopirovany znak = %c [%d] \n",
-               i,*buffer,*buffer);
-      #endif
-      // call method
-      obj_bb = (*env)->CallObjectMethod(env,
-                                        obj_bb,
-                                        mid,
-                                        *buffer);
-      // next char
-      buffer++;
     }
     /////////////////////////////////////////////////////
     // methodID - read()
@@ -395,7 +269,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
  jint      jstype,    // subs type
  jstring   jtopic,    // subs topic
  jstring   jtname,    // subs typeName
- jint      jbufflen,  // length of buffer
+ jobject   jinstance, // direct ByteBuffer
  jobject   obj_msg,   // messageData instance
  jobject   jdeadline,
  jobject   jminSeparation,
@@ -418,7 +292,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   // standart variables
   const char             *topic = 0;
   const char             *typename = 0;
-  char                   *buffer;
+  void                   *buffer;
   int                     flag_ok = 0;
   // memory alocation
   // don't forget use free() funct.!!
@@ -426,8 +300,9 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
 
   do
   {
-    // create buffer
-    buffer = (char*) malloc((int32_t) jbufflen);
+
+    // get direct ByteBuffer pointer from Java
+    buffer = (*env)->GetDirectBufferAddress(env, jinstance);
     // check obj_callback
     if (obj_callback == 0)
     {
@@ -474,7 +349,6 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     }
     // init RecvInfo pointer
     callback_cont->rinfo = 0;
-    callback_cont->bbuff = 0;
     //
     cls = (*env)->GetObjectClass(env, obj);
     if(cls == 0)
@@ -525,7 +399,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
                                stype,
                                topic,
                                typename,
-                               (void *) buffer,
+                               buffer,
                                &deadline,
                                &minSeparation,
                                recvCallBack,

@@ -46,8 +46,6 @@ Java_org_ocera_orte_Publication_jORTEPublicationDestroy
     printf(":!c: publication destroy failed! [bad publication handle] \n");
     return 1;
   }
-  // free data buffer
-  free(ORTEPublicationGetInstance((ORTEPublication *) pub_handle));
   #ifdef TEST_STAGE
     printf(":c: publication destroyed successfully.. \n");
   #endif
