@@ -50,17 +50,11 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
   JNIEnv          *env = 0;
   jclass           cls = 0; // local reference!
   jclass           cls_msg = 0;
-  jclass           cls_tmp = 0;
   jobject          obj = 0;
   jobject          rinfo = 0;
   jobject          obj_msg;
   jmethodID        mid = 0;
   jmethodID        mid_callback = 0;
-  jfieldID         fid = 0;
-  //
-  int              i;
-  int              buff_length;
-  int              flag_ok = 0;
   //
   JORTECallbackContext_t   *callback_cont = (JORTECallbackContext_t*)recvCallBackParam;
 
@@ -243,8 +237,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
                            mid_callback,
                            callback_cont->rinfo,
                            NULL);//obj_msg);
-    // set flag
-    flag_ok = 1;
   } while(0);
 
   // detach current thread

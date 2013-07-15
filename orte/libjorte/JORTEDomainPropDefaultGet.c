@@ -41,7 +41,6 @@ Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
   ORTEDomainProp *dprop;
 
   // memory allocation
-  // don't forget use free()!!
   dprop = (ORTEDomainProp *) malloc(sizeof(ORTEDomainProp));
   if (dprop == NULL)
   {

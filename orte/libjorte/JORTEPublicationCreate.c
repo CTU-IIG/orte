@@ -42,7 +42,6 @@ int counter = 0;
 void
 sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
 {
-  char *instance=(char*)vinstance;
 
   printf(":c: zacatek sendCallBack()..\n");
 
@@ -50,7 +49,6 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
     case NEED_DATA:
       printf(":c:PUB: Sampling publication, count %d\n", counter++);
       printf(":c:PUB: !! DOCASNE - ZRUSIT!! - callback() u Publishera \n");
-	  //sprintf(instance,"Hello Universe! (%d)",counter++);
       break;
     case CQL:  //criticalQueueLevel
       break;
