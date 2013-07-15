@@ -17,11 +17,19 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefa
 
 /*
  * Class:     org_ocera_orte_types_DomainProp
- * Method:    jORTEDomainPropMgrsSet
- * Signature: ()Z
+ * Method:    jORTEDomainPropSet
+ * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropMgrsSet
-  (JNIEnv *, jobject);
+JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropSet
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     org_ocera_orte_types_DomainProp
+ * Method:    jORTEDomainPropDestroy
+ * Signature: (JLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDestroy
+  (JNIEnv *, jobject, jlong, jstring);
 
 #ifdef __cplusplus
 }

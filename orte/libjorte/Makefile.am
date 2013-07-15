@@ -5,6 +5,7 @@
 #
 
 LIBJORTE_FILES = \
+onLoad.c \
 getNtpTime.c \
 JGetORTEConstant.c \
 JIPAddressToString.c \
@@ -16,6 +17,8 @@ JORTEDomainInitEvents.c \
 JORTEDomainMgrCreate.c \
 JORTEDomainMgrDestroy.c \
 JORTEDomainPropDefaultGet.c \
+JORTEDomainPropSet.c \
+JORTEDomainPropDestroy.c \
 JORTEDomainStart.c \
 JORTEInit.c \
 JORTEPublicationCreate.c \
@@ -49,8 +52,7 @@ JORTESubscriptionWaitForPublications.c \
 JORTETypeRegisterDestroyAll.c \
 JORTEVerbositySetLogFile.c \
 JORTEVerbositySetOptions.c \
-setRecvInfo.c setTopic.c setType.c \
-temp.c
+setRecvInfo.c setTopic.c setType.c
 
 dist-hook:
 	cp -f  $(srcdir)/Makefile $(distdir)/Makefile

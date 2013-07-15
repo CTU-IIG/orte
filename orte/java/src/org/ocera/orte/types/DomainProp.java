@@ -25,7 +25,7 @@ package org.ocera.orte.types;
 
 
 public class DomainProp {
-	
+
  /* load native library 'libjorte.so' */
   static {
      System.loadLibrary("jorte");
@@ -35,18 +35,20 @@ public class DomainProp {
  /* handler to C struct with default domain properties  */
   public long handle = 0;
   private String mgrs = "";
-  
-  public void setMgrs(String[] mgrs) {
+
+ /**
+  *  setProps - sets DomainProp
+  */
+  public void setProps(String[] mgrs) {
 	  for (String item : mgrs) {
 		  this.mgrs += item + ":";
 	  }
-	  
 	  this.mgrs = this.mgrs.substring(0, this.mgrs.length()-1);
-	  
-	  if(!jORTEDomainPropMgrsSet())
+
+	  if(!jORTEDomainPropSet(this.handle,this.mgrs))
 		  System.out.println(":j: Mgrs not set !!!");
   }
-  
+
  /**
   * defaultPropsCreate - create DomainProp with handle to default
   * domain properties
@@ -59,6 +61,17 @@ public class DomainProp {
      long handle = jORTEDomainPropDefaultGet();
      prop.handle = handle;
      return prop;
+  }
+
+  protected void finalize() {
+    System.out.println(":j: DomainProp destroy called..");
+
+    if(!jORTEDomainPropDestroy(this.handle,this.mgrs)) {
+      System.out.println(":j: DomainProp destroy fault!");
+    }
+    else {
+      System.out.println(":j: DomainProp destroy successful..");
+    }
   }
 
 
@@ -77,9 +90,12 @@ public class DomainProp {
   */
   private static native
   long jORTEDomainPropDefaultGet();
-  
+
   private native
-  boolean jORTEDomainPropMgrsSet();
+  boolean jORTEDomainPropSet(long prophandle, String mgrs);
+
+  private native
+  boolean jORTEDomainPropDestroy(long prophandle, String mgrs);
 
 }
 

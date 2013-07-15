@@ -9,7 +9,7 @@ public class Manager {
 	
 	public Manager(String[] mgrs) {
 		dprops = DomainProp.defaultPropsCreate();
-		dprops.setMgrs(mgrs);
+		dprops.setProps(mgrs);
 		
 		dmgr = new DomainMgr(ORTEConstant.ORTE_DEFAULT_DOMAIN,
 							 dprops,
