@@ -69,21 +69,11 @@ public class Subscription {
 					                      subsProp.getMulticastIPAddr());
   }
 
-
-  /**
-   * Destructor - destroy Subscription.
-   */
-   protected void finalize()
-   {
-     destroy();
-   }
-
-
  /**
   * Removes a Subscription.
   * @return False if bad Publication handle, True if  succesful
   */
-  protected
+  public
   boolean destroy()
   {
   	/* TODO vyradit vypis na nasledujici radce */

@@ -34,19 +34,20 @@ public class DomainProp {
 
  /* handler to C struct with default domain properties  */
   public long handle = 0;
-  private String mgrs = "";
+  private String mgrs = null;
 
  /**
   *  setProps - sets DomainProp
   */
   public void setProps(String[] mgrs) {
+          this.mgrs = "";
 	  for (String item : mgrs) {
 		  this.mgrs += item + ":";
 	  }
 	  this.mgrs = this.mgrs.substring(0, this.mgrs.length()-1);
 
 	  if(!jORTEDomainPropSet(this.handle,this.mgrs))
-		  System.out.println(":j: Mgrs not set !!!");
+		  System.out.println(":j: DomainProp not set !!!");
   }
 
  /**
@@ -63,14 +64,16 @@ public class DomainProp {
      return prop;
   }
 
-  protected void finalize() {
+  public boolean destroy() {
     System.out.println(":j: DomainProp destroy called..");
 
     if(!jORTEDomainPropDestroy(this.handle,this.mgrs)) {
       System.out.println(":j: DomainProp destroy fault!");
+      return false;
     }
     else {
       System.out.println(":j: DomainProp destroy successful..");
+      return true;
     }
   }
 

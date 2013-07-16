@@ -34,6 +34,7 @@ public class Publication {
   private org.ocera.orte.types.MessageData msgData;
 
   private boolean b;
+  private Domain appDomain;
 /*
   private int callbackEnvHandle = 0;
 */
@@ -63,6 +64,7 @@ public class Publication {
                       PublProp publProp,
 					  MessageData instance)
   {
+   this.appDomain = d;
 	this.handle = jORTEPublicationCreate(d.handle,
 	                                     publProp.getTopic(),
 	                                     publProp.getTypeName(),
@@ -75,16 +77,6 @@ public class Publication {
   }
 
 
-  /**
-   * destructor
-   *
-   */
-   protected void finalize()
-   {
-     destroy();
-   }
-
-
  /**
   * destroy - Removes a publication.
   * @return False if bad publication handle, True if  succesful.
@@ -92,9 +84,22 @@ public class Publication {
   public
   boolean destroy()
   {
-    if(jORTEPublicationDestroy(this.handle)) return true;
-    System.out.println(":j!: Destroy Publication Fault!");
-    return false;
+  	/* TODO vyradit vypis na nasledujici radce */
+  	System.out.println(":j: publication destroy called..");
+  	// destroy publication
+  	if(!jORTEPublicationDestroy(this.handle)) 
+  	{
+  	    System.out.println(":j!: publication destroy fault!");
+  	    return false;              	
+  	}
+  	// destroy application domain    
+    if(!appDomain.destroy()) 
+    {
+  	    System.out.println(":j!: publication destroy fault!");
+  	    return false;              	    	
+    }
+    System.out.println(":j: publication destroy successfull..");
+    return true;
   }
 
 

@@ -29,8 +29,10 @@
         break;
       }
 
-      //release fellow managers string
-      (*env)->ReleaseStringUTFChars(env,mgrs,dp->mgrs);
+      if (mgrs != NULL) {
+        //release fellow managers string
+        (*env)->ReleaseStringUTFChars(env,mgrs,dp->mgrs);
+      }
 
       //free DomainProperties memory
       free(dp);
