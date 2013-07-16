@@ -92,13 +92,14 @@ public class Publisher {
     System.out.println(":j: start sending data:");
     System.out.println(":j: * ********************************************* *");
     
-    while(true)
+    for(int i = 0; i < 40; i++)
 	{
 	  pub.send(hellomsg); 
 	  System.out.println("<<  data to send: " + hellomsg);
 	  JOrte.sleepMs(1000);
 	  System.out.println(" ");
 	}
+    pub.destroy();
   } 
 
 }

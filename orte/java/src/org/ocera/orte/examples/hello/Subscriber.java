@@ -113,11 +113,7 @@ public class Subscriber {
 	   System.out.println(" ");
 	}
 
-	// kill & clean subscriber - call Garbage Collector 
-	sub = null;
-    System.out.println("Calling gc() ...");
-	System.gc();
-
+	sub.destroy();
   }
 
 }

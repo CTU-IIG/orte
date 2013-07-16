@@ -55,21 +55,25 @@ public class DomainMgr extends Domain
 	                 DomainEvents events,
 	                 boolean suspend)
     {
+     super(); 	 // set Default Domain Properties
+     if(props == null) {
+         this.props = DomainProp.defaultPropsCreate();
+     }
+     else {
+         this.props = props;
+     }
+     // init Domain Events
+     if(events == null) {
+         this.events.init();
+     }
+     else {
+         this.events = events;
+     }
 	   handle = jORTEDomainMgrCreate(domain,
 	                                 props.handle,
 		                             events==null ? 0 : events.getHandle(),
 			     					 suspend);
     }
-
-
-    /**
-	 * destructor
-	 *
-	 */
-	 protected void finalize()
-	 {
-	    destroy();
-	 }
 
 	 /*
      public void create()
@@ -83,7 +87,7 @@ public class DomainMgr extends Domain
 	  public
 	  boolean destroy()
 	  {
-	    if(jORTEDomainMgrDestroy(this.handle)) return true;
+	    if(jORTEDomainMgrDestroy(this.handle) && this.props.destroy()) return true;
 	    System.out.println(":j!: ORTEDomainMgrDestroy() fault..");
 	    return false;
 	  }

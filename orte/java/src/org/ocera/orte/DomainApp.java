@@ -68,25 +68,18 @@ public class DomainApp extends Domain
       else System.out.println(":j: application domain created..");
    }
 
-   
-   /**
-    * Destructor. Before it destroy Application Domain, destroy all registered 
-    * data types too.
-    */
-   protected void finalize()
-   {
-     if(!destroyAllRegTypes()) System.out.println(":j!: destroyAllRegTypes fault!");
-     if(!destroy()) System.out.println(":j!: ORTEDomainADestroy fault!");
-   }
-
-    
    /**
     * Destroy the Application Domain.  
     */
    public boolean destroy()
    {
-     if (jORTEDomainAppDestroy(this.handle)) return true;
-     return false;
+     if(!destroyAllRegTypes()) System.out.println(":j!: destroyAllRegTypes fault!");
+     if(!jORTEDomainAppDestroy(this.handle) || !this.props.destroy()) {
+       System.out.println(":j!: ORTEDomainADestroy fault!");
+       return false;
+     }
+     return true;
+       
    }
 
      
