@@ -37,7 +37,6 @@ public class JOrte {
    void sleepMs(long msec)
    {
     jORTESleepMs(msec);
-    System.out.println(":j: sleep " + msec + "[milisec]  ..ZZzzzz..."); 
    }
 
    public static

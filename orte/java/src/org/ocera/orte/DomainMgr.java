@@ -62,13 +62,7 @@ public class DomainMgr extends Domain
      else {
          this.props = props;
      }
-     // init Domain Events
-     if(events == null) {
-         this.events.init();
-     }
-     else {
-         this.events = events;
-     }
+
 	   handle = jORTEDomainMgrCreate(domain,
 	                                 props.handle,
 		                             events==null ? 0 : events.getHandle(),
