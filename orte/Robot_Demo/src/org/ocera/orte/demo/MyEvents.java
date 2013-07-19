@@ -32,6 +32,7 @@ public class MyEvents extends DomainEvents {
     super();	  	
   }
 
+  @Override
   public void onRegFail() 
   {
   	System.out.println(":j: *************************************************");
@@ -39,6 +40,7 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   }
 
+  @Override
   public void onMgrNew(AppInfo appInfo) 
   {
   	System.out.println(":j: *************************************************");
@@ -46,6 +48,7 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   }
   
+  @Override
   public void onMgrDelete(AppInfo appInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -53,6 +56,7 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   }
 
+  @Override
   public void onAppRemoteNew(AppInfo appInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -62,6 +66,7 @@ public class MyEvents extends DomainEvents {
   	appInfo.printWithLegend();
   }
 
+  @Override
   public void onAppDelete(AppInfo appInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -71,6 +76,7 @@ public class MyEvents extends DomainEvents {
     appInfo.printWithLegend();   
   }
 
+  @Override
   public void onPubRemoteNew(AppInfo appInfo, PubInfo pubInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -81,6 +87,7 @@ public class MyEvents extends DomainEvents {
   	pubInfo.printWithLegend();
   }
 
+  @Override
   public void onPubRemoteChanged(AppInfo appInfo, PubInfo pubInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -91,6 +98,7 @@ public class MyEvents extends DomainEvents {
     pubInfo.printWithLegend();
   }
 
+  @Override
   public void onPubDelete(AppInfo appInfo, PubInfo pubInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -101,7 +109,7 @@ public class MyEvents extends DomainEvents {
     pubInfo.printWithLegend();
   }
   
-  
+  @Override
   public void onSubRemoteNew(AppInfo appInfo, SubInfo subInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -112,6 +120,7 @@ public class MyEvents extends DomainEvents {
     subInfo.printWithLegend();
   }
 
+  @Override
   public void onSubRemoteChanged(AppInfo appInfo, SubInfo subInfo)
   {
   	System.out.println(":j: *************************************************");
@@ -122,6 +131,7 @@ public class MyEvents extends DomainEvents {
     subInfo.printWithLegend();  
   }
 
+  @Override
   public void onSubDelete(AppInfo appInfo, SubInfo subInfo)
   {
   	System.out.println(":j: *************************************************");

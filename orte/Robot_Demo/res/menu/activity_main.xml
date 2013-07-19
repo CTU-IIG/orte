@@ -1,9 +1,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item
-        android:id="@+id/menu_settings"
-        android:orderInCategory="100"
+    <item android:id="@+id/speed"
+        android:title="Start speed"
         android:showAsAction="never"
-        android:title="@string/menu_settings"/>
+        android:orderInCategory="1">
+    </item>
+    
+    <item android:id="@+id/hokuyo"
+        android:title="Start hokuyo"
+        android:showAsAction="never"
+        android:orderInCategory="2">
+    </item>
+    
+    <item android:id="@+id/lift"
+        android:title="Lift up"
+        android:orderInCategory="3"
+        android:showAsAction="never">
+    </item>
+    
+    <item android:id="@+id/manget"
+        android:title="Magnet on"
+        android:orderInCategory="4"
+        android:showAsAction="never">
+    </item>
 
+    <item android:id="@+id/exit"
+        android:title="Exit"
+        android:orderInCategory="5"
+        android:showAsAction="never">
+    </item>
 </menu>
