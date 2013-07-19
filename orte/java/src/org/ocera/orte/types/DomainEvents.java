@@ -24,7 +24,7 @@
 package org.ocera.orte.types;
 
 
-public class DomainEvents {
+public abstract class DomainEvents {
   /* handler to C struct with default domain properties  */
   private long handle = 0;
 
@@ -57,17 +57,17 @@ public class DomainEvents {
   	return this.handle;
   }
   
-  public void onRegFail() { }
-  public void onMgrNew(AppInfo appInfo) { }
-  public void onMgrDelete(AppInfo appInfo) { }
-  public void onAppRemoteNew(AppInfo appInfo) { }
-  public void onAppDelete(AppInfo appInfo) { }
-  public void onPubRemoteNew(AppInfo appInfo, PubInfo pubInfo) { }
-  public void onPubRemoteChanged(AppInfo appInfo, PubInfo pubInfo) { }
-  public void onPubDelete(AppInfo appInfo, PubInfo pubInfo) { }
-  public void onSubRemoteNew(AppInfo appInfo, SubInfo subInfo) { }
-  public void onSubRemoteChanged(AppInfo appInfo, SubInfo subInfo) { }
-  public void onSubDelete(AppInfo appInfo, SubInfo subInfo) { }
+  public abstract void onRegFail();
+  public abstract void onMgrNew(AppInfo appInfo);
+  public abstract void onMgrDelete(AppInfo appInfo);
+  public abstract void onAppRemoteNew(AppInfo appInfo);
+  public abstract void onAppDelete(AppInfo appInfo);
+  public abstract void onPubRemoteNew(AppInfo appInfo, PubInfo pubInfo);
+  public abstract void onPubRemoteChanged(AppInfo appInfo, PubInfo pubInfo);
+  public abstract void onPubDelete(AppInfo appInfo, PubInfo pubInfo);
+  public abstract void onSubRemoteNew(AppInfo appInfo, SubInfo subInfo);
+  public abstract void onSubRemoteChanged(AppInfo appInfo, SubInfo subInfo);
+  public abstract void onSubDelete(AppInfo appInfo, SubInfo subInfo);
   
  /* ****************************************************************** *
   *                                                                    *
