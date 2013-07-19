@@ -26,11 +26,10 @@ package org.ocera.orte.types;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class MessageData
+public abstract class MessageData
 {
 
   private   String         topic;
-  private   int            maxLength;
   protected  ByteBuffer    buffer; 
   
    /**
@@ -43,8 +42,8 @@ public class MessageData
      //System.out.println(":j: instance MessageData created..");	
    }   	
 
-  public void  read() {};
-  public void write() {};
+  public abstract void  read();
+  public abstract void write();
 
   /** 
    * Get the Publication's Topic.  
@@ -62,7 +61,6 @@ public class MessageData
   public void setTopic(String newTopic)
   {
     topic = newTopic;
-  	 return;
   }
        
   /** 
@@ -79,7 +77,7 @@ public class MessageData
 	return  className.substring(dot + 1);
   }
   
-  public int getMaxDataLength() { return 0; };
+  public abstract int getMaxDataLength();
   
   public ByteBuffer getBuffer()
   {
