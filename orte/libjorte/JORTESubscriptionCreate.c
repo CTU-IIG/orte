@@ -236,7 +236,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
                            callback_cont->obj, /*obj*/
                            mid_callback,
                            callback_cont->rinfo,
-                           NULL);//obj_msg);
+                           obj_msg);
   } while(0);
 
   // detach current thread
