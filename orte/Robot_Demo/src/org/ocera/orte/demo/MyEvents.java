@@ -62,8 +62,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onAppRemoteNew()'..     *");
   	System.out.println(":j: *************************************************");
-    //
-  	appInfo.printWithLegend();
   }
 
   @Override
@@ -72,8 +70,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onAppDelete()'..        *");
   	System.out.println(":j: *************************************************");
-    //
-    appInfo.printWithLegend();   
   }
 
   @Override
@@ -82,9 +78,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onPubRemoteNew()'..     *");
   	System.out.println(":j: *************************************************");
-    // 
-  	appInfo.printWithLegend();
-  	pubInfo.printWithLegend();
   }
 
   @Override
@@ -93,9 +86,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onPubRemoteChanged()'.. *");
   	System.out.println(":j: *************************************************");
-    // 
-  	appInfo.printWithLegend();	
-    pubInfo.printWithLegend();
   }
 
   @Override
@@ -104,9 +94,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onPubDelete()'..        *");
   	System.out.println(":j: *************************************************");
-    // 
-  	appInfo.printWithLegend();	
-    pubInfo.printWithLegend();
   }
   
   @Override
@@ -115,9 +102,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onSubRemoteNew()'..     *");
   	System.out.println(":j: *************************************************");
-    // 
-  	appInfo.printWithLegend();	
-    subInfo.printWithLegend();
   }
 
   @Override
@@ -126,9 +110,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onSubRemoteChanged()'.. *");
   	System.out.println(":j: *************************************************");
-    // 
-  	appInfo.printWithLegend();	
-    subInfo.printWithLegend();  
   }
 
   @Override
@@ -137,9 +118,6 @@ public class MyEvents extends DomainEvents {
   	System.out.println(":j: *************************************************");
   	System.out.println(":j: * call method 'MyEvents.onSubDelete()'..        *");
   	System.out.println(":j: *************************************************");
-    // 
-  	appInfo.printWithLegend();	
-    subInfo.printWithLegend();
   }
   
 }
