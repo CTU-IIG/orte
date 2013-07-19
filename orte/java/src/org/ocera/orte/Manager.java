@@ -4,11 +4,10 @@ import org.ocera.orte.types.*;;
 
 public class Manager {
 	
-	private DomainProp dprops;
 	private DomainMgr dmgr;
 	
 	public Manager(String[] mgrs) {
-		dprops = DomainProp.defaultPropsCreate();
+		DomainProp dprops = DomainProp.defaultPropsCreate();
 		dprops.setProps(mgrs);
 		
 		dmgr = new DomainMgr(ORTEConstant.ORTE_DEFAULT_DOMAIN,
@@ -16,4 +15,8 @@ public class Manager {
 							 null,
 							 false);
 	}
+
+        public boolean destroy() {
+                return dmgr.destroy())
+        }
 }
