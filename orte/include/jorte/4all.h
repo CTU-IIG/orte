@@ -12,7 +12,7 @@ typedef struct
 #ifndef Included4all
 #define Included4all
 
-#define TEST_STAGE
+//#define TEST_STAGE
 
 #include "onLoad.h"
 #ifdef __ANDROID__

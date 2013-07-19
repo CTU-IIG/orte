@@ -17,6 +17,6 @@ public class Manager {
 	}
 
         public boolean destroy() {
-                return dmgr.destroy())
+                return dmgr.destroy();
         }
 }
