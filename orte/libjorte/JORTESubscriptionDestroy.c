@@ -74,31 +74,6 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
      #endif
      break;
     }
-    // get value
-    h = (*env)->GetLongField(env, obj, fid);
-    if(h)
-    {
-      //JavaVM *jvm;
-      //jint ret;
-      JORTECallbackContext_t *ctx = (JORTECallbackContext_t*)h;
-      if(ctx->obj)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->obj \n");
-        #endif
-        (*env)->DeleteLocalRef(env, ctx->obj);
-      }
-      if(ctx->rinfo)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->rinfo\n");
-        #endif
-        (*env)->DeleteLocalRef(env, ctx->rinfo);
-      }
-      //
-      free((void*)h);
-    }
-    //
     if(subs_handle)
     {
       // call ORTE function
@@ -111,6 +86,37 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
       #ifdef TEST_STAGE
         printf(":c: subscription destroy succesfuly.. \n");
       #endif
+    }
+    // get value
+    h = (*env)->GetLongField(env, obj, fid);
+    if(h)
+    {
+      //JavaVM *jvm;
+      //jint ret;
+      JORTECallbackContext_t *ctx = (JORTECallbackContext_t*)h;
+      if(ctx->obj)
+      {
+        #ifdef TEST_STAGE
+          printf(":c: deleting ctx->obj \n");
+        #endif
+        (*env)->DeleteGlobalRef(env, ctx->obj);
+      }
+      if(ctx->rinfo)
+      {
+        #ifdef TEST_STAGE
+          printf(":c: deleting ctx->rinfo\n");
+        #endif
+        (*env)->DeleteGlobalRef(env, ctx->rinfo);
+      }
+      if(ctx->msg)
+      {
+        #ifdef TEST_STAGE
+          printf(":c: deleting ctx->msg\n");
+        #endif
+        (*env)->DeleteGlobalRef(env, ctx->msg);
+      }
+      //
+      free((void*)h);
     }
     // set flag
     flag_ok = 1;
