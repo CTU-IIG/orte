@@ -40,7 +40,7 @@ libjorte_la_CFLAGS = $(AM_CFLAGS)
 libjorte_la_LIBADD = $(top_builddir)/orte/liborte/liborte.la 
 
 EXTRA_DIST = Makefile Makefile.omk \
-createAppInfo.c createPubInfo.c createRecvInfo.c createSubInfo.c \
+createAppInfo.c createPubInfo.c createSubInfo.c \
 JORTEPublicationGetStatus.c \
 JORTEPublicationPropertiesGet.c \
 JORTEPublicationPropertiesSet.c \
