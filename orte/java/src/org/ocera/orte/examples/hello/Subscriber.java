@@ -114,6 +114,7 @@ public class Subscriber {
 	}
 
 	sub.destroy();
+	appDomain.destroy();
   }
 
 }

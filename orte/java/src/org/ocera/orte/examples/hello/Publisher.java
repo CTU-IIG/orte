@@ -100,6 +100,7 @@ public class Publisher {
 	  System.out.println(" ");
 	}
     pub.destroy();
+    appDomain.destroy();
   } 
 
 }
