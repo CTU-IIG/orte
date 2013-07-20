@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 // library header file's path
 #include "orte.h"
 // getNtpTime function
@@ -145,7 +146,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->typeChecksum = (TypeChecksum) (*env)->GetIntField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->typeChecksum = %d\n",
+      printf(":c: check: publ_prop->typeChecksum = %"PRId32"\n",
              publ_prop->typeChecksum);
     #endif
     /////////////////////////////////////////////////
@@ -162,7 +163,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     if (jbool == 0) publ_prop->expectsAck = ORTE_FALSE;
       else publ_prop->expectsAck = ORTE_TRUE;
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->expectsAck = %d\n", publ_prop->expectsAck);
+      printf(":c: check: publ_prop->expectsAck = %"PRId8"\n", publ_prop->expectsAck);
     #endif
     /////////////////////////////////////////////////
     // set persistence
@@ -187,7 +188,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->persistence = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->persistence: sec = %d, fract = %d  \n",
+      printf(":c: check: publ_prop->persistence: sec = %"PRId32", fract = %"PRIu32"  \n",
              publ_prop->persistence.seconds, publ_prop->persistence.fraction);
     #endif
     /////////////////////////////////////////////////
@@ -205,7 +206,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->reliabilityOffered = (uint32_t) (*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->reliabilityOffered = %d \n",
+      printf(":c: check: publ_prop->reliabilityOffered = %"PRIu32" \n",
              publ_prop->reliabilityOffered);
     #endif
     /////////////////////////////////////////////////
@@ -223,7 +224,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->sendQueueSize = (uint32_t) (*env)->GetLongField(env,obj_pp,fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->sendQueueSize = %d \n",
+      printf(":c: check: publ_prop->sendQueueSize = %"PRIu32" \n",
              publ_prop->sendQueueSize);
     #endif
     /////////////////////////////////////////////////
@@ -241,7 +242,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->strength = (int32_t) (*env)->GetIntField(env,obj_pp,fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->strength = %d \n",
+      printf(":c: check: publ_prop->strength = %"PRId32" \n",
              publ_prop->strength);
     #endif
     /////////////////////////////////////////////////
@@ -259,7 +260,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->criticalQueueLevel = (uint32_t) (*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->criticalQueueLevel = %d \n",
+      printf(":c: check: publ_prop->criticalQueueLevel = %"PRIu32" \n",
              publ_prop->criticalQueueLevel);
     #endif
     /////////////////////////////////////////////////
@@ -278,7 +279,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     obj_ntpT = (*env)->GetObjectField(env, obj_pp, fid);
     publ_prop->HBNornalRate = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-    printf(":c: check: publ_prop->HBNornalRate: sec = %d, fract = %d  \n",
+    printf(":c: check: publ_prop->HBNornalRate: sec = %"PRId32", fract = %"PRIu32"  \n",
            publ_prop->HBNornalRate.seconds, publ_prop->HBNornalRate.fraction);
     #endif
     /////////////////////////////////////////////////
@@ -304,7 +305,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->HBCQLRate = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->HBCQLRate: sec = %d, fract = %d  \n",
+      printf(":c: check: publ_prop->HBCQLRate: sec = %"PRId32", fract = %"PRIu32"  \n",
              publ_prop->HBCQLRate.seconds, publ_prop->HBCQLRate.fraction);
     #endif
     /////////////////////////////////////////////////
@@ -322,7 +323,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->HBMaxRetries = (unsigned int) (*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->HBMaxRetries = %d \n",
+      printf(":c: check: publ_prop->HBMaxRetries = %u \n",
              publ_prop->HBMaxRetries);
     #endif
     /////////////////////////////////////////////////
@@ -348,7 +349,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     }
     publ_prop->maxBlockTime = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->maxBlockTime: sec = %d, fract = %d  \n",
+      printf(":c: check: publ_prop->maxBlockTime: sec = %"PRId32", fract = %"PRIu32"  \n",
              publ_prop->maxBlockTime.seconds, publ_prop->maxBlockTime.fraction);
     #endif
     /////////////////////////////////////////////////

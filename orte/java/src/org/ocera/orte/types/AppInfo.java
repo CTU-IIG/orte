@@ -147,15 +147,15 @@ ProtocolVersion protocolVersion;
   // only for testing purposes
   public void printWithLegend()
   {
-  	System.out.println(":j: * AppInfo.hostId = " + getHostId());
-	System.out.println(":j: * AppInfo.appId  = " + getAppId());
+	System.out.format(":j: * AppInfo.hostId = %#x\n", getHostId());
+	System.out.format(":j: * AppInfo.appId  = %#x\n", getAppId());
 	// ipAdressList
-	System.out.println(":j: * AppInfo.pAddressTemp  = " + getIpAddressTemp());
+	System.out.println(":j: * AppInfo.ipAddressTemp  = " + getIpAddressTemp());
 	System.out.println(":j: * AppInfo.unicastIPcount = " + getUnicastIPcount());
 	// ipAdressList
-	System.out.println(":j: * AppInfo.pAddressTemp  = " + getIpAddressTemp());
-        System.out.println(":j: * AppInfo.unicastIPcount = " + getMulticastIPcount());
-	System.out.println(":j: * AppInfo.mettatrafficUniPort = " + getMetatrafficUniPort());
+	System.out.println(":j: * AppInfo.mettaTrafficMulticastIPAddressTemp  = " + getMettaTrafficMulticastIPAddressTemp());
+        System.out.println(":j: * AppInfo.multicastIPcount = " + getMulticastIPcount());
+	System.out.println(":j: * AppInfo.metatrafficUniPort = " + getMetatrafficUniPort());
 	System.out.println(":j: * AppInfo.userdataUniPort     = " + getUserdataUniPort());
 	System.out.println(":j: * AppInfo.vendorId = " + getVendorId());
 	System.out.println(":j: * AppInfo.protocolVersion = " + getProtocolVersion()); 	

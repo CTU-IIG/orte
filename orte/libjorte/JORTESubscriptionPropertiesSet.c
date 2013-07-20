@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 // library header file's path
 #include "orte.h"
 // getNtpTime function
@@ -143,7 +144,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     }
     subs_prop->typeChecksum = (TypeChecksum) (*env)->GetIntField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->typeChecksum = %d\n",
+      printf(":c: check: subs_prop->typeChecksum = %"PRId32"\n",
              subs_prop->typeChecksum);
     #endif
     /////////////////////////////////////////////////
@@ -162,7 +163,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     j_minSeparation = (*env)->GetObjectField(env, obj_sp, fid);
     subs_prop->minimumSeparation = getNtpTime(env, j_minSeparation);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->minimumSeparation: sec = %d, fract = %d \n",
+      printf(":c: check: subs_prop->minimumSeparation: sec = %"PRId32", fract = %"PRIu32" \n",
              subs_prop->minimumSeparation.seconds,
              subs_prop->minimumSeparation.fraction);
     #endif
@@ -178,7 +179,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     }
     subs_prop->recvQueueSize = (uint32_t) (*env)->GetLongField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->recvQueueSize = %d \n",
+      printf(":c: check: subs_prop->recvQueueSize = %"PRIu32" \n",
              subs_prop->recvQueueSize);
     #endif
     /////////////////////////////////////////////////
@@ -193,7 +194,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     }
     subs_prop->reliabilityRequested = (uint32_t) (*env)->GetLongField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->reliabilityRequested = %d \n",
+      printf(":c: check: subs_prop->reliabilityRequested = %"PRIu32" \n",
              subs_prop->reliabilityRequested);
     #endif
     /////////////////////////////////////////////////
@@ -212,7 +213,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     j_deadline = (*env)->GetObjectField(env, obj_sp, fid);
     subs_prop->deadline = getNtpTime(env, j_deadline);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->deadline: sec = %d, fract = %d  \n",
+      printf(":c: check: subs_prop->deadline: sec = %"PRId32", fract = %"PRIu32"  \n",
              subs_prop->deadline.seconds, subs_prop->deadline.fraction);
     #endif
     /////////////////////////////////////////////////
@@ -227,7 +228,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     }
     subs_prop->mode = (uint32_t) (*env)->GetIntField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->mode = %d \n",
+      printf(":c: check: subs_prop->mode = %"PRIu32" \n",
              subs_prop->mode);
     #endif
 /*

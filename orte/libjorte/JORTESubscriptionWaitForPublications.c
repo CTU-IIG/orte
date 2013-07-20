@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 // library header file's path
 #include "orte.h"
 // getNtpTime function
@@ -51,7 +52,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionWaitForPublications
   //
   wait = getNtpTime(env, obj_ntpT);
   #ifdef TEST_STAGE
-    printf(":c: check: wait: sec = %d, fract = %d  \n",
+    printf(":c: check: wait: sec = %"PRId32", fract = %"PRIu32"  \n",
            wait.seconds, wait.fraction);
   #endif
   // calling ORTE function

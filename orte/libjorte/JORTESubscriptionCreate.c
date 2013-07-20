@@ -27,6 +27,7 @@
 
 
 #include <stdlib.h>
+#include <inttypes.h>
 
 // library header file's path
 #include "orte.h"
@@ -98,7 +99,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
 
       #ifdef TEST_STAGE
          printf(":c: #0 \n");
-         printf(":c: env = %p, obj_msg = %p \n", env, obj_msg);
+         printf(":c: env = %#"PRIxPTR", obj_msg = %#"PRIxPTR" \n", (intptr_t)env, (intptr_t)obj_msg);
       #endif
 
 
@@ -156,16 +157,16 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
     #ifdef TEST_STAGE
       printf(":c: rinfo created :] \n");
       printf(":c:----- ORTERecvInfo members  ------ \n");
-      printf(":c:    recvStatus: %d \n", info->status);
-      printf(":c:    senderGuid: hid = %d, aid = %d, oid = %d \n",
+      printf(":c:    recvStatus: %#x \n", info->status);
+      printf(":c:    senderGuid: hid = %#"PRIx32", aid = %#"PRIx32", oid = %#"PRIx32" \n",
              info->senderGUID.hid,info->senderGUID.aid,info->senderGUID.oid);
       printf(":c:         topic: %s \n",info->topic);
       printf(":c:          type: %s \n",info->type);
-      printf(":c: localTimeRecv: sec = %d, fract = %d \n",
+      printf(":c: localTimeRecv: sec = %"PRId32", fract = %"PRIu32" \n",
              info->localTimeReceived.seconds,info->localTimeReceived.fraction);
-      printf(":c: remoteTimePub: sec = %d, fract = %d \n",
+      printf(":c: remoteTimePub: sec = %"PRId32", fract = %"PRIu32" \n",
              info->remoteTimePublished.seconds,info->remoteTimePublished.fraction);
-      printf(":c:         seqNr: high = %d, low = %d \n",info->sn.high,info->sn.low);
+      printf(":c:         seqNr: high = %"PRId32", low = %"PRIu32" \n",info->sn.high,info->sn.low);
       printf(":c:---------------------------------- \n");
     #endif
     ////////////////////////////////////////////////////

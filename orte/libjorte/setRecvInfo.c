@@ -1,6 +1,7 @@
 /* setRecvInfo.c  */
 
 #include <jni.h>
+#include <inttypes.h>
 #include "orte.h"
 #include "jorte/4all.h"
 #include "jorte/jorte_protos_api.h"
@@ -15,6 +16,8 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
   jmethodID mid;
   //
   int flag_ok = 0;
+  int32_t sec;
+  uint32_t us;
 
   do
   {
@@ -110,7 +113,7 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: rinfo.senderGUID: hid = %d, aid = %d, oid = %d \n",
+       printf(":c: rinfo.senderGUID: hid = %#"PRIx32", aid = %#"PRIx32", oid = %#"PRIx32" \n",
               rinfo->senderGUID.hid,rinfo->senderGUID.aid,rinfo->senderGUID.oid);
     #endif
     (*env)->SetObjectField(env,
@@ -165,8 +168,9 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: rinfo.NtpTime: %d (sec = %d fract = %d) \n",
-              (rinfo->localTimeReceived.seconds + rinfo->localTimeReceived.fraction/(2^32)),
+       NtpTimeDisAssembToUs(sec, us, rinfo->localTimeReceived);
+       printf(":c: rinfo.NtpTime: %"PRId32".%"PRIu32" (sec = %"PRId32" fract = %"PRIu32") \n",
+              sec, us,
               rinfo->localTimeReceived.seconds,rinfo->localTimeReceived.fraction);
     #endif
     (*env)->SetObjectField(env,
@@ -223,8 +227,9 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: rinfo.remoteTimePub: %d (sec = %d fract = %d) \n",
-              (rinfo->remoteTimePublished.seconds + rinfo->remoteTimePublished.fraction/(2^32)),
+       NtpTimeDisAssembToUs(sec, us, rinfo->remoteTimePublished);
+       printf(":c: rinfo.remoteTimePub: %"PRId32".%"PRIu32" (sec = %"PRId32" fract = %"PRIu32") \n",
+              sec, us,
               rinfo->remoteTimePublished.seconds,rinfo->remoteTimePublished.fraction);
     #endif
     (*env)->SetObjectField(env,
@@ -279,8 +284,8 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: rinfo.sn: %d (high = %d low = %d) \n",
-              (rinfo->sn.high*(2^32) + rinfo->sn.low),rinfo->sn.high,rinfo->sn.low);
+       printf(":c: rinfo.sn: %"PRId64" (high = %"PRId32" low = %"PRId32") \n",
+              (((int64_t)rinfo->sn.high << 32) + rinfo->sn.low),rinfo->sn.high,rinfo->sn.low);
     #endif
     (*env)->SetObjectField(env,
                            obj,

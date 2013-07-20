@@ -53,7 +53,7 @@ public class SequenceNumber
 
   public long getDecimal()
   {
-    long sn = high*2^32 + low; 
+    long sn = ((long)high << 32) + low;
   	return sn;	
   }
   

@@ -87,7 +87,7 @@ public class NtpTime {
    **/
   public long getDecimal()
   {
-    return this.seconds + (this.fraction/2^32);
+    return this.seconds + (this.fraction << 32);
   }
     
   /* ****************************************************************** *
