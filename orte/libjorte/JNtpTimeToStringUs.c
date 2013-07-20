@@ -34,7 +34,7 @@
 
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT jstring JNICALL
-Java_org_ocera_orte_types_JORTENtpTime_NtpTimeToStringUs
+Java_org_ocera_orte_types_NtpTime_NtpTimeToStringUs
 (JNIEnv *env, jclass class, jobject j_ntpTime)
 {
   char             buff[65];  // 32 + 32 + 1 end char
@@ -61,7 +61,7 @@ Java_org_ocera_orte_types_JORTENtpTime_NtpTimeToStringUs
   if(fieldID == NULL)
     return((*env)->NewStringUTF(env, "error when reading Java NtpTime"));
   // get object's value
-  time.fraction = (uint32_t) (*env)->GetIntField(env,j_ntpTime,fieldID);
+  time.fraction = (uint32_t) (*env)->GetLongField(env,j_ntpTime,fieldID);
 
   // calling an orte's function
   NtpTimeToStringUs(time,buff);
