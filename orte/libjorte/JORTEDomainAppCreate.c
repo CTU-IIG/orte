@@ -1142,7 +1142,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainDefautlAppCreate() ok.. + %"PRIiPTR"\n", d);
+    printf(":c: ORTEDomainDefautlAppCreate() ok.. + %#"PRIxPTR"\n", (intptr_t)d);
   #endif
   return (d);
 }
@@ -1231,7 +1231,7 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainAppCreate() ok.. + %"PRIiPTR"\n", d);
+    printf(":c: ORTEDomainAppCreate() ok.. + %#"PRIxPTR"\n", (intptr_t)d);
   #endif
   return (d);
 }

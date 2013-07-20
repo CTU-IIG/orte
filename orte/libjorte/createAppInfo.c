@@ -56,7 +56,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.hostId = %d \n",ainfo->hostId);
+       printf(":c: ainfo.hostId = %#"PRIx32" \n",ainfo->hostId);
     #endif
     (*env)->SetLongField(env,
                          obj,
@@ -73,7 +73,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.appId = %d \n",ainfo->appId);
+       printf(":c: ainfo.appId = %#"PRIx32" \n",ainfo->appId);
     #endif
     (*env)->SetLongField(env,
                          obj,
@@ -89,7 +89,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.unicastIPAddressList = %"PRIoPTR"\n",(intptr_t)ainfo->unicastIPAddressList);
+       printf(":c: ainfo.unicastIPAddressList = %#"PRIxPTR"\n",(intptr_t)ainfo->unicastIPAddressList);
     #endif
     (*env)->SetLongField(env,
                          obj,
@@ -105,7 +105,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.unicastIPcount = %d \n",
+       printf(":c: ainfo.unicastIPcount = %hhu \n",
               ainfo->unicastIPAddressCount);
     #endif
     (*env)->SetByteField(env,
@@ -122,7 +122,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.multicastIPAddressList = %"PRIoPTR"\n",
+       printf(":c: ainfo.multicastIPAddressList = %#"PRIxPTR"\n",
               (intptr_t)ainfo->metatrafficMulticastIPAddressList);
     #endif
     (*env)->SetLongField(env,
@@ -139,7 +139,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.metatrafficMulticastIPAddressCount = %d \n",
+       printf(":c: ainfo.metatrafficMulticastIPAddressCount = %hhu \n",
               ainfo->metatrafficMulticastIPAddressCount);
     #endif
     (*env)->SetByteField(env,
@@ -157,7 +157,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.metatrafficUnicastPort = %d \n",
+       printf(":c: ainfo.metatrafficUnicastPort = %"PRIu32" \n",
               ainfo->metatrafficUnicastPort);
     #endif
     (*env)->SetLongField(env,
@@ -175,7 +175,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.userdataUnicastPort = %d \n",
+       printf(":c: ainfo.userdataUnicastPort = %"PRIu32" \n",
               ainfo->userdataUnicastPort);
     #endif
     (*env)->SetLongField(env,
@@ -230,7 +230,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.vendorId: major = %d, minor = %d \n",
+       printf(":c: ainfo.vendorId: major = %"PRId8", minor = %"PRId8" \n",
               ainfo->vendorId.major, ainfo->vendorId.minor);
     #endif
     (*env)->SetObjectField(env,
@@ -285,7 +285,7 @@ jobject createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo)
       break;
     }
     #ifdef TEST_STAGE
-       printf(":c: ainfo.protocolVersion: major = %d, minor = %d \n",
+       printf(":c: ainfo.protocolVersion: major = %"PRId8", minor = %"PRId8" \n",
               ainfo->protocolVersion.major, ainfo->protocolVersion.minor);
     #endif
     (*env)->SetObjectField(env,

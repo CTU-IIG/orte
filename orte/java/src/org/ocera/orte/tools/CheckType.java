@@ -33,7 +33,7 @@ package org.ocera.orte.tools;
 public class CheckType {
 
  /** constants - max and min boundry values of the unsigned integer32 */ 
-   final static long UINT32MAX = (2^32 - 1);   
+   final static long UINT32MAX = ((long)1 << 32) - 1;
    final static long UINT32MIN = 0;
 
 
