@@ -36,7 +36,7 @@
       str = (*env)->GetStringUTFChars(env,mgrs,0);
       
       //set managers
-      dp->mgrs=str;
+      dp->mgrs=(char *)str;
 
       flag_ok = 1;
     } while (0);

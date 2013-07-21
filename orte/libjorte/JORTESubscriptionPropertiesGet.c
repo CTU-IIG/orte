@@ -101,7 +101,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
     // setting object's fields
     /////////////////////////////////////////////////
     // set topic
-    if(!setTopic(env,cls_sp,obj_sp,subs_prop->topic))
+    if(!setTopic(env,cls_sp,obj_sp,(const char *)subs_prop->topic))
     {
       #ifdef TEST_STAGE
         printf(":!c: setTopic() failed! \n");
@@ -110,7 +110,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
     }
     /////////////////////////////////////////////////
     // set type
-    if(!setType(env,cls_sp,obj_sp,subs_prop->typeName))
+    if(!setType(env,cls_sp,obj_sp,(const char *)subs_prop->typeName))
     {
       #ifdef TEST_STAGE
         printf(":!c: setType() failed! \n");

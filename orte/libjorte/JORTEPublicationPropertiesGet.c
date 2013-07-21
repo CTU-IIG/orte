@@ -104,7 +104,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
     // setting object's fields
     /////////////////////////////////////////////////
     // set topic
-    if(!setTopic(env,cls_pp,obj_pp,publ_prop->topic))
+    if(!setTopic(env,cls_pp,obj_pp,(const char *)publ_prop->topic))
     {
       #ifdef TEST_STAGE
         printf(":!c: setTopic() failed! \n");
@@ -113,7 +113,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
     }
     /////////////////////////////////////////////////
     // set type
-    if(!setType(env,cls_pp,obj_pp,publ_prop->typeName))
+    if(!setType(env,cls_pp,obj_pp,(const char *)publ_prop->typeName))
     {
       #ifdef TEST_STAGE
         printf(":!c: setType() failed! \n");
