@@ -51,7 +51,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
   JNIEnv          *env = 0;
   jclass           cls = 0; // local reference!
   jclass           cls_msg = 0;
-  jobject          obj = 0;
   jobject          rinfo = 0;
   jobject          obj_msg;
   jmethodID        mid = 0;
@@ -92,7 +91,6 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
       break;
     }
     // set local vars
-    obj = callback_cont->obj;
     rinfo = callback_cont->rinfo;
     obj_msg = callback_cont->msg;
 
