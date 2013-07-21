@@ -21,10 +21,6 @@
   */
 
 
-# define UINT32__MIN 0
-# define UINT32__MAX (2^32 -1)
-
-
 typedef struct
 {
  JavaVM        *jvm;
