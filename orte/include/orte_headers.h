@@ -29,10 +29,13 @@
 
 #ifndef _ORTE_ALL_H
 #define _ORTE_ALL_H
-#define HAVE_CONFIG_H
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifdef __ANDROID__
+  #define HAVE_CONFIG_H
 #endif
 
 #if defined _MSC_VER

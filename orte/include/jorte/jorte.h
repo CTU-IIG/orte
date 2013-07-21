@@ -42,7 +42,6 @@ extern "C" {
 
 // auto-generated headers by JNI
 #include "org_ocera_orte_tools_Conversions.h"
-#include "org_ocera_orte_Domain.h"
 #include "org_ocera_orte_DomainEvents.h"
 #include "org_ocera_orte_DomainProp.h"
 #include "org_ocera_orte_tools_GetORTEConstant.h"

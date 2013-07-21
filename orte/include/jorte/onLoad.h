@@ -1,8 +1,14 @@
+#include <jni.h>
+
 #ifndef IncludedOnLoad
 #define IncludedOnLoad
-
-#include <jni.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 jclass findClass(JNIEnv *env, const char* name);
 
+#ifdef __cplusplus
+}
+#endif
 #endif
