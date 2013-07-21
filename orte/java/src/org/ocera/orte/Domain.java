@@ -64,25 +64,4 @@ public class Domain {
     {
     	return false;
     }
-   
-   
-  /* ****************************************************************** *
-   *                                                                    *
-   *                         native methods                             *
-   *                                                                    *
-   * ****************************************************************** */
-
-  /**
-   * jORTEDomainStart -
-   *
-   * @param dhandle handler to domain
-   * @param
-   * @param
-   * @return
-   */
-   private static native
-   void jORTEDomainStart(long dhandle,
-                         boolean recvMetatrafficThread,
-                         boolean recvUserDataThread,
-  	                     boolean sendThread);
 }
