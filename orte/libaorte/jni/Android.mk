@@ -78,7 +78,6 @@ libjorte/JORTEDomainMgrDestroy.c \
 libjorte/JORTEDomainPropDefaultGet.c \
 libjorte/JORTEDomainPropSet.c \
 libjorte/JORTEDomainPropDestroy.c \
-libjorte/JORTEDomainStart.c \
 libjorte/JORTEInit.c \
 libjorte/JORTEPublicationCreate.c \
 libjorte/JORTEPublicationDestroy.c \
