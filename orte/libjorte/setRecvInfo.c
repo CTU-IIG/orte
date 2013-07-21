@@ -16,8 +16,10 @@ int setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj)
   jmethodID mid;
   //
   int flag_ok = 0;
-  int32_t sec;
-  uint32_t us;
+  #ifdef TEST_STAGE
+    int32_t sec;
+    uint32_t us;
+  #endif
 
   do
   {
