@@ -36,7 +36,7 @@
 
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
-(JNIEnv *env, jclass cls)
+(JNIEnv *env, jobject obj)
 {
   ORTEDomainAppEvents *evs;
 
