@@ -36,25 +36,27 @@ public abstract class DomainEvents {
 
   public DomainEvents()
   {
-  	init();
+    this.handle = jORTEDomainInitEvents();
   	System.out.println(":j: events created & initialized..");
   }
-
-
-  /**
-   * Initializes DomainEvents and return their handle
-   * @return handle initialized DomainEvents
-   */
-  public void init()
-  {
-    this.handle = jORTEDomainInitEvents();
-  	return;
-  }
-
   
   public long getHandle()
   {
   	return this.handle;
+  }
+  
+  public boolean destroy()
+  {
+    System.out.println(":j: DomainEvents destroy called..");
+
+    if(!jORTEDomainEventsDestroy(this.handle)) {
+      System.out.println(":j: DomainEvents destroy fault!");
+      return false;
+    }
+    else {
+      System.out.println(":j: DomainEvents destroy successful..");
+      return true;
+    }
   }
   
   public abstract void onRegFail();
@@ -82,9 +84,9 @@ public abstract class DomainEvents {
   *
   * @return handler to default properties of a domain, NULL if error
   */
-  private static native
+  private native
   long jORTEDomainInitEvents();
 
-
-
+  private native
+  boolean jORTEDomainEventsDestroy(long handle);
 }

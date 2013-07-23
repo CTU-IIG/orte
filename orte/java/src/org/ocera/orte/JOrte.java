@@ -51,13 +51,6 @@ public class JOrte {
     jORTEVerbositySetLogFile(logfile);
    }
 
-   public static
-   void appSendThread(long dhandle)
-   {
-    jORTEAppSendThread(dhandle);
-   }
-
-
 
   /* ****************************************************************** *
    *                                                                    *
@@ -105,16 +98,5 @@ public class JOrte {
    */
    private static native
    void jORTEVerbositySetLogFile(String logfile);
-
-
-  /**
-   * jORTEVerbositySetLogFile -
-   *
-   *
-   * @return void
-   */
-   private static native
-   void jORTEAppSendThread(long dhandle);
-
 
 }

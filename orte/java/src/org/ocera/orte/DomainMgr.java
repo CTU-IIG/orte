@@ -73,7 +73,9 @@ public class DomainMgr extends Domain
 	  public
 	  boolean destroy()
 	  {
-	    if(jORTEDomainMgrDestroy(this.handle) && (this.props == null || this.props.destroy())) return true;
+	    if(jORTEDomainMgrDestroy(this.handle)
+	    		&& (this.props == null || this.props.destroy())
+	    		&& (this.events == null || this.events.destroy())) return true;
 	    System.out.println(":j!: ORTEDomainMgrDestroy() fault..");
 	    return false;
 	  }

@@ -13,7 +13,15 @@ extern "C" {
  * Signature: ()J
  */
 JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
-  (JNIEnv *, jclass);
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     org_ocera_orte_types_DomainEvents
+ * Method:    jORTEDomainEventsDestroy
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainEventsDestroy
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

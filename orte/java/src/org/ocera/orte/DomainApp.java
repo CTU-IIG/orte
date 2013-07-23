@@ -67,7 +67,9 @@ public class DomainApp extends Domain
    @Override
    public boolean destroy()
    {
-     if(destroyAllRegTypes() && jORTEDomainAppDestroy(this.handle) && (this.props == null || this.props.destroy())) return true;
+     if(destroyAllRegTypes() && jORTEDomainAppDestroy(this.handle)
+    		 && (this.props == null || this.props.destroy())
+    		 && (this.events == null || this.events.destroy())) return true;
      System.out.println(":j!: ORTEDomainAppDestroy() fault..");
      return false;
    }
