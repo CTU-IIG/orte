@@ -4,6 +4,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := orte
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_LDLIBS := -llog
+LOCAL_CFLAGS += -Wall
 LOCAL_SRC_FILES := \
 liborte/conv.c \
 liborte/debug.c \
@@ -57,6 +58,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := jorte
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_LDLIBS := -llog
+LOCAL_CFLAGS += -Wall 
 LOCAL_SRC_FILES := \
 libjorte/onLoad.c \
 libjorte/getNtpTime.c \
@@ -72,6 +74,8 @@ libjorte/JNtpTimeToStringMs.c \
 libjorte/JNtpTimeToStringUs.c \
 libjorte/JORTEDomainAppCreate.c \
 libjorte/JORTEDomainAppDestroy.c \
+libjorte/JORTEDomainEvents.c \
+libjorte/JORTEDomainEventsDestroy.c \
 libjorte/JORTEDomainInitEvents.c \
 libjorte/JORTEDomainMgrCreate.c \
 libjorte/JORTEDomainMgrDestroy.c \
