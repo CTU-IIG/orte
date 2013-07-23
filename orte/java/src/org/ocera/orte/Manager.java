@@ -1,10 +1,18 @@
 package org.ocera.orte;
 
-import org.ocera.orte.types.*;;
+import org.ocera.orte.types.*;
 
 public class Manager {
 	
 	private DomainMgr dmgr;
+        private ManagerEvents events = new ManagerEvents();
+
+        public Manager() {
+                dmgr = new DomainMgr(ORTEConstant.ORTE_DEFAULT_DOMAIN,
+                                                         null,
+                                                         events,
+                                                         false);
+        }
 	
 	public Manager(String[] mgrs) {
 		DomainProp dprops = DomainProp.defaultPropsCreate();
@@ -12,7 +20,7 @@ public class Manager {
 		
 		dmgr = new DomainMgr(ORTEConstant.ORTE_DEFAULT_DOMAIN,
 							 dprops,
-							 null,
+							 events,
 							 false);
 	}
 

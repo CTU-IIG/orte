@@ -29,6 +29,7 @@ JNtpTimeToStringMs.c \
 JNtpTimeToStringUs.c \
 JORTEDomainAppCreate.c \
 JORTEDomainAppDestroy.c \
+JORTEDomainEvents.c \
 JORTEDomainInitEvents.c \
 JORTEDomainMgrCreate.c \
 JORTEDomainMgrDestroy.c \

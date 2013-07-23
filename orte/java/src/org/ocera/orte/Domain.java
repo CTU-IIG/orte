@@ -25,7 +25,7 @@ package org.ocera.orte;
 import  org.ocera.orte.types.*;
 
 
-public class Domain {
+public abstract class Domain {
 
    /** load native library 'libjorte.so' */
    static {
@@ -33,9 +33,10 @@ public class Domain {
    }
 
    /* domain fields */
-   protected long              handle;
-   public DomainProp           props;
-   public DomainEvents         events;
+   protected long			handle;
+   protected long			domainEventsContextHandle = 0;
+   protected DomainProp			props;
+   protected DomainEvents		events;
 
 
    /* constructor */
@@ -48,8 +49,8 @@ public class Domain {
 
 
   /**
-   * Get handle of the Application Domain.   
-   * @return Handle of the Application Domain. 
+   * Get handle of the Domain.
+   * @return Handle of the Domain.
    */
    public long getHandle()
    {
@@ -57,11 +58,8 @@ public class Domain {
    }
 
    /**
-    * Get handle of the Application Domain.   
-    * @return Handle of the Application Domain. 
+    * Destroy domain.
+    * @return Handle of the Domain.
     */
-    public boolean destroy() 
-    {
-    	return false;
-    }
+    public abstract boolean destroy();
 }

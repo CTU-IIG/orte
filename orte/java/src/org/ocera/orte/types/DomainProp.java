@@ -33,8 +33,12 @@ public class DomainProp {
 
 
  /* handler to C struct with default domain properties  */
-  public long handle = 0;
+  private long handle = 0;
   private String mgrs = null;
+  
+  public long getHandle() {
+	  return this.handle;
+  }
 
  /**
   *  setProps - sets DomainProp

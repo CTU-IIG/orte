@@ -14,7 +14,6 @@ typedef struct
 
 //#define TEST_STAGE
 
-#include "onLoad.h"
 #ifdef __ANDROID__
 
 #include <android/log.h>
