@@ -48,21 +48,14 @@ public class DomainApp extends Domain
    /** TODO dodelat objekty 'props', 'events' */
    public DomainApp(int domain, DomainProp ps, DomainEvents ev, boolean suspend)
    {
-     super(); 	 // set Default Domain Properties
-     if(ps == null) {
-         this.props = DomainProp.defaultPropsCreate();
-     }
-     else {
-         this.props = ps;
-     }
-     // init Domain Events
-     if(ev == null) {
-         this.events.init();
-     }
-     else {
-         this.events = ev;
-     }
-     this.handle = jORTEDomainAppCreate(domain,ps.handle,ev.getHandle(),ev,suspend);
+     super();
+     this.props = ps;
+     this.events = ev;
+     this.handle = jORTEDomainAppCreate(domain,
+					ps==null ? 0 : this.props.getHandle(),
+					ev==null ? 0 : this.events.getHandle(),
+					this.events,
+					suspend);
      /* TODO osetrit neuspesne vytvoreni domeny */ 
      if(this.handle == 0) System.out.println(":j!: zero domain handle! ..");
       else System.out.println(":j: application domain created..");
@@ -71,15 +64,12 @@ public class DomainApp extends Domain
    /**
     * Destroy the Application Domain.  
     */
+   @Override
    public boolean destroy()
    {
-     if(!destroyAllRegTypes()) System.out.println(":j!: destroyAllRegTypes fault!");
-     if(!jORTEDomainAppDestroy(this.handle) || !this.props.destroy()) {
-       System.out.println(":j!: ORTEDomainADestroy fault!");
-       return false;
-     }
-     return true;
-       
+     if(destroyAllRegTypes() && jORTEDomainAppDestroy(this.handle) && (this.props == null || this.props.destroy())) return true;
+     System.out.println(":j!: ORTEDomainAppDestroy() fault..");
+     return false;
    }
 
      
@@ -178,7 +168,7 @@ public class DomainApp extends Domain
  * @param domain given domain
  * @return addres value (from C environment) of the created domain
  */
- private static native long jORTEDomainDefaultAppCreate(int domain,boolean suspend);
+ private native long jORTEDomainDefaultAppCreate(int domain,boolean suspend);
 
 
 /**
@@ -194,7 +184,7 @@ public class DomainApp extends Domain
  * @return addres value (from C environment) of the created domain
  */
 
- private static native
+ private native
  long jORTEDomainAppCreate(int  domain,
                            long propHandle,
                            long eventsHandle,
@@ -210,7 +200,7 @@ public class DomainApp extends Domain
  * @param jp_domhandle handler to domain
  * @return boolean value, False when some error occures, otherwise True
  */
- private static native
+ private native
  boolean jORTEDomainAppDestroy(long dhandle);
 
  
@@ -224,7 +214,7 @@ public class DomainApp extends Domain
   * @param
   * @return
   */
-  private static native
+  private native
   int jORTETypeRegisterAdd(long dhandle,
                             String typeName,
                             long maxlenght);
@@ -237,7 +227,7 @@ public class DomainApp extends Domain
   * @param dhandle handler to domain
   * @return boolean value, False when some error occures, otherwise True
   */
-  private static native
+  private native
   boolean jORTETypeRegisterDestroyAll(long dhandle);
 
 }

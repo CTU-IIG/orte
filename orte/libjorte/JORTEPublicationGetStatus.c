@@ -33,6 +33,7 @@
 #include "jorte/4all.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Publication.h"
+#include "jorte/jorte_protos_api.h"
 
 
 JNIEXPORT jobject JNICALL

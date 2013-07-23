@@ -52,6 +52,20 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
 
   do
   {
+    if(subs_handle)
+    {
+      // call ORTE function
+      b = ORTESubscriptionDestroy((ORTESubscription *) subs_handle);
+      if (b == ORTE_BAD_HANDLE)
+      {
+        printf(":!c: subscription destroy failed! [bad sub handle] \n");
+        break;
+      }
+      #ifdef TEST_STAGE
+        printf(":c: subscription destroy succesfuly.. \n");
+      #endif
+    }
+
     // free callBack object
     // find cls
     cls = (*env)->GetObjectClass(env, obj);
@@ -73,19 +87,6 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
        printf(":!c: fid = NULL! \n");
      #endif
      break;
-    }
-    if(subs_handle)
-    {
-      // call ORTE function
-      b = ORTESubscriptionDestroy((ORTESubscription *) subs_handle);
-      if (b == ORTE_BAD_HANDLE)
-      {
-        printf(":!c: subscription destroy failed! [bad sub handle] \n");
-        break;
-      }
-      #ifdef TEST_STAGE
-        printf(":c: subscription destroy succesfuly.. \n");
-      #endif
     }
     // get value
     h = (*env)->GetLongField(env, obj, fid);

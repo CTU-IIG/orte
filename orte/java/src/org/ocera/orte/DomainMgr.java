@@ -55,33 +55,25 @@ public class DomainMgr extends Domain
 	                 DomainEvents events,
 	                 boolean suspend)
     {
-     super(); 	 // set Default Domain Properties
-     if(props == null) {
-         this.props = DomainProp.defaultPropsCreate();
-     }
-     else {
-         this.props = props;
-     }
-
-	   handle = jORTEDomainMgrCreate(domain,
-	                                 props.handle,
-		                             events==null ? 0 : events.getHandle(),
-			     					 suspend);
+     super();
+     this.props = props;
+     this.events = events;
+     this.handle = jORTEDomainMgrCreate(domain,
+					props==null ? 0 : this.props.getHandle(),
+					events==null ? 0 : this.events.getHandle(),
+					this.events,
+					suspend);
     }
-
-	 /*
-     public void create()
-     {}
-	 */
      
 	 /**
 	  * destroy - destroy manager object
 	  * @return boolean: False if bad publication handle, True if  succesful
 	  */
+      @Override
 	  public
 	  boolean destroy()
 	  {
-	    if(jORTEDomainMgrDestroy(this.handle) && this.props.destroy()) return true;
+	    if(jORTEDomainMgrDestroy(this.handle) && (this.props == null || this.props.destroy())) return true;
 	    System.out.println(":j!: ORTEDomainMgrDestroy() fault..");
 	    return false;
 	  }
@@ -97,7 +89,7 @@ public class DomainMgr extends Domain
    * @param handle of the domain
    * @return handle of the Manager
    **/
-   private static native
+   private native
    long jORTEDomainDefaultMgrCreate(int dhandle,boolean suspend);
 
 
@@ -108,10 +100,11 @@ public class DomainMgr extends Domain
    * @param handle of the domain events
    * @return handle of the Manager
    **/
-   private static native
+   private native
    long jORTEDomainMgrCreate(int dhandle,
                              long propsHandle,
                              long eventsHandle,
+                             DomainEvents ev,
                              boolean suspend);
 
   /**
@@ -119,7 +112,7 @@ public class DomainMgr extends Domain
    * @param hadle of the domain
    * @return if some error occures return False, otherwise True
    **/
-   private static native
+   private native
    boolean jORTEDomainMgrDestroy(long dhandle);  
 	
 }
