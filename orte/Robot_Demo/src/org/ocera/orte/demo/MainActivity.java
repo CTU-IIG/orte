@@ -2,8 +2,6 @@ package org.ocera.orte.demo;
 
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Manager;
-import org.ocera.orte.types.DomainProp;
-import org.ocera.orte.types.ORTEConstant;
 
 import android.app.Activity;
 import android.content.Context;
@@ -93,11 +91,7 @@ public class MainActivity extends Activity {
         
         manager = new Manager(mgrs);
 
-        MyEvents events = new MyEvents();
-        appDomain = new DomainApp(ORTEConstant.ORTE_DEFAULT_DOMAIN,
-        						  DomainProp.defaultPropsCreate(),
-        						  events,
-        						  false);
+        appDomain = new DomainApp();
     }
     
 	@Override
