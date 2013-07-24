@@ -37,7 +37,7 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainAppDestroy
  * Signature: (JLjava/lang/String;J)I
  */
 JNIEXPORT jint JNICALL Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
-  (JNIEnv *, jobject, jlong, jstring, jlong);
+  (JNIEnv *, jobject, jlong, jstring, jlong, jobject);
 
 /*
  * Class:     org_ocera_orte_DomainApp
