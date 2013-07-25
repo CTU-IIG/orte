@@ -80,7 +80,9 @@ motion_speed_type_register(ORTEDomain *d) {
 				(ORTETypeSerialize)motion_speed_serialize,
 				(ORTETypeDeserialize)motion_speed_deserialize,
 				motion_speed_get_max_size,
-				0);
+				0,
+                                NULL,
+                                NULL);
 }
 
 void robottype_subscriber_motion_speed_create(struct robottype_orte_data *data, ORTERecvCallBack callback, void *arg) {
