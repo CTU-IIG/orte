@@ -16,7 +16,7 @@ public class SpeedMotionType extends MessageData
  	     boolean b;
  	     counter++;
          this.setTopic(newTopic);
-     	 b = domainApp.regNewDataType("motion_speed",getMaxDataLength()); 
+     	 b = domainApp.regNewDataType("motion_speed",getMaxDataLength(),this.buffer); 
 	     if (b == false) {
 	       System.out.println(":j!: cannot register data type!");    
 	     }
