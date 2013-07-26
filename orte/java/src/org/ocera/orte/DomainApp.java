@@ -22,8 +22,6 @@
  */
 
 package org.ocera.orte;
-import java.nio.ByteBuffer;
-
 import  org.ocera.orte.types.*;
 
 
@@ -85,13 +83,11 @@ public class DomainApp extends Domain
     */
    public
    boolean regNewDataType(String name,
-   						  long maxlength,
-   						  ByteBuffer buffer)
+   						  long maxlength)
    {
      int b = jORTETypeRegisterAdd(this.handle, 
      		                      name,
-                                  maxlength,
-                                  buffer);
+                                  maxlength);
    	 if (b == ORTEConstant.ORTE_BAD_HANDLE)
      {
        System.out.println(":!j: regNewDataType() failed! [bad domain handle]");
@@ -223,8 +219,7 @@ public class DomainApp extends Domain
   private native
   int jORTETypeRegisterAdd(long dhandle,
                             String typeName,
-                            long maxlenght,
-                            ByteBuffer buffer);
+                            long maxlenght);
 
 
  /**
