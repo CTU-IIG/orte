@@ -6,21 +6,16 @@ import org.ocera.orte.types.*;
 
 public class SpeedMotionType extends MessageData
 {
-   private int counter = 0;
-
    public  short[]	speed = new short[2];
    
   public SpeedMotionType(DomainApp domainApp, String newTopic) {
     super();
-	if(counter == 0) {
- 	     boolean b;
- 	     counter++;
-         this.setTopic(newTopic);
-     	 b = domainApp.regNewDataType("motion_speed",getMaxDataLength()); 
-	     if (b == false) {
-	       System.out.println(":j!: cannot register data type!");    
-	     }
-	}
+    boolean b;
+    this.setTopic(newTopic);
+    b = domainApp.regNewDataType("motion_speed",getMaxDataLength()); 
+    if (b == false) {
+      System.out.println(":j!: cannot register data type!");    
+    }
   }
       
   @Override

@@ -6,21 +6,16 @@ import org.ocera.orte.types.ORTEConstant;
 
 public class HokuyoScanType extends MessageData {
 	
-	private int counter = 0;
-	
 	public  int[]	hokuyo = new int[681];
 
 	public HokuyoScanType(DomainApp domainApp, String newTopic) {
 	    super();
-		if(counter == 0) {
-	 	     boolean b;
-	 	     counter++;
-	         this.setTopic(newTopic); 
-	     	 b = domainApp.regNewDataType("hokuyo_scan",getMaxDataLength()); 
-		     if (b == false) {
-		       System.out.println(":j!: cannot register data type!");    
-		     }
-		}
+            boolean b;
+            this.setTopic(newTopic); 
+            b = domainApp.regNewDataType("hokuyo_scan",getMaxDataLength()); 
+            if (b == false) {
+	      System.out.println(":j!: cannot register data type!");    
+	    }
 	}
 
 	@Override
