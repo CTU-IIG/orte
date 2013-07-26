@@ -53,8 +53,7 @@ ORTETypeRegisterFind(ORTEDomain *d,const char *typeName) {
 /*****************************************************************************/
 int
 ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
-                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,
-                    unsigned int ms,ORTETypeProcessEndianness pe,void *pep) {
+                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,unsigned int ms) {
   TypeNode           *tn;
   
   if (!d) 
@@ -82,8 +81,6 @@ ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
   tn->typeRegister.deserialize=ds;
   tn->typeRegister.getMaxSize=gms;
   tn->typeRegister.maxSize=ms;
-  tn->typeRegister.processEndianness=pe;
-  tn->typeRegister.processParam=pep;
   pthread_rwlock_unlock(&d->typeEntry.lock);    
   debug(26,3) ("ORTETypeRegisterAdd: registered type:%s\n",typeName);
   return ORTE_OK;

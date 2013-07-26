@@ -446,8 +446,7 @@ ORTESubscriptionGetInstance(ORTESubscription *cstReader);
  */
 extern int
 ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
-                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,
-                    unsigned int ms,ORTETypeProcessEndianness pe,void *pep);
+                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,unsigned int ms);
 /**
  * ORTETypeRegisterDestroyAll - destroy all registered data types
  * @d: domain object handle

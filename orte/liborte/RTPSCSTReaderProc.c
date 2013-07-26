@@ -228,11 +228,6 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
       memcpy(objectEntryOID->instance,
              csChange->cdrCodec.buffer,
              max_size);
-      if(cstRemoteWriter->cstReader->typeRegister->processEndianness) {
-        cstRemoteWriter->cstReader->typeRegister->processEndianness(
-            &csChange->cdrCodec,
-            cstRemoteWriter->cstReader->typeRegister->processParam);
-      }
     }
     info.status=NEW_DATA;
     info.topic=(char*)sp->topic;

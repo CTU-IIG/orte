@@ -141,8 +141,6 @@ typedef void (*ORTETypeDeserialize)(CDR_Codec *cdrCodec, void *instance);
 
 typedef int (*ORTETypeGetMaxSize)(ORTEGetMaxSizeParam *gms, int num);
 
-typedef void (*ORTETypeProcessEndianness)(CDR_Codec *cdrCodec, void *param);
-
 /**
  * struct ORTETypeRegister - registered data type
  * @typeName: name of data type 
@@ -150,19 +148,15 @@ typedef void (*ORTETypeProcessEndianness)(CDR_Codec *cdrCodec, void *param);
  * @deserialize: pointer to deserialization function
  * @getMaxSize: pointer to function given maximal data length
  * @maxSize: maximal size of ser./deser. data
- * @processEndianness: allows application to adjust some preferences according to byte order
- * @processParam: pointer to user structure containing parameters for processEndianness
  *
  * Contains description of registered data type. See @ORTETypeRegisterAdd function for details.
  */
 typedef struct ORTETypeRegister {
-  const char                  *typeName;
-  ORTETypeSerialize           serialize;
-  ORTETypeDeserialize         deserialize;
-  ORTETypeGetMaxSize          getMaxSize;
-  unsigned int                maxSize;
-  ORTETypeProcessEndianness   processEndianness;
-  void                        *processParam;
+  const char             *typeName;
+  ORTETypeSerialize      serialize;
+  ORTETypeDeserialize    deserialize;
+  ORTETypeGetMaxSize     getMaxSize;
+  unsigned int		 maxSize;
 } ORTETypeRegister;
 
 /**
