@@ -16,7 +16,7 @@ public class HokuyoScanType extends MessageData {
 	 	     boolean b;
 	 	     counter++;
 	         this.setTopic(newTopic); 
-	     	 b = domainApp.regNewDataType("hokuyo_scan",getMaxDataLength(),this.buffer); 
+	     	 b = domainApp.regNewDataType("hokuyo_scan",getMaxDataLength()); 
 		     if (b == false) {
 		       System.out.println(":j!: cannot register data type!");    
 		     }
