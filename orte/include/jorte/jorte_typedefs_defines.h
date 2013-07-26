@@ -27,6 +27,8 @@ typedef struct
  jobject        obj;
  jobject        rinfo;
  jobject        msg;
+ jobject        obj_buf;  // byte buffer object
+ CDR_Endianness cur_endian;
 } JORTECallbackContext_t;
 
 

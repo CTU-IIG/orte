@@ -30,7 +30,7 @@
 #include <inttypes.h>
 
 // library header file's path
-#include "orte.h"
+#include "orte_all.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_Subscription.h"
 // enable TEST_STAGE run level
@@ -53,6 +53,8 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
   jclass           cls_msg = 0;
   jobject          rinfo = 0;
   jobject          obj_msg;
+  jobject          obj_bo = 0;
+  jfieldID         fid = 0;
   jmethodID        mid = 0;
   jmethodID        mid_callback = 0;
   //
@@ -81,6 +83,71 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
        printf(":!c: env = NULL \n");
       #endif
       break;
+    }
+    //
+    // set byte order only if it differs from that currently set
+    if(info->data_endian != callback_cont->cur_endian) {
+      //prepare ByteOrder
+      cls = (*env)->FindClass(env, "java/nio/ByteOrder");
+      if (cls == 0) {
+        #ifdef TEST_STAGE
+          printf(":!c: cls = NULL \n");
+        #endif
+      }
+      if(info->data_endian == BigEndian) {
+        fid = (*env)->GetStaticFieldID(env,
+                                       cls,
+                                       "BIG_ENDIAN",
+                                       "Ljava/nio/ByteOrder;");
+        callback_cont->cur_endian = BigEndian;
+      }
+      else {
+        fid = (*env)->GetStaticFieldID(env,
+                                       cls,
+                                       "LITTLE_ENDIAN",
+                                       "Ljava/nio/ByteOrder;");
+        callback_cont->cur_endian = LittleEndian;
+      }
+      if(fid == 0) {
+        #ifdef TEST_STAGE
+          printf(":!c: fid = NULL \n");
+        #endif
+      }
+      obj_bo = (*env)->GetStaticObjectField(env, cls, fid);
+      if(obj_bo == 0) {
+        #ifdef TEST_STAGE
+          printf(":!c: cls = NULL \n");
+        #endif
+      }
+
+      // set byte order to ByteBuffer
+      // get BB class
+      cls = (*env)->GetObjectClass(env, callback_cont->obj_buf);
+      if(cls == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: cls = NULL \n");
+        #endif
+      }
+      // get methodID - order(ByteOrder)
+      mid = (*env)->GetMethodID(env,
+                                cls,
+                                "order",
+                                "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+      if(mid == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: mid = NULL \n");
+        #endif
+      }
+
+      // set ByteOrder
+      if((*env)->CallObjectMethod(env,callback_cont->obj_buf,mid,obj_bo) == 0)
+      {
+        #ifdef TEST_STAGE
+          printf(":!c: set byte order failed.. \n");
+        #endif
+      }
     }
     //
     if(callback_cont->obj == 0)
@@ -318,10 +385,21 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
       #endif
     }
     callback_cont->jvm = jvm;
+    callback_cont->cur_endian = FLAG_ENDIANNESS;
     // create global references
     callback_cont->obj = (*env)->NewGlobalRef(env, obj_callback);
     //
     if (callback_cont->obj == 0)
+    {
+      #ifdef TEST_STAGE
+        printf(":c: global reference not created! \n");
+      #endif
+      break;
+    }
+    // create global references
+    callback_cont->obj_buf = (*env)->NewGlobalRef(env, jinstance);
+    //
+    if (callback_cont->obj_buf == 0)
     {
       #ifdef TEST_STAGE
         printf(":c: global reference not created! \n");
