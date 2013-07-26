@@ -18,7 +18,7 @@ import android.view.MenuItem;
 public class MainActivity extends Activity {
 	
 	private Manager manager = null;
-    private String[] mgrs = {"192.168.1.5","192.168.1.8","10.1.1.1","10.1.1.4"};
+    private String[] mgrs = {"192.168.1.5","192.168.1.8"};
 	private MotionSpeedPublish motion_speed = null;
 	private HokuyoScanSubscribe hokuyo_scan = null;
     private SensorManager mSensorManager = null;
