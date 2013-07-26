@@ -236,6 +236,7 @@ CSTReaderNewData(CSTRemoteWriter *cstRemoteWriter,
     info.localTimeReceived=csChange->localTimeReceived;
     info.remoteTimePublished=csChange->remoteTimePublished;
     info.sn=csChange->sn;
+    info.data_endian=csChange->cdrCodec.data_endian;
     objectEntryOID->recvCallBack(&info,
                             objectEntryOID->instance,
                             objectEntryOID->callBackParam);

@@ -349,6 +349,7 @@ typedef struct ORTESubsStatus {
  * @localTimeReceived: local timestamp when data were received
  * @remoteTimePublished: remote timestam when data were published
  * @sn: sequencial number of data 
+ * @data_endian: endianness of received data
  */
 typedef struct ORTERecvInfo {
   ORTERecvStatus        status;
@@ -358,6 +359,7 @@ typedef struct ORTERecvInfo {
   NtpTime               localTimeReceived;
   NtpTime               remoteTimePublished;
   SequenceNumber        sn;
+  CDR_Endianness        data_endian;
 } ORTERecvInfo;
 
 /**
