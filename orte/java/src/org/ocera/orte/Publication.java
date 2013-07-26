@@ -24,6 +24,7 @@
 
 package org.ocera.orte;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.ocera.orte.types.*;
 
@@ -63,6 +64,7 @@ public class Publication {
                       PublProp publProp,
 					  MessageData instance)
   {
+        instance.getBuffer().order(ByteOrder.nativeOrder());
 	this.handle = jORTEPublicationCreate(d.handle,
 	                                     publProp.getTopic(),
 	                                     publProp.getTypeName(),

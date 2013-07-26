@@ -24,6 +24,7 @@
 
 package org.ocera.orte;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import  org.ocera.orte.types.*;
 
@@ -58,6 +59,7 @@ public class Subscription {
 	                                      subsProp.getTopic(),
 	                                      subsProp.getTypeName(),
 	                                      message.getBuffer(),
+                                              message.getBuffer().order().equals(ByteOrder.BIG_ENDIAN) ? 0 : 1,
 	                                      message,
 										  subsProp.getDeadline(),
 					                      subsProp.getMinSeparation(),
@@ -193,6 +195,7 @@ public class Subscription {
                                String topic,
                                String typeName,
                                ByteBuffer buffer,
+                               int byte_order,
                                MessageData message,
 		 					  NtpTime deadline,
                                NtpTime minSeparation,
