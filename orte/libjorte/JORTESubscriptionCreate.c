@@ -328,6 +328,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
  jstring   jtopic,    // subs topic
  jstring   jtname,    // subs typeName
  jobject   jinstance, // direct ByteBuffer
+ jint      jbyteOrder,// byte order of ByteBuffer
  jobject   obj_msg,   // messageData instance
  jobject   jdeadline,
  jobject   jminSeparation,
@@ -385,7 +386,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
       #endif
     }
     callback_cont->jvm = jvm;
-    callback_cont->cur_endian = FLAG_ENDIANNESS;
+    callback_cont->cur_endian = (CDR_Endianness) jbyteOrder;
     // create global references
     callback_cont->obj = (*env)->NewGlobalRef(env, obj_callback);
     //
