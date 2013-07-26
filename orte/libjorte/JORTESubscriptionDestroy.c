@@ -116,6 +116,13 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
         #endif
         (*env)->DeleteGlobalRef(env, ctx->msg);
       }
+      if(ctx->obj_buf)
+      {
+        #ifdef TEST_STAGE
+          printf(":c: deleting ctx->obj_buf\n");
+        #endif
+        (*env)->DeleteGlobalRef(env, ctx->obj_buf);
+      }
       //
       free((void*)h);
     }
