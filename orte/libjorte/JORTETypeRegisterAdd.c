@@ -25,29 +25,29 @@
   *
   */
 
-#include <stdlib.h>
 #include <jni.h>
+#include <string.h>
 // library header file's path
-#include "orte_all.h"
+#include "orte.h"
 // pregenerated header
 #include "jorte/org_ocera_orte_DomainApp.h"
-
-#include "jorte/jorte_typedefs_defines.h"
+#include "jorte/jorte_protos_api.h"
 #include "jorte/4all.h"
 
-void set_order(CDR_Codec *cdrCodec, void *param) {
+extern JavaVM *javavm;
+static jobject byte_buf;
+
+void deserialize(CDR_Codec *cdrCodec, void *instance) {
   JNIEnv        *env = 0;
   jclass         cls = 0;
   jfieldID       fid = 0;
   jmethodID      mid = 0;
   jobject        obj_bo = 0;
-  
-  JORTESetEndiannessContext_t *ctx = (JORTESetEndiannessContext_t*) param;
 
   //set byte order only once
-  if(cdrCodec->data_endian != ctx->cur_endian) {
+  if(byte_buf) {
     // get environment
-    (*ctx->jvm)->AttachCurrentThread(ctx->jvm, (void **)&env, NULL);
+    (*javavm)->AttachCurrentThread(javavm, (void **)&env, NULL);
     if(env == 0)
     {
       #ifdef TEST_STAGE
@@ -67,14 +67,12 @@ void set_order(CDR_Codec *cdrCodec, void *param) {
     		                         cls,
     		                         "BIG_ENDIAN",
     		                         "Ljava/nio/ByteOrder;");
-      ctx->cur_endian = BigEndian;
     }
     else {
       fid = (*env)->GetStaticFieldID(env,
     		                         cls,
     		                         "LITTLE_ENDIAN",
     		                         "Ljava/nio/ByteOrder;");
-      ctx->cur_endian = LittleEndian;
     }
     if(fid == 0) {
       #ifdef TEST_STAGE
@@ -90,7 +88,7 @@ void set_order(CDR_Codec *cdrCodec, void *param) {
 
     // set byte order to ByteBuffer
     // get BB class
-    cls = (*env)->GetObjectClass(env, ctx->obj_buf);
+    cls = (*env)->GetObjectClass(env, byte_buf);
     if(cls == 0)
     {
       #ifdef TEST_STAGE
@@ -110,15 +108,24 @@ void set_order(CDR_Codec *cdrCodec, void *param) {
     }
 
     // set ByteOrder
-    if((*env)->CallObjectMethod(env,ctx->obj_buf,mid,obj_bo) == 0)
+    if((*env)->CallObjectMethod(env,byte_buf,mid,obj_bo) == 0)
     {
       #ifdef TEST_STAGE
         printf(":!c: set byte order failed.. \n");
       #endif
     }
 
-    (*ctx->jvm)->DetachCurrentThread(ctx->jvm);
+    // delete global reference
+    (*env)->DeleteGlobalRef(env, byte_buf);
+    byte_buf = 0;
+
+    (*javavm)->DetachCurrentThread(javavm);
   }
+
+  //copy over the message instance
+  memcpy(instance,
+         cdrCodec->buffer,
+         cdrCodec->buf_len);
 }
 
 JNIEXPORT jint JNICALL
@@ -128,45 +135,19 @@ Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
   const char     *name;
   int            b;
 
-  JORTESetEndiannessContext_t *ctx = 0;
-  
-  jobject        byte_buf = 0;
-  JavaVM         *jvm = 0;
-
-  // TODO free() !
-  ctx = (JORTESetEndiannessContext_t*) malloc(sizeof(JORTESetEndiannessContext_t));
-  if(ctx == 0) {
-    #ifdef TEST_STAGE
-      printf(":c!: ctx = NULL\n");
-    #endif
-  }
-  // create global reference for ByteBuffer
-  // TODO delete global reference
-  byte_buf = (*env)->NewGlobalRef(env, obj_bb);
-  ctx->obj_buf = byte_buf;
-  // get jvm
-  b = (*env)->GetJavaVM(env,&jvm);
-  if (b < 0)
-  {
-    printf(":!c: getJavaVM() failed! \n");
-    return 0;
-  }
-  ctx->jvm = jvm;
-  ctx->cur_endian = FLAG_ENDIANNESS;
-
   // get type name from JAVA env
   name = (*env)->GetStringUTFChars(env,jname,0);
   // call ORTE function
   b = ORTETypeRegisterAdd((ORTEDomain *) handle,
                           name,
                           NULL,
+                          (ORTETypeDeserialize)deserialize,
                           NULL,
-                          NULL,
-                          (unsigned int) jlength,
-                          (ORTETypeProcessEndianness) set_order,
-                          (void*) ctx);
+                          (unsigned int) jlength);
   // free memmory space
   (*env)->ReleaseStringUTFChars(env,jname,name);
+
+  byte_buf = (*env)->NewGlobalRef(env, obj_bb);
 
   #ifdef TEST_STAGE
   printf(":c: jORTETypeRegisterAdd vraci %d [%d = ORTE_OK, %d = ORTE_BAD_HANDLE] \n",

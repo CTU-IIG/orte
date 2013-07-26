@@ -37,14 +37,6 @@ typedef struct
 } JORTEDomainEventsContext_t;
 
 
-typedef struct
-{
- JavaVM        *jvm;
- jobject        obj_buf;  // byte buffer object
- CDR_Endianness cur_endian;
-} JORTESetEndiannessContext_t;
-
-
 typedef enum {
         ON_REG_FAIL       = 1,
         ON_MGR_NEW        = 2,
