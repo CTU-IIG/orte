@@ -40,7 +40,7 @@ public class RoboMsg extends org.ocera.orte.types.MessageData
  	     counter++;
          this.setTopic(newTopic); // set the topic of a publication 
          // register new data typeName	   
-     	 b = domainApp.regNewDataType("motion_speed",getMaxDataLength(),this.buffer); 
+     	 b = domainApp.regNewDataType("motion_speed",getMaxDataLength()); 
 	     if (b == false) 
 	     {
 	       System.out.println(":j!: cannot register data type!");    

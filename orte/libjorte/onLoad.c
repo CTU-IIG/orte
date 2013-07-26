@@ -5,8 +5,6 @@ static jmethodID findClassM;
 static jmethodID findLoadedClassM;
 static jobject classLoader;
 
-JavaVM *javavm;
-
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   JNIEnv *env;
   jclass testCl;
@@ -15,7 +13,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   jmethodID getClassLoader;
 
   (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_6);
-  javavm = vm;
 
   testCl = (*env)->FindClass(env, "org/ocera/orte/JOrte");
   clClass = (*env)->FindClass(env, "java/lang/Class");

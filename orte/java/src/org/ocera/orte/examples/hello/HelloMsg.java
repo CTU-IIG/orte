@@ -37,7 +37,7 @@ public class HelloMsg extends org.ocera.orte.types.MessageData
  	     counter++;
          this.setTopic(newTopic); // set the topic of a publication 
          // register new data typeName	   
-     	 b = domainApp.regNewDataType(this.getType(),getMaxDataLength(),this.buffer); 
+     	 b = domainApp.regNewDataType(this.getType(),getMaxDataLength()); 
 	     if (b == false) 
 	     {
 	       System.out.println(":j!: cannot register data type!");    
