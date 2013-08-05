@@ -25,7 +25,7 @@ public class HokuyoScanSubscribe extends SubscriptionCallback{
 		this.domainApp = domainApp;
 		
 	    NtpTime deadline      = new NtpTime(10);
-	    NtpTime minSeparation = new NtpTime(0,773094113);
+	    NtpTime minSeparation = new NtpTime(0);
 	    
 	    hokuyomsg = new HokuyoScanType(domainApp, "hokuyo_scan");
 		
