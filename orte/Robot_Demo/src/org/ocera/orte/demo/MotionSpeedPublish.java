@@ -13,11 +13,11 @@ public class MotionSpeedPublish implements Runnable {
 	
 	private short[] speed = new short[2];
 	private boolean isCancelled = false;
+	private boolean isSent = true;
 	private float maxRange;
 	private float[] accelData = new float[2];
 	private SpeedMotionType speedmsg;
 	private Publication pub;
-	private Object lock = new Object();
 	private Thread thread = null;
 	private PublProp publProp;
 	private DomainApp appDomain;
@@ -81,19 +81,17 @@ public class MotionSpeedPublish implements Runnable {
 	@Override
 	public void run() {
 	    while(!isCancelled) {
-	      synchronized(lock) {
-	    	  calculateSpeed(accelData);
-	    	  speedmsg.speed = this.speed;
-	    	  
-	    	  pub.send(speedmsg);
-	      }
-	      
+	      calculateSpeed(accelData.clone());
+	      speedmsg.speed = this.speed.clone();  
+	      pub.send(speedmsg);
+	      isSent = true;
     	  JOrte.sleepMs(100);
 		}
 	}
 	
 	public void setSpeed(float accelX, float accelY) {
-		synchronized(lock) {
+		if(isSent) {
+			isSent = false;
 			this.accelData[0] = accelX;
 			this.accelData[1] = accelY;
 		}
