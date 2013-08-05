@@ -130,6 +130,7 @@ public class MainActivity extends Activity {
 		else if (item.getTitle().equals("Stop hokuyo")) {
 			hokuyo_view.run(false);
 			hokuyo_scan.cancel();
+			hokuyo_view.invalidate();
 			item.setTitle("Start hokuyo");
 		}
 		else if (item.getTitle().equals("Lift up")) {

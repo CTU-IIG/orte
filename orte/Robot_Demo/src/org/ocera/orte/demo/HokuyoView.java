@@ -21,6 +21,7 @@ public class HokuyoView extends View {
 	private Paint paint = new Paint();
 	private Path path = new Path();
 	private boolean isRunning = false;
+	private boolean hasBeenDrawn = true;
 
 	public HokuyoView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -51,6 +52,9 @@ public class HokuyoView extends View {
 			
 			canvas.drawPath(path, paint);
 		}
+		else
+			canvas.drawARGB(0, 0, 0, 0);
+		hasBeenDrawn = true;
 	}
 	
 	public void run(boolean run) {
@@ -58,8 +62,11 @@ public class HokuyoView extends View {
 	}
 	
 	public void setData(int[] data) {
-		this.data = data;
-		postInvalidate();
+		if (hasBeenDrawn) {
+			this.data = data.clone();
+			hasBeenDrawn = false;
+			postInvalidate();
+		}
 	}
 	
 	public static double HOKUYO_INDEX_TO_DEG(int index) {
