@@ -60,8 +60,8 @@ public class MotionSpeedPublish implements Runnable {
 		}
 		omega *= 2;
 		 
-		speed[0] = (short)(-((v + r*omega))*VMAX);
-		speed[1] = (short)(-(v - r*omega)*VMAX);
+		speed[0] = (short)(-(v + (v>0 ? -r*omega : r*omega))*VMAX);
+		speed[1] = (short)(-(v - (v>0 ? -r*omega : r*omega))*VMAX);
 	}
 	
 	public void cancel() {
