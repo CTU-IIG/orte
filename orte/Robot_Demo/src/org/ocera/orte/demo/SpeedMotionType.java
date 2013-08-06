@@ -10,11 +10,9 @@ public class SpeedMotionType extends MessageData
    
   public SpeedMotionType(DomainApp domainApp, String newTopic) {
     super();
-    boolean b;
     this.setTopic(newTopic);
-    b = domainApp.regNewDataType("motion_speed",getMaxDataLength()); 
-    if (b == false) {
-      System.out.println(":j!: cannot register data type!");    
+    if (!domainApp.regNewDataType("motion_speed",getMaxDataLength())) {
+      System.out.println(":j!: cannot register data type \"motion_speed\"!");    
     }
   }
       
@@ -32,15 +30,12 @@ public class SpeedMotionType extends MessageData
   @Override
   public int getMaxDataLength()
   {
-  	int len=0;
-  	len += ORTEConstant.SHORT_FIELD_SIZE;
-  	len += ORTEConstant.SHORT_FIELD_SIZE;
-    return len;
+    return 2 * ORTEConstant.SHORT_FIELD_SIZE;
   }
 
   public String toString()
   {
-    String data = new String();
+    String data = "";
     
     data += (" left = " + speed[0]); 
     data += (" right = " + speed[1]);	
