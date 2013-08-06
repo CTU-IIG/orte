@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 		
 		if(item.getTitle().equals("Start speed")) {
 			accel = new HandleAccelerometer();
-			mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_UI);
+			mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
 			if (motion_speed == null)
 				motion_speed = new MotionSpeedPublish(mGravity.getMaximumRange(),appDomain);
 			motion_speed.start();
