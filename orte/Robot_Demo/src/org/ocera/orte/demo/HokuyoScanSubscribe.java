@@ -1,5 +1,9 @@
 package org.ocera.orte.demo;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Subscription;
 import org.ocera.orte.SubscriptionCallback;
@@ -18,7 +22,11 @@ public class HokuyoScanSubscribe extends SubscriptionCallback{
 	private	HokuyoScanType hokuyomsg;
 	private DomainApp domainApp;
 	private SubsProp subProps;
+	
 	private boolean isCancelled = true;
+	private final ReentrantReadWriteLock controlRrwl = new ReentrantReadWriteLock(true);
+	private final ReadLock rcLock = controlRrwl.readLock();
+	private final WriteLock wcLock = controlRrwl.writeLock();
 	
 	public HokuyoScanSubscribe(DomainApp domainApp, HokuyoView view) {
 		this.view = view;
@@ -39,17 +47,32 @@ public class HokuyoScanSubscribe extends SubscriptionCallback{
 	}
 	
 	public void start() {
-	    isCancelled = false;
-		sub = domainApp.createSubscription(subProps, hokuyomsg, this);
+		wcLock.lock();
+		try {
+			isCancelled = false;
+			sub = domainApp.createSubscription(subProps, hokuyomsg, this);
+		} finally {
+			wcLock.unlock();
+		}
 	}
 	
 	public void cancel() {
-		sub.destroy();
-		isCancelled = true;
+		wcLock.lock();
+		try {
+			isCancelled = true;
+			sub.destroy();
+		} finally {
+			wcLock.unlock();
+		}
 	}
 	
 	public boolean isCancelled() {
-		return isCancelled;
+		rcLock.lock();
+		try {
+			return isCancelled;
+		} finally {
+			rcLock.unlock();
+		}
 	}
 	
     public void callback(RecvInfo info, MessageData msg) {
