@@ -1,5 +1,10 @@
 package org.ocera.orte.demo;
 
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,48 +25,79 @@ public class HokuyoView extends View {
 	private int[] data = new int[681];
 	private Paint paint = new Paint();
 	private Path path = new Path();
+	
 	private boolean isRunning = false;
 	private boolean hasBeenDrawn = true;
+	private final ReentrantLock lock = new ReentrantLock();
+	private final ReentrantReadWriteLock controlRrwl = new ReentrantReadWriteLock(true);
+	private final ReadLock rcLock = controlRrwl.readLock();
+	private final WriteLock wcLock = controlRrwl.writeLock();
 
 	public HokuyoView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(4);
+		paint.setColor(Color.BLACK);
+		paint.setAntiAlias(false);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		paint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(3);
-		paint.setColor(Color.BLACK);
-		paint.setAntiAlias(true);
-		
-		path.reset();
-		if (isRunning) {
-			path.moveTo(getWidth()/2, getHeight());
-			for(int i = 0; i < data.length; i++) {
-				double ang = HOKUYO_INDEX_TO_RAD(i);
-		        if((ang<(-HOKUYO_RANGE_ANGLE_LEFT/180.0*Math.PI))||((ang>(HOKUYO_RANGE_ANGLE_RIGHT/180.0*Math.PI)))) {
-	                continue;
-		        }
-	
-		        data[i] /= 10;
-	            int x = (int)(getWidth()/2) - (int)(data[i] * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
-	            int y = getHeight() -(int)(data[i] * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
-				path.lineTo(x, y);
+		rcLock.lock();
+		try {
+			if (isRunning) {
+				lock.lock();
+				try {
+					if (!hasBeenDrawn) {
+						path.reset();
+						path.moveTo(getWidth()/2, getHeight());
+						for(int i = 0; i < data.length; i++) {
+							double ang = HOKUYO_INDEX_TO_RAD(i);
+					        if((ang<(-HOKUYO_RANGE_ANGLE_LEFT/180.0*Math.PI))||((ang>(HOKUYO_RANGE_ANGLE_RIGHT/180.0*Math.PI)))) {
+				                continue;
+					        }
+				
+					        data[i] /= 10;
+				            int x = (int)(getWidth()/2) - (int)(data[i] * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
+				            int y = getHeight() -(int)(data[i] * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
+							path.lineTo(x, y);
+						}
+						path.close();
+						hasBeenDrawn = true;
+					}
+				}
+				finally {
+					lock.unlock();
+				}
 			}
-			path.close();
+			else {
+				path.reset();
+			}
+			canvas.drawPath(path, paint);
+		} finally {
+			rcLock.unlock();
 		}
-		canvas.drawPath(path, paint);
-		hasBeenDrawn = true;
 	}
 	
 	public void run(boolean run) {
-		isRunning = run;
+		wcLock.lock();
+		try {
+			isRunning = run;
+		} finally {
+			wcLock.unlock();
+		}
 	}
 	
 	public void setData(int[] data) {
-		if (hasBeenDrawn) {
-			this.data = data.clone();
-			hasBeenDrawn = false;
+		if (lock.tryLock()) {
+			try {
+				this.data = data.clone();
+				hasBeenDrawn = false;
+			}
+			finally {
+				lock.unlock();
+			}
 			postInvalidate();
 		}
 	}
