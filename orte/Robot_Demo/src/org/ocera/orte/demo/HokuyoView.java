@@ -29,13 +29,13 @@ public class HokuyoView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(3);
+		paint.setColor(Color.BLACK);
+		paint.setAntiAlias(true);
+		
+		path.reset();
 		if (isRunning) {
-			paint.setStyle(Style.STROKE);
-			paint.setStrokeWidth(3);
-			paint.setColor(Color.BLACK);
-			paint.setAntiAlias(true);
-	
-			path.reset();
 			path.moveTo(getWidth()/2, getHeight());
 			for(int i = 0; i < data.length; i++) {
 				double ang = HOKUYO_INDEX_TO_RAD(i);
@@ -49,11 +49,8 @@ public class HokuyoView extends View {
 				path.lineTo(x, y);
 			}
 			path.close();
-			
-			canvas.drawPath(path, paint);
 		}
-		else
-			canvas.drawARGB(0, 0, 0, 0);
+		canvas.drawPath(path, paint);
 		hasBeenDrawn = true;
 	}
 	
