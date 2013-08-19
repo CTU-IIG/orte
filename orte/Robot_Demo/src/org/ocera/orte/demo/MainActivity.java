@@ -5,6 +5,7 @@ import org.ocera.orte.Manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -49,6 +50,7 @@ public class MainActivity extends Activity {
         if (motion_speed != null && !motion_speed.isCancelled()) {
         	motion_speed.cancel();
             mSensorManager.unregisterListener(accel);
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         	speed_item.setTitle("Start speed");
         }
 
@@ -77,7 +79,7 @@ public class MainActivity extends Activity {
         }
     }
 	
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.hokuyo_view);
@@ -113,11 +115,13 @@ public class MainActivity extends Activity {
 				motion_speed = new MotionSpeedPublish(mGravity.getMaximumRange(),appDomain);
 			motion_speed.start();
 			speed_item = item;
+			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			item.setTitle("Stop speed");
 		}
 		else if (item.getTitle().equals("Stop speed")) {
 			mSensorManager.unregisterListener(accel);
 			motion_speed.cancel();
+			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 			item.setTitle("Start speed");
 		}
 		else if (item.getTitle().equals("Start hokuyo")) {
