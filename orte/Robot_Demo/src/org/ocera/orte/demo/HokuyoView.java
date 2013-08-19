@@ -21,6 +21,9 @@ public class HokuyoView extends View {
 	public static final int HOKUYO_ORIENTATION = 1;
 	public static final double HOKUYO_RANGE_ANGLE_LEFT = 70.0;
 	public static final double HOKUYO_RANGE_ANGLE_RIGHT = 70.0;
+	public static final int HOKUYO_INDEX_LOWER = HOKUYO_DEG_TO_INDEX(HOKUYO_RANGE_ANGLE_LEFT);
+	public static final int HOKUYO_INDEX_UPPER = HOKUYO_DEG_TO_INDEX(-HOKUYO_RANGE_ANGLE_RIGHT);
+	public static final double COSINUS = Math.cos((90-HOKUYO_RANGE_ANGLE_LEFT)/180.0*Math.PI);
 
 	private int[] data = new int[681];
 	private Paint paint = new Paint();
@@ -52,15 +55,13 @@ public class HokuyoView extends View {
 					if (!hasBeenDrawn) {
 						path.reset();
 						path.moveTo(getWidth()/2, getHeight());
-						for(int i = 0; i < data.length; i++) {
-							double ang = HOKUYO_INDEX_TO_RAD(i);
-					        if((ang<(-HOKUYO_RANGE_ANGLE_LEFT/180.0*Math.PI))||((ang>(HOKUYO_RANGE_ANGLE_RIGHT/180.0*Math.PI)))) {
-				                continue;
-					        }
-				
-					        data[i] /= 10;
+						double norm = (double)getWidth()/(2*COSINUS);
+						if (norm > getHeight())
+							norm = getHeight();
+						for(int i = HOKUYO_INDEX_LOWER; i <= HOKUYO_INDEX_UPPER; i++) {
+							data[i] = (int)(((double)data[i]/4000)*norm);
 				            int x = (int)(getWidth()/2) - (int)(data[i] * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
-				            int y = getHeight() -(int)(data[i] * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
+				            int y = getHeight() - (int)(data[i] * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
 							path.lineTo(x, y);
 						}
 						path.close();
@@ -108,5 +109,9 @@ public class HokuyoView extends View {
 	
 	public static double HOKUYO_INDEX_TO_RAD(int index) {
 		return (HOKUYO_INDEX_TO_DEG(index)/180.0*Math.PI);
+	}
+	
+	public static int HOKUYO_DEG_TO_INDEX(double d) {
+		return (int)((HOKUYO_START_ANGLE-(d)/HOKUYO_ORIENTATION)/(360.0/HOKUYO_SPLIT_DIVISION));
 	}
 }
