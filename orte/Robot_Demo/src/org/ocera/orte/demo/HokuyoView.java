@@ -58,7 +58,7 @@ public class HokuyoView extends View {
 						double norm = (double)getWidth()/(2*COSINUS);
 						if (norm > getHeight())
 							norm = getHeight();
-						for(int i = HOKUYO_INDEX_LOWER; i <= HOKUYO_INDEX_UPPER; i++) {
+						for(int i = HOKUYO_INDEX_LOWER+1; i <= HOKUYO_INDEX_UPPER; i++) {
 							data[i] = (int)(((double)data[i]/4000)*norm);
 				            int x = (int)(getWidth()/2) - (int)(data[i] * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
 				            int y = getHeight() - (int)(data[i] * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
