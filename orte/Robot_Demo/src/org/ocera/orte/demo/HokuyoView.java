@@ -52,12 +52,20 @@ public class HokuyoView extends View {
 			if (isRunning) {
 				lock.lock();
 				try {
+					double norm = (double)getWidth()/(2*COSINUS);
+					if (norm > getHeight())
+						norm = getHeight();
+					canvas.drawLine((int)(getWidth()*0.95),
+									(int)(getHeight()*0.97),
+									(int)(getWidth()*0.95-norm/4),
+									(int)(getHeight()*0.97),
+									paint);
+					paint.setStrokeWidth(2);
+					canvas.drawText("1 m", (int)(getWidth()*0.95-norm/8), (int)(getHeight()*0.97-10), paint);
+					paint.setStrokeWidth(3);
 					if (!hasBeenDrawn) {
 						path.reset();
 						path.moveTo(getWidth()/2, getHeight());
-						double norm = (double)getWidth()/(2*COSINUS);
-						if (norm > getHeight())
-							norm = getHeight();
 						for(int i = HOKUYO_INDEX_LOWER+1; i <= HOKUYO_INDEX_UPPER; i++) {
 							data[i] = (int)(((double)data[i]/4000)*norm);
 				            int x = (int)(getWidth()/2) - (int)(data[i] * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
