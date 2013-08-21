@@ -19,8 +19,9 @@ import android.view.MenuItem;
 public class MainActivity extends Activity {
 	
 	private Manager manager = null;
-    private String[] mgrs = {"192.168.1.5","192.168.1.8","10.1.1.1"};
-	private MotionSpeedPublish motion_speed = null;
+    private String[] mgrs = {"192.168.1.5","192.168.1.8","192.168.1.29","10.1.1.1"};
+	private MotionSpeedPublish motion_speed_publ = null;
+	private MotionSpeedSubscribe motion_speed_subs = null;
 	private HokuyoScanSubscribe hokuyo_scan = null;
     private SensorManager mSensorManager = null;
     private Sensor mGravity = null;
@@ -29,7 +30,8 @@ public class MainActivity extends Activity {
     private WakeLock mWakeLock = null;
     private DomainApp appDomain = null;
     private HokuyoView hokuyo_view = null;
-    private MenuItem speed_item = null;
+    private MenuItem speed_publ_item = null;
+    private MenuItem speed_subs_item = null;
     private MenuItem hokuyo_item = null;
 
     static {
@@ -47,18 +49,25 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         
-        if (motion_speed != null && !motion_speed.isCancelled()) {
-        	motion_speed.cancel();
+        if (motion_speed_publ != null && !motion_speed_publ.isCancelled()) {
+        	motion_speed_publ.cancel();
             mSensorManager.unregisterListener(accel);
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        	speed_item.setTitle("Start speed");
+        	speed_publ_item.setTitle("Start motion control");
+        }
+        
+        if (motion_speed_subs != null && !motion_speed_subs.isCancelled()) {
+        	hokuyo_view.runMotion(false);
+        	motion_speed_subs.cancel();
+        	hokuyo_view.invalidate();
+        	speed_subs_item.setTitle("Start motion monitor");
         }
 
         if (hokuyo_scan != null && !hokuyo_scan.isCancelled()) {
 			hokuyo_view.run(false);
 			hokuyo_scan.cancel();
 			hokuyo_view.invalidate();
-			hokuyo_item.setTitle("Start hokuyo");
+			hokuyo_item.setTitle("Start LRF");
         }
         
         mWakeLock.release();
@@ -108,35 +117,51 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected (MenuItem item) {
 		System.out.println(item.getTitle());
 		
-		if(item.getTitle().equals("Start speed")) {
+		if(item.getTitle().equals("Start motion control")) {
 			accel = new HandleAccelerometer();
 			mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
-			if (motion_speed == null)
-				motion_speed = new MotionSpeedPublish(mGravity.getMaximumRange(),appDomain);
-			motion_speed.start();
-			speed_item = item;
+			if (motion_speed_publ == null)
+				motion_speed_publ = new MotionSpeedPublish(mGravity.getMaximumRange(),appDomain);
+			motion_speed_publ.start();
+			speed_publ_item = item;
 			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			item.setTitle("Stop speed");
+			item.setTitle("Stop motion control");
 		}
-		else if (item.getTitle().equals("Stop speed")) {
+		else if (item.getTitle().equals("Stop motion control")) {
 			mSensorManager.unregisterListener(accel);
-			motion_speed.cancel();
+			motion_speed_publ.cancel();
 			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-			item.setTitle("Start speed");
+			item.setTitle("Start motion control");
 		}
-		else if (item.getTitle().equals("Start hokuyo")) {
+		else if (item.getTitle().equals("Start motion monitor")) {
+			if (motion_speed_subs == null)
+				motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
+			motion_speed_subs.start();
+			hokuyo_view.runMotion(true);
+			hokuyo_view.invalidate();
+			speed_subs_item = item;
+			item.setTitle("Stop motion monitor");
+		}
+		else if (item.getTitle().equals("Stop motion monitor")) {
+			hokuyo_view.runMotion(false);
+			motion_speed_subs.cancel();
+			hokuyo_view.invalidate();
+			item.setTitle("Start motion monitor");
+		}
+		else if (item.getTitle().equals("Start LRF")) {
 			if (hokuyo_scan == null)
 				hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
 			hokuyo_scan.start();
 			hokuyo_view.run(true);
+			hokuyo_view.invalidate();
 			hokuyo_item = item;
-			item.setTitle("Stop hokuyo");
+			item.setTitle("Stop LRF");
 		}
-		else if (item.getTitle().equals("Stop hokuyo")) {
+		else if (item.getTitle().equals("Stop LRF")) {
 			hokuyo_view.run(false);
 			hokuyo_scan.cancel();
 			hokuyo_view.invalidate();
-			item.setTitle("Start hokuyo");
+			item.setTitle("Start LRF");
 		}
 		else if (item.getTitle().equals("Lift up")) {
 			
@@ -165,8 +190,8 @@ public class MainActivity extends Activity {
     	@Override
     	public void onSensorChanged(SensorEvent event) {
     		 if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-    			 if (motion_speed != null)
-    				 motion_speed.setSpeed(event.values[0], event.values[1]);
+    			 if (motion_speed_publ != null)
+    				 motion_speed_publ.setSpeed(event.values[0], event.values[1]);
     		 }
     	}
     }

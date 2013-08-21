@@ -25,7 +25,11 @@ public class SpeedMotionType extends MessageData
   }
  
   @Override
-  public void read() {}
+  public void read() {
+	  buffer.rewind();
+	  this.speed[0] = buffer.getShort();
+	  this.speed[1] = buffer.getShort();
+  }
 
   @Override
   public int getMaxDataLength()

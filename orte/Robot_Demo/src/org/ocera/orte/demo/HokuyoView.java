@@ -26,12 +26,16 @@ public class HokuyoView extends View {
 	public static final double COSINUS = Math.cos((90-HOKUYO_RANGE_ANGLE_LEFT)/180.0*Math.PI);
 
 	private int[] data = new int[681];
+	private double[] speedCo = new double[2];
 	private Paint paint = new Paint();
 	private Path path = new Path();
 	
 	private boolean isRunning = false;
+	private boolean isMonitoring = false;
 	private boolean hasBeenDrawn = true;
+	
 	private final ReentrantLock lock = new ReentrantLock();
+	private final ReentrantLock lockMotion = new ReentrantLock();
 	private final ReentrantReadWriteLock controlRrwl = new ReentrantReadWriteLock(true);
 	private final ReadLock rcLock = controlRrwl.readLock();
 	private final WriteLock wcLock = controlRrwl.writeLock();
@@ -84,15 +88,68 @@ public class HokuyoView extends View {
 				path.reset();
 			}
 			canvas.drawPath(path, paint);
+			
+			if (isMonitoring) {
+				lockMotion.lock();
+				try {
+					double norm;
+					if (getHeight() < getWidth())
+						norm = getHeight()*0.125;
+					else
+						 norm = getWidth()*0.125;
+					paint.setStrokeWidth(1);
+					canvas.drawLine((int)(10),
+									(int)(10+norm*1.5),
+									(int)(10+norm*3),
+									(int)(10+norm*1.5),
+									paint);
+					canvas.drawLine((int)(10+norm*1.5),
+									(int)(10),
+									(int)(10+norm*1.5),
+									(int)(10+norm*3),
+									paint);
+					paint.setStrokeWidth(4);
+					canvas.drawLine((int)(10+norm*1.5),
+									(int)(10+norm*1.5),
+									(int)(speedCo[0]*norm+10+norm*1.5),
+									(int)(speedCo[1]*norm+10+norm*1.5),
+									paint);
+				} finally {
+					lockMotion.unlock();
+				}
+			}
 		} finally {
 			rcLock.unlock();
 		}
+	}
+	
+	private void calculateCoordinates(short[] speed) {
+		double x, y;
+		double temp[] = new double[2];
+		
+		temp[0] = (double)speed[0]/16000;
+		temp[1] = (double)speed[1]/16000;
+		
+		y = (temp[0]+temp[1])/2;
+		x = (temp[0]-y)/0.30;
+
+		speedCo[1] = -y;
+		speedCo[0] = speedCo[1]>0 ? -x : x;
 	}
 	
 	public void run(boolean run) {
 		wcLock.lock();
 		try {
 			isRunning = run;
+		} finally {
+			wcLock.unlock();
+		}
+	}
+	
+	public void runMotion(boolean run) {
+		wcLock.lock();
+		try {
+			isMonitoring = run;
 		} finally {
 			wcLock.unlock();
 		}
@@ -106,6 +163,19 @@ public class HokuyoView extends View {
 			}
 			finally {
 				lock.unlock();
+			}
+			postInvalidate();
+		}
+	}
+	
+	public void setDataMotion(short[] speed) {
+		if (lockMotion.tryLock()) {
+			try {
+				short[] speedCl = speed.clone();
+				calculateCoordinates(speedCl);
+			}
+			finally {
+				lockMotion.unlock();
 			}
 			postInvalidate();
 		}
