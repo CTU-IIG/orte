@@ -29,9 +29,15 @@
         android:showAsAction="never">
     </item>
 
+    <item android:id="@+id/voltage"
+        android:title="Voltage monitor"
+        android:orderInCategory="6"
+        android:showAsAction="never">
+    </item>
+    
     <item android:id="@+id/exit"
         android:title="Exit"
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         android:showAsAction="never">
     </item>
 </menu>
