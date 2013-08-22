@@ -4,6 +4,7 @@ import org.ocera.orte.DomainApp;
 import org.ocera.orte.Manager;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
@@ -15,8 +16,12 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
  
 public class MainActivity extends Activity {
+	private Dialog voltageDialog = null;
 	
 	private Manager manager = null;
     private String[] mgrs = {"192.168.1.5","192.168.1.8","192.168.1.29","10.1.1.1"};
@@ -93,6 +98,8 @@ public class MainActivity extends Activity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.hokuyo_view);
         
+        voltageDialog = new Dialog(this,R.style.voltage_dialog);
+        voltageDialog.setCancelable(false);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
@@ -174,6 +181,17 @@ public class MainActivity extends Activity {
 		}
 		else if (item.getTitle().equals("Magnet off")) {
 			
+		}
+		else if (item.getTitle().equals("Voltage monitor")) {
+			voltageDialog.setContentView(R.layout.status_dialog);
+			Button okButton = (Button)voltageDialog.findViewById(R.id.button1);
+			okButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					voltageDialog.dismiss();
+				}
+			});
+			voltageDialog.show();
 		}
 		else if (item.getTitle().equals("Exit")) {
 			finish();
