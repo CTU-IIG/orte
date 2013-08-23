@@ -36,14 +36,4 @@ public class SpeedMotionType extends MessageData
   {
     return 2 * ORTEConstant.SHORT_FIELD_SIZE;
   }
-
-  public String toString()
-  {
-    String data = "";
-    
-    data += (" left = " + speed[0]); 
-    data += (" right = " + speed[1]);	
-   	return data;	  
-  }
-  
 }  
