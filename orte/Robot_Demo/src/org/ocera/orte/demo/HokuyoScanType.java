@@ -31,13 +31,4 @@ public class HokuyoScanType extends MessageData {
 	public int getMaxDataLength() {
 		return 681 * ORTEConstant.SHORT_FIELD_SIZE;
 	}
-
-	public String toString() {
-	  String data = new String();
-	  for(int i = 0; i < hokuyo.length; i++) {
-	    data += i + ": " + hokuyo[i] + ", ";
-	  }
-	  data = data.substring(0, data.length()-2);
-	  return data;	  
-	}
 }

@@ -12,6 +12,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.Menu;
@@ -19,15 +21,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
  
 public class MainActivity extends Activity {
 	private Dialog voltageDialog = null;
+	static EditText voltage33 = null;
+	static EditText voltage50 = null;
+	static EditText voltage80 = null;
+	static EditText voltageBAT = null;
+	static Handler dialogHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			double[] values = msg.getData().getDoubleArray("voltages");
+			if (values != null) {
+				if (voltage33 != null) {
+					voltage33.setText(Double.toString(values[0]));
+				}
+				if (voltage50 != null) {
+					voltage50.setText(Double.toString(values[1]));
+				}
+				if (voltage80 != null) {
+					voltage80.setText(Double.toString(values[2]));
+				}
+				if (voltageBAT != null) {
+					voltageBAT.setText(Double.toString(values[3]));
+				}
+			}
+		}
+    };
 	
 	private Manager manager = null;
     private String[] mgrs = {"192.168.1.5","192.168.1.8","192.168.1.29","10.1.1.1"};
 	private MotionSpeedPublish motion_speed_publ = null;
 	private MotionSpeedSubscribe motion_speed_subs = null;
 	private HokuyoScanSubscribe hokuyo_scan = null;
+	private PwrVoltageSubscribe pwr_voltage = null;
     private SensorManager mSensorManager = null;
     private Sensor mGravity = null;
     private SensorEventListener accel = null;
@@ -74,6 +102,12 @@ public class MainActivity extends Activity {
 			hokuyo_view.invalidate();
 			hokuyo_item.setTitle("Start LRF");
         }
+
+        if (pwr_voltage != null && !pwr_voltage.isCancelled()) {
+        	if (voltageDialog.isShowing())
+        		voltageDialog.dismiss();
+			pwr_voltage.cancel();
+        }
         
         mWakeLock.release();
     }
@@ -100,6 +134,20 @@ public class MainActivity extends Activity {
         
         voltageDialog = new Dialog(this,R.style.voltage_dialog);
         voltageDialog.setCancelable(false);
+		voltageDialog.setContentView(R.layout.status_dialog);
+		Button okButton = (Button)voltageDialog.findViewById(R.id.button1);
+		okButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				voltageDialog.dismiss();
+				pwr_voltage.cancel();
+			}
+		});
+		voltage33 = (EditText)voltageDialog.findViewById(R.id.editText1);
+		voltage50 = (EditText)voltageDialog.findViewById(R.id.editText2);
+		voltage80 = (EditText)voltageDialog.findViewById(R.id.editText3);
+		voltageBAT = (EditText)voltageDialog.findViewById(R.id.editText4);
+
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
@@ -183,14 +231,9 @@ public class MainActivity extends Activity {
 			
 		}
 		else if (item.getTitle().equals("Voltage monitor")) {
-			voltageDialog.setContentView(R.layout.status_dialog);
-			Button okButton = (Button)voltageDialog.findViewById(R.id.button1);
-			okButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					voltageDialog.dismiss();
-				}
-			});
+			if (pwr_voltage == null)
+				pwr_voltage = new PwrVoltageSubscribe(appDomain, dialogHandler);
+			pwr_voltage.start();
 			voltageDialog.show();
 		}
 		else if (item.getTitle().equals("Exit")) {
