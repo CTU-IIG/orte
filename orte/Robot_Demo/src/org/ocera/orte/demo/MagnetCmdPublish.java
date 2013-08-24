@@ -65,7 +65,7 @@ public class MagnetCmdPublish {
 		}
 	}
 	
-	public void send(short magnet) {
+	public void send(int magnet) {
 		magnetmsg.magnet = magnet;
 		pub.send(magnetmsg);
 	}

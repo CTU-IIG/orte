@@ -17,8 +17,8 @@
         android:orderInCategory="3">
     </item>
     
-    <item android:id="@+id/lift"
-        android:title="Lift up"
+    <item android:id="@+id/crane"
+        android:title="Crane up"
         android:orderInCategory="4"
         android:showAsAction="never">
     </item>
