@@ -82,6 +82,7 @@ libjorte/JORTEDomainMgrDestroy.c \
 libjorte/JORTEDomainPropDefaultGet.c \
 libjorte/JORTEDomainPropSet.c \
 libjorte/JORTEDomainPropDestroy.c \
+libjorte/JORTEDomainStart.c \
 libjorte/JORTEInit.c \
 libjorte/JORTEPublicationCreate.c \
 libjorte/JORTEPublicationDestroy.c \
@@ -95,6 +96,7 @@ libjorte/JORTESubscriptionCreate.c \
 libjorte/JORTESubscriptionDestroy.c \
 libjorte/JORTESubscriptionPropertiesGet.c \
 libjorte/JORTESubscriptionPropertiesSet.c \
+libjorte/JORTESubscriptionPull.c \
 libjorte/JORTESubscriptionGetStatus.c \
 libjorte/JORTESubscriptionWaitForPublications.c \
 libjorte/JORTETypeRegisterAdd.c \

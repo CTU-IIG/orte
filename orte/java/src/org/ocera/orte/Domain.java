@@ -62,4 +62,26 @@ public abstract class Domain {
     * @return Handle of the Domain.
     */
     public abstract boolean destroy();
+   
+   
+  /* ****************************************************************** *
+   *                                                                    *
+   *                         native methods                             *
+   *                                                                    *
+   * ****************************************************************** */
+
+  /**
+   * jORTEDomainStart -
+   *
+   * @param dhandle handler to domain
+   * @param
+   * @param
+   * @return
+   */
+   private static native
+   void jORTEDomainStart(long dhandle,
+                         boolean recvMetatrafficThread,
+                         boolean recvUserDataThread,
+  	                     boolean sendThread);
+
 }

@@ -21,6 +21,7 @@ JORTEDomainMgrDestroy.c \
 JORTEDomainPropDefaultGet.c \
 JORTEDomainPropSet.c \
 JORTEDomainPropDestroy.c \
+JORTEDomainStart.c \
 JORTEInit.c \
 JORTEPublicationCreate.c \
 JORTEPublicationDestroy.c \
@@ -28,6 +29,7 @@ JORTEPublicationSend.c \
 JORTESleepMs.c \
 JORTESubscriptionCreate.c \
 JORTESubscriptionDestroy.c \
+JORTESubscriptionPull.c \
 JORTETypeRegisterAdd.c \
 JStringToIPAddress.c
 
