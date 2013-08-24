@@ -56,6 +56,8 @@ public class MainActivity extends Activity {
 	private MotionSpeedSubscribe motion_speed_subs = null;
 	private HokuyoScanSubscribe hokuyo_scan = null;
 	private PwrVoltageSubscribe pwr_voltage = null;
+	private MagnetCmdPublish magnet_cmd = null;
+	private CraneCmdPublish crane_cmd = null;
     private SensorManager mSensorManager = null;
     private Sensor mGravity = null;
     private SensorEventListener accel = null;
@@ -116,6 +118,14 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
     	super.onDestroy();
     	
+    	if (crane_cmd != null && !crane_cmd.isCancelled()) {
+    		crane_cmd.cancel();
+    	}
+    	
+    	if (magnet_cmd != null && !crane_cmd.isCancelled()) {
+    		magnet_cmd.cancel();
+    	}
+    	
         if (appDomain != null) {
         	appDomain.destroy();
         	appDomain = null;
@@ -147,7 +157,7 @@ public class MainActivity extends Activity {
 		voltage50 = (EditText)voltageDialog.findViewById(R.id.editText2);
 		voltage80 = (EditText)voltageDialog.findViewById(R.id.editText3);
 		voltageBAT = (EditText)voltageDialog.findViewById(R.id.editText4);
-
+		
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
@@ -159,6 +169,10 @@ public class MainActivity extends Activity {
         manager = new Manager(mgrs);
 
         appDomain = new DomainApp();
+        magnet_cmd = new MagnetCmdPublish(appDomain);
+        magnet_cmd.start();
+        crane_cmd = new CraneCmdPublish(appDomain);
+        crane_cmd.start();
     }
     
 	@Override
@@ -219,16 +233,20 @@ public class MainActivity extends Activity {
 			item.setTitle("Start LRF");
 		}
 		else if (item.getTitle().equals("Lift up")) {
-			
+			crane_cmd.send((short)0x100);
+			item.setTitle("Lift down");
 		}
 		else if (item.getTitle().equals("Lift down")) {
-			
+			crane_cmd.send((short)0x190);
+			item.setTitle("Lift up");
 		}
 		else if (item.getTitle().equals("Magnet on")) {
-			
+			magnet_cmd.send((short)1);
+			item.setTitle("Magnet off");			
 		}
 		else if (item.getTitle().equals("Magnet off")) {
-			
+			magnet_cmd.send((short)0);
+			item.setTitle("Magnet on");			
 		}
 		else if (item.getTitle().equals("Voltage monitor")) {
 			if (pwr_voltage == null)
