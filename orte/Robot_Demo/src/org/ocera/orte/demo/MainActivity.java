@@ -232,20 +232,20 @@ public class MainActivity extends Activity {
 			hokuyo_view.invalidate();
 			item.setTitle("Start LRF");
 		}
-		else if (item.getTitle().equals("Lift up")) {
-			crane_cmd.send((short)0x100);
-			item.setTitle("Lift down");
+		else if (item.getTitle().equals("Crane up")) {
+			crane_cmd.send(0x100);
+			item.setTitle("Crane down");
 		}
-		else if (item.getTitle().equals("Lift down")) {
-			crane_cmd.send((short)0x190);
-			item.setTitle("Lift up");
+		else if (item.getTitle().equals("Crane down")) {
+			crane_cmd.send(0x190);
+			item.setTitle("Crane up");
 		}
 		else if (item.getTitle().equals("Magnet on")) {
-			magnet_cmd.send((short)1);
+			magnet_cmd.send(1);
 			item.setTitle("Magnet off");			
 		}
 		else if (item.getTitle().equals("Magnet off")) {
-			magnet_cmd.send((short)0);
+			magnet_cmd.send(0);
 			item.setTitle("Magnet on");			
 		}
 		else if (item.getTitle().equals("Voltage monitor")) {

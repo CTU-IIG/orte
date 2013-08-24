@@ -65,7 +65,7 @@ public class CraneCmdPublish {
 		}
 	}
 	
-	public void send(short magnet) {
+	public void send(int magnet) {
 		liftmsg.position = magnet;
 		pub.send(liftmsg);
 	}
