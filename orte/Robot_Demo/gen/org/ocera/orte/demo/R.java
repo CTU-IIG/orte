@@ -15,6 +15,7 @@ public final class R {
     }
     public static final class id {
         public static final int button1=0x7f07000d;
+        public static final int crane=0x7f070011;
         public static final int editText1=0x7f070003;
         public static final int editText2=0x7f070006;
         public static final int editText3=0x7f070009;
@@ -22,7 +23,6 @@ public final class R {
         public static final int exit=0x7f070014;
         public static final int hokuyo=0x7f070010;
         public static final int hokuyo_view=0x7f070000;
-        public static final int lift=0x7f070011;
         public static final int magnet=0x7f070012;
         public static final int speed=0x7f07000e;
         public static final int speed_mon=0x7f07000f;
