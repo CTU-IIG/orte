@@ -150,7 +150,6 @@ public class Subscription {
     return i; 
   }
   
-  /* TODO - dodelat middle C zdrojak !! */
   /**
    * Read data
    * @param Time how long to wait.

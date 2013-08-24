@@ -37,6 +37,7 @@ JORTEDomainMgrDestroy.c \
 JORTEDomainPropDefaultGet.c \
 JORTEDomainPropSet.c \
 JORTEDomainPropDestroy.c \
+JORTEDomainStart.c \
 JORTEInit.c \
 JORTEPublicationCreate.c \
 JORTEPublicationDestroy.c \
@@ -50,6 +51,7 @@ JORTESubscriptionCreate.c \
 JORTESubscriptionDestroy.c \
 JORTESubscriptionPropertiesGet.c \
 JORTESubscriptionPropertiesSet.c \
+JORTESubscriptionPull.c \
 JORTESubscriptionGetStatus.c \
 JORTESubscriptionWaitForPublications.c \
 JORTETypeRegisterAdd.c \
