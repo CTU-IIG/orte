@@ -11,6 +11,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -64,7 +66,9 @@ public class MainActivity extends Activity {
     private Sensor mGravity = null;
     private SensorEventListener accel = null;
     private PowerManager mPowerManager = null;
+    private WifiManager mWifiManager = null;
     private WakeLock mWakeLock = null;
+    private WifiLock mWifiLock = null;
     private DomainApp appDomain = null;
     private HokuyoView hokuyo_view = null;
     private MenuItem speed_publ_item = null;
@@ -80,6 +84,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         mWakeLock.acquire();
+        mWifiLock.acquire();
     }
 
     @Override
@@ -114,6 +119,7 @@ public class MainActivity extends Activity {
         }
         
         mWakeLock.release();
+        mWifiLock.release();
     }
     
     @Override
@@ -139,6 +145,7 @@ public class MainActivity extends Activity {
         }
     }
 	
+	@SuppressWarnings("deprecation")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -164,7 +171,14 @@ public class MainActivity extends Activity {
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
+        mWakeLock = mPowerManager.newWakeLock(
+        		PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+        		| PowerManager.ACQUIRE_CAUSES_WAKEUP
+        		| PowerManager.ON_AFTER_RELEASE,
+        		getClass().getName());
+        
+        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, getClass().getName());
         
         hokuyo_view = (HokuyoView) findViewById(R.id.hokuyo_view);
         
