@@ -4,6 +4,7 @@ import org.ocera.orte.DomainApp;
 import org.ocera.orte.Manager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -18,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +29,7 @@ import android.widget.EditText;
  
 public class MainActivity extends Activity {
 	private Dialog voltageDialog = null;
+	private AlertDialog aboutDialog = null;
 	static EditText voltage33 = null;
 	static EditText voltage50 = null;
 	static EditText voltage80 = null;
@@ -167,6 +170,13 @@ public class MainActivity extends Activity {
 		voltage80 = (EditText)voltageDialog.findViewById(R.id.editText3);
 		voltageBAT = (EditText)voltageDialog.findViewById(R.id.editText4);
 		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = getLayoutInflater();
+		View aboutView = inflater.inflate(R.layout.about_dialog, null);
+		builder.setView(aboutView);
+		builder.setPositiveButton("OK", null);
+		aboutDialog = builder.create();
+		
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
@@ -269,6 +279,9 @@ public class MainActivity extends Activity {
 				pwr_voltage = new PwrVoltageSubscribe(appDomain, dialogHandler);
 			pwr_voltage.start();
 			voltageDialog.show();
+		}
+		else if (item.getTitle().equals("About")) {
+			aboutDialog.show();
 		}
 		else if (item.getTitle().equals("Exit")) {
 			finish();
