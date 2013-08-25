@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent" >
 
-    <org.ocera.orte.demo.HokuyoView 
+    <ImageView
+        android:id="@+id/hokuyo_view_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:maxHeight="100dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/logo_cvut" />
+    
+	<org.ocera.orte.demo.HokuyoView 
         android:id="@+id/hokuyo_view"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent" />
+	
 
-</LinearLayout>
+ 
+</RelativeLayout>

@@ -44,7 +44,7 @@ public class HokuyoView extends View {
 		super(context, attrs);
 		
 		paint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(4);
+		paint.setStrokeWidth(3);
 		paint.setColor(Color.BLACK);
 		paint.setAntiAlias(false);
 	}
@@ -59,6 +59,9 @@ public class HokuyoView extends View {
 					double norm = (double)getWidth()/(2*COSINUS);
 					if (norm > getHeight())
 						norm = getHeight();
+					paint.setStyle(Style.STROKE);
+					paint.setStrokeWidth(3);
+					paint.setColor(Color.BLACK);
 					canvas.drawLine((int)(getWidth()*0.95),
 									(int)(getHeight()*0.97),
 									(int)(getWidth()*0.95-norm/4),
@@ -67,6 +70,8 @@ public class HokuyoView extends View {
 					paint.setStrokeWidth(2);
 					canvas.drawText("1 m", (int)(getWidth()*0.95-norm/8), (int)(getHeight()*0.97-10), paint);
 					paint.setStrokeWidth(3);
+					paint.setStyle(Style.FILL);
+					paint.setColor(Color.argb(40, 62, 62, 171));
 					if (!hasBeenDrawn) {
 						path.reset();
 						path.moveTo(getWidth()/2, getHeight());
@@ -92,6 +97,9 @@ public class HokuyoView extends View {
 				path.reset();
 			}
 			canvas.drawPath(path, paint);
+			paint.setStyle(Style.STROKE);
+			paint.setColor(Color.BLACK);
+			canvas.drawPath(path, paint);
 			
 			if (isMonitoring) {
 				lockMotion.lock();
@@ -101,7 +109,9 @@ public class HokuyoView extends View {
 						norm = getHeight()*0.125;
 					else
 						 norm = getWidth()*0.125;
+					paint.setStyle(Style.STROKE);
 					paint.setStrokeWidth(1);
+					paint.setColor(Color.BLACK);
 					canvas.drawLine((int)(10),
 									(int)(10+norm*1.5),
 									(int)(10+norm*3),
@@ -113,6 +123,7 @@ public class HokuyoView extends View {
 									(int)(10+norm*3),
 									paint);
 					paint.setStrokeWidth(4);
+					paint.setColor(Color.BLUE);
 					canvas.drawLine((int)(10+norm*1.5),
 									(int)(10+norm*1.5),
 									(int)(speedCo[0]*norm+10+norm*1.5),
