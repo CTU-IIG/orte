@@ -12,7 +12,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:adjustViewBounds="true"
-        android:maxHeight="100dp"
+        android:maxHeight="70dp"
         android:scaleType="fitXY"
         android:src="@drawable/logo_cvut" />
     

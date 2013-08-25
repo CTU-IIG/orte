@@ -14,11 +14,13 @@ public class MotionSpeedPublish implements Runnable {
 	
 	public static final int VMAX = 16000;
 	public static final double r = 0.15;
+	public final float alpha = 0.8f;
 	
-	private short[] speed = new short[2];
+	private short[] speed = new short[2]; 
 	private boolean isCancelled = true;
 	private float maxRange;
 	private float[] accelData = new float[2];
+	private float[] accelNew = new float[2];
 	private SpeedMotionType speedmsg;
 	private Publication pub;
 	private Thread thread = null;
@@ -111,6 +113,9 @@ public class MotionSpeedPublish implements Runnable {
 			    if (!isCancelled) {
 			      dataLock.lock();
 			      try {
+			    	  accelData[0] = alpha * accelData[0] + (1 - alpha) * accelNew[0];
+			    	  accelData[1] = alpha * accelData[1] + (1 - alpha) * accelNew[1];
+
 			    	  calculateSpeed(accelData);
 			      }
 			      finally {
@@ -135,8 +140,8 @@ public class MotionSpeedPublish implements Runnable {
 	public void setSpeed(float accelX, float accelY) {
 		if (dataLock.tryLock()) {
 			try {
-				this.accelData[0] = accelX;
-				this.accelData[1] = accelY;
+				this.accelNew[0] = accelX;
+				this.accelNew[1] = accelY;
 			}
 			finally {
 				dataLock.unlock();
