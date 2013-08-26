@@ -5,14 +5,15 @@ import org.ocera.orte.Manager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
@@ -20,17 +21,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
  
 public class MainActivity extends Activity {
-	private Dialog voltageDialog = null;
+	private AlertDialog voltageDialog = null;
 	private AlertDialog aboutDialog = null;
+	private AlertDialog managersDialog = null;
+	private EditText managersField = null;
 	static EditText voltage33 = null;
 	static EditText voltage50 = null;
 	static EditText voltage80 = null;
@@ -57,9 +60,7 @@ public class MainActivity extends Activity {
     };
 	
 	private Manager manager = null;
-    private String[] mgrs = {"192.168.1.5","192.168.1.8","192.168.1.29",
-    		"10.1.1.1","10.1.1.2","10.1.1.3","10.1.1.4","10.1.1.5","10.1.1.6","10.1.1.7","10.1.1.8","10.1.1.9","10.1.1.10",
-    		"10.1.1.11","10.1.1.12","10.1.1.13","10.1.1.14","10.1.1.15","10.1.1.16","10.1.1.17","10.1.1.18","10.1.1.19","10.1.1.20"};
+    private String mgrs = null;
 	private MotionSpeedPublish motion_speed_publ = null;
 	private MotionSpeedSubscribe motion_speed_subs = null;
 	private HokuyoScanSubscribe hokuyo_scan = null;
@@ -78,6 +79,7 @@ public class MainActivity extends Activity {
     private MenuItem speed_publ_item = null;
     private MenuItem speed_subs_item = null;
     private MenuItem hokuyo_item = null;
+    private SharedPreferences prefs = null;
 
     static {
     	System.loadLibrary("jorte");     
@@ -155,6 +157,22 @@ public class MainActivity extends Activity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.hokuyo_view);
         
+        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = mPowerManager.newWakeLock(
+        		PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+        		| PowerManager.ACQUIRE_CAUSES_WAKEUP
+        		| PowerManager.ON_AFTER_RELEASE,
+        		getClass().getName());
+
+        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, getClass().getName());
+        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+        int ip = wifiInfo.getIpAddress();
+        String ipAddress = Formatter.formatIpAddress(ip);
+        
+        prefs = getSharedPreferences("prefs", 0);
+        mgrs = prefs.getString("managers", "10.1.1.1");
+        
 		AlertDialog.Builder voltageBuilder = new AlertDialog.Builder(this);
 		LayoutInflater inflater = getLayoutInflater();
 		View voltageView = inflater.inflate(R.layout.status_dialog, null);
@@ -180,28 +198,42 @@ public class MainActivity extends Activity {
 		builder.setPositiveButton("OK", null);
 		aboutDialog = builder.create();
 		
+		AlertDialog.Builder managersBuilder = new AlertDialog.Builder(this);
+		View managersView = inflater.inflate(R.layout.managers_view, null);
+		TextView ownIP = (TextView)managersView.findViewById(R.id.ownIP);
+		ownIP.setText("\nOwn IP Address: " + ipAddress);
+		managersField = (EditText)managersView.findViewById(R.id.managers);
+		managersField.setText(mgrs);
+		managersBuilder.setCancelable(false);
+		managersBuilder.setView(managersView);
+		managersBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				SharedPreferences.Editor editor = prefs.edit();
+				mgrs = managersField.getText().toString();
+				System.out.println(mgrs);
+				editor.putString("managers", mgrs);
+				editor.commit();
+				
+		        manager = new Manager(mgrs);
+
+		        appDomain = new DomainApp();
+		        magnet_cmd = new MagnetCmdPublish(appDomain);
+		        magnet_cmd.start();
+		        crane_cmd = new CraneCmdPublish(appDomain);
+		        crane_cmd.start();
+				managersDialog.dismiss();
+			}
+		});
+		managersBuilder.setTitle("Set fellow managers");
+		managersDialog = managersBuilder.create();
+		
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
-        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = mPowerManager.newWakeLock(
-        		PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-        		| PowerManager.ACQUIRE_CAUSES_WAKEUP
-        		| PowerManager.ON_AFTER_RELEASE,
-        		getClass().getName());
-        
-        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, getClass().getName());
-        
         hokuyo_view = (HokuyoView) findViewById(R.id.hokuyo_view);
         
-        manager = new Manager(mgrs);
-
-        appDomain = new DomainApp();
-        magnet_cmd = new MagnetCmdPublish(appDomain);
-        magnet_cmd.start();
-        crane_cmd = new CraneCmdPublish(appDomain);
-        crane_cmd.start();
+        managersDialog.show();
     }
     
 	@Override
