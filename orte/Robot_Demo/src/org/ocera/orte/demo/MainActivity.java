@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -154,24 +155,26 @@ public class MainActivity extends Activity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.hokuyo_view);
         
-        voltageDialog = new Dialog(this,R.style.voltage_dialog);
-        voltageDialog.setCancelable(false);
-		voltageDialog.setContentView(R.layout.status_dialog);
-		Button okButton = (Button)voltageDialog.findViewById(R.id.button1);
-		okButton.setOnClickListener(new OnClickListener() {
+		AlertDialog.Builder voltageBuilder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = getLayoutInflater();
+		View voltageView = inflater.inflate(R.layout.status_dialog, null);
+		voltageBuilder.setCancelable(false);
+		voltageBuilder.setView(voltageView);
+		voltageBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(DialogInterface dialog, int which) {
 				voltageDialog.dismiss();
 				pwr_voltage.cancel();
 			}
 		});
-		voltage33 = (EditText)voltageDialog.findViewById(R.id.editText1);
-		voltage50 = (EditText)voltageDialog.findViewById(R.id.editText2);
-		voltage80 = (EditText)voltageDialog.findViewById(R.id.editText3);
-		voltageBAT = (EditText)voltageDialog.findViewById(R.id.editText4);
+		voltageBuilder.setTitle("Voltages");
+		voltageDialog = voltageBuilder.create();
+		voltage33 = (EditText)voltageView.findViewById(R.id.editText1);
+		voltage50 = (EditText)voltageView.findViewById(R.id.editText2);
+		voltage80 = (EditText)voltageView.findViewById(R.id.editText3);
+		voltageBAT = (EditText)voltageView.findViewById(R.id.editText4);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		LayoutInflater inflater = getLayoutInflater();
 		View aboutView = inflater.inflate(R.layout.about_dialog, null);
 		builder.setView(aboutView);
 		builder.setPositiveButton("OK", null);
