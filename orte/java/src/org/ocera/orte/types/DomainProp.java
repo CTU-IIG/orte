@@ -53,6 +53,12 @@ public class DomainProp {
 	  if(!jORTEDomainPropSet(this.handle,this.mgrs))
 		  System.out.println(":j: DomainProp not set !!!");
   }
+  
+  public void setProps(String mgrs) {
+	  this.mgrs = mgrs;
+	  if(!jORTEDomainPropSet(this.handle,this.mgrs))
+		  System.out.println(":j: DomainProp not set !!!");
+  }
 
  /**
   * defaultPropsCreate - create DomainProp with handle to default
