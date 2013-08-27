@@ -1,19 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/speed"
-        android:title="Start motion control"
+        android:title="Motion control"
         android:showAsAction="never"
+        android:checkable="true"
         android:orderInCategory="1">
     </item>
 
     <item android:id="@+id/speed_mon"
-        android:title="Start motion monitor"
+        android:title="Speed monitor"
         android:showAsAction="never"
+        android:checkable="true"
         android:orderInCategory="2">
     </item>
 
     <item android:id="@+id/hokuyo"
-        android:title="Start LRF"
+        android:title="Hokuyo"
         android:showAsAction="never"
+        android:checkable="true"
         android:orderInCategory="3">
     </item>
     
