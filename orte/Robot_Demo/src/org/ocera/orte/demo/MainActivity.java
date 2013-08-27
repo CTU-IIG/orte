@@ -159,8 +159,7 @@ public class MainActivity extends Activity {
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = mPowerManager.newWakeLock(
         		PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-        		| PowerManager.ACQUIRE_CAUSES_WAKEUP
-        		| PowerManager.ON_AFTER_RELEASE,
+        		| PowerManager.ACQUIRE_CAUSES_WAKEUP,
         		getClass().getName());
 
         mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);

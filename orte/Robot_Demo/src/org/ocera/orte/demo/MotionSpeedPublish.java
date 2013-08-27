@@ -14,7 +14,7 @@ public class MotionSpeedPublish implements Runnable {
 	
 	public static final int VMAX = 16000;
 	public static final double r = 0.15;
-	public final float alpha = 0.8f;
+	public final float alpha = 0.75f;
 	
 	private short[] speed = new short[2]; 
 	private boolean isCancelled = true;
@@ -60,8 +60,8 @@ public class MotionSpeedPublish implements Runnable {
 		}
 		omega *= 2;
 		 
-		speed[0] = (short)(-(v + (v>0 ? -r*omega : r*omega))*VMAX);
-		speed[1] = (short)(-(v - (v>0 ? -r*omega : r*omega))*VMAX);
+		speed[0] = (short)(-((v + r*omega))*VMAX);
+		speed[1] = (short)(-(v - r*omega)*VMAX);
 	}
 	
 	public void start() {
