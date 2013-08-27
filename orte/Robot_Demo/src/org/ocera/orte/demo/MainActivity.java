@@ -16,6 +16,7 @@ import android.hardware.SensorManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity {
 	private AlertDialog aboutDialog = null;
 	private AlertDialog managersDialog = null;
 	private EditText managersField = null;
+	private TextView ownIP = null;
 	static EditText voltage33 = null;
 	static EditText voltage50 = null;
 	static EditText voltage80 = null;
@@ -101,21 +103,21 @@ public class MainActivity extends Activity {
         	motion_speed_publ.cancel();
             mSensorManager.unregisterListener(accel);
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        	speed_publ_item.setTitle("Start motion control");
+        	speed_publ_item.setChecked(false);
         }
         
         if (motion_speed_subs != null && !motion_speed_subs.isCancelled()) {
         	hokuyo_view.runMotion(false);
         	motion_speed_subs.cancel();
         	hokuyo_view.invalidate();
-        	speed_subs_item.setTitle("Start motion monitor");
+        	speed_subs_item.setChecked(false);
         }
 
         if (hokuyo_scan != null && !hokuyo_scan.isCancelled()) {
 			hokuyo_view.run(false);
 			hokuyo_scan.cancel();
 			hokuyo_view.invalidate();
-			hokuyo_item.setTitle("Start LRF");
+			hokuyo_item.setChecked(false);
         }
 
         if (pwr_voltage != null && !pwr_voltage.isCancelled()) {
@@ -166,9 +168,6 @@ public class MainActivity extends Activity {
 
         mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, getClass().getName());
-        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-        int ip = wifiInfo.getIpAddress();
-        String ipAddress = Formatter.formatIpAddress(ip);
         
         prefs = getSharedPreferences("prefs", 0);
         mgrs = prefs.getString("managers", "10.1.1.1");
@@ -200,10 +199,11 @@ public class MainActivity extends Activity {
 		
 		AlertDialog.Builder managersBuilder = new AlertDialog.Builder(this);
 		View managersView = inflater.inflate(R.layout.managers_view, null);
-		TextView ownIP = (TextView)managersView.findViewById(R.id.ownIP);
-		ownIP.setText("\nOwn IP Address: " + ipAddress);
+		ownIP = (TextView)managersView.findViewById(R.id.ownIP);
 		managersField = (EditText)managersView.findViewById(R.id.managers);
 		managersField.setText(mgrs);
+		
+		NetworkInfo wifiInfoTask = new NetworkInfo();
 		managersBuilder.setCancelable(false);
 		managersBuilder.setView(managersView);
 		managersBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -234,6 +234,7 @@ public class MainActivity extends Activity {
         hokuyo_view = (HokuyoView) findViewById(R.id.hokuyo_view);
         
         managersDialog.show();
+		wifiInfoTask.execute();
     }
     
 	@Override
@@ -245,53 +246,57 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected (MenuItem item) {
-		System.out.println(item.getTitle());
-		
-		if(item.getTitle().equals("Start motion control")) {
-			accel = new HandleAccelerometer();
-			mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
-			if (motion_speed_publ == null)
-				motion_speed_publ = new MotionSpeedPublish(appDomain);
-			motion_speed_publ.start();
-			speed_publ_item = item;
-			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			item.setTitle("Stop motion control");
+		if(item.getTitle().equals("Motion control")) {
+			if (!item.isChecked()) {
+				accel = new HandleAccelerometer();
+				mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
+				if (motion_speed_publ == null)
+					motion_speed_publ = new MotionSpeedPublish(appDomain);
+				motion_speed_publ.start();
+				speed_publ_item = item;
+				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				item.setChecked(true);
+			}
+			else {
+				mSensorManager.unregisterListener(accel);
+				motion_speed_publ.cancel();
+				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+				item.setChecked(false);
+			}
 		}
-		else if (item.getTitle().equals("Stop motion control")) {
-			mSensorManager.unregisterListener(accel);
-			motion_speed_publ.cancel();
-			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-			item.setTitle("Start motion control");
+		else if (item.getTitle().equals("Speed monitor")) {
+			if(!item.isChecked()) {
+				if (motion_speed_subs == null)
+					motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
+				motion_speed_subs.start();
+				hokuyo_view.runMotion(true);
+				hokuyo_view.invalidate();
+				speed_subs_item = item;
+				item.setChecked(true);
+			}
+			else {
+				hokuyo_view.runMotion(false);
+				motion_speed_subs.cancel();
+				hokuyo_view.invalidate();
+				item.setChecked(false);				
+			}
 		}
-		else if (item.getTitle().equals("Start motion monitor")) {
-			if (motion_speed_subs == null)
-				motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
-			motion_speed_subs.start();
-			hokuyo_view.runMotion(true);
-			hokuyo_view.invalidate();
-			speed_subs_item = item;
-			item.setTitle("Stop motion monitor");
-		}
-		else if (item.getTitle().equals("Stop motion monitor")) {
-			hokuyo_view.runMotion(false);
-			motion_speed_subs.cancel();
-			hokuyo_view.invalidate();
-			item.setTitle("Start motion monitor");
-		}
-		else if (item.getTitle().equals("Start LRF")) {
-			if (hokuyo_scan == null)
-				hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
-			hokuyo_scan.start();
-			hokuyo_view.run(true);
-			hokuyo_view.invalidate();
-			hokuyo_item = item;
-			item.setTitle("Stop LRF");
-		}
-		else if (item.getTitle().equals("Stop LRF")) {
-			hokuyo_view.run(false);
-			hokuyo_scan.cancel();
-			hokuyo_view.invalidate();
-			item.setTitle("Start LRF");
+		else if (item.getTitle().equals("Hokuyo")) {
+			if (!item.isChecked()) {
+				if (hokuyo_scan == null)
+					hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
+				hokuyo_scan.start();
+				hokuyo_view.run(true);
+				hokuyo_view.invalidate();
+				hokuyo_item = item;
+				item.setChecked(true);
+			}
+			else {
+				hokuyo_view.run(false);
+				hokuyo_scan.cancel();
+				hokuyo_view.invalidate();
+				item.setChecked(false);
+			}
 		}
 		else if (item.getTitle().equals("Crane up")) {
 			crane_cmd.send(0x100);
@@ -336,6 +341,35 @@ public class MainActivity extends Activity {
     			 if (motion_speed_publ != null)
     				 motion_speed_publ.setSpeed(event.values[0], event.values[1]);
     		 }
+    	}
+    }
+    
+    private class NetworkInfo extends AsyncTask<Void, String, Void> {
+    	@Override
+    	protected Void doInBackground(Void... arg0) {
+    		while (managersDialog.isShowing()) {
+		        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+		        int ip = wifiInfo.getIpAddress();
+		        String ipAddress = Formatter.formatIpAddress(ip);
+		        String ssid = wifiInfo.getSSID();
+	
+		        publishProgress("\nOwn IP Address: " + ipAddress + "\nNetwork SSID: " + ssid);
+		        
+		        try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+    		}
+    		
+    		return null;
+    	}
+
+    	@Override
+    	protected void onProgressUpdate(String... values) {
+    		super.onProgressUpdate(values);
+    		
+    		ownIP.setText(values[0]);
     	}
     }
 }
