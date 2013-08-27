@@ -88,14 +88,6 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        mWakeLock.acquire();
-        mWifiLock.acquire();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         
@@ -104,6 +96,8 @@ public class MainActivity extends Activity {
             mSensorManager.unregisterListener(accel);
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         	speed_publ_item.setChecked(false);
+            mWakeLock.release();
+            mWifiLock.release();
         }
         
         if (motion_speed_subs != null && !motion_speed_subs.isCancelled()) {
@@ -111,6 +105,8 @@ public class MainActivity extends Activity {
         	motion_speed_subs.cancel();
         	hokuyo_view.invalidate();
         	speed_subs_item.setChecked(false);
+            mWakeLock.release();
+            mWifiLock.release();
         }
 
         if (hokuyo_scan != null && !hokuyo_scan.isCancelled()) {
@@ -118,16 +114,17 @@ public class MainActivity extends Activity {
 			hokuyo_scan.cancel();
 			hokuyo_view.invalidate();
 			hokuyo_item.setChecked(false);
+	        mWakeLock.release();
+	        mWifiLock.release();
         }
 
         if (pwr_voltage != null && !pwr_voltage.isCancelled()) {
         	if (voltageDialog.isShowing())
         		voltageDialog.dismiss();
 			pwr_voltage.cancel();
+	        mWakeLock.release();
+	        mWifiLock.release();
         }
-        
-        mWakeLock.release();
-        mWifiLock.release();
     }
     
     @Override
@@ -182,6 +179,8 @@ public class MainActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				voltageDialog.dismiss();
 				pwr_voltage.cancel();
+				mWakeLock.release();
+				mWifiLock.release();
 			}
 		});
 		voltageBuilder.setTitle("Voltages");
@@ -248,6 +247,8 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected (MenuItem item) {
 		if(item.getTitle().equals("Motion control")) {
 			if (!item.isChecked()) {
+				mWakeLock.acquire();
+				mWifiLock.acquire();
 				accel = new HandleAccelerometer();
 				mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
 				if (motion_speed_publ == null)
@@ -262,10 +263,14 @@ public class MainActivity extends Activity {
 				motion_speed_publ.cancel();
 				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 				item.setChecked(false);
+				mWakeLock.release();
+				mWifiLock.release();
 			}
 		}
 		else if (item.getTitle().equals("Speed monitor")) {
 			if(!item.isChecked()) {
+				mWakeLock.acquire();
+				mWifiLock.acquire();
 				if (motion_speed_subs == null)
 					motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
 				motion_speed_subs.start();
@@ -278,11 +283,15 @@ public class MainActivity extends Activity {
 				hokuyo_view.runMotion(false);
 				motion_speed_subs.cancel();
 				hokuyo_view.invalidate();
-				item.setChecked(false);				
+				item.setChecked(false);
+				mWakeLock.release();
+				mWifiLock.release();
 			}
 		}
 		else if (item.getTitle().equals("Hokuyo")) {
 			if (!item.isChecked()) {
+				mWakeLock.acquire();
+				mWifiLock.acquire();
 				if (hokuyo_scan == null)
 					hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
 				hokuyo_scan.start();
@@ -296,6 +305,8 @@ public class MainActivity extends Activity {
 				hokuyo_scan.cancel();
 				hokuyo_view.invalidate();
 				item.setChecked(false);
+				mWakeLock.release();
+				mWifiLock.release();
 			}
 		}
 		else if (item.getTitle().equals("Crane up")) {
@@ -315,6 +326,8 @@ public class MainActivity extends Activity {
 			item.setTitle("Magnet on");			
 		}
 		else if (item.getTitle().equals("Voltage monitor")) {
+			mWakeLock.acquire();
+			mWifiLock.acquire();
 			if (pwr_voltage == null)
 				pwr_voltage = new PwrVoltageSubscribe(appDomain, dialogHandler);
 			pwr_voltage.start();
