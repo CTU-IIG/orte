@@ -37,10 +37,16 @@
         android:orderInCategory="6"
         android:showAsAction="never">
     </item>
+    
+    <item android:id="@+id/managers"
+        android:title="Fellow managers"
+        android:orderInCategory="7"
+        android:showAsAction="never">
+    </item>
 
     <item android:id="@+id/about"
         android:title="About"
-        android:orderInCategory="7"
+        android:orderInCategory="8"
         android:showAsAction="never">
     </item>
 

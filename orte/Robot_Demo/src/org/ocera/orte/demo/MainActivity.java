@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
 	private AlertDialog managersDialog = null;
 	private EditText managersField = null;
 	private TextView ownIP = null;
+	private NetworkInfo wifiInfoTask = null; 
 	static EditText voltage33 = null;
 	static EditText voltage50 = null;
 	static EditText voltage80 = null;
@@ -201,7 +202,6 @@ public class MainActivity extends Activity {
 		managersField = (EditText)managersView.findViewById(R.id.managers);
 		managersField.setText(mgrs);
 		
-		NetworkInfo wifiInfoTask = new NetworkInfo();
 		managersBuilder.setCancelable(false);
 		managersBuilder.setView(managersView);
 		managersBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -213,13 +213,11 @@ public class MainActivity extends Activity {
 				editor.putString("managers", mgrs);
 				editor.commit();
 				
-		        manager = new Manager(mgrs);
-
-		        appDomain = new DomainApp();
-		        magnet_cmd = new MagnetCmdPublish(appDomain);
-		        magnet_cmd.start();
-		        crane_cmd = new CraneCmdPublish(appDomain);
-		        crane_cmd.start();
+				if (manager != null)
+					manager.destroy();
+				manager = new Manager(mgrs);
+				
+				wifiInfoTask.cancel(false);
 				managersDialog.dismiss();
 			}
 		});
@@ -231,8 +229,13 @@ public class MainActivity extends Activity {
         
         hokuyo_view = (HokuyoView) findViewById(R.id.hokuyo_view);
         
-        managersDialog.show();
-		wifiInfoTask.execute();
+        manager = new Manager(mgrs);
+
+        appDomain = new DomainApp();
+        magnet_cmd = new MagnetCmdPublish(appDomain);
+        magnet_cmd.start();
+        crane_cmd = new CraneCmdPublish(appDomain);
+        crane_cmd.start();
     }
     
 	@Override
@@ -332,6 +335,12 @@ public class MainActivity extends Activity {
 			pwr_voltage.start();
 			voltageDialog.show();
 		}
+		else if (item.getTitle().equals("Fellow managers")) {
+			wifiInfoTask = new NetworkInfo();
+
+			managersDialog.show();
+			wifiInfoTask.execute();
+		}
 		else if (item.getTitle().equals("About")) {
 			aboutDialog.show();
 		}
@@ -359,7 +368,7 @@ public class MainActivity extends Activity {
     private class NetworkInfo extends AsyncTask<Void, String, Void> {
     	@Override
     	protected Void doInBackground(Void... arg0) {
-    		while (managersDialog.isShowing()) {
+    		while (!isCancelled()) {
 		        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
 		        int ip = wifiInfo.getIpAddress();
 		        String ipAddress = Formatter.formatIpAddress(ip);
