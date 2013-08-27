@@ -251,7 +251,7 @@ public class MainActivity extends Activity {
 			accel = new HandleAccelerometer();
 			mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
 			if (motion_speed_publ == null)
-				motion_speed_publ = new MotionSpeedPublish(mGravity.getMaximumRange(),appDomain);
+				motion_speed_publ = new MotionSpeedPublish(appDomain);
 			motion_speed_publ.start();
 			speed_publ_item = item;
 			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

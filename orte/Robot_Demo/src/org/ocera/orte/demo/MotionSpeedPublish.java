@@ -18,7 +18,7 @@ public class MotionSpeedPublish implements Runnable {
 	
 	private short[] speed = new short[2]; 
 	private boolean isCancelled = true;
-	private float maxRange;
+	private float a2sRatio = 9.81f;
 	private float[] accelData = new float[2];
 	private float[] accelNew = new float[2];
 	private SpeedMotionType speedmsg;
@@ -32,8 +32,7 @@ public class MotionSpeedPublish implements Runnable {
 	private final ReadLock rcLock = controlRrwl.readLock();
 	private final WriteLock wcLock = controlRrwl.writeLock();
 	
-	public MotionSpeedPublish(float maxRange, DomainApp appDomain) {
-		this.maxRange = maxRange;
+	public MotionSpeedPublish(DomainApp appDomain) {
 		this.appDomain = appDomain;
 		
 	    NtpTime persistence = new NtpTime(3);
@@ -51,8 +50,8 @@ public class MotionSpeedPublish implements Runnable {
 
 		double angle = 0, length, v, omega;
 
-		v = (double)mAccel[1]/maxRange;
-		omega = (double)mAccel[0]/maxRange;
+		v = (double)mAccel[1]/a2sRatio;
+		omega = (double)mAccel[0]/a2sRatio;
 		length = Math.sqrt(Math.pow(v,2) + Math.pow(omega,2));
 		if (length >= 1) {
 			angle = Math.atan2(mAccel[1], mAccel[0]);	
