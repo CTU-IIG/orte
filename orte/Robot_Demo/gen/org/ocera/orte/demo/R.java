@@ -26,11 +26,11 @@ public final class R {
         public static final int hokuyo=0x7f070014;
         public static final int hokuyo_view=0x7f070004;
         public static final int hokuyo_view_bg=0x7f070003;
-        public static final int imageView1=0x7f070000;
+        public static final int imageView1=0x7f070001;
         public static final int magnet=0x7f070016;
         public static final int managers=0x7f070005;
         public static final int ownIP=0x7f070006;
-        public static final int scrollView1=0x7f070001;
+        public static final int scrollView1=0x7f070000;
         public static final int speed=0x7f070012;
         public static final int speed_mon=0x7f070013;
         public static final int tableRow1=0x7f070007;

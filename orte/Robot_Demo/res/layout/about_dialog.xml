@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:src="@drawable/logo_flamingos" />
-
-    <ScrollView 
-        android:id="@+id/scrollView1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:scrollbars="vertical" >
-
-	    <TextView
-	        android:id="@+id/textView1"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="vertical" >
+    
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical">
+	
+	    <ImageView
+	        android:id="@+id/imageView1"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"
-	        android:gravity="center"
-	        android:text="\nRoboDruid 1.0\n\n\nby Martin Vajnar\nand Flamingos Team\n\u00A9 2013\n\n\nDepartment of Control Engineering\nFaculty of Electrical Engineering\nCTU in Prague"
-	        android:textSize="15sp" />
-        
-    </ScrollView>
+	        android:adjustViewBounds="true"
+	        android:scaleType="fitXY"
+	        android:visibility="visible"
+	        android:src="@drawable/logo_flamingos" />
+	
+		    <TextView
+		        android:id="@+id/textView1"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:gravity="center"
+		        android:text="\nRoboDruid 1.0\n\n\n\nDepartment of Control Engineering\nFaculty of Electrical Engineering\nCzech Technical University in Prague"
+		        android:textSize="15sp" />
 
-</LinearLayout>
+	</LinearLayout>
+</ScrollView>
