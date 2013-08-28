@@ -21,14 +21,15 @@
     </item>
     
     <item android:id="@+id/crane"
-        android:title="Crane up"
+        android:title="Crane: up"
         android:orderInCategory="4"
         android:showAsAction="never">
     </item>
     
     <item android:id="@+id/magnet"
-        android:title="Magnet on"
+        android:title="Magnet"
         android:orderInCategory="5"
+        android:checkable="true"
         android:showAsAction="never">
     </item>
 

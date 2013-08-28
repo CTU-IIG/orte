@@ -149,7 +149,7 @@ public class HokuyoView extends View {
 		x = (temp[0]-y)/0.30;
 
 		speedCo[1] = -y;
-		speedCo[0] = speedCo[1]>0 ? -x : x;
+		speedCo[0] = x;
 	}
 	
 	public void run(boolean run) {

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
@@ -151,7 +152,6 @@ public class MainActivity extends Activity {
         }
     }
 	
-	@SuppressWarnings("deprecation")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -172,19 +172,19 @@ public class MainActivity extends Activity {
 		AlertDialog.Builder voltageBuilder = new AlertDialog.Builder(this);
 		LayoutInflater inflater = getLayoutInflater();
 		View voltageView = inflater.inflate(R.layout.status_dialog, null);
-		voltageBuilder.setCancelable(false);
 		voltageBuilder.setView(voltageView);
-		voltageBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		voltageBuilder.setPositiveButton("OK",null);
+		voltageBuilder.setTitle("Voltages");
+		voltageDialog = voltageBuilder.create();
+		voltageDialog.setOnDismissListener(new OnDismissListener(){
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onDismiss(DialogInterface arg0) {
 				voltageDialog.dismiss();
 				pwr_voltage.cancel();
 				mWakeLock.release();
 				mWifiLock.release();
 			}
 		});
-		voltageBuilder.setTitle("Voltages");
-		voltageDialog = voltageBuilder.create();
 		voltage33 = (EditText)voltageView.findViewById(R.id.editText1);
 		voltage50 = (EditText)voltageView.findViewById(R.id.editText2);
 		voltage80 = (EditText)voltageView.findViewById(R.id.editText3);
@@ -202,14 +202,12 @@ public class MainActivity extends Activity {
 		managersField = (EditText)managersView.findViewById(R.id.managers);
 		managersField.setText(mgrs);
 		
-		managersBuilder.setCancelable(false);
 		managersBuilder.setView(managersView);
 		managersBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				SharedPreferences.Editor editor = prefs.edit();
 				mgrs = managersField.getText().toString();
-				System.out.println(mgrs);
 				editor.putString("managers", mgrs);
 				editor.commit();
 				
@@ -217,12 +215,19 @@ public class MainActivity extends Activity {
 					manager.destroy();
 				manager = new Manager(mgrs);
 				
-				wifiInfoTask.cancel(false);
 				managersDialog.dismiss();
 			}
 		});
+		managersBuilder.setNeutralButton("Cancel", null);
 		managersBuilder.setTitle("Set fellow managers");
 		managersDialog = managersBuilder.create();
+		managersDialog.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface arg0) {
+				managersField.setText(mgrs);
+				wifiInfoTask.cancel(false);
+			}
+		});
 		
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -311,21 +316,23 @@ public class MainActivity extends Activity {
 				mWifiLock.release();
 			}
 		}
-		else if (item.getTitle().equals("Crane up")) {
-			crane_cmd.send(0x100);
-			item.setTitle("Crane down");
-		}
-		else if (item.getTitle().equals("Crane down")) {
+		else if (item.getTitle().equals("Crane: up")) {
 			crane_cmd.send(0x190);
-			item.setTitle("Crane up");
+			item.setTitle("Crane: down");
 		}
-		else if (item.getTitle().equals("Magnet on")) {
-			magnet_cmd.send(1);
-			item.setTitle("Magnet off");			
+		else if (item.getTitle().equals("Crane: down")) {
+			crane_cmd.send(0x100);
+			item.setTitle("Crane: up");
 		}
-		else if (item.getTitle().equals("Magnet off")) {
-			magnet_cmd.send(0);
-			item.setTitle("Magnet on");			
+		else if (item.getTitle().equals("Magnet")) {
+			if (!item.isChecked()) {
+				magnet_cmd.send(1);
+				item.setChecked(true);
+			}
+			else {
+				magnet_cmd.send(0);
+				item.setChecked(false);	
+			}
 		}
 		else if (item.getTitle().equals("Voltage monitor")) {
 			mWakeLock.acquire();
