@@ -120,16 +120,16 @@ public class MainActivity extends Activity {
 	        mWakeLock.release();
 	        mWifiLock.release();
         }
-
-        if (pwr_voltage != null && !pwr_voltage.isCancelled()) {
-        	if (voltageDialog.isShowing())
-        		voltageDialog.dismiss();
-        }
     }
     
     @Override
     protected void onDestroy() {
     	super.onDestroy();
+
+        if (pwr_voltage != null && !pwr_voltage.isCancelled()) {
+        	if (voltageDialog.isShowing())
+        		voltageDialog.dismiss();
+        }
     	
     	if (crane_cmd != null && !crane_cmd.isCancelled()) {
     		crane_cmd.cancel();
@@ -184,7 +184,7 @@ public class MainActivity extends Activity {
 			public void onDismiss(DialogInterface arg0) {
 				voltageDialog.dismiss();
 				pwr_voltage.cancel();
-				mWakeLock.release();
+				mDimLock.release();
 			}
 		});
 		voltage33 = (EditText)voltageView.findViewById(R.id.editText1);
@@ -256,7 +256,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected (MenuItem item) {
 		if(item.getTitle().equals("Motion control")) {
 			if (!item.isChecked()) {
-				mWakeLock.acquire();
+				mDimLock.acquire();
 				mWifiLock.acquire();
 				accel = new HandleAccelerometer();
 				mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
@@ -272,7 +272,7 @@ public class MainActivity extends Activity {
 				motion_speed_publ.cancel();
 				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 				item.setChecked(false);
-				mWakeLock.release();
+				mDimLock.release();
 				mWifiLock.release();
 			}
 		}
