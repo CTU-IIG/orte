@@ -77,6 +77,7 @@ public class MainActivity extends Activity {
     private PowerManager mPowerManager = null;
     private WifiManager mWifiManager = null;
     private WakeLock mWakeLock = null;
+    private WakeLock mDimLock = null;
     private WifiLock mWifiLock = null;
     private DomainApp appDomain = null;
     private HokuyoView hokuyo_view = null;
@@ -98,7 +99,7 @@ public class MainActivity extends Activity {
             mSensorManager.unregisterListener(accel);
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         	speed_publ_item.setChecked(false);
-            mWakeLock.release();
+            mDimLock.release();
             mWifiLock.release();
         }
         
@@ -123,9 +124,6 @@ public class MainActivity extends Activity {
         if (pwr_voltage != null && !pwr_voltage.isCancelled()) {
         	if (voltageDialog.isShowing())
         		voltageDialog.dismiss();
-			pwr_voltage.cancel();
-	        mWakeLock.release();
-	        mWifiLock.release();
         }
     }
     
@@ -159,12 +157,17 @@ public class MainActivity extends Activity {
         
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = mPowerManager.newWakeLock(
-        		PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-        		| PowerManager.ACQUIRE_CAUSES_WAKEUP,
-        		getClass().getName());
+        		PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+        		getClass().getName() + " Bright");
+        mDimLock = mPowerManager.newWakeLock(
+        		PowerManager.SCREEN_DIM_WAKE_LOCK,
+        		getClass().getName() + " Dim");
 
         mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        mWifiLock = mWifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, getClass().getName());
+        mWifiLock = mWifiManager.createWifiLock(
+        		android.os.Build.VERSION.SDK_INT >= 12
+        		? WifiManager.WIFI_MODE_FULL_HIGH_PERF
+        		: WifiManager.WIFI_MODE_FULL, getClass().getName());
         
         prefs = getSharedPreferences("prefs", 0);
         mgrs = prefs.getString("managers", "10.1.1.1");
@@ -182,7 +185,6 @@ public class MainActivity extends Activity {
 				voltageDialog.dismiss();
 				pwr_voltage.cancel();
 				mWakeLock.release();
-				mWifiLock.release();
 			}
 		});
 		voltage33 = (EditText)voltageView.findViewById(R.id.editText1);
@@ -335,8 +337,7 @@ public class MainActivity extends Activity {
 			}
 		}
 		else if (item.getTitle().equals("Voltage monitor")) {
-			mWakeLock.acquire();
-			mWifiLock.acquire();
+			mDimLock.acquire();
 			if (pwr_voltage == null)
 				pwr_voltage = new PwrVoltageSubscribe(appDomain, dialogHandler);
 			pwr_voltage.start();
