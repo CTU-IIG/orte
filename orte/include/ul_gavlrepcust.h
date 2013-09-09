@@ -147,7 +147,6 @@ int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node)\
 \
 int cust_prefix##_delete(cust_root_t *root, cust_item_t *item)\
 {\
-  int ret;\
   gavl_node_t *n, *p;\
   if(!item) return -1;\
   n=&item->cust_item_node;\
@@ -155,8 +154,7 @@ int cust_prefix##_delete(cust_root_t *root, cust_item_t *item)\
   for(p=n; p->parent; p=p->parent);\
   if(p!=root->cust_root_node)\
     return -1;\
-  ret=gavl_delete_primitive(&root->cust_root_node, n);\
-  return 1;\
+  return gavl_delete_primitive(&root->cust_root_node, n);\
 }\
 \
 gavl_node_t *cust_prefix##_first_node(const cust_root_t *root)\

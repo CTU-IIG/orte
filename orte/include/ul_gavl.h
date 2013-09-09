@@ -40,7 +40,7 @@ extern "C" {
 #define GAVL_UNBALANCED_SUPPORT
 
 /* function to compare fields of two items */
-typedef int gavl_cmp_fnc_t(const void *a, const void *b);
+typedef int gavl_cmp_fnc_t(const void *a, const void *b) UL_ATTR_REENTRANT;
 
 /**
  * struct gavl_node - Structure Representing Node of Generic AVL Tree
@@ -100,6 +100,8 @@ gavl_next_node(const gavl_node_t *node);
 
 gavl_node_t *
 gavl_prev_node(const gavl_node_t *node);
+
+#if !defined(SDCC) && !defined(__SDCC)
 
 int
 gavl_is_empty(const gavl_root_t *root);
@@ -198,6 +200,8 @@ gavl_node2key(const gavl_root_t *root, const gavl_node_t *node)
   return (void*)(p+root->key_offs);
 }
 
+#endif /*SDCC*/
+
 int
 gavl_balance_one(gavl_node_t **subtree);
 
@@ -246,6 +250,8 @@ gavl_delete_and_next_node(gavl_root_t *root, gavl_node_t *node);
 
 /*===========================================================*/
 /* iterators for generic GAVL type */
+
+#if !defined(SDCC) && !defined(__SDCC)
 
 typedef struct {
   gavl_root_t *container;
@@ -302,21 +308,21 @@ gavl_delete_it(gavl_it_t *it)
 }
 
 static inline int 
-gavl_find_it(gavl_root_t *container, void *key, gavl_it_t *it)
+gavl_find_it(gavl_root_t *container, const void *key, gavl_it_t *it)
 {
   it->container=container;
   return (it->node=gavl_find_first_node(container, key))!=0;
 }
 
 static inline int 
-gavl_find_first_it(gavl_root_t *container, void *key, gavl_it_t *it)
+gavl_find_first_it(gavl_root_t *container, const void *key, gavl_it_t *it)
 {
   it->container=container;
   return (it->node=gavl_find_first_node(container, key))!=0;
 }
 
 static inline int 
-gavl_find_after_it(gavl_root_t *container, void *key, gavl_it_t *it)
+gavl_find_after_it(gavl_root_t *container, const void *key, gavl_it_t *it)
 {
   it->container=container;
   return (it->node=gavl_find_after_node(container, key))!=0;
@@ -351,12 +357,14 @@ gavl_find_after_it(gavl_root_t *container, void *key, gavl_it_t *it)
 #define gavl_generic_for_each_cut(item_t, root, ptr) \
 	for(;(ptr=(item_t*)gavl_cut_first(root));)
 
+#endif /*SDCC*/
+
 /*===========================================================*/
 /* basic types compare functions */
 
-int gavl_cmp_int(const void *a, const void *b);
-int gavl_cmp_long(const void *a, const void *b);
-int gavl_cmp_ptr(const void *a, const void *b);
+int gavl_cmp_int(const void *a, const void *b) UL_ATTR_REENTRANT;
+int gavl_cmp_long(const void *a, const void *b) UL_ATTR_REENTRANT;
+int gavl_cmp_ptr(const void *a, const void *b) UL_ATTR_REENTRANT;
 
 /*===========================================================*/
 /* More functions useful for partially balanced trees */
@@ -412,7 +420,7 @@ typedef struct{
     int cust_cmp_fnc(cust_key_t *a, cust_key_t *b) */
 
 /* Declaration of new custom tree with internal node */
-#define GAVL_CUST_NODE_INT_DEC(cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
+#define GAVL_CUST_NODE_INT_DEC_SCOPE(cust_scope, cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
 		cust_root_node, cust_item_node, cust_item_key, cust_cmp_fnc) \
 \
 static inline cust_item_t * \
@@ -423,16 +431,16 @@ static inline cust_key_t *\
 cust_prefix##_node2key(const cust_root_t *root, gavl_node_t *node)\
   { return &(cust_prefix##_node2item(root, node)->cust_item_key);}\
 \
-void cust_prefix##_init_root_field(cust_root_t *root);\
-int cust_prefix##_search_node(const cust_root_t *root, cust_key_t *key, gavl_node_t **nodep);\
-cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t *key);\
-cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t *key);\
-cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t *key);\
-int cust_prefix##_insert(cust_root_t *root, cust_item_t *item);\
-int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node);\
-int cust_prefix##_delete(cust_root_t *root, cust_item_t *item);\
-gavl_node_t *cust_prefix##_first_node(const cust_root_t *root);\
-gavl_node_t *cust_prefix##_last_node(const cust_root_t *root);\
+cust_scope void cust_prefix##_init_root_field(cust_root_t *root);\
+cust_scope int cust_prefix##_search_node(const cust_root_t *root, cust_key_t const *key, gavl_node_t **nodep);\
+cust_scope cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t const *key);\
+cust_scope cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t const *key);\
+cust_scope cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t const *key);\
+cust_scope int cust_prefix##_insert(cust_root_t *root, cust_item_t *item);\
+cust_scope int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node);\
+cust_scope int cust_prefix##_delete(cust_root_t *root, cust_item_t *item);\
+cust_scope gavl_node_t *cust_prefix##_first_node(const cust_root_t *root);\
+cust_scope gavl_node_t *cust_prefix##_last_node(const cust_root_t *root);\
 \
 static inline void \
 cust_prefix##_init_detached(cust_item_t *item){\
@@ -475,6 +483,11 @@ cust_prefix##_cut_first(cust_root_t *root)\
 }\
 /*** Iterators ***/\
 UL_ITBASE_SORT_DEC(cust_prefix, cust_root_t, cust_item_t, cust_key_t)
+
+#define GAVL_CUST_NODE_INT_DEC(cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
+		cust_root_node, cust_item_node, cust_item_key, cust_cmp_fnc) \
+	GAVL_CUST_NODE_INT_DEC_SCOPE(extern, cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
+		cust_root_node, cust_item_node, cust_item_key, cust_cmp_fnc)
 
 #define gavl_cust_for_each(cust_prefix, root, ptr) \
 	for(ptr=cust_prefix##_first(root);ptr;ptr=cust_prefix##_next((root),ptr))

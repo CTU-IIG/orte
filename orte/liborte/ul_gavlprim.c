@@ -21,8 +21,7 @@
 
  *******************************************************************/
 
-//#include <string.h>
-#include <orte_all.h>
+#include <string.h>
 #include "ul_gavl.h"
 
 int 
@@ -78,6 +77,10 @@ gavl_prev_node(const gavl_node_t *node)
   }
 }
 
+#if defined(SDCC) || defined(__SDCC)
+#pragma save
+#pragma nogcse
+#endif /*SDCC*/
 /**
  * gavl_balance_one - Balance One Node to Enhance Balance Factor
  * @subtree:	pointer to pointer to node for which balance is enhanced
@@ -214,6 +217,9 @@ gavl_balance_one(gavl_node_t **subtree)
   /*printf("#%d",ret);*/
   return(ret);
 }
+#if defined(SDCC) || defined(__SDCC)
+#pragma restore
+#endif /*SDCC*/
 
 /**
  * gavl_insert_primitive_at - Low Lewel Routine to Insert Node into Tree 
