@@ -77,6 +77,9 @@ int managerStop(void) {
 #endif
 
 #ifdef CONFIG_ORTE_UNIX
+#ifdef HAVE_SYS_STAT_H
+  #include <sys/stat.h>		/* For umask() */
+#endif
 //Unix daemon support
 void waitForEndingCommand(void) {
 	sigset_t sigset;
