@@ -184,6 +184,7 @@ fi
 if test ${WIN} == 'yes' ; then
     AC_CHECK_HEADERS([\
     winsock2.h ws2tcpip.h windows.h w32api/windows.h],,,[[]])
+    AC_CHECK_FUNCS([gettimeofday])
 fi
 # kernel
 if test ${CONFIG_ORTE_KERNEL} == 'yes' ; then

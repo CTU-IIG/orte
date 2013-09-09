@@ -12,6 +12,8 @@
 
 #ifdef _WIN32
 
+#ifndef HAVE_GETTIMEOFDAY
+
 #ifndef __PHARLAP
   #include <winsock2.h>   //there is defined struct timeval
 #endif
@@ -62,7 +64,8 @@ static inline int gettimeofday(struct timeval *tv, struct timezone *tz)
     return 0;
 }
 
+#endif /* HAVE_GETTIMEOFDAY */
+
 #endif /* _WIN32 */
 
 #endif /* _TIMEVAL_H */
-
