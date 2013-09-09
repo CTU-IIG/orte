@@ -105,7 +105,7 @@ Obtaining the code from Git repository
 You can obtain the latest ORTE source code from Git repository by
 running:
 
-  $ git clone git://orte.git.sourceforge.net/gitroot/orte/orte
+  $ git clone git://git.code.sf.net/p/orte/orte
 
 Building From Git
 -----------------
