@@ -273,7 +273,7 @@ chmod +x modtool
 #		generate orte/include/orte/orte_config.h
 # ======================================================================
 
-AC_MSG_NOTICE([creating orte/include/orte/orte_config.h])
+AC_MSG_NOTICE([fixing orte/include/orte/orte_config.h])
 sed -e "s/ PACKAGE/ ORTE_PACKAGE/" -e "s/ VERSION/ ORTE_VERSION/" \
     orte/include/orte/orte_config.h >orte/include/orte/orte_config.h.new
 if cmp -s orte/include/orte/orte_config.h.new orte/include/orte/orte_config.h; then
