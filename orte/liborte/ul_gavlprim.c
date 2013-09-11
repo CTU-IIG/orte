@@ -21,7 +21,8 @@
 
  *******************************************************************/
 
-#include <string.h>
+//#include <string.h>
+#include <orte_all.h>
 #include "ul_gavl.h"
 
 int 

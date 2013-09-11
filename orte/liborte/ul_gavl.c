@@ -21,8 +21,10 @@
 
  *******************************************************************/
 
-#include <string.h>
-#include "ul_utmalloc.h"
+#include <orte_all.h>
+//#include <string.h>
+//#include "ul_utmalloc.h"
+
 #include "ul_gavl.h"
 
 int 
@@ -319,7 +321,7 @@ gavl_delete(gavl_root_t *root, void *item)
   /* delete_primitive called directly for speedup */
   ret=gavl_delete_primitive(&root->root_node, n);
   if(root->node_offs<0)
-    free(n);
+    FREE(n);
   return ret;
 }
 
@@ -590,7 +592,7 @@ gavl_cut_first(gavl_root_t *root)
     return NULL;
   item=gavl_node2item(root,n);
   if(root->node_offs<0)
-    free(n);
+    FREE(n);
   return item;
 }
 
