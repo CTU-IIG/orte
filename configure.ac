@@ -236,7 +236,39 @@ AC_SUBST(INCLUDES)
 
 ###############################
 # Checks for typedefs, structures, and compiler characteristics.
-AC_C_BIGENDIAN
+need_endian_test=no
+AC_CHECK_HEADERS([endian.h], [], [],[])
+if test "$ac_cv_header_endian_h" == 'yes' ; then
+    AC_MSG_CHECKING([whether endian can be determined from endian.h])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <endian.h>], [
+                        unsigned int a=__BYTE_ORDER;
+                        unsigned int b=__BIG_ENDIAN;
+                        unsigned int c=__LITTLE_ENDIAN;])],
+                      [AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no])
+                      need_endian_test=yes
+                      ])
+else
+  need_endian_test=yes
+fi
+
+if test "$need_endian_test" == 'yes' ; then
+  AC_C_BIGENDIAN
+fi
+
+AH_BOTTOM([
+#ifdef HAVE_ENDIAN_H
+  #include <endian.h>
+  #ifdef __BYTE_ORDER
+    #if __BYTE_ORDER == __BIG_ENDIAN
+      #define WORDS_BIGENDIAN 1
+    #endif
+    #if __BYTE_ORDER == __LITTLE_ENDIAN
+      #undef WORDS_BIGENDIAN
+    #endif
+  #endif
+#endif
+])
+
 AC_C_CONST
 AC_C_INLINE
 
