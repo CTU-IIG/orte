@@ -175,6 +175,9 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1
 
+/* Define to 1 if you have the <sys/param.h> header file. */
+#define HAVE_SYS_PARAM_H 1
+
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #define HAVE_SYS_SOCKET_H 1
 
@@ -267,14 +270,20 @@
 #endif
 
 
-#ifdef HAVE_ENDIAN_H
-  #include <endian.h>
-  #ifdef __BYTE_ORDER
+#if defined(HAVE_ENDIAN_H) || defined(HAVE_SYS_PARAM_H)
+  #ifdef HAVE_SYS_PARAM_H
+    #include <sys/param.h>
+  #endif
+  #if defined(HAVE_ENDIAN_H) && !defined(BYTE_ORDER) && !defined(__BYTE_ORDER)
+    #include <endian.h>
+  #endif
+  #if defined(__BYTE_ORDER)
     #if __BYTE_ORDER == __BIG_ENDIAN
       #define WORDS_BIGENDIAN 1
     #endif
-    #if __BYTE_ORDER == __LITTLE_ENDIAN
-      #undef WORDS_BIGENDIAN
+  #elif defined(BYTE_ORDER)
+    #if BYTE_ORDER == BIG_ENDIAN
+      #define WORDS_BIGENDIAN 1
     #endif
   #endif
 #endif

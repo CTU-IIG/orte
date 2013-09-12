@@ -236,19 +236,38 @@ AC_SUBST(INCLUDES)
 
 ###############################
 # Checks for typedefs, structures, and compiler characteristics.
-need_endian_test=no
-AC_CHECK_HEADERS([endian.h], [], [],[])
-if test "$ac_cv_header_endian_h" == 'yes' ; then
-    AC_MSG_CHECKING([whether endian can be determined from endian.h])
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <endian.h>], [
+need_endian_test=yes
+AC_CHECK_HEADERS([endian.h sys/param.h], [], [],[])
+
+if test "$ac_cv_header_sys_param_h" == 'yes' ; then
+    AC_MSG_CHECKING([whether BYTE_ORDER defined in sys/param.h])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <sys/param.h>], [
+                        unsigned int a=BYTE_ORDER;
+                        unsigned int b=BIG_ENDIAN;
+                        unsigned int c=LITTLE_ENDIAN;])],
+                      [AC_MSG_RESULT([yes])
+                       need_endian_test=no],[AC_MSG_RESULT([no])])
+
+    if test "$need_endian_test" == 'yes' ; then
+        AC_MSG_CHECKING([whether __BYTE_ORDER defined in sys/param.h])
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <sys/param.h>], [
                         unsigned int a=__BYTE_ORDER;
                         unsigned int b=__BIG_ENDIAN;
                         unsigned int c=__LITTLE_ENDIAN;])],
-                      [AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no])
-                      need_endian_test=yes
-                      ])
-else
-  need_endian_test=yes
+                      [AC_MSG_RESULT([yes])
+                       need_endian_test=no],[AC_MSG_RESULT([no])])
+    fi
+fi
+if test "$ac_cv_header_endian_h" == 'yes' ; then
+    if test "$need_endian_test" == 'yes' ; then
+        AC_MSG_CHECKING([whether endian can be determined from endian.h])
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <endian.h>], [
+                        unsigned int a=__BYTE_ORDER;
+                        unsigned int b=__BIG_ENDIAN;
+                        unsigned int c=__LITTLE_ENDIAN;])],
+                      [AC_MSG_RESULT([yes])
+                       need_endian_test=no],[AC_MSG_RESULT([no])])
+    fi
 fi
 
 if test "$need_endian_test" == 'yes' ; then
@@ -256,14 +275,20 @@ if test "$need_endian_test" == 'yes' ; then
 fi
 
 AH_BOTTOM([
-#ifdef HAVE_ENDIAN_H
-  #include <endian.h>
-  #ifdef __BYTE_ORDER
+#if defined(HAVE_ENDIAN_H) || defined(HAVE_SYS_PARAM_H)
+  #ifdef HAVE_SYS_PARAM_H
+    #include <sys/param.h>
+  #endif
+  #if defined(HAVE_ENDIAN_H) && !defined(BYTE_ORDER) && !defined(__BYTE_ORDER)
+    #include <endian.h>
+  #endif
+  #if defined(__BYTE_ORDER)
     #if __BYTE_ORDER == __BIG_ENDIAN
       #define WORDS_BIGENDIAN 1
     #endif
-    #if __BYTE_ORDER == __LITTLE_ENDIAN
-      #undef WORDS_BIGENDIAN
+  #elif defined(BYTE_ORDER)
+    #if BYTE_ORDER == BIG_ENDIAN
+      #define WORDS_BIGENDIAN 1
     #endif
   #endif
 #endif
