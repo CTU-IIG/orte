@@ -52,6 +52,9 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
+/* Define to 1 if you have the <endian.h> header file. */
+#define HAVE_ENDIAN_H 1
+
 /* Define to 1 if you have the <errno.h> header file. */
 #define HAVE_ERRNO_H 1
 
@@ -262,3 +265,17 @@
 #ifndef __cplusplus
 /* #undef inline */
 #endif
+
+
+#ifdef HAVE_ENDIAN_H
+  #include <endian.h>
+  #ifdef __BYTE_ORDER
+    #if __BYTE_ORDER == __BIG_ENDIAN
+      #define WORDS_BIGENDIAN 1
+    #endif
+    #if __BYTE_ORDER == __LITTLE_ENDIAN
+      #undef WORDS_BIGENDIAN
+    #endif
+  #endif
+#endif
+
