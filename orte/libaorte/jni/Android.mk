@@ -3,7 +3,6 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := orte
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
-LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS += -Wall
 LOCAL_SRC_FILES := \
 liborte/conv.c \
