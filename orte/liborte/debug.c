@@ -91,7 +91,7 @@ void
 db_print_output(const char *format) {
 #ifndef CONFIG_ORTE_RT
   if (debug_log == NULL) return;
-  fprintf(debug_log, format);
+  fprintf(debug_log, "%s", format);
   fflush(debug_log);
 #else
   rtl_printf(format);
