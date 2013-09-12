@@ -719,7 +719,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   debug(30,10) ("ORTEDomainCreate: finished\n");
   return d;
 
-err:
+//err:
   if (!errno_save) errno_save = errno;
   /* TODO */
   FREE(appParams);

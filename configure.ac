@@ -6,7 +6,7 @@
 
 AC_PREREQ([2.56])
 
-AC_INIT([orte],[0.3.3],[petr.smolik@wo.cz])
+AC_INIT([orte],[0.3.3],[orte@rtime.felk.cvut.cz], [], [http://orte.sf.net])
 AC_CONFIG_AUX_DIR(admin)
 
 ###############################
@@ -44,8 +44,8 @@ echo
 #Check for CPU / vendor / OS
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_CONFIG_HEADER(orte/include/orte/orte_config.h)
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
+AC_CONFIG_HEADER(orte/include/orte/orte_config.h)
+AM_INIT_AUTOMAKE(no-define)
 
 
 # Activate maintainer mode
@@ -116,6 +116,7 @@ fi
 # Checks for programs.
 # Initialize libtool
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 
 ###############################
@@ -160,7 +161,7 @@ if test ${UNIX} == 'yes' -o ${WIN} == 'yes' ; then
     AC_HEADER_STDC
     AC_CHECK_HEADERS([\
     arpa/inet.h fcntl.h stdio.h netdb.h stdlib.h \
-    string.h sys/ioctl.h sys/time.h unistd.h pthread.h \
+    string.h sys/ioctl.h sys/stat.h sys/time.h unistd.h pthread.h \
     sys/types.h sys/sockio.h stdarg.h byteswap.h getopt.h \
     ctype.h signal.h stdint.h errno.h],,,[[]])
     AC_CHECK_HEADERS([sys/socket.h], [], [],
@@ -183,6 +184,7 @@ fi
 if test ${WIN} == 'yes' ; then
     AC_CHECK_HEADERS([\
     winsock2.h ws2tcpip.h windows.h w32api/windows.h],,,[[]])
+    AC_CHECK_FUNCS([gettimeofday])
 fi
 # kernel
 if test ${CONFIG_ORTE_KERNEL} == 'yes' ; then
@@ -271,7 +273,7 @@ chmod +x modtool
 #		generate orte/include/orte/orte_config.h
 # ======================================================================
 
-AC_MSG_NOTICE([creating orte/include/orte/orte_config.h])
+AC_MSG_NOTICE([fixing orte/include/orte/orte_config.h])
 sed -e "s/ PACKAGE/ ORTE_PACKAGE/" -e "s/ VERSION/ ORTE_VERSION/" \
     orte/include/orte/orte_config.h >orte/include/orte/orte_config.h.new
 if cmp -s orte/include/orte/orte_config.h.new orte/include/orte/orte_config.h; then

@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 /* Declaration of tree with first/last enhanced speed functions with internal node */
-#define GAVL_FLES_INT_DEC(cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
+#define GAVL_FLES_INT_DEC_SCOPE(cust_scope, cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
 		cust_root_field, cust_item_node, cust_item_key, cust_cmp_fnc) \
 \
 static inline cust_item_t * \
@@ -43,15 +43,15 @@ static inline cust_key_t *\
 cust_prefix##_node2key(const cust_root_t *root, gavl_node_t *node)\
   { return &(cust_prefix##_node2item(root, node)->cust_item_key);}\
 \
-void cust_prefix##_init_root_field(cust_root_t *root);\
-int cust_prefix##_search_node(const cust_root_t *root, cust_key_t *key, gavl_node_t **nodep);\
-cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t *key);\
-cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t *key);\
-cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t *key);\
-int cust_prefix##_insert(cust_root_t *root, cust_item_t *item);\
-cust_item_t *cust_prefix##_cut_first(cust_root_t *root);\
-int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node);\
-int cust_prefix##_delete(cust_root_t *root, cust_item_t *item);\
+cust_scope void cust_prefix##_init_root_field(cust_root_t *root);\
+cust_scope int cust_prefix##_search_node(const cust_root_t *root, cust_key_t const *key, gavl_node_t **nodep);\
+cust_scope cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t const *key);\
+cust_scope cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t const *key);\
+cust_scope cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t const *key);\
+cust_scope int cust_prefix##_insert(cust_root_t *root, cust_item_t *item);\
+cust_scope cust_item_t *cust_prefix##_cut_first(cust_root_t *root);\
+cust_scope int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node);\
+cust_scope int cust_prefix##_delete(cust_root_t *root, cust_item_t *item);\
 \
 static inline void \
 cust_prefix##_init_detached(cust_item_t *item){\
@@ -99,6 +99,10 @@ cust_prefix##_is_empty(const cust_root_t *root)\
 /*** Iterators ***/\
 UL_ITBASE_SORT_DEC(cust_prefix, cust_root_t, cust_item_t, cust_key_t)
 
+#define GAVL_FLES_INT_DEC(cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
+		cust_root_field, cust_item_node, cust_item_key, cust_cmp_fnc) \
+	GAVL_FLES_INT_DEC_SCOPE(extern, cust_prefix, cust_root_t, cust_item_t, cust_key_t,\
+		cust_root_field, cust_item_node, cust_item_key, cust_cmp_fnc)
 
 /**
  * GAVL_FLES_INT_IMP - Implementation of new custom tree with fast first/last functions
@@ -136,7 +140,7 @@ void cust_prefix##_init_root_field(cust_root_t *root)\
   root->cust_root_field.count=0;\
 }\
 \
-int cust_prefix##_search_node4(const cust_root_t *root, cust_key_t *key, gavl_node_t **nodep, int mode)\
+int cust_prefix##_search_node4(const cust_root_t *root, cust_key_t const *key, gavl_node_t **nodep, int mode)\
 {\
   int cmp=1;\
   gavl_node_t *n, *p;\
@@ -174,12 +178,12 @@ int cust_prefix##_search_node4(const cust_root_t *root, cust_key_t *key, gavl_no
   return cmp;\
 }\
 \
-int cust_prefix##_search_node(const cust_root_t *root, cust_key_t *key, gavl_node_t **nodep)\
+int cust_prefix##_search_node(const cust_root_t *root, cust_key_t const *key, gavl_node_t **nodep)\
 {\
   return cust_prefix##_search_node4(root, key, nodep, 0);\
 }\
 \
-cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t *key)\
+cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t const *key)\
 {\
   gavl_node_t *node;\
   if(cust_prefix##_search_node4(root, key, &node, 0))\
@@ -187,7 +191,7 @@ cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t *key)\
   return cust_prefix##_node2item(root,node);\
 }\
 \
-cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t *key)\
+cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t const *key)\
 {\
   gavl_node_t *n;\
   if(cust_prefix##_search_node4(root, key, &n, GAVL_FFIRST))\
@@ -195,7 +199,7 @@ cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t *key)\
   return cust_prefix##_node2item(root,n);\
 }\
 \
-cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t *key)\
+cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t const *key)\
 {\
   gavl_node_t *node;\
   if(cust_prefix##_search_node4(root, key, &node, GAVL_FAFTER)<=0){\

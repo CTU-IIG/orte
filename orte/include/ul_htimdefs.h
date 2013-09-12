@@ -2,6 +2,9 @@
 #define _UL_HTIMDEFS_H
 
 #include "ul_utdefs.h"
+#ifdef _WIN64
+#include <stdint.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,6 +37,8 @@ typedef signed long ul_msdiff_t;
 typedef ul_mstime_t ul_htim_time_t;
 typedef ul_msdiff_t ul_htim_diff_t;
 
+#define UL_HTIM_RESOLUTION 1000
+
 static inline int
 ul_htimer_cmp_fnc(const ul_htim_time_t *a, const ul_htim_time_t *b)
 {
@@ -48,6 +53,9 @@ ul_htimer_cmp_fnc(const ul_htim_time_t *a, const ul_htim_time_t *b)
 #include "orte/typedefs_defines_rtps.h"
 #include "orte/defines_api.h"
 typedef NtpTime ul_htim_time_t;
+typedef NtpTime ul_htim_diff_t;
+
+#define UL_HTIM_RESOLUTION 0x100000000
 
 static inline int
 ul_htimer_cmp_fnc(const ul_htim_time_t *a, const ul_htim_time_t *b){
@@ -61,7 +69,14 @@ ul_htimer_cmp_fnc(const ul_htim_time_t *a, const ul_htim_time_t *b){
 /* Additional, user defined fields for ul_htimer_t structure */
 #define UL_HTIMER_USER_FIELDS 
 
-typedef void (ul_htimer_fnc_t)(unsigned long data);
+#ifdef _WIN64
+typedef uintptr_t ul_htimer_fnc_data_t;
+#else
+typedef unsigned long ul_htimer_fnc_data_t;
+#endif
+/*typedef void *ul_htimer_fnc_data_t;*/
+
+typedef void (ul_htimer_fnc_t)(ul_htimer_fnc_data_t data) UL_ATTR_REENTRANT;
 
 /* The wrapper for ul_htimer_run_expired */
 #define UL_HTIMER_FNC_CALL(queue, timer, pact_time) \

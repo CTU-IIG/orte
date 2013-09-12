@@ -60,7 +60,7 @@ void cust_prefix##_init_root_field(cust_root_t *root)\
   root->cust_root_node=NULL;\
 }\
 \
-int cust_prefix##_search_node(const cust_root_t *root, cust_key_t *key, gavl_node_t **nodep)\
+int cust_prefix##_search_node(const cust_root_t *root, cust_key_t const *key, gavl_node_t **nodep)\
 {\
   int cmp=1;\
   gavl_node_t *n, *p;\
@@ -81,7 +81,7 @@ int cust_prefix##_search_node(const cust_root_t *root, cust_key_t *key, gavl_nod
   return cmp;\
 }\
 \
-cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t *key)\
+cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t const *key)\
 {\
   gavl_node_t *node;\
   if(cust_prefix##_search_node(root, key, &node))\
@@ -89,12 +89,12 @@ cust_item_t *cust_prefix##_find(const cust_root_t *root, cust_key_t *key)\
   return cust_prefix##_node2item(root,node);\
 }\
 \
-cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t *key)\
+cust_item_t *cust_prefix##_find_first(const cust_root_t *root, cust_key_t const *key)\
 {\
   return cust_prefix##_find(root, key);\
 }\
 \
-cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t *key)\
+cust_item_t *cust_prefix##_find_after(const cust_root_t *root, cust_key_t const *key)\
 {\
   gavl_node_t *node;\
   if(cust_prefix##_search_node(root, key, &node)<=0){\
@@ -121,7 +121,6 @@ int cust_prefix##_delete_node(cust_root_t *root, gavl_node_t *node)\
 \
 int cust_prefix##_delete(cust_root_t *root, cust_item_t *item)\
 {\
-  int ret;\
   gavl_node_t *n, *p;\
   if(!item) return -1;\
   /*if(cust_prefix##_search_node(root, &item->cust_item_key, &n))*/\
@@ -130,8 +129,7 @@ int cust_prefix##_delete(cust_root_t *root, cust_item_t *item)\
   for(p=n; p->parent; p=p->parent);\
   if(p!=root->cust_root_node)\
     return -1;\
-  ret=gavl_delete_primitive(&root->cust_root_node, n);\
-  return 1;\
+  return gavl_delete_primitive(&root->cust_root_node, n);\
 }\
 \
 gavl_node_t *cust_prefix##_first_node(const cust_root_t *root)\

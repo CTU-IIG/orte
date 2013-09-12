@@ -3,7 +3,7 @@
 
   ul_htimer.h  - hierarchical timer basic declarations
 
-  (C) Copyright 2003-2004 by Pavel Pisa - Originator
+  (C) Copyright 2003-2009 by Pavel Pisa - Originator
 
   The uLan utilities library can be used, copied and modified under
   next licenses
@@ -115,12 +115,12 @@ ul_htim_queue_inline_first(ul_htim_queue_t *queue, ul_htim_node_t **phtim)
 }
 #endif /*UL_HTIMER_WITH_HPTREE*/
 
-#define UL_HTIMER_DEC(cust_prefix, cust_queue_t, cust_timer_t, \
+#define UL_HTIMER_DEC_SCOPE(cust_scope, cust_prefix, cust_queue_t, cust_timer_t, \
 		cust_queue_field, cust_timer_field) \
 \
-void cust_prefix##_init_queue(cust_queue_t *queue);\
-cust_timer_t *cust_prefix##_cut_expired(cust_queue_t *queue, ul_htim_time_t *act_time);\
-int cust_prefix##_next_expire(cust_queue_t *queue, ul_htim_time_t *act_time);\
+cust_scope void cust_prefix##_init_queue(cust_queue_t *queue);\
+cust_scope cust_timer_t *cust_prefix##_cut_expired(cust_queue_t *queue, ul_htim_time_t *act_time);\
+cust_scope int cust_prefix##_next_expire(cust_queue_t *queue, ul_htim_time_t *act_time);\
 static inline int \
 cust_prefix##_add(cust_queue_t *queue, cust_timer_t *timer){ \
   return ul_htim_queue_insert(&queue->cust_queue_field, &timer->cust_timer_field); \
@@ -147,6 +147,11 @@ static inline ul_htim_time_t \
 cust_prefix##_get_expire(cust_timer_t *timer){\
   return timer->cust_timer_field.expires;\
 }
+
+#define UL_HTIMER_DEC(cust_prefix, cust_queue_t, cust_timer_t, \
+		cust_queue_field, cust_timer_field) \
+	UL_HTIMER_DEC_SCOPE(extern, cust_prefix, cust_queue_t, cust_timer_t, \
+		cust_queue_field, cust_timer_field)
 
 #define UL_HTIMER_IMP(cust_prefix, cust_queue_t, cust_timer_t, \
 		cust_queue_field, cust_timer_field) \
@@ -193,7 +198,7 @@ int cust_prefix##_next_expire(cust_queue_t *queue, ul_htim_time_t *pnext_time)\
 typedef struct ul_htimer {
   ul_htim_node_t htim;
   ul_htimer_fnc_t *function;
-  unsigned long data;
+  ul_htimer_fnc_data_t data;
   UL_HTIMER_USER_FIELDS
 } ul_htimer_t;
 
@@ -216,27 +221,109 @@ void ul_htimer_run_expired(ul_htimer_queue_t *queue, ul_htim_time_t *pact_time);
  * int ul_htimer_add(ul_htimer_queue_t *queue, ul_htimer_t *timer);
  * int ul_htimer_detach(ul_htimer_queue_t *queue, ul_htimer_t *timer);
  * int ul_htimer_first_changed(ul_htimer_queue_t *queue);
- * int ul_htimer_next_expire(ul_htimer_queue_t *queue, ul_htimer_time_t *pnext_time);
- * ul_htimer_t *ul_htimer_cut_expired(ul_htimer_queue_t *queue, ul_htimer_time_t *pact_time);
+ * int ul_htimer_next_expire(ul_htimer_queue_t *queue, ul_htim_time_t *pnext_time);
+ * ul_htimer_t *ul_htimer_cut_expired(ul_htimer_queue_t *queue, ul_htim_time_t *pact_time);
  * void ul_htimer_init_detached(ul_htimer_t *timer);
- * void ul_htimer_set_expire(ul_htimer_t *timer, ul_htimer_time_t expire);
- * ul_htimer_time_t ul_htimer_get_expire(ul_htimer_t *timer);
+ * void ul_htimer_set_expire(ul_htimer_t *timer, ul_htim_time_t expire);
+ * ul_htim_time_t ul_htimer_get_expire(ul_htimer_t *timer);
  */
 
 #endif /*UL_HTIMER_WITH_STD_TYPE*/
 
+/*===========================================================*/
+/*  Standard timer support to provide default root timer */
+
+#ifdef UL_HTIMER_WITH_STD_TYPE
+
+typedef struct ul_root_htimer_ops_t {
+  int (*timer_root_init)(int options, void *context) UL_ATTR_REENTRANT;
+  ul_htimer_queue_t *(*timer_root_get)(int options, void *context) UL_ATTR_REENTRANT;
+  void (*timer_root_put)(ul_htimer_queue_t *queue) UL_ATTR_REENTRANT;
+  int (*current_time)(int options, ul_htim_time_t *htimer_time) UL_ATTR_REENTRANT;
+} ul_root_htimer_ops_t;
+
+extern ul_root_htimer_ops_t *ul_root_htimer_ops;
+extern ul_root_htimer_ops_t *ul_root_htimer_ops_compile_default;
+
+int ul_root_htimer_init(int options, void *context);
+
+static inline ul_htimer_queue_t *ul_root_htimer_get(int options, void *context)
+{
+  return ul_root_htimer_ops->timer_root_get(options, context);
+}
+
+static inline void ul_root_htimer_put(ul_htimer_queue_t *queue)
+{
+  ul_root_htimer_ops->timer_root_put(queue);
+}
+
+static inline int ul_root_htimer_current_time(int options, ul_htim_time_t *htimer_time)
+{
+  return ul_root_htimer_ops->current_time(options, htimer_time);
+}
+
+int ul_root_htimer_add(ul_htimer_t *timer);
+
+int ul_root_htimer_detach(ul_htimer_t *timer);
+#endif /*UL_HTIMER_WITH_STD_TYPE*/
+
 #ifdef UL_HTIMER_WITH_MSTIME
 #ifdef UL_HTIMER_WITH_STD_TYPE
-ul_htimer_queue_t ul_root_htimer;
+static inline int ul_htimdiff2ms(ul_msdiff_t *ms, const ul_htim_diff_t *htimdiff)
+{
+  *ms = *htimdiff;
+  return 0;
+}
+
+static inline int ul_ms2htimdiff(ul_htim_diff_t *htimdiff, const ul_msdiff_t *ms)
+{
+  *htimdiff = *ms;
+  return 0;
+}
+
+static inline int ul_htime2mstime(ul_mstime_t *ms, const ul_htim_time_t *htime)
+{
+  *ms = *htime;
+  return 0;
+}
+
+static inline int ul_mstime2htime(ul_htim_time_t *htime, const ul_mstime_t *ms)
+{
+  *htime = *ms;
+  return 0;
+}
+
+static inline int ul_htime_sub2ms(ul_msdiff_t *ms, const ul_htim_time_t *htimto,
+                                const ul_htim_time_t *htimfrom)
+{
+  ul_htim_diff_t htimdiff = *htimto - *htimfrom;
+  return ul_htimdiff2ms(ms, &htimdiff);
+}
+
+static inline int ul_htime_sub(ul_htim_diff_t *diff, const ul_htim_time_t *htimto,
+                                const ul_htim_time_t *htimfrom)
+{
+  *diff = *htimto - *htimfrom;
+  return 0;
+}
+
+static inline int ul_htime_add(ul_htim_time_t *sum, const ul_htim_time_t *htimfrom,
+                                const ul_htim_diff_t *diff)
+{
+  *sum = *htimfrom + *diff;
+  return 0;
+}
+
 #endif /*UL_HTIMER_WITH_STD_TYPE*/
-ul_mstime_t ul_mstime_last;
-ul_mstime_t ul_mstime_next;
+
+//ul_mstime_t ul_mstime_last;
+//ul_mstime_t ul_mstime_next;
 
 void ul_mstime_now(ul_mstime_t *mstm);
-void ul_mstime_update(void);
-void ul_mstime_init(void);
+//void ul_mstime_update(void);
+//void ul_mstime_init(void);
 void ul_get_log_time_str(char str[30]);
-void ul_compute_mstime_next(void);
+//void ul_compute_mstime_next(void);
 
 #endif /*UL_HTIMER_WITH_MSTIME*/
 

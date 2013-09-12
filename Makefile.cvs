@@ -1,4 +1,5 @@
 default: cvs
+	@echo "Now you can run './configure'"
 
 cvs:
 	autoreconf -i 

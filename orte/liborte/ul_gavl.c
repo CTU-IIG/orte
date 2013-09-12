@@ -123,7 +123,7 @@ gavl_search_node(const gavl_root_t *root, const void *key,
       break;
     }
   }
-  if(mode&GAVL_FAFTER){
+  if((mode&GAVL_FAFTER)&&!(mode&GAVL_FCMP)){
     if(cmp<=0)
       if(p) p=gavl_next_node(p);
     *nodep=p;
@@ -264,7 +264,7 @@ gavl_insert(gavl_root_t *root, void *item, int mode)
   			(mode|GAVL_FCMP), &where);
   if((mode!=GAVL_FAFTER) && !cmp) return -1;
   if(root->node_offs<0){
-    n2add=MALLOC(sizeof(gavl_node_t)+sizeof(void*));
+    n2add=malloc(sizeof(gavl_node_t)+sizeof(void*));
     if(!n2add) return -1;
     *(void**)(n2add+1)=item;
   } else {
@@ -380,21 +380,21 @@ gavl_delete_and_next_node(gavl_root_t *root, gavl_node_t *node)
 /*===========================================================*/
 /* basic types compare functions */
 
-int gavl_cmp_int(const void *a, const void *b)
+int gavl_cmp_int(const void *a, const void *b) UL_ATTR_REENTRANT
 {
   if (*(int*)a>*(int*)b) return 1;
   if (*(int*)a<*(int*)b) return -1;
   return 0;
 }
 
-int gavl_cmp_long(const void *a, const void *b)
+int gavl_cmp_long(const void *a, const void *b) UL_ATTR_REENTRANT
 {
   if (*(long*)a>*(long*)b) return 1;
   if (*(long*)a<*(long*)b) return -1;
   return 0;
 }
 
-int gavl_cmp_ptr(const void *a, const void *b)
+int gavl_cmp_ptr(const void *a, const void *b) UL_ATTR_REENTRANT
 {
   if (*(void**)a>*(void**)b) return 1;
   if (*(void**)a<*(void**)b) return -1;

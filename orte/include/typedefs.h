@@ -222,7 +222,19 @@ typedef struct ParameterSequence {
   ul_list_node_t         node;
   ParameterId            parameterID;
   ParameterLength        parameterLength;
-  u_char                 parameterLocal[MAX_PARAMETER_LOCAL_LENGTH];
+  union {
+    u_char               asStr[MAX_PARAMETER_LOCAL_LENGTH];
+    NtpTime		 asNtpTime;
+    CORBA_unsigned_long  asLong;
+    VendorId		 asVendorId;
+    ProtocolVersion	 asProtocolVersion;
+    SequenceNumber	 asSequenceNumber;
+    CORBA_octet		 asOctet;
+    IPAddress		 asIPAddress;
+    Port		 asPort;
+    uint32_t		 asUInt32;
+    TypeChecksum	 asTypeChecksum;
+  } parameterLocal;
   u_char                 *parameter;
 } ParameterSequence; 
 
