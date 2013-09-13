@@ -76,7 +76,13 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
     }
     jvm = callback_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
       #ifdef TEST_STAGE
