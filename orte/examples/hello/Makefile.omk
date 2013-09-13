@@ -1,6 +1,11 @@
 ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_AS_LIBRARY),y)
+INCLUDES += -D MAIN_RENAMED
+lib_LIBRARIES = h_publisher h_subscriber
+else
 utils_PROGRAMS = h_publisher h_subscriber
+endif
 
 h_publisher_SOURCES = h_publisher.c
 
@@ -21,7 +26,7 @@ ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_RTL),y)
 rtlinux_MODULES = h_publisher_rt h_subscriber_rt
 
 rtlinux_INCLUDES = -I $(srcdir)/../../include
-               
+
 h_publisher_rt_SOURCES = h_publisher.c
 
 h_subscriber_rt_SOURCES = h_subscriber.c

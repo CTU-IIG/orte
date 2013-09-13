@@ -35,10 +35,15 @@
 #endif
 #include "orte.h"
 
-ORTEDomain        *d;
-char              instance2Recv[64];
+#ifdef MAIN_RENAMED
+#define main orte_r_subscriber_reliable_main
+#define exit return
+#endif
 
-void
+static ORTEDomain        *d;
+static char              instance2Recv[64];
+
+static void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
   char *instance=(char*)vinstance;
   

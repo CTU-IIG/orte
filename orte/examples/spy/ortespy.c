@@ -47,11 +47,16 @@
 #endif
 #include "string.h"
 
-ORTEDomain              *d;
-NtpTime                 deadline,minimumSeparation;
-int32_t                 instanceRecv;
+#ifdef MAIN_RENAMED
+#define main orte_spy_main
+#define exit return
+#endif
 
-void
+static ORTEDomain              *d;
+static NtpTime                 deadline,minimumSeparation;
+static int32_t                 instanceRecv;
+
+static void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
   char lbuff[MAX_STRING_NTPTIME_LENGTH];
   char rbuff[MAX_STRING_NTPTIME_LENGTH];

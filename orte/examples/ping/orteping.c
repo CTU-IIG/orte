@@ -46,6 +46,11 @@
   #include <getopt.h>
 #endif
 
+#ifdef MAIN_RENAMED
+#define main orte_ping_main
+#define exit return
+#endif
+
 Boolean                 quite=ORTE_FALSE;
 int			regfail=0;
 
@@ -56,7 +61,7 @@ onRegFail(void *param) {
   regfail=1;
 }
 
-void
+static void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
   uint32_t *instance=(uint32_t*)vinstance;
   
@@ -71,7 +76,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   }
 }
 
-void
+static void
 sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
   uint32_t *instance=(uint32_t*)vinstance;
   

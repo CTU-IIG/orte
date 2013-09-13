@@ -35,11 +35,16 @@
 #endif
 #include "orte.h"
 
-ORTEDomain        *d;
-char              instance2Send[64];
-int               counter=0;
+#ifdef MAIN_RENAMED
+#define main orte_r_publisher_main
+#define exit return
+#endif
 
-void
+static ORTEDomain        *d;
+static char              instance2Send[64];
+static int               counter=0;
+
+static void
 sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
   char *instance=(char*)vinstance;
 

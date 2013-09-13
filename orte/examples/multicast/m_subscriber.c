@@ -31,14 +31,19 @@
 #include "orte.h"
 #include <stdio.h>
 
-ORTEDomain        *d = NULL;
-char              instance2Recv[64];
+#ifdef MAIN_RENAMED
+#define main orte_m_subscriber_main
+#define exit return
+#endif
+
+static ORTEDomain        *d = NULL;
+static char              instance2Recv[64];
 
 int maxDataSize(ORTEGetMaxSizeParam *gms) {
   return gms->max_size;
 }
 
-void
+static void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
   char *instance=(char*)vinstance;
 
@@ -53,7 +58,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 }
 
 
-void *
+static void *
 subscriberCreate(void *arg) {
   ORTESubscription    *s;
   NtpTime             deadline,minimumSeparation;

@@ -1,6 +1,11 @@
 ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_AS_LIBRARY),y)
+INCLUDES += -D MAIN_RENAMED
+lib_LIBRARIES = m_subscriber
+else
 utils_PROGRAMS = m_subscriber
+endif
 
 m_subscriber_SOURCES = m_subscriber.c
 

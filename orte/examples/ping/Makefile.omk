@@ -1,6 +1,11 @@
 ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
 
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES_AS_LIBRARY),y)
+INCLUDES += -D MAIN_RENAMED
+lib_LIBRARIES = orteping
+else
 bin_PROGRAMS = orteping
+endif
 
 orteping_SOURCES = orteping.c
 

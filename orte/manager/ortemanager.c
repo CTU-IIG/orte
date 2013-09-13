@@ -31,14 +31,19 @@
  
 #include "orte_all.h"
 
+#ifdef MAIN_RENAMED
+#define main ortemanager_main
+#define exit return
+#endif
+
 #ifndef CONFIG_ORTE_RT
 //global variables
-ORTEDomain          *d;
-ORTEDomainProp      dp;
-int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
-Boolean             orteDaemon=ORTE_FALSE;
-Boolean             orteWinService=ORTE_FALSE;
-ORTEDomainAppEvents *events=NULL;
+static ORTEDomain          *d;
+static ORTEDomainProp      dp;
+static int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
+static Boolean             orteDaemon=ORTE_FALSE;
+static Boolean             orteWinService=ORTE_FALSE;
+static ORTEDomainAppEvents *events=NULL;
 
 //event system
 Boolean

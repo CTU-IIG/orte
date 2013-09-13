@@ -41,11 +41,15 @@
   #include <stdio.h>
 #endif
 
+#ifdef MAIN_RENAMED
+#define main orte_h_subscriber_main
+#define exit return
+#endif
 
-ORTEDomain        *d = NULL;
-char              instance2Recv[64];
+static ORTEDomain        *d = NULL;
+static char              instance2Recv[64];
 
-void
+static void
 recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
   char *instance=(char*)vinstance;
 
@@ -60,7 +64,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 }
 
 
-void *
+static void *
 subscriberCreate(void *arg) {
   ORTESubscription    *s;
   NtpTime             deadline,minimumSeparation;

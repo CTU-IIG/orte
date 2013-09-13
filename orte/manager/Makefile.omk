@@ -1,10 +1,16 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE_MANAGER=y
+default_CONFIG = CONFIG_OC_ETH_ORTE_MANAGER_AS_LIBRARY=x
 
 ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER),y)
 
-bin_PROGRAMS = ortemanager
-
 INCLUDES = -I $(srcdir)/../include
+
+ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER_AS_LIBRARY),y)
+INCLUDES += -D MAIN_RENAMED
+lib_LIBRARIES = ortemanager
+else
+bin_PROGRAMS = ortemanager
+endif
 
 lib_LOADLIBES =  orte pthread
 
@@ -24,7 +30,7 @@ default_CONFIG += CONFIG_OC_ETH_ORTE_MANAGER_RTL=n
 ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER_RTL),y)
 
 rtlinux_MODULES = ortemanager_rt
-               
+
 rtlinux_INCLUDES = -I $(srcdir)/../include
 
 ortemanager_rt_SOURCES = ortemanager.c
