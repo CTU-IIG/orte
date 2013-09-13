@@ -1,0 +1,35 @@
+default_CONFIG += CONFIG_OC_ETH_ORTE_EXAMPLES=x
+default_CONFIG += CONFIG_OC_ETH_ORTE_RTEMS_SHELL=x
+default_CONFIG += CONFIG_OC_ETH_ORTE_MANAGER=x
+
+
+ifeq ($(CONFIG_OC_ETH_ORTE_RTEMS_SHELL),y)
+
+LOCAL_CONFIG_H = rtems_shell_local_config.h
+
+bin_PROGRAMS = orte_rtems_shell_example
+
+lib_LIBRARIES = orte_rtems_shell
+
+include_HEADERS = orte_rtems_shell.h
+
+orte_rtems_shell_SOURCES += orte_rtems_shell.c
+
+orte_rtems_shell_example_SOURCES += init.c
+
+#appfoo_EMBEDTARFILES = rootfs
+
+lib_LOADLIBES += orte_rtems_shell
+
+ifeq ($(CONFIG_OC_ETH_ORTE_EXAMPLES),y)
+lib_LOADLIBES += h_publisher h_subscriber m_subscriber orteping \
+	ortespy r_publisher r_subscriber_besteffort r_subscriber_reliable
+endif
+
+ifeq ($(CONFIG_OC_ETH_ORTE_MANAGER),y)
+lib_LOADLIBES += ortemanager
+endif
+
+lib_LOADLIBES += orte nfs
+
+endif
