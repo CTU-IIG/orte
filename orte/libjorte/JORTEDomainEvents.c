@@ -37,7 +37,13 @@ onRegFail(void *param)
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -119,7 +125,13 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -211,7 +223,13 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -304,7 +322,13 @@ onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -397,7 +421,13 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -492,7 +522,13 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -597,7 +633,13 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -704,7 +746,13 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -809,7 +857,13 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -914,7 +968,13 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
@@ -1019,7 +1079,13 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
     }
     jvm = domain_events_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+    (*jvm)->AttachCurrentThread(jvm,
+                                #ifdef __ANDROID__
+                                  &env,
+                                #else
+                                  (void **)&env,
+                                #endif
+                                NULL);
     if(env == 0)
     {
      #ifdef TEST_STAGE
