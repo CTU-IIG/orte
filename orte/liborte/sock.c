@@ -182,6 +182,10 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
   }
 
   for (ifa_it = ifa; ifa_it != NULL; ifa_it = ifa_it->ifa_next) {
+    if (ifa_it->ifa_addr == NULL) {
+      SOCK_INTF_DEBUG("interace %s without address ... skipping\n", ifa_it->ifa_name);
+      continue;
+    }
     SOCK_INTF_DEBUG("interace %s SA_%d addr 0x%08lx flags 0x%08lx %s %s ... ",
            ifa_it->ifa_name,
            ifa_it->ifa_addr->sa_family,
