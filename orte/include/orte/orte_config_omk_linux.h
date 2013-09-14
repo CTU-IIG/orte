@@ -73,6 +73,9 @@
 /* Define for ORTE getopt_long self implemetation */
 /* #undef HAVE_GETPOT_LONG_ORTE */
 
+/* Define to 1 if you have the <ifaddrs.h> header file. */
+#define HAVE_IFADDRS_H 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
@@ -171,6 +174,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
+
+/* Define to 1 if `sa_len' is a member of `struct sockaddr'. */
+/* #undef HAVE_STRUCT_SOCKADDR_SA_LEN */
 
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1

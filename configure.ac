@@ -236,6 +236,26 @@ AC_SUBST(INCLUDES)
 
 ###############################
 # Checks for typedefs, structures, and compiler characteristics.
+
+AC_CHECK_MEMBERS([struct sockaddr.sa_len],,,[#ifdef HAVE_SYS_TYPES_H
+                   #include <sys/types.h>
+                 #endif
+                 #ifdef HAVE_SYS_SOCKET_H
+                   #include <sys/socket.h>
+                 #endif
+                 #ifdef HAVE_WINSOCK2_H
+                   #include <winsock2.h>
+                 #endif])
+
+
+AC_CHECK_HEADERS([ifaddrs.h],,,[#ifdef HAVE_SYS_TYPES_H
+	     #include <sys/types.h>
+           #endif])
+
+###############################
+# Endianness support attempts to allow build with same configure
+# for both cases on recent systems
+
 need_endian_test=yes
 AC_CHECK_HEADERS([endian.h sys/param.h], [], [],[])
 

@@ -159,29 +159,128 @@ sock_ioctl(sock_t *sock, long cmd, unsigned long *arg) {
 }
 
 /*********************************************************************/
+
+#if 0
+  #define SOCK_INTF_DEBUG(...) printf( __VA_ARGS__ )
+#else
+  #define SOCK_INTF_DEBUG(...) do {;} while(0)
+#endif
+
+#ifdef HAVE_IFADDRS_H
+#include <ifaddrs.h>
+#endif /*HAVE_IFADDRS_H*/
+
 int
 sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
-#if defined(SOCK_BSD)
-  struct ifconf           ifc;
-  char                    buf[MAX_INTERFACES*sizeof(struct ifreq)];
-  char                    *ptr;
+#if defined(HAVE_IFADDRS_H)
+  struct ifaddrs *ifa = NULL;
+  struct ifaddrs *ifa_it;
 
-  ifc.ifc_len = sizeof(buf);
-  ifc.ifc_buf = buf;
+  if (getifaddrs(&ifa)) {
+    SOCK_INTF_DEBUG("getifaddrs() failed\n");
+    return -1;
+  }
+
+  for (ifa_it = ifa; ifa_it != NULL; ifa_it = ifa_it->ifa_next) {
+    SOCK_INTF_DEBUG("interace %s SA_%d addr 0x%08lx flags 0x%08lx %s %s ... ",
+           ifa_it->ifa_name,
+           ifa_it->ifa_addr->sa_family,
+           (unsigned long)ntohl(((struct sockaddr_in*)(ifa_it->ifa_addr))->sin_addr.s_addr),
+           (unsigned long)ifa_it->ifa_flags,
+           ifa_it->ifa_flags & IFF_UP? "up":"down",
+           ifa_it->ifa_flags & IFF_LOOPBACK? "loopback":"");
+
+    if (!(ifa_it->ifa_flags & IFF_UP) || (ifa_it->ifa_flags & IFF_LOOPBACK) ||
+        (ifa_it->ifa_addr->sa_family != AF_INET)) {
+      SOCK_INTF_DEBUG("skipped\n");
+      continue;
+    }
+    SOCK_INTF_DEBUG("used\n");
+
+    (*IFCount)++;
+    IFProp->ifFlags=ifa_it->ifa_flags;
+    IFProp->ipAddress=ntohl(((struct sockaddr_in*)(ifa_it->ifa_addr))->sin_addr.s_addr);
+    IFProp++;
+    if(*IFCount >= MAX_INTERFACES)
+      break;
+  }
+
+  freeifaddrs(ifa);
+
+#elif defined(SOCK_BSD)
+  #define SOCK_SIOCGIFCONF_SA_LEN_UNCONDITIONAL 1 /* seems to be required for RTEMS*/
+
+  struct ifconf           ifc;
+  char                    *buf;
+  char                    *ptr;
+  int                     res;
+  int                     i;
+
+  ifc.ifc_len = MAX_INTERFACES*sizeof(struct ifreq);
+  if (ifc.ifc_len < 2 * 1024)
+    ifc.ifc_len = 2 * 1024;
+  ifc.ifc_buf = buf = malloc(ifc.ifc_len);
+
   *IFCount=0;
-  if (ioctl(sock->fd, SIOCGIFCONF, &ifc) < 0) return -1;
-  for (ptr = buf; ptr < (buf + ifc.ifc_len);ptr += sizeof(struct ifreq)) {
+  res = ioctl(sock->fd, SIOCGIFCONF, &ifc);
+  if (res < 0) {
+     SOCK_INTF_DEBUG("ioctl(sock->fd, SIOCGIFCONF) failed\n");
+     free(buf);
+     return -1;
+  }
+  SOCK_INTF_DEBUG("ioctl(sock->fd, SIOCGIFCONF) returned %d\n", res);
+  for(i=0; i < ifc.ifc_len; i++)
+     SOCK_INTF_DEBUG(" %02x", buf[i]);
+  SOCK_INTF_DEBUG("\n");
+
+  SOCK_INTF_DEBUG("sizeof(struct sockaddr) %d, sizeof(struct ifreq) %d ifc.ifc_len %d\n",
+         (int)sizeof(struct sockaddr),
+         (int)sizeof(struct ifreq),
+         ifc.ifc_len);
+
+  for (ptr = buf; ptr < (buf + ifc.ifc_len);) {
     struct ifreq*     ifr = (struct ifreq*) ptr;
     struct sockaddr   addr;
+    size_t            addr_len = sizeof(addr);
+
+    if(buf + ifc.ifc_len - ptr < sizeof(struct ifreq)) {
+      SOCK_INTF_DEBUG("truncated ifreq entry\n");
+      break;
+    }
+
     memcpy(&addr, &ifr->ifr_addr, sizeof(addr));
-    ioctl(sock->fd, SIOCGIFFLAGS, ifr);
-    if ((ifr->ifr_flags & IFF_UP) && !(ifr->ifr_flags & IFF_LOOPBACK)) {
+
+   #ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
+    addr_len = addr.sa_len;
+    if ((addr_len > sizeof(addr)) || SOCK_SIOCGIFCONF_SA_LEN_UNCONDITIONAL)
+      ptr = addr_len + (char*)&ifr->ifr_addr;
+    else
+   #endif /*HAVE_STRUCT_SOCKADDR_SA_LEN*/
+      ptr += sizeof(struct ifreq);
+
+    res = ioctl(sock->fd, SIOCGIFFLAGS, ifr);
+
+    SOCK_INTF_DEBUG("interace %s SA_%d addr 0x%08lx len %d flags 0x%08lx %s %s SIOCGIFFLAGS res %d\n",
+           ifr->ifr_name,
+           addr.sa_family,
+           (unsigned long)ntohl(((struct sockaddr_in*)&addr)->sin_addr.s_addr),
+           (int)addr_len,
+           (unsigned long)ifr->ifr_flags,
+           ifr->ifr_flags & IFF_UP? "up":"down",
+           ifr->ifr_flags & IFF_LOOPBACK? "loopback":"",
+           res);
+
+    if ((ifr->ifr_flags & IFF_UP) && !(ifr->ifr_flags & IFF_LOOPBACK) &&
+        (addr.sa_family == AF_INET)) {
       (*IFCount)++;
       IFProp->ifFlags=ifr->ifr_flags;
       IFProp->ipAddress=ntohl(((struct sockaddr_in*)&addr)->sin_addr.s_addr);
       IFProp++;
+      if(*IFCount >= MAX_INTERFACES)
+        break;
     }
   }
+  free(buf);
   return 0;
 #elif defined(SOCK_RTLWIP)
   /* loopback iface is recognized if it has this address */
