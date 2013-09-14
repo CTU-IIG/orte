@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <pthread.h>
 #include <string.h>
+#include <getopt.h>
 #include <rtems/error.h>
 #include <rtems/monitor.h>
 #include <rtems/shell.h>
@@ -22,6 +23,9 @@ void *orte_spawn_task_func(void *arg_pack)
   orte_spawn_args_t  *spawn_args = (orte_spawn_args_t*)arg_pack;
   int                argc = spawn_args->argc;
   char               **argv = &(spawn_args->argv[0]);
+
+  if (optind)
+    optind = 1;
 
   if (argc) {
     shell_cmd = rtems_shell_lookup_cmd(argv[0]);
@@ -74,6 +78,8 @@ int orte_spawn_main(int argc, char **argv)
   spawn_args->argv[argc] = NULL;
 
   status = pthread_create(&task_id, NULL, orte_spawn_task_func, spawn_args);
+  if (status == 0)
+    pthread_detach(task_id);
 
   return status?1:0;
 }
