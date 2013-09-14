@@ -34,8 +34,6 @@
 
 #include <orte_rtems_shell.h>
 
-#include "networkconfig-static.h"
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -59,6 +57,14 @@
 #endif
 
 #define RTEMS_VER_CODE VER_CODE(__RTEMS_MAJOR__ ,__RTEMS_MINOR__ ,__RTEMS_REVISION__)
+
+#if RTEMS_VER_CODE < VER_CODE(4,10,99)
+  #ifndef RTEMS_USE_LOOPBACK
+    #define RTEMS_USE_LOOPBACK 1
+  #endif
+#endif
+
+#include "networkconfig-static.h"
 
 #if RTEMS_VER_CODE < VER_CODE(4,7,99)
   #define rtems_shell_add_cmd shell_add_cmd

@@ -7,10 +7,33 @@
 
 static char ethernet_address[6] = {0x00, 0x04, 0x9F, 0x00, 0x27, 0x50 };
 
+#ifdef RTEMS_USE_LOOPBACK
+
+int rtems_bsdnet_loopattach(struct rtems_bsdnet_ifconfig *, int);
+
+#ifdef RTEMS_USE_LOOPBACK_ONLY
+static struct rtems_bsdnet_ifconfig netdriver_config = {
+#else
+static struct rtems_bsdnet_ifconfig loopback_config = {
+#endif
+	.name = "lo0",
+	.attach = rtems_bsdnet_loopattach,
+	.next = NULL,
+	.ip_address = "127.0.0.1",
+	.ip_netmask = "255.0.0.0",
+};
+
+#endif /*RTEMS_USE_LOOPBACK*/
+
+#ifndef RTEMS_USE_LOOPBACK_ONLY
 static struct rtems_bsdnet_ifconfig netdriver_config = {
 	.name = RTEMS_BSP_NETWORK_DRIVER_NAME,
 	.attach = RTEMS_BSP_NETWORK_DRIVER_ATTACH,
+#ifdef RTEMS_USE_LOOPBACK
+	.next = &loopback_config,
+#else /*RTEMS_USE_LOOPBACK*/
 	.next = NULL,
+#endif /*RTEMS_USE_LOOPBACK*/
 	.ip_address = "192.168.3.66",
 	.ip_netmask = "255.255.255.0",
 	.hardware_address = ethernet_address,
@@ -23,6 +46,7 @@ static struct rtems_bsdnet_ifconfig netdriver_config = {
 	.bpar = 0,
 	.drv_ctrl = NULL
 };
+#endif /*RTEMS_USE_LOOPBACK_ONLY*/
 
 struct rtems_bsdnet_config rtems_bsdnet_config = {
 	.ifconfig = &netdriver_config,
