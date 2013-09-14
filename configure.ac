@@ -137,7 +137,7 @@ if test -z ${CONFIG_ORTE_RT} ; then
   AC_CHECK_LIB(pthread, pthread_create, ,
          AC_CHECK_LIB(c_r, pthread_create, ,
               if test ${MINGW} == 'yes' ; then
-                     LIBS=$LIBS' -L$(top_srcdir)/orte/contrib/win_pthread/ -lpthread'
+                     INTERNAL_PTHREAD_LIBS=' -L$(top_srcdir)/orte/contrib/win_pthread/ -lpthread'
                      AC_MSG_NOTICE([Using internal version of pthreads!!!])
               else
                      AC_MSG_ERROR([Can't compile without pthreads!!!])
@@ -340,6 +340,7 @@ AC_CONFIG_FILES([Makefile
 		 orte/libjorte/Makefile
                  orte/manager/Makefile])
 
+LIBS="$LIBS$INTERNAL_PTHREAD_LIBS"
 
 AC_OUTPUT([
 modtool
