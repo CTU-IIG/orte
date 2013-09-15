@@ -4,9 +4,9 @@
 
 # autoconf requirement
 
-AC_PREREQ([2.56])
+AC_PREREQ([2.69])
 
-AC_INIT([orte],[0.3.3],[orte@rtime.felk.cvut.cz], [], [http://orte.sf.net])
+AC_INIT([orte],[0.3.3],[orte@rtime.felk.cvut.cz],[],[http://orte.sf.net])
 AC_CONFIG_AUX_DIR(admin)
 
 ###############################
@@ -117,7 +117,7 @@ fi
 # Initialize libtool
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_PROG_LIBTOOL
+LT_INIT
 
 ###############################
 # Checks for ability to compile ORTE_IDL
@@ -342,9 +342,10 @@ AC_CONFIG_FILES([Makefile
 
 LIBS="$LIBS$INTERNAL_PTHREAD_LIBS"
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 modtool
 ])
+AC_OUTPUT
 chmod +x modtool
 
 # ======================================================================
