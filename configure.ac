@@ -77,7 +77,7 @@ case "$target" in
     ;;
   *)
     # Assume a Unix.
-    if test -z ${CONFIG_ORTE_RT} -a ${CONFIG_ORTE_KERNEL} ; then
+    if test -z "${CONFIG_ORTE_RT}" -a "${CONFIG_ORTE_KERNEL}" ; then
       UNIX='yes'
       AC_DEFINE([CONFIG_ORTE_UNIX],[1],[Define if is target a unix system])
     fi
