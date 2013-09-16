@@ -106,7 +106,7 @@ else
   if test ${USE_RTAI} == 'yes' ; then
     CFLAGS="$CFLAGS $RTAI_CFLAGS $LINUX_CFLAGS"
   else
-    if test -n ${CONFIG_ORTE_KERNEL} ; then
+    if test -n "${CONFIG_ORTE_KERNEL}" ; then
       CFLAGS="$CFLAGS $LINUX_CFLAGS"
     fi
   fi
@@ -129,7 +129,7 @@ AM_JORTE
 
 ###############################
 # Checks for libraries and init libtools
-if test -z ${CONFIG_ORTE_RT} ; then
+if test -z "${CONFIG_ORTE_RT}" ; then
   AC_CHECK_LIB([ws2_32], [main])
   AC_CHECK_LIB([socket], [main])
   AC_CHECK_LIB([nsl], [main])
@@ -187,7 +187,7 @@ if test ${WIN} == 'yes' ; then
     AC_CHECK_FUNCS([gettimeofday])
 fi
 # kernel
-if test ${CONFIG_ORTE_KERNEL} == 'yes' ; then
+if test "${CONFIG_ORTE_KERNEL}" == 'yes' ; then
     AC_CHECK_HEADERS([\
     asm/byteorder.h linux/ctype.h linux/string.h \
     linux/module.h linux/if.h linux/socket.h \
@@ -320,7 +320,7 @@ AC_C_INLINE
 ###############################
 # Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
-if test -z ${CONFIG_ORTE_RT} ; then
+if test -z "${CONFIG_ORTE_RT}" ; then
 AC_CHECK_FUNCS([gethostbyname getopt_long])
 fi
 
