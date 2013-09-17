@@ -26,7 +26,10 @@ dist:
 # Create tarball
 	tar czf orte-$(VER).tar.gz orte-$(VER)
 # Check that we can compile the content of the tarball
-	cd orte-$(VER) && ./configure && make
+	mkdir orte-$(VER)/_build
+	cd orte-$(VER)/_build && ../configure && make V=0
+	mkdir orte-$(VER)/_win
+	cd orte-$(VER)/_win && ../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc && make V=0
 # Done
 	rm -rf orte-$(VER)
 	@echo "Tarball stored as orte-$(VER).tar.gz"
