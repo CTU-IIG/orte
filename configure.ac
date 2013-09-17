@@ -117,7 +117,7 @@ fi
 # Initialize libtool
 AC_PROG_CC
 AM_PROG_CC_C_O
-LT_INIT
+LT_INIT([win32-dll])
 
 ###############################
 # Checks for ability to compile ORTE_IDL
