@@ -64,7 +64,7 @@ directory.
 Now just type a run
 make
 
-in the root of the ORTE project will be create two direcories, which contains compilation results.
+in the root of the ORTE project will be create two directories, which contains compilation results.
 
 How to start?
 -------------
@@ -75,7 +75,7 @@ note:ortemanager have to be running during all communication. For future work ca
 be added into /etc/init.d/... script for starting ortemanager during boot
 of machine. This scripts (redhat and mandrake) are located in 
 "orte/manager/rc/ortemanagerd"
-For developping a RT application, ortemnager can be running in userspace.
+For developing a RT application, ortemnager can be running in userspace.
 Start it with parameter "-k 192.168.4.2". This address is IP address of 
 RT application.
 
@@ -95,7 +95,7 @@ received fresh issue 3
 
 communication works. If you see only sending messsages, it's sign that ortemanager 
 is not probably running.
-See "orteping -h" for usaged.
+See "orteping -h" for usage.
 
 Now, you can develop self applications (see documentation).
 
