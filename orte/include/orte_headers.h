@@ -38,6 +38,8 @@ extern "C" {
   #include "orte/ew_types.h"
 #elif defined(HAVE_CONFIG_H) || defined(OMK_FOR_USER)  || defined(OMK_FOR_KERNEL)
   #include "orte/orte_config.h"
+#elif defined(__ANDROID__)
+  #include "orte/orte_config_android.h"
 #else
   #error ""
   #error "You don't have file 'orte/orte_config.h'."
