@@ -321,7 +321,7 @@ AC_C_INLINE
 # Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
 if test -z "${CONFIG_ORTE_RT}" ; then
-AC_CHECK_FUNCS([gethostbyname getopt_long])
+AC_CHECK_FUNCS([gethostbyname getopt_long sigwaitinfo])
 fi
 
 AC_CONFIG_FILES([Makefile

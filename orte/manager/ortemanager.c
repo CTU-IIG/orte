@@ -91,7 +91,14 @@ void waitForEndingCommand(void) {
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGINT);
 	sigaddset(&sigset, SIGTERM);
-	sigwaitinfo(&sigset, NULL);
+	{
+	#ifdef HAVE_SIGWAITINFO
+		sigwaitinfo(&sigset, NULL);
+	#else /*HAVE_SIGWAITINFO*/
+		int sig;
+		sigwait(&sigset, &sig);
+	#endif /*HAVE_SIGWAITINFO*/
+	}
 }
 static int daemonInit(void) {
   pid_t pid;
