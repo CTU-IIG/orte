@@ -84,6 +84,9 @@ subscriberCreate(void *arg) {
        recvCallBack,
        NULL,
        IPADDRESS_INVALID);
+  if (s == NULL) {
+    printf("ORTESubscriptionCreate failed\n");
+  }
   return arg;
 }
 

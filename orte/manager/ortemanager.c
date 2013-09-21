@@ -31,6 +31,19 @@
  
 #include "orte_all.h"
 
+#ifdef HAVE_INTTYPES_H
+ #include <inttypes.h>
+ #if defined(PRIx32) && !defined(ORTE_PRI_HostId)
+  #define ORTE_PRI_HostId PRIx32
+  #define ORTE_PRI_AppId PRIx32
+ #endif
+#endif /*HAVE_INTTYPES_H*/
+
+#ifndef ORTE_PRI_HostId
+  #define ORTE_PRI_HostId x
+  #define ORTE_PRI_AppId x
+#endif
+
 #ifdef MAIN_RENAMED
 #define main ortemanager_main
 #define exit return
@@ -48,7 +61,7 @@ static ORTEDomainAppEvents *events=NULL;
 //event system
 Boolean
 onMgrAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param) {
-  printf("%s 0x%x-0x%x was accepted\n",
+  printf("%s 0x%"ORTE_PRI_HostId"-0x%"ORTE_PRI_AppId" was accepted\n",
          (appInfo->appId & 0x3)==MANAGER ? "manager" : "application",
          appInfo->hostId,appInfo->appId);
   return ORTE_TRUE;
@@ -56,7 +69,7 @@ onMgrAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param) {
 
 void
 onMgrAppDelete(const struct ORTEAppInfo *appInfo, void *param) {
-  printf("%s 0x%x-0x%x was deleted\n",
+  printf("%s 0x%"ORTE_PRI_HostId"-0x%"ORTE_PRI_AppId" was deleted\n",
          (appInfo->appId & 0x3)==MANAGER ? "manager" : "application",
          appInfo->hostId,appInfo->appId);
 }

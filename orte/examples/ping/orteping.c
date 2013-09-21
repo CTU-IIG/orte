@@ -46,6 +46,14 @@
   #include <getopt.h>
 #endif
 
+#ifdef HAVE_INTTYPES_H
+ #include <inttypes.h>
+#endif /*HAVE_INTTYPES_H*/
+
+#ifndef PRIu32
+  #define PRIu32 x
+#endif
+
 #ifdef MAIN_RENAMED
 #define main orte_ping_main
 #define exit return
@@ -68,7 +76,7 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   switch (info->status) {
     case NEW_DATA:
       if (!quite)
-        printf("received fresh issue %d\n",*instance);
+        printf("received fresh issue %"PRIu32"\n",*instance);
       break;
     case DEADLINE:
       printf("deadline occurred\n");
@@ -84,7 +92,7 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) 
     case NEED_DATA:
       (*instance)++;
       if (!quite)
-        printf("sent issue %d\n",*instance);
+        printf("sent issue %"PRIu32"\n",*instance);
       break;
     case CQL:  //criticalQueueLevel
       break;
@@ -239,6 +247,10 @@ int main(int argc,char *argv[]) {
          sendCallBack,
          NULL,
          &delay);
+   if (p == NULL) {
+     printf("ORTEPublicationCreate failed\n");
+     exit(1);
+   }
   }
   if (haveSubscriber) {
     NTPTIME_BUILD(deadline,3); 
@@ -254,6 +266,10 @@ int main(int argc,char *argv[]) {
          recvCallBack,
          NULL,
 	 smIPAddress);
+   if (s == NULL) {
+     printf("ORTESubscriptionCreate failed\n");
+     exit(1);
+   }
   }
   //never ending loop
   while (!regfail) 

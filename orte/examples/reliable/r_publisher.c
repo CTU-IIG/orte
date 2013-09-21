@@ -79,6 +79,10 @@ main(int argc, char *args[]) {
       sendCallBack,
       NULL,
       &repeating);
+  if (p == NULL) {
+    printf("ORTEPublicationCreate failed\n");
+    return 1;
+  }
   #ifndef CONFIG_ORTE_RT
   while(1) {
     ORTESleepMs(1000);

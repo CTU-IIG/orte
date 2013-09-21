@@ -81,6 +81,10 @@ main(int argc, char *args[]) {
        recvCallBack,
        NULL,
        IPADDRESS_INVALID);
+  if (s == NULL) {
+    printf("ORTESubscriptionCreate failed\n");
+    return 1;
+  }
   #ifndef CONFIG_ORTE_RT
   while (1) 
     ORTESleepMs(1000);

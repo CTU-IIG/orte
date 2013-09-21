@@ -82,6 +82,9 @@ publisherCreate(void *arg) {
       sendCallBack,
       NULL,
       &delay);
+  if (p == NULL) {
+    printf("ORTEPublicationCreate failed\n");
+  }
   return arg;
 }
 

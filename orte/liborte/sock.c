@@ -210,7 +210,7 @@ sock_get_local_interfaces(sock_t *sock,ORTEIFProp *IFProp,char *IFCount) {
   }
 
   freeifaddrs(ifa);
-
+  return 0;
 #elif defined(SOCK_BSD)
   #define SOCK_SIOCGIFCONF_SA_LEN_UNCONDITIONAL 1 /* seems to be required for RTEMS*/
 

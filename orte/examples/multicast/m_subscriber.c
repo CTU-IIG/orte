@@ -39,7 +39,7 @@
 static ORTEDomain        *d = NULL;
 static char              instance2Recv[64];
 
-int maxDataSize(ORTEGetMaxSizeParam *gms) {
+int maxDataSize(ORTEGetMaxSizeParam *gms, int num) {
   return gms->max_size;
 }
 
@@ -78,6 +78,9 @@ subscriberCreate(void *arg) {
        recvCallBack,
        NULL,
        StringToIPAddress("225.0.0.2"));
+  if (s == NULL) {
+    printf("ORTESubscriptionCreate failed\n");
+  }
   return arg;
 }
 
