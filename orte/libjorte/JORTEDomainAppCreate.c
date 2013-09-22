@@ -7,6 +7,7 @@
   * (by command 'javah -jni class_with_native_function')
   *
   * @author Lukas Pokorny (lukas_pokorny@centrum.cz)
+  * @author Martin Vajnar (martin.vajnar@gmail.com)
   * @author CTU FEE Prague - Department of Control Engineering (dce.felk.cvut.cz)
   * @author Project ORTE - OCERA Real Time Ethernet (www.ocera.org)
   * @author dedication to Kj
@@ -25,18 +26,7 @@
   *
   */
 
-#include <stdlib.h>
-// origin orte headers
-#include "orte.h"
-// pregenerated header
-#include "jorte/org_ocera_orte_DomainApp.h"
-// enable TEST_STAGE run level
-#include "jorte/4all.h"
-// new data types
-#include "jorte/jorte_typedefs_defines.h"
-#include "jorte/jorte_protos_api.h"
-#include <inttypes.h>
-
+#include "jorte/jorte.h"
 
 // /////////////////////////////////////////////////////////////////////
 // create default application domain

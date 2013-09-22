@@ -36,6 +36,8 @@ extern "C" {
 
 #ifdef _MSC_VER
   #include <orte/ew_types.h>
+#elif defined(__ANDROID__) && !defined(OMK_FOR_USER) && !defined(OMK_FOR_KERNEL)
+  #include "orte/orte_config_android.h"
 #else
   #include <orte/orte_config.h>
 #endif

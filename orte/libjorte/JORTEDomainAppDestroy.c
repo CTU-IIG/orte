@@ -7,8 +7,8 @@
   * (by command 'javah -jni class_with_native_function')
   *
   * @author Lukas Pokorny (lukas_pokorny@centrum.cz)
-  * @author CTU FEE Prague - Department of Control Engineering (dce.felk.cvut.cz
-)
+  * @author Martin Vajnar (martin.vajnar@gmail.com)
+  * @author CTU FEE Prague - Department of Control Engineering (dce.felk.cvut.cz)
   * @author Project ORTE - OCERA Real Time Ethernet (www.ocera.org)
   * @author dedication to Kj
   * @version 0.1
@@ -26,13 +26,7 @@
   *
   */
 
-#include <stdlib.h>
-// origin orte headers
-#include "orte.h"
-// pregenerated header
-#include "jorte/org_ocera_orte_DomainApp.h"
-#include "jorte/4all.h"
-#include "jorte/jorte_typedefs_defines.h"
+#include "jorte/jorte.h"
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_DomainApp_jORTEDomainAppDestroy
