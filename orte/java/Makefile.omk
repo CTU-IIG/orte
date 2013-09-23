@@ -32,6 +32,8 @@ export JAVA_HOME
 .PHONY: jar-orte
 
 utils-pass-local: jar-orte
+binary-pass_HOOKS = jar-orte
+
 
 jar-orte:
 	$(ANT) -Djava_class_dir=$(USER_OBJS_DIR)/ -Djava_lib_dir=$(USER_BIN_DIR)/ \
