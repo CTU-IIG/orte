@@ -7,7 +7,6 @@
   * (by command 'javah -jni class_with_native_function')
   *
   * @author Lukas Pokorny (lukas_pokorny@centrum.cz)
-  * @author Martin Vajnar (martin.vajnar@gmail.com)
   * @author CTU FEE Prague - Department of Control Engineering (dce.felk.cvut.cz)
   * @author Project ORTE - OCERA Real Time Ethernet (www.ocera.org)
   * @author dedication to Kj
@@ -26,7 +25,8 @@
   *
   */
 
-#include  "jorte/jorte.h"
+#include  "jorte/jorte_protos_api.h"
+
 
 NtpTime getNtpTime(JNIEnv *env, jobject obj)
 {

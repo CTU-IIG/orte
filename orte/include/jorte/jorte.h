@@ -20,34 +20,34 @@
   *
   */
 
+/*
 #ifndef _JORTE_H
 #define _JORTE_H
+*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "orte_all.h"
+#include "orte.h"
 
 // switch program behaviour (test stage,....)
 #include "4all.h"
 
-// new type definitions
-#include "jorte_typedefs_defines.h"
+// NtpTime
+#include "getNtpTime.h"
 
-// JORTE API
-#include "jorte_protos_api.h"
+// new type definitions
+#include "typedefs_defines_jorte.h"
 
 // auto-generated headers by JNI
 #include "org_ocera_orte_tools_Conversions.h"
 #include "org_ocera_orte_Domain.h"
-#include "org_ocera_orte_DomainApp.h"
-#include "org_ocera_orte_DomainMgr.h"
-#include "org_ocera_orte_types_DomainEvents.h"
-#include "org_ocera_orte_types_DomainProp.h"
-#include "org_ocera_orte_types_NtpTime.h"
+#include "org_ocera_orte_DomainEvents.h"
+#include "org_ocera_orte_DomainProp.h"
 #include "org_ocera_orte_tools_GetORTEConstant.h"
 #include "org_ocera_orte_JOrte.h"
+#include "org_ocera_orte_Manager.h"
 #include "org_ocera_orte_Publication.h"
 #include "org_ocera_orte_Subscription.h"
 
@@ -55,4 +55,6 @@ extern "C" {
 } /* extern "C"*/
 #endif
 
+/*
 #endif // _JORTE_H
+*/
