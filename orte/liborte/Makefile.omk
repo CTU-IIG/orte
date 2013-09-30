@@ -60,7 +60,9 @@ endif #CONFIG_OC_ETH_ORTE
 
 ifeq ($(CONFIG_OC_ETH_ORTE_SOLIB),y)
 shared_LIBRARIES = orte
-lib_LOADLIBES = pthread
+TARGET_LOADLIBES ?= pthread
+
+lib_LOADLIBES = $(TARGET_LOADLIBES)
 ifeq ($(TARGET_OS),win32)
 lib_LOADLIBES += ws2_32
 endif #TARGET_OS

@@ -12,7 +12,9 @@ else
 bin_PROGRAMS = ortemanager
 endif
 
-lib_LOADLIBES =  orte pthread
+TARGET_LOADLIBES ?= pthread
+
+lib_LOADLIBES =  orte $(TARGET_LOADLIBES)
 
 ortemanager_SOURCES = ortemanager.c
 ifeq ($(TARGET_OS),win32)

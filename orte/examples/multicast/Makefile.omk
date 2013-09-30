@@ -9,7 +9,9 @@ endif
 
 m_subscriber_SOURCES = m_subscriber.c
 
-lib_LOADLIBES =  orte pthread
+TARGET_LOADLIBES ?= pthread
+
+lib_LOADLIBES =  orte $(TARGET_LOADLIBES)
 ifeq ($(TARGET_OS),win32)
 lib_LOADLIBES +=  ws2_32
 endif #TARGET_OS
