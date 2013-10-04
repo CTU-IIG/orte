@@ -1,5 +1,6 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE_EXAMPLES=y
 default_CONFIG += CONFIG_OC_ETH_ORTE_EXAMPLES_RTL=n
+default_CONFIG += CONFIG_OC_ETH_ORTE_EXAMPLES_AS_LIBRARY=x
 
 SUBDIRS = ping multicast spy hello reliable schneider mpo rtems-shell
 
