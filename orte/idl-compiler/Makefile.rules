@@ -4,7 +4,7 @@
 #  (C) Copyright 2006, 2007, 2008, 2009, 2010, 2011 by Michal Sojka - Czech Technical University, FEE, DCE
 #
 #  Homepage: http://rtime.felk.cvut.cz/omk/
-#  Version:  0.2-109-g87787c0
+#  Version:  0.2-110-g85ebc7c
 #
 # The OMK build system is distributed under the GNU General Public
 # License.  See file COPYING for details.
@@ -348,7 +348,7 @@ omkize:
 	fi
 	$(Q)for i in `find -L . -name Makefile.omk` ; do \
 	   d=`dirname $${i}`; \
-	   if ! test -f "$${d}/Makefile.rules" && ( test -f "$${d}/Makefile" && ! cmp --silent Makefile "$${d}/Makefile" ); then \
+	   if ! test -f "$${d}/Makefile.rules" && ( test -f "$${d}/Makefile" && ! cmp -s Makefile "$${d}/Makefile" ); then \
 	      rm -f "$${d}/Makefile"; \
 	      cp -v Makefile "$${d}/Makefile"; \
 	   fi \
@@ -402,14 +402,15 @@ endif
 
 ifneq ($(LN_HEADERS),y)
 define cp_cmd
-if ! cmp --quiet $(1) $(2); then \
+if ! cmp -s $(1) $(2); then \
     echo "  CP      $(1:$(OUTPUT_DIR)/%=%) -> $(2:$(OUTPUT_DIR)/%=%)"; \
-    install -D $(CPHEADER_FLAGS) $(1) $(2) || exit 1; \
+    install -d $(CPHEADER_FLAGS) $(dir $(2)) && \
+    install $(CPHEADER_FLAGS) $(1) $(2) || exit 1; \
 fi
 endef
 else
 define cp_cmd
-if ! cmp --quiet $(1) $(2); then \
+if ! cmp -s $(1) $(2); then \
     echo "  LN      $(1:$(OUTPUT_DIR)/%=%) -> $(2:$(OUTPUT_DIR)/%=%)"; \
     if [ -f $(1) ]; then d=$(2); mkdir -p $${d%/*} && ln -sf $(LNHEADER_FLAGS) $(1) $(2) || exit 1; else exit 1; fi; \
 fi
@@ -1282,7 +1283,7 @@ $(addprefix $(1)/,$(notdir $(addsuffix .stamp,$(2)))) : $(CONFIG_FILES)
 		  >> "$(2).tmp"
 	@echo "#endif /*$(4)*/" >> "$(2).tmp"
 	@touch "$$@"
-	@if cmp --quiet "$(2).tmp" "$(2)" ; then rm "$(2).tmp"; \
+	@if cmp -s "$(2).tmp" "$(2)" ; then rm "$(2).tmp"; \
 	else mv "$(2).tmp" "$(2)" ; \
 	echo "Updated configuration $(2)" ; fi
 
