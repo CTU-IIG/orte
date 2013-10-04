@@ -44,7 +44,7 @@
 /* #undef HAVE_ASM_BYTEORDER_H */
 
 /* Define to 1 if you have the <byteswap.h> header file. */
-#define HAVE_BYTESWAP_H 1
+/* #undef HAVE_BYTESWAP_H */
 
 /* Define to 1 if you have the <ctype.h> header file. */
 #define HAVE_CTYPE_H 1
