@@ -4,7 +4,7 @@
 #  (C) Copyright 2006, 2007, 2008, 2009, 2010, 2011 by Michal Sojka - Czech Technical University, FEE, DCE
 #
 #  Homepage: http://rtime.felk.cvut.cz/omk/
-#  Version:  0.2-110-g85ebc7c
+#  Version:  0.2-111-g8f9236e
 #
 # The OMK build system is distributed under the GNU General Public
 # License.  See file COPYING for details.
@@ -404,7 +404,7 @@ ifneq ($(LN_HEADERS),y)
 define cp_cmd
 if ! cmp -s $(1) $(2); then \
     echo "  CP      $(1:$(OUTPUT_DIR)/%=%) -> $(2:$(OUTPUT_DIR)/%=%)"; \
-    install -d $(CPHEADER_FLAGS) $(dir $(2)) && \
+    install -d $(CPHEADER_FLAGS) `dirname $(2)` && \
     install $(CPHEADER_FLAGS) $(1) $(2) || exit 1; \
 fi
 endef
