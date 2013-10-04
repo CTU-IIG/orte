@@ -4,7 +4,7 @@
 #  (C) Copyright 2006, 2007, 2008, 2009, 2010, 2011 by Michal Sojka - Czech Technical University, FEE, DCE
 #
 #  Homepage: http://rtime.felk.cvut.cz/omk/
-#  Version:  0.2-97-g532aeb1
+#  Version:  0.2-109-g87787c0
 #
 # The OMK build system is distributed under the GNU General Public
 # License.  See file COPYING for details.
@@ -568,9 +568,9 @@ endif
 
 ifdef USER_RULE_TEMPLATES
 
-USER_SOURCES2OBJS = .o/.c .o/.cc .o/.cxx .o/.S .o/.o
+USER_SOURCES2OBJS = .o/.c .o/.cc .o/.cxx .o/.cpp .o/.S .o/.o
 
-USER_SOURCES2OBJSLO = .lo/.c .lo/.cc .lo/.cxx .lo/.S .lo/.lo
+USER_SOURCES2OBJSLO = .lo/.c .lo/.cc .lo/.cxx .lo/.cpp .lo/.S .lo/.lo
 
 #%.lo: %.c
 #	$(CC) -o $@ $(LCFLAGS) -c $<
@@ -579,7 +579,7 @@ c_o_COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -DOMK_FOR_USER
 
 cc_o_COMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -DOMK_FOR_USER
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(CXXFLAGS) -DOMK_FOR_USER
 
 S_o_COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(ASFLAGS) -DOMK_FOR_USER
@@ -689,7 +689,7 @@ USER_SOURCES += $$($(1)_SOURCES)
 
 $(2)/$(1)$(3): $$($(1)_OBJS)
 	@$(QUIET_CMD_ECHO) "  LINK    $$@"
-	$(Q) $$(if $$(filter %.cc,$$($(1)_SOURCES:%.cxx=%.cc)),$$(CXX),$$(CC)) \
+	$(Q) $$(if $$(filter %.cc,$$($(1)_SOURCES))$$(filter %.cxx,$$($(1)_SOURCES))$$(filter %.cpp,$$($(1)_SOURCES)),$$(CXX),$$(CC)) \
 	  $$($(1)_OBJS) $$($(1)_LIBS:%=-l%) $$(LOADLIBES) $$(LDFLAGS) $$($(1)_LDFLAGS) -Wl,-rpath-link,$(USER_LIB_DIR) -Wl,-Map,$(USER_OBJS_DIR)/$(1).exe.map -o $$@
 	@echo "$(2)/$(1)$(3): \\" >$(USER_OBJS_DIR)/$(1).exe.d
 	@$(SED4OMK) -n -e 's|^LOAD \(.*\)$$$$|  \1  \&|p' $(USER_OBJS_DIR)/$(1).exe.map|tr '&' '\134'  >>$(USER_OBJS_DIR)/$(1).exe.d
@@ -994,6 +994,7 @@ define MODULE_kern_template
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cpp=%.o))
 $(1)_OBJS := $$(sort $$($(1)_OBJS))
 
 KERN_OBJS  += $$($(1)_OBJS)
@@ -1046,6 +1047,7 @@ define LIBRARY_kern_template
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.c=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cc=%.o))
 $(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cxx=%.o))
+$(1)_OBJS += $$(filter %.o,$$($(1)_SOURCES:%.cpp=%.o))
 $(1)_OBJS := $$(sort $$($(1)_OBJS))
 
 KERN_OBJS  += $$($(1)_OBJS)
@@ -1177,6 +1179,8 @@ $(foreach src,$(filter %.cc,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template
 
 $(foreach src,$(filter %.cxx,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.o),)))
 
+$(foreach src,$(filter %.cpp,$(USER_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cpp=%.o),)))
+
 $(foreach src,$(filter %.S,$(USER_SOURCES)),$(eval $(call COMPILE_S_o_template,$(SOURCES_DIR)/$(src),$(src:%.S=%.o),)))
 
 $(foreach src,$(filter %.c,$(USER_GEN_SOURCES)),$(eval $(call COMPILE_c_o_template,$(src),$(src:%.c=%.o),)))
@@ -1195,6 +1199,8 @@ $(foreach src,$(filter %.c,$(SOLIB_SOURCES)),$(eval $(call COMPILE_c_o_template,
 $(foreach src,$(filter %.cc,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.lo),$(SOLIB_PICFLAGS))))
 
 $(foreach src,$(filter %.cxx,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.lo),$(SOLIB_PICFLAGS))))
+
+$(foreach src,$(filter %.cpp,$(SOLIB_SOURCES)),$(eval $(call COMPILE_cc_o_template,$(SOURCES_DIR)/$(src),$(src:%.cpp=%.lo),$(SOLIB_PICFLAGS))))
 
 $(foreach src,$(filter %.S,$(SOLIB_SOURCES)),$(eval $(call COMPILE_S_o_template,$(SOURCES_DIR)/$(src),$(src:%.S=%.lo),$(SOLIB_PICFLAGS))))
 
@@ -1225,6 +1231,8 @@ $(foreach src,$(filter %.c,$(KERN_SOURCES)),$(eval $(call COMPILE_c_o_kern_templ
 $(foreach src,$(filter %.cc,$(KERN_SOURCES)),$(eval $(call COMPILE_cc_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.cc=%.o),)))
 
 $(foreach src,$(filter %.cxx,$(KERN_SOURCES)),$(eval $(call COMPILE_cc_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.cxx=%.o),)))
+
+$(foreach src,$(filter %.cpp,$(KERN_SOURCES)),$(eval $(call COMPILE_cc_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.cpp=%.o),)))
 
 $(foreach src,$(filter %.S,$(USER_SOURCES)),$(eval $(call COMPILE_S_o_kern_template,$(SOURCES_DIR)/$(src),$(src:%.S=%.o),)))
 endif
