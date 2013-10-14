@@ -2,17 +2,40 @@ default: git
 	@echo "Now you can run './configure'"
 
 git:
-	autoreconf -i 
+	autoreconf -i
 
 all:
-	aclocal -I admin 
+	aclocal -I admin
 	autoheader
 	automake
 	autoconf
 
-.PHONY: default cvs all dist dist-tarball
+.PHONY: default git all dist dist-tarball
 
 VER=$(shell git describe --match='v[0-9]*' | sed -e 's/^v\(.*\)/\1/')
+
+configure: git
+
+check: configure
+	$(MAKE) -f Makefile.git check-windows check-autotools check-java
+
+check-windows:
+	mkdir -p _check-win
+	cd _check-win && ../configure --host=i586-mingw32msvc CC=i586-mingw32msvc-gcc
+	cd _check-win && $(MAKE)
+
+check-autotools:
+	mkdir -p _check-autotools
+	cd _check-autotools && ../configure
+	cd _check-autotools && $(MAKE)
+
+check-java: JAVAC=$(shell readlink -f $(which javac))
+check-java: JAVA_HOME=$(JAVAC:%/bin/javac=%)
+check-java:
+	mkdir -p _check-java
+	cd _check-java && ../configure --with-java=$(JAVA_HOME)
+	cd _check-java && $(MAKE)
+	false # Java is not compiled - either fix it or update README
 
 dist:
 	$(MAKE) VER=$(VER) dist-tarball dist-check
