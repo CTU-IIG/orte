@@ -3,10 +3,10 @@
 
 What is it?
 -----------
-ORTE is open source implementation of RTPS communication protocol 
-defined by Real Time Innovations (http://www.rti.com). 
-RTPS is new application layer protocol targeted to real-time communication 
-area, which is build on top of standard UDP stack.
+ORTE is open source implementation of the RTPS communication protocol
+defined by Real Time Innovations (http://www.rti.com). RTPS is a new
+application layer protocol, targeted at real-time communication area,
+which is build on top of the standard UDP stack.
 
 Which targets are supported by ORTE?
 -----------------------------------
@@ -15,6 +15,7 @@ Windows - MinGW, CygWin, MSVC, PharLap
 RTLinux - with preliminary UDP stack
 RTAI - with RTNet
 JAVA
+Android - see README.android
 
 note: was tested on
 sparc-sun-solaris2.9
@@ -23,16 +24,17 @@ powerpc-apple-darwin6.8
 How to compile and install it?
 ---------------------------
 
-simply untar instalation package into desired directory, enter this 
-directory and issue following commands.
+Simply untar installation package into desired directory, enter this
+directory and issue the following commands.
 
 UserSpace compilation:
 ./configure
 make 
 make install
 
-After this procedure ortemanager and orteping are placed in /usr/local/bin,
-library is placed in /usr/local/lib and include headers in /usr/local/include.
+After this procedure ortemanager and orteping are placed in
+/usr/local/bin, the library is placed in /usr/local/lib and include
+headers in /usr/local/include.
 
 RTLinux compilation with wIP: (DEPRICATED)
 ./configure --with-linux=/patched_linux_dir/ --with-rtlinux=/rtlinux_dir/ --with-rtlinuxwip=/wip_dir/
@@ -55,35 +57,34 @@ make
 make install
 
 
-Another way, how to compile ORTE project is to use OMK compilation
-method. See https://rtime.felk.cvut.cz/omk/ for details about OMK. For
-standalone compilation (without OCERA), just copy folder orte to other
-(private) destination. Run ./switch2standalone in the root of orte
-directory.
+Another way of compiling ORTE is to use OMK compilation method. See
+https://rtime.felk.cvut.cz/omk/ for details about OMK. Just run
 
-Now just type a run
-make
+  make
 
-in the root of the ORTE project will be create two directories, which contains compilation results.
+in the root of the ORTE project. This will create _compiled directory,
+which will contain the compiled binaries as well as other files.
 
 How to start?
 -------------
 
 run :ortemanager &
 see :ortemanager -h for usage
-note:ortemanager have to be running during all communication. For future work can 
-be added into /etc/init.d/... script for starting ortemanager during boot
-of machine. This scripts (redhat and mandrake) are located in 
-"orte/manager/rc/ortemanagerd"
-For developing a RT application, ortemnager can be running in userspace.
-Start it with parameter "-k 192.168.4.2". This address is IP address of 
-RT application.
+
+note: ortemanager have to be running during all communication. For
+future work can be added into /etc/init.d/... script for starting
+ortemanager during boot of machine. This scripts (redhat and mandrake)
+are located in "orte/manager/rc/ortemanagerd". For developing a RT
+application, ortemnager can be running in userspace. Start it with
+parameter "-k 192.168.4.2". This address is the IP address of the RT
+application.
 
 How to test communication?
 -------------------------
 
-in a shell try to type "orteping -p -s". So, now will be created one publisher
-and one subscriber with same topic and type. If you see messages like
+In a shell try to type "orteping -p -s". This will create one
+publisher and one subscriber with the same topic and type. If you see
+messages like
 
 [root@localhost ORTEPing]# ./orteping -p -s
 sent issue 1
@@ -93,11 +94,11 @@ received fresh issue 2
 sent issue 3
 received fresh issue 3
 
-communication works. If you see only sending messsages, it's sign that ortemanager 
-is not probably running.
-See "orteping -h" for usage.
+then communication works. If you see only sending messages, it is a
+sign that ortemanager is not probably running. See "orteping -h" for
+usage.
 
-Now, you can develop self applications (see documentation).
+Now, you can develop your applications (see documentation).
 
 Obtaining the code from Git repository
 --------------------------------------
@@ -120,7 +121,5 @@ get to the point where you can run "configure" and "make".
  $ make -f Makefile.cvs 
 
 Feedback is welcome - send bug reports, enhancements, checks, money
-orders, etc. to the address below.
-
-Petr Smolik             petr.smolik@wo.cz
-Michal Sojka		sojkam1@fel.cvut.cz
+orders, etc. to ORTE maintainers <orte@rtime.felk.cvut.cz>. The mail
+will go to Petr Smolik, Michal Sojka and Pavel Pisa.
