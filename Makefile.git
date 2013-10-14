@@ -1,7 +1,7 @@
-default: cvs
+default: git
 	@echo "Now you can run './configure'"
 
-cvs:
+git:
 	autoreconf -i 
 
 all:
