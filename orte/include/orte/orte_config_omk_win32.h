@@ -208,7 +208,7 @@
 #define HAVE_WS2TCPIP_H 1
 
 /* Define to the address where bug reports for this package should be sent. */
-#define ORTE_PACKAGE_BUGREPORT "petr.smolik@wo.cz"
+#define ORTE_PACKAGE_BUGREPORT "petr@smoliku.cz"
 
 /* Define to the full name of this package. */
 #define ORTE_PACKAGE_NAME "orte"

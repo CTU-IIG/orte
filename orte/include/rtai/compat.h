@@ -10,7 +10,7 @@
  *                      http://dce.felk.cvut.cz                       
  *                      http://www.ocera.org                          
  *                                                                    
- *  Author: 		 Petr Smolik       petr.smolik@wo.cz
+ *  Author: 		 Petr Smolik       petr@smoliku.cz
  *  Author - this code:	 Jan Kiszka        jan.kiszka@web.de
  *  Advisor: 		 Pavel Pisa                                   
  *  Project Responsible: Zdenek Hanzalek                              
