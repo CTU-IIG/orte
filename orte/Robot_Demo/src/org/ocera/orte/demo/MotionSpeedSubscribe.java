@@ -11,12 +11,10 @@ import org.ocera.orte.types.MessageData;
 import org.ocera.orte.types.NtpTime;
 import org.ocera.orte.types.RecvInfo;
 import org.ocera.orte.types.SubsProp;
+import org.ocera.orte.types.ORTEConstant;
 
 public class MotionSpeedSubscribe extends SubscriptionCallback{
 
-    public final static int IMMEDIATE    = 0x02;
-    public final static int BEST_EFFORTS = 0x01;
-    
 	private Subscription sub;
 	private HokuyoView view;
 	private	SpeedMotionType speedmsg;
@@ -41,8 +39,8 @@ public class MotionSpeedSubscribe extends SubscriptionCallback{
 	    						"motion_speed",                       		
 	    						minSeparation,  
 	    						deadline,
-	    						IMMEDIATE,
-	    						BEST_EFFORTS,
+	    						ORTEConstant.IMMEDIATE,
+	    						ORTEConstant.BEST_EFFORTS,
 	    						0);
 	}
 	
@@ -76,7 +74,7 @@ public class MotionSpeedSubscribe extends SubscriptionCallback{
 	}
 	
     public void callback(RecvInfo info, MessageData msg) {
-    	view.setDataMotion(((SpeedMotionType)msg).speed);
-    	//System.out.println(msg);
-	}
+      if (info.getRecvStatus() == ORTEConstant.NEW_DATA)
+        view.setDataMotion(((SpeedMotionType)msg).speed);
+    }
 }

@@ -11,12 +11,10 @@ import org.ocera.orte.types.MessageData;
 import org.ocera.orte.types.NtpTime;
 import org.ocera.orte.types.RecvInfo;
 import org.ocera.orte.types.SubsProp;
+import org.ocera.orte.types.ORTEConstant;
 
 public class HokuyoScanSubscribe extends SubscriptionCallback{
 
-    public final static int IMMEDIATE    = 0x02;
-    public final static int BEST_EFFORTS = 0x01;
-    
 	private Subscription sub;
 	private HokuyoView view;
 	private	HokuyoScanType hokuyomsg;
@@ -41,8 +39,8 @@ public class HokuyoScanSubscribe extends SubscriptionCallback{
 	    						"hokuyo_scan",                       		
 	    						minSeparation,  
 	    						deadline,
-	    						IMMEDIATE,
-	    						BEST_EFFORTS,
+	    						ORTEConstant.IMMEDIATE,
+	    						ORTEConstant.BEST_EFFORTS,
 	    						0);
 	}
 	
@@ -76,6 +74,7 @@ public class HokuyoScanSubscribe extends SubscriptionCallback{
 	}
 	
     public void callback(RecvInfo info, MessageData msg) {
-    	view.setData(((HokuyoScanType)msg).hokuyo);
-	}
+      if (info.getRecvStatus() == ORTEConstant.NEW_DATA)
+        view.setData(((HokuyoScanType)msg).hokuyo);
+    }
 }
