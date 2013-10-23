@@ -146,6 +146,21 @@ public class ORTEConstant {
   public static final int ORTE_TIMEOUT                       = -2;
   public static final int ORTE_QUEUE_FULL                    = -3;
 
+ /* ************************************************* *
+  * constants from the file 'typedefs_api.h' *
+  * ************************************************* */
+
+  /* Receive status */
+  public static final int NEW_DATA                           = 0x01;
+  public static final int DEADLINE                           = 0x02;
+
+  /* Subscription type */
+  public static final int BEST_EFFORTS                       = 0x01;
+  public static final int STRICT_RELIABLE                    = 0x02;
+
+  /* Subscription mode */
+  public static final int PULLED                             = 0x01;
+  public static final int IMMEDIATE                          = 0x02;
 
 }
 
