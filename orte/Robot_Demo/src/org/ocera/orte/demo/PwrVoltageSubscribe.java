@@ -11,15 +11,13 @@ import org.ocera.orte.types.MessageData;
 import org.ocera.orte.types.NtpTime;
 import org.ocera.orte.types.RecvInfo;
 import org.ocera.orte.types.SubsProp;
+import org.ocera.orte.types.ORTEConstant;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
 public class PwrVoltageSubscribe extends SubscriptionCallback{
-
-    public final static int IMMEDIATE    = 0x02;
-    public final static int BEST_EFFORTS = 0x01;
 
     static Handler handler;
     
@@ -46,8 +44,8 @@ public class PwrVoltageSubscribe extends SubscriptionCallback{
 	    						"pwr_voltage",                       		
 	    						minSeparation,  
 	    						deadline,
-	    						IMMEDIATE,
-	    						BEST_EFFORTS,
+	    						ORTEConstant.IMMEDIATE,
+	    						ORTEConstant.BEST_EFFORTS,
 	    						0);
 	}
 	
@@ -81,11 +79,13 @@ public class PwrVoltageSubscribe extends SubscriptionCallback{
 	}
 	
     public void callback(RecvInfo info, MessageData msg) {
-    	Message message = handler.obtainMessage();
-    	Bundle bundle = new Bundle();
-    	
-    	bundle.putDoubleArray("voltages", ((PwrVoltageType)msg).voltage.clone());
-    	message.setData(bundle);
-    	handler.sendMessage(message);
+      if (info.getRecvStatus() == ORTEConstant.NEW_DATA) {
+        Message message = handler.obtainMessage();
+        Bundle bundle = new Bundle();
+
+        bundle.putDoubleArray("voltages", ((PwrVoltageType)msg).voltage.clone());
+        message.setData(bundle);
+        handler.sendMessage(message);
+      }
     }
 }
