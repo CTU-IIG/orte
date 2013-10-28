@@ -11,11 +11,11 @@ which is build on top of the standard UDP stack.
 Which targets are supported by ORTE?
 -----------------------------------
 UNIX - Linux, Solars, MacOS, FreeBSD
-Windows - MinGW, CygWin, MSVC, PharLap, ReactOS, Wine
+Windows - MinGW, CygWin, MSVC, PharLap, ReactOS, Wine (see README.windows)
 RTLinux - with preliminary UDP stack
 RTAI - with RTNet
 JAVA
-Android - see README.android
+Android (see README.android)
 RTEMS
 Blackberry
 

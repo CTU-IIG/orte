@@ -1,28 +1,29 @@
-Instructions how to compile ORTE for Windows:
-=============================================
+Instructions how to compile ORTE for Windows
+============================================
 
-ORTE for windows can be compiled by MinGW and Microsoft
-Visual C. The library providing pthread API is required
-in both cases.
+ORTE for Windows can be compiled by MinGW or Microsoft Visual C. A
+library providing the pthread API is required in both cases.
 
-
-When ORTE is build by Microsoft Visual C the Pthreads-w32
+When ORTE is built by Microsoft Visual C the Pthreads-w32
 should be used
 
   http://sourceware.org/pthreads-win32/
 
-When build by MinGW32 then current version (3.0) versions
-of MinGW-w64 integrates winpthreads directly in the standard
-development tools distribution
+When built by MinGW then starting from MinGW-w64 3.0, the winpthreads
+library is already integrated in the MinGW distribution
 
   http://mingw-w64.sourceforge.net/
 
-There is inluded local copy of winpthreads library for
-the case that older  MinGW version is used.
+We inlude a local copy of winpthreads library for the case that an
+older MinGW version is used.
 
 The cross-compilation of ORTE from GNU/Linux system
 ---------------------------------------------------
 
-The Debian package mingw-w64-i686-dev provides GCC
-cross-compiler and libraries. The actual package
-used for the build was mingw-w64-i686-dev_3.0.0-2_all.deb.
+The Debian package mingw-w64-i686-dev provides GCC cross-compiler and
+libraries. After installing that package, one can compile orte for
+windows as follows:
+
+  ./configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc
+  make
+  make install
