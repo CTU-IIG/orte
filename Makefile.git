@@ -19,7 +19,7 @@ CONFIGURE_FLAGS = --enable-orte-idl
 configure: git
 
 check: configure
-	$(MAKE) check-windows check-autotools check-java check-android
+	$(MAKE) -f Makefile.git check-windows check-autotools check-java check-android
 
 check-%:
 	rm -rf _$@
