@@ -19,7 +19,7 @@ CONFIGURE_FLAGS = --enable-orte-idl
 configure: git
 
 check: configure
-	$(MAKE) -f Makefile.git check-windows check-autotools check-java check-android
+	$(MAKE) -f Makefile.git check-omk check-autotools check-windows check-windows-omk check-java check-android
 
 check-%:
 	rm -rf _$@
@@ -34,6 +34,18 @@ check-windows.real:
 	make install DESTDIR=$(CURDIR)/_install
 	test -f _install/bin/liborte-*.dll
 
+check-windows-omk.real:
+	echo "TARGET_OS=win32" > config.omk
+	echo "CC=i686-w64-mingw32-gcc" >> config.omk
+	echo "CXX=i686-w64-mingw32-g++" >> config.omk
+	echo "AR=i686-w64-mingw32-ar" >> config.omk
+	echo "LD=i686-w64-mingw32-ld" >> config.omk
+	ln -s ../orte ../Makefile ../Makefile.omk ../Makefile.rules .
+	make
+
+check-omk.real:
+	ln -s ../orte ../Makefile ../Makefile.omk ../Makefile.rules .
+	make
 
 check-autotools.real:
 	../configure $(CONFIGURE_FLAGS)
