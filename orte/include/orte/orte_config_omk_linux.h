@@ -234,7 +234,7 @@
 #define ORTE_PACKAGE_NAME "orte"
 
 /* Define to the full name and version of this package. */
-#define ORTE_PACKAGE_STRING "orte 0.3.3"
+#define ORTE_PACKAGE_STRING "orte 0.3.4"
 
 /* Define to the one symbol short name of this package. */
 #define ORTE_PACKAGE_TARNAME "orte"
@@ -243,7 +243,7 @@
 #define ORTE_PACKAGE_URL "http://orte.sf.net"
 
 /* Define to the version of this package. */
-#define ORTE_PACKAGE_VERSION "0.3.3"
+#define ORTE_PACKAGE_VERSION "0.3.4"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -293,4 +293,3 @@
     #endif
   #endif
 #endif
-

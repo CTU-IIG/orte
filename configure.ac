@@ -6,7 +6,7 @@
 
 AC_PREREQ([2.69])
 
-AC_INIT([orte],[0.3.3],[orte@rtime.felk.cvut.cz],[],[http://orte.sf.net])
+AC_INIT([orte],[0.3.4],[orte@rtime.felk.cvut.cz],[],[http://orte.sf.net])
 AC_CONFIG_AUX_DIR(admin)
 
 ###############################
