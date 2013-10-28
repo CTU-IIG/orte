@@ -19,30 +19,31 @@ CONFIGURE_FLAGS = --enable-orte-idl
 configure: git
 
 check: configure
-	$(MAKE) -f Makefile.git check-windows check-autotools check-java
+	$(MAKE) check-windows check-autotools check-java
 
-check-windows:
-	mkdir -p _check-win
-	$(MAKE) -C _check-win -f ../Makefile.git $@.real
+check-%:
+	rm -rf _$@
+	mkdir -p _$@
+	$(MAKE) -C _$@ -f ../Makefile.git $@.real
 
 check-windows.real:
 # We don't have libIDL for mingw, so we check without --enable-orte-idl
-	../configure --host=i586-mingw32msvc CC=i586-mingw32msvc-gcc || \
-	../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc
+	../configure --prefix=/ --host=i586-mingw32msvc CC=i586-mingw32msvc-gcc || \
+	../configure --prefix=/ --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc
+	make
+	make install DESTDIR=$(CURDIR)/_install
+	test -f _install/bin/liborte-*.dll
+
+
+check-autotools.real:
+	../configure $(CONFIGURE_FLAGS)
+	make
+
+check-java.real: JAVAC=$(shell readlink -f $(which javac))
+check-java.real: JAVA_HOME=$(JAVAC:%/bin/javac=%)
+check-java.real:
+	../configure --with-java=$(JAVA_HOME)
 	$(MAKE)
-	find -name 'liborte*.dll'
-
-check-autotools:
-	mkdir -p _check-autotools
-	cd _check-autotools && ../configure $(CONFIGURE_FLAGS)
-	cd _check-autotools && $(MAKE)
-
-check-java: JAVAC=$(shell readlink -f $(which javac))
-check-java: JAVA_HOME=$(JAVAC:%/bin/javac=%)
-check-java:
-	mkdir -p _check-java
-	cd _check-java && ../configure --with-java=$(JAVA_HOME)
-	cd _check-java && $(MAKE)
 	false # Java is not compiled - either fix it or update README
 
 dist:
