@@ -1,0 +1,7 @@
+ORTE 0.3.4 Release Notes
+========================
+
+The major new feature of this release is Android support. See
+README.android for details how to compile an Android demo application
+included in ORTE. Besides that we tested ORTE on RTEMS, BlackBerry,
+ReactOS and checked whether the Windows and FreeBSD builds still work.
