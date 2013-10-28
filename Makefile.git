@@ -14,6 +14,8 @@ all:
 
 VER=$(shell git describe --match='v[0-9]*' | sed -e 's/^v\(.*\)/\1/')
 
+CONFIGURE_FLAGS = --enable-orte-idl
+
 configure: git
 
 check: configure
@@ -24,6 +26,7 @@ check-windows:
 	$(MAKE) -C _check-win -f ../Makefile.git $@.real
 
 check-windows.real:
+# We don't have libIDL for mingw, so we check without --enable-orte-idl
 	../configure --host=i586-mingw32msvc CC=i586-mingw32msvc-gcc || \
 	../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc
 	$(MAKE)
@@ -31,7 +34,7 @@ check-windows.real:
 
 check-autotools:
 	mkdir -p _check-autotools
-	cd _check-autotools && ../configure
+	cd _check-autotools && ../configure $(CONFIGURE_FLAGS)
 	cd _check-autotools && $(MAKE)
 
 check-java: JAVAC=$(shell readlink -f $(which javac))
@@ -69,7 +72,7 @@ dist-check: orte-$(VER).tar.gz
 	tar xf $<
 # Check that we can compile the content of the tarball
 	mkdir orte-$(VER)/_build
-	cd orte-$(VER)/_build && ../configure && make V=0
+	cd orte-$(VER)/_build && ../configure $(CONFIGURE_FLAGS) && make V=0
 	mkdir orte-$(VER)/_win
-	cd orte-$(VER)/_win && ../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc && make V=0
+	cd orte-$(VER)/_win && ../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc $(CONFIGURE_FLAGS) && make V=0
 	rm -rf orte-$(VER)
