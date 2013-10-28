@@ -1,4 +1,1 @@
 SUBDIRS = orte
-
-dist:
-	$(MAKE) -f Makefile.cvs dist
