@@ -3,6 +3,9 @@
 
 <project name="orte" default="default" basedir=".">
 
+    <property name="java_class_dir" value=""/>
+    <property name="java_lib_dir" value=""/>
+
     <property name="src" location="src"/>
     <property name="class" location="${java_class_dir}class"/>
     <property name="lib"  location="${java_lib_dir}lib"/>
@@ -63,4 +66,3 @@
     </target>
 
 </project>
-
