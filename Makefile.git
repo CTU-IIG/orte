@@ -39,12 +39,14 @@ check-autotools.real:
 	../configure $(CONFIGURE_FLAGS)
 	make
 
-check-java.real: JAVAC=$(shell readlink -f $(which javac))
+check-java.real: JAVAC=$(shell readlink -f $(shell which javac))
 check-java.real: JAVA_HOME=$(JAVAC:%/bin/javac=%)
 check-java.real:
+	test -d "$(JAVA_HOME)"
 	../configure --with-java=$(JAVA_HOME)
 	$(MAKE)
-	false # Java is not compiled - either fix it or update README
+	ant -f ../orte/java
+	test -f ../orte/java/lib/orte.jar
 
 check-android:
 	android update project -p orte/libaorte
