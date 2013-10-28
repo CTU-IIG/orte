@@ -21,9 +21,13 @@ check: configure
 
 check-windows:
 	mkdir -p _check-win
-	cd _check-win && ../configure --host=i586-mingw32msvc CC=i586-mingw32msvc-gcc || \
-	                 ../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc
-	cd _check-win && $(MAKE)
+	$(MAKE) -C _check-win -f ../Makefile.git $@.real
+
+check-windows.real:
+	../configure --host=i586-mingw32msvc CC=i586-mingw32msvc-gcc || \
+	../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc
+	$(MAKE)
+	find -name 'liborte*.dll'
 
 check-autotools:
 	mkdir -p _check-autotools
