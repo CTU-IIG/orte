@@ -68,7 +68,7 @@ check-android:
 	test -f orte/contrib/Robot_Demo/bin/RoboDruid-debug.apk
 
 dist:
-	$(MAKE) VER=$(VER) dist-tarball dist-check
+	$(MAKE) -f Makefile.git VER=$(VER) dist-tarball dist-check
 	@echo "Tarball stored as orte-$(VER).tar.gz"
 
 dist-tarball: orte-$(VER).tar.gz
@@ -77,7 +77,7 @@ orte-$(VER).tar.gz: $(shell git ls-files)
 # Export clean sources and run autoreconf
 	test ! -d orte-$(VER)
 	git archive --format=tar --prefix=orte-$(VER)/ HEAD | tar x
-	make -C orte-$(VER) -f Makefile.cvs
+	make -C orte-$(VER) -f Makefile.git
 	rm -rf orte-$(VER)/autom4te.cache
 # Export sources again for building of documentation and copy generated orte manual to release dir
 	test ! -d orte-$(VER)-doc
@@ -96,5 +96,5 @@ dist-check: orte-$(VER).tar.gz
 	mkdir orte-$(VER)/_build
 	cd orte-$(VER)/_build && ../configure $(CONFIGURE_FLAGS) && make V=0
 	mkdir orte-$(VER)/_win
-	cd orte-$(VER)/_win && ../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc $(CONFIGURE_FLAGS) && make V=0
+	cd orte-$(VER)/_win && ../configure --host=i686-w64-mingw32 CC=i686-w64-mingw32-gcc && make V=0
 	rm -rf orte-$(VER)
