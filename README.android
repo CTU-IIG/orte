@@ -1,10 +1,9 @@
 To compile ORTE for Android you need:
 Android SDK, Android NDK, Java NDK, ant, make >= 3.81
 
-The Android SDK+NDK could be obtained from developer.android.com site.
+The Android SDK+NDK could be obtained from http://developer.android.com.
 
-After you download and extract the files to some convenient location,
-there are several steps needed to compile the app:
+Then follow these steps to compile the app:
 
 1) add to your $PATH following locations:
    <ndk-folder>:<sdk-folder>/tools
