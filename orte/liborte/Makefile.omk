@@ -3,7 +3,7 @@ default_CONFIG += CONFIG_OC_ETH_ORTE_SOLIB=n
 
 ifeq ($(TARGET_OS),win32)
 renamed_include_HEADERS = \
-../contrib/win_pthread/pthread.dll->../lib/pthread.dll
+../contrib/win_pthread/libpthread.a->../lib/libpthread.a
 endif #TARGET_OS
 
 INCLUDES = -I $(srcdir)/../include
