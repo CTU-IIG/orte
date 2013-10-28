@@ -9,8 +9,8 @@ Then follow these steps to compile the app:
    <ndk-folder>:<sdk-folder>/tools
 2) go to <sdk-folder>/tools and execute "android"
 3) download "SDK Platform" for "API 15" - Android 4.0.3
-4) go to orte/libaorte and execute "android update project -p .", then
-   go to orte/contrib/Robot_Demo and do the same
+4) execute "android update project -p orte/libaorte" and
+           "android update project -p orte/contrib/Robot_Demo"
 5) go to orte/libaorte and execute "ndk-build" - this builds native
    code
 6) go to orte/contrib/Robot_Demo and execute "ant debug" - this will prepare

@@ -19,7 +19,7 @@ CONFIGURE_FLAGS = --enable-orte-idl
 configure: git
 
 check: configure
-	$(MAKE) check-windows check-autotools check-java
+	$(MAKE) check-windows check-autotools check-java check-android
 
 check-%:
 	rm -rf _$@
@@ -45,6 +45,13 @@ check-java.real:
 	../configure --with-java=$(JAVA_HOME)
 	$(MAKE)
 	false # Java is not compiled - either fix it or update README
+
+check-android:
+	android update project -p orte/libaorte
+	android update project -p orte/contrib/Robot_Demo
+	cd orte/libaorte && ndk-build
+	cd orte/contrib/Robot_Demo && ant debug
+	test -f orte/contrib/Robot_Demo/bin/RoboDruid-debug.apk
 
 dist:
 	$(MAKE) VER=$(VER) dist-tarball dist-check
