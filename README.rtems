@@ -1,0 +1,75 @@
+Instructions how to compile ORTE for RTEMS
+==========================================
+
+Build process of ORTE for RTEMS differs from build
+for Linux and Windows even that all required changes
+to actual source files are included in the common
+source base.
+
+The build for RTEMS requires access to the RTEMS BSP
+and executive include files and libraries in addition
+to selection cross-compiler and associeted C library
+files. It should be possible through autoconf/configure
+options but we have not tested that approach because
+we use OMK system for many of our Linux, RTEMS, etc.
+projects and OMK provides rules suatable for RTEMS
+projects.
+
+See OMK homepage for more details about OMK
+
+  http://rtime.felk.cvut.cz/omk/
+
+Example/template application (rtems-omk-template)
+for RTEMS OMK project is provided in repository
+
+  http://rtime.felk.cvut.cz/gitweb/rtems-devel.git
+
+The RTEMS specific OMK rules are used for ORTE build
+
+  cp Makefile.rules.rtems Makefile.rules
+
+Then RTEMS target BSP is selected by specifying
+RTEMS_MAKEFILE_PATH definition written into "config.target"
+file
+
+  echo /opt/rtems4.10/powerpc-rtems4.10/icecube >config.target
+
+This declaration selects directory where RTEMS Makefile.inc
+file for given BSP is located.
+
+The ORTE components can be configured in "config.omk" file
+
+  echo "# ORTE for RTEMS configuration"         >config.omk
+
+The RTEMS cannot run multiple processes. It is not problem
+for RTEMS because it allows to specify and maintain multiple
+domains and applications in single address space. Even ORTE
+manager can be started directly from user application.
+But standalone applications are used for testing
+and standalone manager is easiest way to start development
+too. The problem of independent starting of multiple
+services in RTEMS environment had been solved by providing
+applications as libraries with renamed C main() function.
+This arangement is selected for manager by
+
+  echo CONFIG_OC_ETH_ORTE_MANAGER_AS_LIBRARY=y  >>config.omk
+
+The same way examples and their build as libraries can be selcted
+
+  echo CONFIG_OC_ETH_ORTE_EXAMPLES=y            >>config.omk
+  echo CONFIG_OC_ETH_ORTE_EXAMPLES_AS_LIBRARY=y >>config.omk
+
+
+ and that means that
+
+
+CONFIG_OC_ETH_ORTE=y
+CONFIG_OC_ETH_ORTE_SOLIB=n
+CONFIG_OC_ETH_ORTE_RTL=n
+CONFIG_OC_ETH_ORTE_MANAGER=y
+CONFIG_OC_ETH_ORTE_RTEMS_SHELL=y
+#CONFIG_OC_ETH_JORTE=y
+#CONFIG_OC_JAVA_ORTE=y
+CONFIG_OC_ETH_ORTE_DEMO_SHAPE=n
+
+CONFIG_OC_ETH_ORTE_IDL=n
