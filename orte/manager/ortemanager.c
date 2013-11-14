@@ -74,7 +74,7 @@ onMgrAppDelete(const struct ORTEAppInfo *appInfo, void *param) {
          appInfo->hostId,appInfo->appId);
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
 //Windows service support
 void serviceDispatchTable(void);  //forward declaration
 void removeService(void);         //forward declaration
@@ -152,7 +152,7 @@ static void usage(void) {
   printf("  -e, --events                  register event system\n");
   printf("  -l, --logfile <filename>      set log file name\n");
   printf("  -V, --version                 show version\n");
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
   printf("  -i, --install_service         install service into service manager on Windows\n");
   printf("  -r, --remove_service          remove service from service manager on Windows\n");
 #endif
@@ -243,7 +243,7 @@ int main(int argc,char *argv[]) {
       case 'D':
         orteDaemon=ORTE_TRUE;
         break;
-      #ifdef _WIN32
+      #if defined(_WIN32) || defined(__CYGWIN__)
       case 's':
         serviceDispatchTable();
         exit(0);
