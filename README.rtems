@@ -8,11 +8,11 @@ source base.
 
 The build for RTEMS requires access to the RTEMS BSP
 and executive include files and libraries in addition
-to selection cross-compiler and associeted C library
+to selection cross-compiler and associated C library
 files. It should be possible through autoconf/configure
 options but we have not tested that approach because
 we use OMK system for many of our Linux, RTEMS, etc.
-projects and OMK provides rules suatable for RTEMS
+projects and OMK provides rules suitable for RTEMS
 projects.
 
 See OMK homepage for more details about OMK
@@ -32,7 +32,7 @@ Then RTEMS target BSP is selected by specifying
 RTEMS_MAKEFILE_PATH definition written into "config.target"
 file
 
-  echo /opt/rtems4.10/powerpc-rtems4.10/icecube >config.target
+  echo RTEMS_MAKEFILE_PATH=/opt/rtems4.10/powerpc-rtems4.10/icecube >config.target
 
 This declaration selects directory where RTEMS Makefile.inc
 file for given BSP is located.
@@ -50,26 +50,129 @@ and standalone manager is easiest way to start development
 too. The problem of independent starting of multiple
 services in RTEMS environment had been solved by providing
 applications as libraries with renamed C main() function.
-This arangement is selected for manager by
+This arrangement is selected for manager by
 
   echo CONFIG_OC_ETH_ORTE_MANAGER_AS_LIBRARY=y  >>config.omk
 
-The same way examples and their build as libraries can be selcted
+The same way examples and their build as libraries can be selected
 
   echo CONFIG_OC_ETH_ORTE_EXAMPLES=y            >>config.omk
   echo CONFIG_OC_ETH_ORTE_EXAMPLES_AS_LIBRARY=y >>config.omk
 
+Option to start the ORTE examples and manager interactively
+is usesfull for testing. That is why commands for services
+invocations from RTEMS shell are provided
 
- and that means that
+  echo CONFIG_OC_ETH_ORTE_RTEMS_SHELL=y         >>config.omk
+
+The commands set includes even "spawn" command implementation
+to run services in background/parallel.
+
+User application can include commands provided by "orte_rtems_shell"
+and other ORTE services libraries ("ortemanager", "orteping",
+"ortespy", ...) by registerring corersponding commands
+
+  rtems_shell_add_cmd("ortemanager", "orte",
+                "start orte manager",
+                ortemanager_main);
+
+  rtems_shell_add_cmd("orteping", "orte",
+                "start orteping",
+                orte_ping_main);
+
+  ...
 
 
-CONFIG_OC_ETH_ORTE=y
-CONFIG_OC_ETH_ORTE_SOLIB=n
-CONFIG_OC_ETH_ORTE_RTL=n
-CONFIG_OC_ETH_ORTE_MANAGER=y
-CONFIG_OC_ETH_ORTE_RTEMS_SHELL=y
-#CONFIG_OC_ETH_JORTE=y
-#CONFIG_OC_JAVA_ORTE=y
-CONFIG_OC_ETH_ORTE_DEMO_SHAPE=n
+  rtems_shell_add_cmd("spawn", "orte",
+                "spawn task or command in background",
+                orte_spawn_main);
 
-CONFIG_OC_ETH_ORTE_IDL=n
+
+The example application (orte/examples/rtems-shell) for RTEMS
+testing is provided. Default provided network configuration
+for this example uses DHCP failsafe option.
+
+  orte/examples/rtems-shell/networkconfig.h
+
+The application binary image linked with RTEMS system
+is available in "_compiled/<bsp_name>/bin" directory.
+I.e.
+
+  _compiled/lpc17xx_ea_ram/bin/orte_rtems_shell_example
+
+
+The build is tarted by simple "make" command after above
+configuration
+
+  make V=1
+
+provides invoked full commands printing.
+
+  make clean
+
+or
+
+  make distclean
+
+can be used to clean the project. Project can be build for multiple
+BSPs when "RTEMS_MAKEFILE_PATH" is used directly as argument
+of "make" command. Each BSP specific build uses its separate
+build "_build/<bsp>" and output "_compiled/<bsp>" directory.
+
+Example ORTE ping run under RTEMS
+=================================
+
+The ORTE applications require to start "ortemanager"
+on each node. Manager "help" is shown when manager
+command is invoked in RTEMS shell
+
+  ortemanager -h
+
+It can be started in background by
+
+  spawn ortemanager -e
+
+If more networked nodes are used then they need to be specified
+when manager is started
+
+  spawn ortemanager -e -p 192.168.1.9 -k 192.168.1.51
+
+ORTE ping publisher can be started now
+
+  spawn orteping -p
+
+same as subscriber
+
+  spawn orteping -s
+
+Both can be started specifying both -p and -s option.
+Log level can be elevated as well
+
+  spawn orteping -p -s -v ALL.6
+
+
+Limitations when ORTE is build and used with RTEMS
+==================================================
+
+The ORTE IDL compiler cannot be build to run on RTEMS
+(CONFIG_OC_ETH_ORTE_IDL=n). But it can be build as part
+of Linux build and used for RTEMS sources generation.
+
+ORTE/DDS RTPS standard is based on building whole
+network model on each participating node. That requires
+considerable amount of memory. ORTE has little use
+for devices equipped with less than 2 or 4 MB of RAM.
+The situation is even worse for above describe examples
+because each is run as separate application and each builds
+its own copy of model/database (This is not a problem for
+real application which registers all publishers and subscribers
+to single domain at given node).
+
+ORTE has full support for big and little endian interoperability
+provided by IDL and types registration. The XDR serialization
+and deserialization is used for all management/control communications.
+But orteping uses delivery of 4 byte raw content in the test
+without IDL or application local endianess resolution.
+This results in byte-reversed numbers print when test is run
+between nodes with different endiannes.
+
