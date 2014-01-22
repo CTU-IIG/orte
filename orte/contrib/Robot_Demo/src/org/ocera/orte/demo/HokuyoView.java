@@ -53,55 +53,50 @@ public class HokuyoView extends View {
 	protected void onDraw(Canvas canvas) {
 		rcLock.lock();
 		try {
-			if (isRunning) {
-				lock.lock();
-				try {
-					double norm = (double)getWidth()/(2*COSINUS);
-					if (norm > getHeight())
-						norm = getHeight();
-					paint.setStyle(Style.STROKE);
-					paint.setStrokeWidth(3);
-					paint.setColor(Color.BLACK);
-					canvas.drawLine((int)(getWidth()*0.95),
-									(int)(getHeight()*0.97),
-									(int)(getWidth()*0.95-norm/4),
-									(int)(getHeight()*0.97),
-									paint);
-					paint.setStrokeWidth(2);
-					canvas.drawText("1 m", (int)(getWidth()*0.95-norm/8), (int)(getHeight()*0.97-10), paint);
-					paint.setStrokeWidth(3);
-					paint.setStyle(Style.FILL);
-					paint.setColor(Color.argb(40, 62, 62, 171));
-					if (!hasBeenDrawn) {
-						path.reset();
-						path.moveTo(getWidth()/2, getHeight());
-						for(int i = HOKUYO_INDEX_LOWER+1; i <= HOKUYO_INDEX_UPPER; i++) {
-							if (data[i] > 4000)
-								data[i] = 4000;
-							data[i] = (int)(((double)data[i]/4000)*norm);
-							if (data[i] < 5)
-								data[i] = 5;
-				            int x = (int)(getWidth()/2) - (int)(data[i] * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
-				            int y = getHeight() - (int)(data[i] * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
-							path.lineTo(x, y);
-						}
-						path.close();
-						hasBeenDrawn = true;
+			lock.lock();
+			try {
+				double norm = (double)getWidth()/(2*COSINUS);
+				if (norm > getHeight())
+					norm = getHeight();
+				paint.setStyle(Style.STROKE);
+				paint.setStrokeWidth(3);
+				paint.setColor(isRunning ? Color.BLACK : Color.GRAY);
+				canvas.drawLine((int)(getWidth()*0.95),
+								(int)(getHeight()*0.97),
+								(int)(getWidth()*0.95-norm/4),
+								(int)(getHeight()*0.97),
+								paint);
+				paint.setStrokeWidth(2);
+				canvas.drawText("1 m", (int)(getWidth()*0.95-norm/8), (int)(getHeight()*0.97-10), paint);
+				paint.setStrokeWidth(3);
+				paint.setStyle(Style.FILL);
+				paint.setColor(isRunning ? Color.argb(40, 62, 62, 171) : Color.LTGRAY);
+				if (!hasBeenDrawn || !isRunning) {
+					path.reset();
+					path.moveTo(getWidth()/2, getHeight());
+					for(int i = HOKUYO_INDEX_LOWER+1; i <= HOKUYO_INDEX_UPPER; i++) {
+						if (data[i] > 4000)
+							data[i] = 4000;
+						data[i] = (int)(((double)data[i]/4000)*norm);
+						if (data[i] < 5)
+							data[i] = 5;
+			            int x = (int)(getWidth()/2) - (int)((isRunning ? data[i] : norm) * Math.sin(HOKUYO_INDEX_TO_RAD(i)));
+			            int y = getHeight() - (int)((isRunning ? data[i] : norm) * Math.cos(HOKUYO_INDEX_TO_RAD(i)));
+						path.lineTo(x, y);
 					}
-				}
-				finally {
-					lock.unlock();
+					path.close();
+					hasBeenDrawn = true;
 				}
 			}
-			else {
-				path.reset();
+			finally {
+				lock.unlock();
 			}
 			canvas.drawPath(path, paint);
 			paint.setStyle(Style.STROKE);
-			paint.setColor(Color.BLACK);
+			paint.setColor(isRunning ? Color.BLACK : Color.GRAY);
 			canvas.drawPath(path, paint);
 			
-			if (isMonitoring) {
+//			if (isMonitoring) {
 				lockMotion.lock();
 				try {
 					double norm;
@@ -111,7 +106,7 @@ public class HokuyoView extends View {
 						 norm = getWidth()*0.125;
 					paint.setStyle(Style.STROKE);
 					paint.setStrokeWidth(1);
-					paint.setColor(Color.BLACK);
+					paint.setColor(isMonitoring ? Color.BLACK : Color.LTGRAY);
 					canvas.drawLine((int)(10),
 									(int)(10+norm*1.5),
 									(int)(10+norm*3),
@@ -123,7 +118,7 @@ public class HokuyoView extends View {
 									(int)(10+norm*3),
 									paint);
 					paint.setStrokeWidth(4);
-					paint.setColor(Color.BLUE);
+					paint.setColor(isMonitoring ? Color.BLUE : Color.GRAY);
 					canvas.drawLine((int)(10+norm*1.5),
 									(int)(10+norm*1.5),
 									(int)(speedCo[0]*norm+10+norm*1.5),
@@ -132,7 +127,7 @@ public class HokuyoView extends View {
 				} finally {
 					lockMotion.unlock();
 				}
-			}
+//			}
 		} finally {
 			rcLock.unlock();
 		}
@@ -168,6 +163,32 @@ public class HokuyoView extends View {
 		} finally {
 			wcLock.unlock();
 		}
+	}
+	
+	public boolean isRunning() {
+		Boolean retVal = false;
+		
+		rcLock.lock();
+		try {
+			retVal = isRunning;
+		} finally {
+			rcLock.unlock();
+		}
+		
+		return retVal;
+	}
+	
+	public boolean isRunningMotion() {
+		Boolean retVal = false;
+		
+		rcLock.lock();
+		try {
+			retVal = isMonitoring;
+		} finally {
+			rcLock.unlock();
+		}
+		
+		return retVal;
 	}
 	
 	public void setData(int[] data) {
