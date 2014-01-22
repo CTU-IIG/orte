@@ -24,9 +24,11 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.format.Formatter;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -81,10 +83,8 @@ public class MainActivity extends Activity {
     private WifiLock mWifiLock = null;
     private DomainApp appDomain = null;
     private HokuyoView hokuyo_view = null;
-    private MenuItem speed_publ_item = null;
-    private MenuItem speed_subs_item = null;
-    private MenuItem hokuyo_item = null;
     private SharedPreferences prefs = null;
+    private GestureDetector gDetector = null;
 
     static {
     	System.loadLibrary("jorte");     
@@ -98,7 +98,6 @@ public class MainActivity extends Activity {
         	motion_speed_publ.cancel();
             mSensorManager.unregisterListener(accel);
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        	speed_publ_item.setChecked(false);
             mDimLock.release();
             mWifiLock.release();
         }
@@ -107,7 +106,6 @@ public class MainActivity extends Activity {
         	hokuyo_view.runMotion(false);
         	motion_speed_subs.cancel();
         	hokuyo_view.invalidate();
-        	speed_subs_item.setChecked(false);
             mWakeLock.release();
             mWifiLock.release();
         }
@@ -116,7 +114,6 @@ public class MainActivity extends Activity {
 			hokuyo_view.run(false);
 			hokuyo_scan.cancel();
 			hokuyo_view.invalidate();
-			hokuyo_item.setChecked(false);
 	        mWakeLock.release();
 	        mWifiLock.release();
         }
@@ -235,7 +232,15 @@ public class MainActivity extends Activity {
         mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         
         hokuyo_view = (HokuyoView) findViewById(R.id.hokuyo_view);
-        
+        gDetector = new GestureDetector(hokuyo_view.getContext(), new HokuyoGestures());
+        hokuyo_view.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return gDetector.onTouchEvent(event);
+			}
+        	
+        });
+
         manager = new Manager(mgrs);
 
         appDomain = new DomainApp();
@@ -254,71 +259,7 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected (MenuItem item) {
-		if(item.getTitle().equals("Motion control")) {
-			if (!item.isChecked()) {
-				mDimLock.acquire();
-				mWifiLock.acquire();
-				accel = new HandleAccelerometer();
-				mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
-				if (motion_speed_publ == null)
-					motion_speed_publ = new MotionSpeedPublish(appDomain);
-				motion_speed_publ.start();
-				speed_publ_item = item;
-				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				item.setChecked(true);
-			}
-			else {
-				mSensorManager.unregisterListener(accel);
-				motion_speed_publ.cancel();
-				this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-				item.setChecked(false);
-				mDimLock.release();
-				mWifiLock.release();
-			}
-		}
-		else if (item.getTitle().equals("Speed monitor")) {
-			if(!item.isChecked()) {
-				mWakeLock.acquire();
-				mWifiLock.acquire();
-				if (motion_speed_subs == null)
-					motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
-				motion_speed_subs.start();
-				hokuyo_view.runMotion(true);
-				hokuyo_view.invalidate();
-				speed_subs_item = item;
-				item.setChecked(true);
-			}
-			else {
-				hokuyo_view.runMotion(false);
-				motion_speed_subs.cancel();
-				hokuyo_view.invalidate();
-				item.setChecked(false);
-				mWakeLock.release();
-				mWifiLock.release();
-			}
-		}
-		else if (item.getTitle().equals("Hokuyo")) {
-			if (!item.isChecked()) {
-				mWakeLock.acquire();
-				mWifiLock.acquire();
-				if (hokuyo_scan == null)
-					hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
-				hokuyo_scan.start();
-				hokuyo_view.run(true);
-				hokuyo_view.invalidate();
-				hokuyo_item = item;
-				item.setChecked(true);
-			}
-			else {
-				hokuyo_view.run(false);
-				hokuyo_scan.cancel();
-				hokuyo_view.invalidate();
-				item.setChecked(false);
-				mWakeLock.release();
-				mWifiLock.release();
-			}
-		}
-		else if (item.getTitle().equals("Crane: up")) {
+		if (item.getTitle().equals("Crane: up")) {
 			crane_cmd.send(0x190);
 			item.setTitle("Crane: down");
 		}
@@ -371,6 +312,102 @@ public class MainActivity extends Activity {
     				 motion_speed_publ.setSpeed(event.values[0], event.values[1]);
     		 }
     	}
+    }
+    
+//    hokuyo_view.setOnTouchListener(new View.OnTouchListener() {
+    private class HokuyoGestures extends GestureDetector.SimpleOnGestureListener {
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent event) {
+			// urceni orientace HokuyoView a poctu pixelu, ktere zabira hokuyo
+			double norm = (double)hokuyo_view.getWidth()/(2*HokuyoView.COSINUS);
+			boolean isVertical = true;
+			if (norm > hokuyo_view.getHeight()) {
+				norm = HokuyoView.COSINUS*hokuyo_view.getHeight()*2;
+				norm = (hokuyo_view.getWidth() - norm)/2;
+				isVertical = false;
+			}
+			else
+				norm = hokuyo_view.getHeight() - norm;
+			
+			// urceni poctu pixelu, ktere zabira ctverec monitoru rychlosti
+			double normSpeed = ((double)(isVertical ? hokuyo_view.getWidth() : hokuyo_view.getHeight())) * 0.375;
+			
+			if (event.getYPrecision()*event.getY() < normSpeed &&
+					event.getXPrecision()*event.getX() < normSpeed) {
+				if(!hokuyo_view.isRunningMotion()) {
+					mWakeLock.acquire();
+					mWifiLock.acquire();
+					if (motion_speed_subs == null)
+						motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
+					motion_speed_subs.start();
+					hokuyo_view.runMotion(true);
+					hokuyo_view.invalidate();
+				}
+				else {
+					hokuyo_view.runMotion(false);
+					motion_speed_subs.cancel();
+					hokuyo_view.invalidate();
+					mWakeLock.release();
+					mWifiLock.release();
+				}
+			}
+			
+			if ((isVertical && event.getYPrecision()*event.getY() > norm) ||
+					(!isVertical && event.getXPrecision()*event.getX() > norm &&
+							event.getXPrecision()*event.getX() < hokuyo_view.getWidth() - norm)) {
+				if (!hokuyo_view.isRunning()) {
+					mWakeLock.acquire();
+					mWifiLock.acquire();
+					hokuyo_view.setData(new int[681]);
+					if (hokuyo_scan == null)
+						hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
+					hokuyo_scan.start();
+					hokuyo_view.run(true);
+					hokuyo_view.invalidate();
+				}
+				else {
+					hokuyo_view.run(false);
+					hokuyo_scan.cancel();
+					hokuyo_view.invalidate();
+					mWakeLock.release();
+					mWifiLock.release();
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public boolean onDown(MotionEvent e) {
+			return true;
+		}
+
+		@Override
+		public void onLongPress(MotionEvent event) {
+			// urceni poctu pixelu, ktere zabira ctverec monitoru rychlosti
+			double normSpeed = ((double)(hokuyo_view.getHeight() < hokuyo_view.getWidth() ? hokuyo_view.getHeight() : hokuyo_view.getWidth())) * 0.375;
+			
+			if (event.getYPrecision()*event.getY() < normSpeed &&
+					event.getXPrecision()*event.getX() < normSpeed) {
+				if (motion_speed_publ == null || motion_speed_publ.isCancelled()) {
+					mDimLock.acquire();
+					mWifiLock.acquire();
+					accel = new HandleAccelerometer();
+					mSensorManager.registerListener(accel, mGravity, SensorManager.SENSOR_DELAY_GAME);
+					if (motion_speed_publ == null)
+						motion_speed_publ = new MotionSpeedPublish(appDomain);
+					motion_speed_publ.start();
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				}
+				else {
+					mSensorManager.unregisterListener(accel);
+					motion_speed_publ.cancel();
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+					mDimLock.release();
+					mWifiLock.release();
+				}
+			}
+		}
     }
     
     private class NetworkInfo extends AsyncTask<Void, String, Void> {

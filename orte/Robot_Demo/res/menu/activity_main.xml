@@ -1,59 +1,39 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/speed"
-        android:title="Motion control"
-        android:showAsAction="never"
-        android:checkable="true"
-        android:orderInCategory="1">
-    </item>
-
-    <item android:id="@+id/speed_mon"
-        android:title="Speed monitor"
-        android:showAsAction="never"
-        android:checkable="true"
-        android:orderInCategory="2">
-    </item>
-
-    <item android:id="@+id/hokuyo"
-        android:title="Hokuyo"
-        android:showAsAction="never"
-        android:checkable="true"
-        android:orderInCategory="3">
-    </item>
     
     <item android:id="@+id/crane"
         android:title="Crane: up"
-        android:orderInCategory="4"
+        android:orderInCategory="1"
         android:showAsAction="never">
     </item>
     
     <item android:id="@+id/magnet"
         android:title="Magnet"
-        android:orderInCategory="5"
+        android:orderInCategory="2"
         android:checkable="true"
         android:showAsAction="never">
     </item>
 
     <item android:id="@+id/voltage"
         android:title="Voltage monitor"
-        android:orderInCategory="6"
+        android:orderInCategory="3"
         android:showAsAction="never">
     </item>
     
     <item android:id="@+id/managers"
         android:title="Fellow managers"
-        android:orderInCategory="7"
+        android:orderInCategory="4"
         android:showAsAction="never">
     </item>
 
     <item android:id="@+id/about"
         android:title="About"
-        android:orderInCategory="8"
+        android:orderInCategory="5"
         android:showAsAction="never">
     </item>
 
     <item android:id="@+id/exit"
         android:title="Exit"
-        android:orderInCategory="8"
+        android:orderInCategory="6"
         android:showAsAction="never">
     </item>
 </menu>
