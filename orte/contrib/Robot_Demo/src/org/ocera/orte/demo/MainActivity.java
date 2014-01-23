@@ -351,6 +351,7 @@ public class MainActivity extends Activity {
 					mWakeLock.release();
 					mWifiLock.release();
 				}
+				return true;
 			}
 			
 			if ((isVertical && event.getYPrecision()*event.getY() > norm) ||
@@ -373,8 +374,10 @@ public class MainActivity extends Activity {
 					mWakeLock.release();
 					mWifiLock.release();
 				}
+				return true;
 			}
-			return true;
+			
+			return false;
 		}
 
 		@Override
