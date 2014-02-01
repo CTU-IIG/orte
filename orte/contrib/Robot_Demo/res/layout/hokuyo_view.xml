@@ -16,7 +16,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/logo_cvut" />
     
-	<org.ocera.orte.demo.HokuyoView 
+	<org.ocera.orte.demo.GUI.HokuyoView 
         android:id="@+id/hokuyo_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />

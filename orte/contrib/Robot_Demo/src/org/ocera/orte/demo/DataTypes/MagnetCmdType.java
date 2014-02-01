@@ -1,4 +1,4 @@
-package org.ocera.orte.demo;
+package org.ocera.orte.demo.DataTypes;
 
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.types.MessageData;

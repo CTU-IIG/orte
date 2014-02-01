@@ -1,7 +1,14 @@
-package org.ocera.orte.demo;
+package org.ocera.orte.demo.GUI;
 
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Manager;
+import org.ocera.orte.demo.R;
+import org.ocera.orte.demo.Publishers.CraneCmdPublish;
+import org.ocera.orte.demo.Publishers.MagnetCmdPublish;
+import org.ocera.orte.demo.Publishers.MotionSpeedPublish;
+import org.ocera.orte.demo.Subscribers.HokuyoScanSubscribe;
+import org.ocera.orte.demo.Subscribers.MotionSpeedSubscribe;
+import org.ocera.orte.demo.Subscribers.PwrVoltageSubscribe;
 
 import android.app.Activity;
 import android.app.AlertDialog;
