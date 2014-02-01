@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.ocera.orte.demo.MainActivity"
+            android:name="org.ocera.orte.demo.GUI.MainActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>

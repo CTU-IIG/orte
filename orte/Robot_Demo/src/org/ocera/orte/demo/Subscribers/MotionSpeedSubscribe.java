@@ -1,4 +1,4 @@
-package org.ocera.orte.demo;
+package org.ocera.orte.demo.Subscribers;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
@@ -7,6 +7,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Subscription;
 import org.ocera.orte.SubscriptionCallback;
+import org.ocera.orte.demo.DataTypes.SpeedMotionType;
+import org.ocera.orte.demo.GUI.HokuyoView;
 import org.ocera.orte.types.MessageData;
 import org.ocera.orte.types.NtpTime;
 import org.ocera.orte.types.RecvInfo;

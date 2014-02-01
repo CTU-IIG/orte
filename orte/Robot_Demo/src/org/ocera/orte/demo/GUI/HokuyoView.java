@@ -1,4 +1,4 @@
-package org.ocera.orte.demo;
+package org.ocera.orte.demo.GUI;
 
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

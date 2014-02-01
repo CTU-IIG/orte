@@ -1,4 +1,4 @@
-package org.ocera.orte.demo;
+package org.ocera.orte.demo.Publishers;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
@@ -6,13 +6,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Publication;
+import org.ocera.orte.demo.DataTypes.CraneCmdType;
 import org.ocera.orte.types.NtpTime;
 import org.ocera.orte.types.PublProp;
 
-public class MagnetCmdPublish {
+public class CraneCmdPublish {
 	
 	private boolean isCancelled = true;
-	private MagnetCmdType magnetmsg;
+	private CraneCmdType liftmsg;
 	private Publication pub;
 	private PublProp publProp;
 	private DomainApp appDomain;
@@ -21,16 +22,16 @@ public class MagnetCmdPublish {
 	private final ReadLock rcLock = controlRrwl.readLock();
 	private final WriteLock wcLock = controlRrwl.writeLock();
 	
-	public MagnetCmdPublish(DomainApp appDomain) {
+	public CraneCmdPublish(DomainApp appDomain) {
 		this.appDomain = appDomain;
 		
 	    NtpTime persistence = new NtpTime(3);
 	    int strength = 100;
 	    
-	    magnetmsg = new MagnetCmdType(appDomain,"magnet_cmd");
+	    liftmsg = new CraneCmdType(appDomain,"crane_cmd");
 	    
-	    publProp = new PublProp(magnetmsg.getTopic(),
-	    								 "magnet_cmd",                       		
+	    publProp = new PublProp(liftmsg.getTopic(),
+	    								 "crane_cmd",                       		
 	    								 persistence,
 	    								 strength);
 	}
@@ -39,7 +40,7 @@ public class MagnetCmdPublish {
 		wcLock.lock();
 		try {
 			isCancelled = false;
-		    pub = appDomain.createPublication(publProp, magnetmsg);
+		    pub = appDomain.createPublication(publProp, liftmsg);
 		}
 		finally {
 			wcLock.unlock();
@@ -66,7 +67,7 @@ public class MagnetCmdPublish {
 	}
 	
 	public void send(int magnet) {
-		magnetmsg.magnet = magnet;
-		pub.send(magnetmsg);
+		liftmsg.position = magnet;
+		pub.send(liftmsg);
 	}
 }
