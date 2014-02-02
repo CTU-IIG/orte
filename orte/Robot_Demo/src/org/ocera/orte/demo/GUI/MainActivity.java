@@ -2,7 +2,7 @@ package org.ocera.orte.demo.GUI;
 
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Manager;
-import org.ocera.orte.demo.R;
+//import org.ocera.orte.demo.R;
 import org.ocera.orte.demo.Publishers.CraneCmdPublish;
 import org.ocera.orte.demo.Publishers.MagnetCmdPublish;
 import org.ocera.orte.demo.Publishers.MotionSpeedPublish;
