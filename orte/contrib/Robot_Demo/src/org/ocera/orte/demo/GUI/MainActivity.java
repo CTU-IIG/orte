@@ -39,6 +39,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
  
 public class MainActivity extends Activity {
 	private AlertDialog voltageDialog = null;
@@ -350,6 +351,7 @@ public class MainActivity extends Activity {
 					motion_speed_subs.start();
 					hokuyo_view.runMotion(true);
 					hokuyo_view.invalidate();
+					Toast.makeText(getApplicationContext(), "Speed Monitor: ON", Toast.LENGTH_SHORT).show();
 				}
 				else {
 					hokuyo_view.runMotion(false);
@@ -357,6 +359,7 @@ public class MainActivity extends Activity {
 					hokuyo_view.invalidate();
 					mWakeLock.release();
 					mWifiLock.release();
+					Toast.makeText(getApplicationContext(), "Speed Monitor: OFF", Toast.LENGTH_SHORT).show();
 				}
 				return true;
 			}
@@ -373,6 +376,7 @@ public class MainActivity extends Activity {
 					hokuyo_scan.start();
 					hokuyo_view.run(true);
 					hokuyo_view.invalidate();
+					Toast.makeText(getApplicationContext(), "Hokuyo LRF: ON", Toast.LENGTH_SHORT).show();
 				}
 				else {
 					hokuyo_view.run(false);
@@ -380,6 +384,7 @@ public class MainActivity extends Activity {
 					hokuyo_view.invalidate();
 					mWakeLock.release();
 					mWifiLock.release();
+					Toast.makeText(getApplicationContext(), "Hokuyo LRF: OFF", Toast.LENGTH_SHORT).show();
 				}
 				return true;
 			}
@@ -408,6 +413,7 @@ public class MainActivity extends Activity {
 						motion_speed_publ = new MotionSpeedPublish(appDomain);
 					motion_speed_publ.start();
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+					Toast.makeText(getApplicationContext(), "Motion Control: ON", Toast.LENGTH_SHORT).show();
 				}
 				else {
 					mSensorManager.unregisterListener(accel);
@@ -415,6 +421,7 @@ public class MainActivity extends Activity {
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 					mDimLock.release();
 					mWifiLock.release();
+					Toast.makeText(getApplicationContext(), "Motion Control: OFF", Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
