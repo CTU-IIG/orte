@@ -1,5 +1,5 @@
 default_CONFIG = CONFIG_OC_ETH_ORTE=y
-default_CONFIG += CONFIG_OC_ETH_ORTE_SOLIB=n
+default_CONFIG += CONFIG_OC_ETH_ORTE_SOLIB=y
 
 ifeq ($(TARGET_OS),win32)
 renamed_include_HEADERS = \
