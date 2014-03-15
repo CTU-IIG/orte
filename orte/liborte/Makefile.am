@@ -76,7 +76,6 @@ lib_LTLIBRARIES = liborte.la
 liborte_la_SOURCES = $(LIBORTE_FILES)
 liborte_la_LDFLAGS = \
     -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-    -release $(LT_RELEASE) \
     -export-dynamic -no-undefined
 #    $(LDADDS)
 liborte_la_CFLAGS = $(AM_CFLAGS)

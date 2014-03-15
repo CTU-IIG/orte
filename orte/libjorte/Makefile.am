@@ -37,7 +37,6 @@ lib_LTLIBRARIES = libjorte.la
 libjorte_la_SOURCES = $(LIBJORTE_FILES)
 libjorte_la_LDFLAGS = \
     -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-    -release $(LT_RELEASE) \
     -export-dynamic 
 libjorte_la_CFLAGS = $(AM_CFLAGS)
 libjorte_la_LIBADD = $(top_builddir)/orte/liborte/liborte.la 
