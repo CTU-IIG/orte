@@ -1,0 +1,35 @@
+Source: orte
+Priority: optional
+Maintainer: Michal Sojka <sojkam1@fel.cvut.cz>
+Build-Depends: debhelper (>= 9.0.0), dh-autoreconf, libidl-dev, libpopt-dev
+Standards-Version: 3.9.5
+Section: libs
+Homepage: http://orte.sourceforge.net/
+Vcs-Git: git://git.code.sf.net/p/orte/orte
+Vcs-Browser: http://sourceforge.net/p/orte/orte/commit_browser
+
+Package: liborte-dev
+Section: libdevel
+Architecture: any
+Depends: liborte1 (= ${binary:Version}), orte-idl (= ${binary:Version}), ${misc:Depends}
+Description: ORTE development files
+
+Package: liborte1
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: ORTE library
+
+Package: liborte-tools
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: ORTE tools
+ This package contains various ORTE programs such as ortemanager.
+
+Package: orte-idl
+Section: devel
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: ORTE IDL compiler

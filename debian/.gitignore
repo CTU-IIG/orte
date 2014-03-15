@@ -1,0 +1,12 @@
+files
+*.debhelper.log
+*.substvars
+autoreconf.before
+autoreconf.after
+liborte1.postinst.debhelper
+liborte1.postrm.debhelper
+liborte1/
+liborte-dev/
+liborte-tools/
+orte-idl/
+tmp/
