@@ -203,7 +203,7 @@ void
 orte_cbe_write_typespec(FILE *of, IDL_tree tree)
 {
     char *name = orte_cbe_get_typespec_str(tree);
-    fprintf( of, name);
+    fprintf( of, "%s", name);
     g_free(name);
 }
 
