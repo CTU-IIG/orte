@@ -115,7 +115,7 @@ public class MainActivity extends Activity {
         	motion_speed_subs.cancel();
         	hokuyo_view.invalidate();
             mWakeLock.release();
-            mWifiLock.release();
+            //mWifiLock.release();
         }
 
         if (hokuyo_scan != null && !hokuyo_scan.isCancelled()) {
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
 			hokuyo_scan.cancel();
 			hokuyo_view.invalidate();
 	        mWakeLock.release();
-	        mWifiLock.release();
+	        //mWifiLock.release();
         }
     }
     
@@ -345,7 +345,7 @@ public class MainActivity extends Activity {
 					event.getXPrecision()*event.getX() < normSpeed) {
 				if(!hokuyo_view.isRunningMotion()) {
 					mWakeLock.acquire();
-					mWifiLock.acquire();
+					//mWifiLock.acquire();
 					if (motion_speed_subs == null)
 						motion_speed_subs = new MotionSpeedSubscribe(appDomain, hokuyo_view);
 					motion_speed_subs.start();
@@ -358,7 +358,7 @@ public class MainActivity extends Activity {
 					motion_speed_subs.cancel();
 					hokuyo_view.invalidate();
 					mWakeLock.release();
-					mWifiLock.release();
+					//mWifiLock.release();
 					Toast.makeText(getApplicationContext(), "Speed Monitor: OFF", Toast.LENGTH_SHORT).show();
 				}
 				return true;
@@ -369,7 +369,7 @@ public class MainActivity extends Activity {
 							event.getXPrecision()*event.getX() < hokuyo_view.getWidth() - norm)) {
 				if (!hokuyo_view.isRunning()) {
 					mWakeLock.acquire();
-					mWifiLock.acquire();
+					//mWifiLock.acquire();
 					hokuyo_view.setData(new int[681]);
 					if (hokuyo_scan == null)
 						hokuyo_scan = new HokuyoScanSubscribe(appDomain, hokuyo_view);
@@ -383,7 +383,7 @@ public class MainActivity extends Activity {
 					hokuyo_scan.cancel();
 					hokuyo_view.invalidate();
 					mWakeLock.release();
-					mWifiLock.release();
+					//mWifiLock.release();
 					Toast.makeText(getApplicationContext(), "Hokuyo LRF: OFF", Toast.LENGTH_SHORT).show();
 				}
 				return true;
