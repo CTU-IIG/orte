@@ -58,7 +58,11 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
   jmethodID        mid = 0;
   jmethodID        mid_callback = 0;
   //
-  JORTECallbackContext_t   *callback_cont = (JORTECallbackContext_t*)recvCallBackParam;
+  // if the subscriber has been destroyed, return
+  if((*(JORTECallbackContext_t**)recvCallBackParam) == 0)
+    return;
+
+  JORTECallbackContext_t   *callback_cont = *((JORTECallbackContext_t**)recvCallBackParam);
 
   #ifdef TEST_STAGE
     printf("\n\n:c: --------------- recvCallBack called.. --------------- \n");
@@ -352,8 +356,10 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   SubscriptionType        stype;
   NtpTime                 deadline;
   NtpTime                 minSeparation;
-  // jorte varialbe
+  // jorte variable
   JORTECallbackContext_t *callback_cont;
+  JORTECallbackContext_t **callback_cont_ptr;
+
   // standart variables
   const char             *topic = 0;
   const char             *typename = 0;
@@ -362,6 +368,8 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   // memory alocation
   // don't forget use free() funct.!!
   callback_cont = (JORTECallbackContext_t*)malloc(sizeof(JORTECallbackContext_t));
+  callback_cont_ptr = (JORTECallbackContext_t**)malloc(sizeof(JORTECallbackContext_t*));
+  *callback_cont_ptr = callback_cont;
 
   do
   {
@@ -449,7 +457,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     (*env)->SetLongField(env,
                         obj,
                         fid,
-                        (jlong) callback_cont);
+                        (jlong) callback_cont_ptr);
     #ifdef TEST_STAGE
        printf(":c: ORTESubscriptionCreate() calling..\n");
     #endif
@@ -479,7 +487,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
                                &deadline,
                                &minSeparation,
                                recvCallBack,
-                               (void*)callback_cont,
+                               (void*)callback_cont_ptr,
                                (uint32_t) j_multicastIP);
     if (s == 0)
     {

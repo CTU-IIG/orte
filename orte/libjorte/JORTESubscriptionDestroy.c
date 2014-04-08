@@ -94,7 +94,8 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
     {
       //JavaVM *jvm;
       //jint ret;
-      JORTECallbackContext_t *ctx = (JORTECallbackContext_t*)h;
+      JORTECallbackContext_t *ctx = *((JORTECallbackContext_t**)h);
+      *((JORTECallbackContext_t**)h) = 0;
       if(ctx->obj)
       {
         #ifdef TEST_STAGE
@@ -124,7 +125,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
         (*env)->DeleteGlobalRef(env, ctx->obj_buf);
       }
       //
-      free((void*)h);
+      free(ctx);
     }
     // set flag
     flag_ok = 1;
