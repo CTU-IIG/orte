@@ -61,6 +61,8 @@ rtems_task Init(
 #define CONFIGURE_MAXIMUM_POSIX_BARRIERS             5
 #define CONFIGURE_MAXIMUM_POSIX_RWLOCKS              50
 #define CONFIGURE_MAXIMUM_POSIX_SPINLOCKS            10
+#define CONFIGURE_MAXIMUM_POSIX_KEYS                 8
+#define CONFIGURE_MAXIMUM_POSIX_KEY_VALUE_PAIRS      16
 #endif /*RTEMS_POSIX_API*/
 
 #endif
