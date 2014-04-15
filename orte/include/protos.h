@@ -413,9 +413,14 @@ CSTWriterSendTimer(ORTEDomain *d,void *vcstRemoteReader);
 UL_LIST_CUST_DEC(CSTReaderCSChange,
                  CSTReader,CSChange,
                  csChanges,nodeList);
-GAVL_CUST_NODE_INT_DEC(CSTReader, 
-                       CSTSubscriptions, CSTReader, GUID_RTPS,
-                       cstReader, node, guid, gavl_cmp_guid);
+GAVL_CUST_NODE_INT_DEC(CSTReader,         /* prefix */
+		       CSTSubscriptions,  /* root_t */
+		       CSTReader,	  /* item_t */
+		       GUID_RTPS,	  /* key_t */
+		       cstReader,	  /* root_node */
+		       node,		  /* item_node */
+		       guid,		  /* item_key */
+		       gavl_cmp_guid);	  /* cmp_fnc */
 GAVL_CUST_NODE_INT_DEC(CSTRemoteWriter, 
                        CSTReader, CSTRemoteWriter, GUID_RTPS,
                        cstRemoteWriter, node, guid, gavl_cmp_guid);
