@@ -60,6 +60,7 @@ ORTESubscriptionCreate(ORTEDomain *d,SubscriptionMode mode,SubscriptionType sTyp
     pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
     printf("before call ORTESubscriptionCreateBestEffort is necessary to register \n\
             ser./deser. function for a given typeName!!!\n");
+    FREE(cstReader);
     return NULL;
   }  
   pthread_rwlock_wrlock(&d->subscriptions.lock);

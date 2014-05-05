@@ -62,6 +62,7 @@ ORTEPublicationCreate(ORTEDomain *d,const char *topic,const char *typeName,
     pthread_rwlock_unlock(&d->objectEntry.htimRootLock);
     printf("before call ORTEPublicationCreate is necessary to register \n\
             ser./deser. function for a given typeName!!!\n");
+    FREE(cstWriter);
     return NULL;
   }  
   pthread_rwlock_wrlock(&d->publications.lock);
