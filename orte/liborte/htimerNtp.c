@@ -33,8 +33,14 @@
 
 #include "orte_all.h"
 
-GAVL_FLES_INT_DEC(ul_htim_queue, ul_htim_queue_t, ul_htim_node_t, ul_htim_time_t,
-  timers, node, expires, ul_htimer_cmp_fnc)
+GAVL_FLES_INT_DEC(ul_htim_queue,	/* prefix */
+		  ul_htim_queue_t,	/* root_t */
+		  ul_htim_node_t,	/* item_t */
+		  ul_htim_time_t,	/* key_t */
+		  timers,		/* root_field */
+		  node,			/* item_node */
+		  expires,		/* item_key */
+		  ul_htimer_cmp_fnc)	/* cmp_fnc */
 
 
 GAVL_FLES_INT_IMP(ul_htim_queue, ul_htim_queue_t, ul_htim_node_t, ul_htim_time_t,
