@@ -67,20 +67,20 @@ getStringPart(char *string,char divChar,int *iterator,char *buff);
 ///////////////////////////////////////////////////////////////////////////////
 // htimerNtp.c
 // htimerRoot
-UL_HTIMER_DEC(htimerRoot, \
-      ObjectEntry, \
-      HTimFncRootNode, \
-      htimRoot, \
-      htim) 
+UL_HTIMER_DEC(htimerRoot,	    /* prefix */
+	      ObjectEntry,	    /* queue_t */
+	      HTimFncRootNode,	    /* timer_t */
+	      htimRoot,		    /* queue_field */
+	      htim)		    /* timer_field */
 extern void
 htimerRoot_run_expired(ORTEDomain *d, 
       ul_htim_time_t *pact_time);
 // htimerUnicastCommon
-UL_HTIMER_DEC(htimerUnicastCommon, \
-      ObjectEntryAID, \
-      HTimFncUserNode, \
-      htimUnicast.common, \
-      htim) 
+UL_HTIMER_DEC(htimerUnicastCommon,  /* prefix */
+	      ObjectEntryAID,	    /* queue_t */
+	      HTimFncUserNode,	    /* timer_t */
+	      htimUnicast.common,   /* queue_field */
+	      htim)		    /* timer_field */
 extern void
 htimerUnicastCommon_update_root_timer(ObjectEntry *objectEntry,
       ObjectEntryAID *objectEntryAID);
@@ -89,11 +89,11 @@ htimerUnicastCommon_run_expired(ORTEDomain *d,
       ObjectEntryAID *objectEntryAID, 
       ul_htim_time_t *pact_time);
 // htimerUnicastSendMetatraffic
-UL_HTIMER_DEC(htimerUnicastSendMetatraffic, \
-      ObjectEntryAID, \
-      HTimFncUserNode, \
-      htimUnicast.sendMetatraffic, \
-      htim) 
+UL_HTIMER_DEC(htimerUnicastSendMetatraffic,  /* prefix */
+	      ObjectEntryAID,		     /* queue_t */
+	      HTimFncUserNode,		     /* timer_t */
+	      htimUnicast.sendMetatraffic,   /* queue_field */
+	      htim)			     /* timer_field */
 extern void
 htimerUnicastSendMetatraffic_update_root_timer(ObjectEntry *objectEntry,
       ObjectEntryAID *objectEntryAID);
@@ -102,11 +102,11 @@ htimerUnicastSendMetatraffic_run_expired(ORTEDomain *d,
       ObjectEntryAID *objectEntryAID, 
       ul_htim_time_t *pact_time);
 // htimerUnicastSendUserData
-UL_HTIMER_DEC(htimerUnicastSendUserData, \
-      ObjectEntryAID, \
-      HTimFncUserNode, \
-      htimUnicast.sendUserData, \
-      htim) 
+UL_HTIMER_DEC(htimerUnicastSendUserData,     /* prefix */
+	      ObjectEntryAID,		     /* queue_t */
+	      HTimFncUserNode,		     /* timer_t */
+	      htimUnicast.sendUserData,	     /* queue_field */
+	      htim)			     /* timer_field */
 extern void
 htimerUnicastSendUserData_update_root_timer(ObjectEntry *objectEntry,
       ObjectEntryAID *objectEntryAID);
@@ -142,15 +142,39 @@ fnmatch(const char *__pattern,const char *__string,int __flags);
 
 ///////////////////////////////////////////////////////////////////////////////
 // objectEntry.c
-UL_LIST_CUST_DEC(ObjectEntryMulticast,
-                 ObjectEntryOID,CSTRemoteReader,
-		 multicastRemoteReaders,multicastNode);
-GAVL_CUST_NODE_INT_DEC(ObjectEntryHID, ObjectEntry, ObjectEntryHID, HostId,
-    objRoot, hidNode, hid, gavl_cmp_int)
-GAVL_CUST_NODE_INT_DEC(ObjectEntryAID, ObjectEntryHID, ObjectEntryAID, AppId,
-    aidRoot, aidNode, aid, gavl_cmp_int)
-GAVL_CUST_NODE_INT_DEC(ObjectEntryOID, ObjectEntryAID, ObjectEntryOID, ObjectId,
-    oidRoot, oidNode, oid, gavl_cmp_int)
+UL_LIST_CUST_DEC(ObjectEntryMulticast,	  /* prefix */
+		 ObjectEntryOID,	  /* head_t */
+		 CSTRemoteReader,	  /* item_t */
+		 multicastRemoteReaders,  /* head_field */
+		 multicastNode);	  /* node_field */
+
+GAVL_CUST_NODE_INT_DEC(ObjectEntryHID,	  /* prefix */
+		       ObjectEntry,	  /* root_t */
+		       ObjectEntryHID,	  /* item_t */
+		       HostId,		  /* key_t */
+		       objRoot,		  /* root_node */
+		       hidNode,		  /* item_node */
+		       hid,		  /* item_key */
+		       gavl_cmp_int)	  /* cmp_fnc */
+
+GAVL_CUST_NODE_INT_DEC(ObjectEntryAID,	  /* prefix */
+		       ObjectEntryHID,	  /* root_t */
+		       ObjectEntryAID,	  /* item_t */
+		       AppId,		  /* key_t */
+		       aidRoot,		  /* root_node */
+		       aidNode,		  /* item_node */
+		       aid,		  /* item_key */
+		       gavl_cmp_int)	  /* cmp_fnc */
+
+GAVL_CUST_NODE_INT_DEC(ObjectEntryOID,	  /* prefix */
+		       ObjectEntryAID,	  /* root_t */
+		       ObjectEntryOID,	  /* item_t */
+		       ObjectId,	  /* key_t */
+		       oidRoot,		  /* root_node */
+		       oidNode,		  /* item_node */
+		       oid,		  /* item_key */
+		       gavl_cmp_int)	  /* cmp_fnc */
+
 extern void
 objectEntryRefreshApp(ORTEDomain *d,ObjectEntryOID *objectEntryOID);
 extern ObjectEntryOID *
@@ -204,9 +228,11 @@ eventDetach(ORTEDomain *d,
 
 ///////////////////////////////////////////////////////////////////////////////
 // parameter.c
-UL_LIST_CUST_DEC(CSChangeAttributes,
-                 CSChange,ParameterSequence,
-                 attributes,node);
+UL_LIST_CUST_DEC(CSChangeAttributes,	  /* prefix */
+		 CSChange,		  /* head_t */
+		 ParameterSequence,	  /* item_t */
+		 attributes,		  /* head_field */
+		 node);			  /* node_field */
 extern int
 parameterGetDataLength(CSChange *csChange);
 extern int
@@ -238,8 +264,14 @@ objectEntryExpirationTimer(ORTEDomain *d,void *vobjectEntryOID);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTETypeRegister.c
-GAVL_CUST_NODE_INT_DEC(ORTEType, TypeEntry, TypeNode, const char *,
-    types, node, typeRegister.typeName, gavl_cmp_str)
+GAVL_CUST_NODE_INT_DEC(ORTEType,	      /* prefix */
+		       TypeEntry,	      /* root_t */
+		       TypeNode,	      /* item_t */
+		       const char *,	      /* key_t */
+		       types,		      /* root_node */
+		       node,		      /* item_node */
+		       typeRegister.typeName, /* item_key */
+		       gavl_cmp_str)	      /* cmp_fnc */
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -347,21 +379,44 @@ extern int gavl_cmp_str(const char *const *a,const char *const *b);
 
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSCSTWriter.c
-UL_LIST_CUST_DEC(CSTWriterCSChange,
-                 CSTWriter,CSChange,
-                 csChanges,nodeList);
-UL_LIST_CUST_DEC(CSChangeParticipant,
-                 CSChange,CSChangeForReader,
-		 writerParticipants,participantNode);
-GAVL_CUST_NODE_INT_DEC(CSTWriter, 
-                       CSTPublications, CSTWriter, GUID_RTPS,
-                       cstWriter, node, guid, gavl_cmp_guid);
-GAVL_CUST_NODE_INT_DEC(CSTRemoteReader, 
-                       CSTWriter, CSTRemoteReader, GUID_RTPS,
-                       cstRemoteReader, node, guid, gavl_cmp_guid);
-GAVL_CUST_NODE_INT_DEC(CSChangeForReader,
-                       CSTRemoteReader, CSChangeForReader, SequenceNumber,
-                       csChangeForReader, node, csChange->sn, gavl_cmp_sn);
+UL_LIST_CUST_DEC(CSTWriterCSChange,	  /* prefix */
+		 CSTWriter,		  /* head_t */
+		 CSChange,		  /* item_t */
+		 csChanges,		  /* head_field */
+		 nodeList);		  /* node_field */
+
+UL_LIST_CUST_DEC(CSChangeParticipant,	  /* prefix */
+		 CSChange,		  /* head_t */
+		 CSChangeForReader,	  /* item_t */
+		 writerParticipants,	  /* head_field */
+		 participantNode);	  /* node_field */
+
+GAVL_CUST_NODE_INT_DEC(CSTWriter,	  /* prefix */
+		       CSTPublications,	  /* root_t */
+		       CSTWriter,	  /* item_t */
+		       GUID_RTPS,	  /* key_t */
+		       cstWriter,	  /* root_node */
+		       node,		  /* item_node */
+		       guid,		  /* item_key */
+		       gavl_cmp_guid);	  /* cmp_fnc */
+
+GAVL_CUST_NODE_INT_DEC(CSTRemoteReader,	  /* prefix */
+		       CSTWriter,	  /* root_t */
+		       CSTRemoteReader,	  /* item_t */
+		       GUID_RTPS,	  /* key_t */
+		       cstRemoteReader,	  /* root_node */
+		       node,		  /* item_node */
+		       guid,		  /* item_key */
+		       gavl_cmp_guid);	  /* cmp_fnc */
+
+GAVL_CUST_NODE_INT_DEC(CSChangeForReader, /* prefix */
+		       CSTRemoteReader,	  /* root_t */
+		       CSChangeForReader, /* item_t */
+		       SequenceNumber,	  /* key_t */
+		       csChangeForReader, /* root_node */
+		       node,		  /* item_node */
+		       csChange->sn,	  /* item_key */
+		       gavl_cmp_sn);	  /* cmp_fnc */
 
 extern void
 CSTWriterInit(ORTEDomain *d,CSTWriter *cstWriter,ObjectEntryOID *object,
@@ -410,10 +465,13 @@ CSTWriterSendTimer(ORTEDomain *d,void *vcstRemoteReader);
         
 ///////////////////////////////////////////////////////////////////////////////
 // RTPSCSTReader.c
-UL_LIST_CUST_DEC(CSTReaderCSChange,
-                 CSTReader,CSChange,
-                 csChanges,nodeList);
-GAVL_CUST_NODE_INT_DEC(CSTReader,         /* prefix */
+UL_LIST_CUST_DEC(CSTReaderCSChange,	  /* prefix */
+		 CSTReader,		  /* head_t */
+		 CSChange,		  /* item_t */
+		 csChanges,		  /* head_field */
+		 nodeList);		  /* node_field */
+
+GAVL_CUST_NODE_INT_DEC(CSTReader,	  /* prefix */
 		       CSTSubscriptions,  /* root_t */
 		       CSTReader,	  /* item_t */
 		       GUID_RTPS,	  /* key_t */
@@ -421,12 +479,24 @@ GAVL_CUST_NODE_INT_DEC(CSTReader,         /* prefix */
 		       node,		  /* item_node */
 		       guid,		  /* item_key */
 		       gavl_cmp_guid);	  /* cmp_fnc */
-GAVL_CUST_NODE_INT_DEC(CSTRemoteWriter, 
-                       CSTReader, CSTRemoteWriter, GUID_RTPS,
-                       cstRemoteWriter, node, guid, gavl_cmp_guid);
-GAVL_CUST_NODE_INT_DEC(CSChangeFromWriter,
-                       CSTRemoteWriter, CSChangeFromWriter, SequenceNumber,
-                       csChangeFromWriter, node, csChange->sn, gavl_cmp_sn);
+
+GAVL_CUST_NODE_INT_DEC(CSTRemoteWriter,	  /* prefix */
+		       CSTReader,	  /* root_t */
+		       CSTRemoteWriter,	  /* item_t */
+		       GUID_RTPS,	  /* key_t */
+		       cstRemoteWriter,	  /* root_node */
+		       node,		  /* item_node */
+		       guid,		  /* item_key */
+		       gavl_cmp_guid);	  /* cmp_fnc */
+
+GAVL_CUST_NODE_INT_DEC(CSChangeFromWriter,/* prefix */
+		       CSTRemoteWriter,	  /* root_t */
+		       CSChangeFromWriter,/* item_t */
+		       SequenceNumber,	  /* key_t */
+		       csChangeFromWriter,/* root_node */
+		       node,		  /* item_node */
+		       csChange->sn,	  /* item_key */
+		       gavl_cmp_sn);	  /* cmp_fnc */
 extern void 
 CSTReaderInit(ORTEDomain *d,CSTReader *cstReader,ObjectEntryOID *object,
     ObjectId oid,CSTReaderParams *params,ORTETypeRegister *typeRegister);
@@ -476,9 +546,11 @@ ORTEDomainDestroy(ORTEDomain *d,Boolean manager);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEDomainApp.c
-UL_LIST_CUST_DEC(Pattern,
-                 PatternEntry,PatternNode,
-                 patterns,node);
+UL_LIST_CUST_DEC(Pattern,	/* prefix */
+		 PatternEntry,	/* head_t */
+		 PatternNode,	/* item_t */
+		 patterns,	/* head_field */
+		 node);		/* node_field */
                                                    
 ///////////////////////////////////////////////////////////////////////////////
 // ORTETypeRegister.c
@@ -487,9 +559,14 @@ ORTETypeRegisterFind(ORTEDomain *d,const char *typeName);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEPublication.c
-GAVL_CUST_NODE_INT_DEC(PublicationList, 
-                       PSEntry, ObjectEntryOID, GUID_RTPS,
-                       publications, psNode, guid, gavl_cmp_guid);
+GAVL_CUST_NODE_INT_DEC(PublicationList,	  /* prefix */
+		       PSEntry,		  /* root_t */
+		       ObjectEntryOID,	  /* item_t */
+		       GUID_RTPS,	  /* key_t */
+		       publications,	  /* root_node */
+		       psNode,		  /* item_node */
+		       guid,		  /* item_key */
+		       gavl_cmp_guid);	  /* cmp_fnc */
 extern int
 ORTEPublicationSendLocked(ORTEPublication *cstWriter,
     ORTEPublicationSendParam *psp);
@@ -506,11 +583,15 @@ PublicationCallBackTimer(ORTEDomain *d,void *vcstWriter);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTESubscription.c
-GAVL_CUST_NODE_INT_DEC(SubscriptionList, 
-                       PSEntry, ObjectEntryOID, GUID_RTPS,
-                       subscriptions, psNode, guid, gavl_cmp_guid);
+GAVL_CUST_NODE_INT_DEC(SubscriptionList,  /* prefix */
+		       PSEntry,		  /* root_t */
+		       ObjectEntryOID,	  /* item_t */
+		       GUID_RTPS,	  /* key_t */
+		       subscriptions,	  /* root_node */
+		       psNode,		  /* item_node */
+		       guid,		  /* item_key */
+		       gavl_cmp_guid);	  /* cmp_fnc */
 
-                       
 #ifdef __cplusplus
 } /* extern "C"*/
 #endif
