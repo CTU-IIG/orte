@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.ocera.orte.shape4a.MainActivity" >
+    
+    <item android:id="@+id/action_blue"
+          android:title="@string/action_blue"
+          app:showAsAction="never" />
+    
+    <item android:id="@+id/action_green"
+          android:title="@string/action_green"
+          app:showAsAction="never" />
+    
+    <item android:id="@+id/action_red"
+          android:title="@string/action_red"
+          app:showAsAction="never" />
+    
+    <item android:id="@+id/action_black"
+          android:title="@string/action_black"
+          app:showAsAction="never" />
+    
+    <item android:id="@+id/action_yellow"
+          android:title="@string/action_yellow"
+          app:showAsAction="never" />
+
+</menu>
