@@ -101,7 +101,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
              str, subs_prop->topic);
     #endif
     // free the memory
-    (*env)->ReleaseStringUTFChars(env, obj_sp, str);
+    (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set topic - typeName
     fid = (*env)->GetFieldID(env,
@@ -131,7 +131,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
              str, subs_prop->typeName);
     #endif
     // free the memory
-    (*env)->ReleaseStringUTFChars(env, obj_sp, str);
+    (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set topic - typeChecksum
     fid = (*env)->GetFieldID(env,cls_sp,"typeChecksum","I");

@@ -103,7 +103,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
              str, publ_prop->topic);
     #endif
     // free the memory
-    (*env)->ReleaseStringUTFChars(env, obj_pp, str);
+    (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set typeName
     fid = (*env)->GetFieldID(env,
@@ -133,7 +133,7 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
              str, publ_prop->typeName);
     #endif
     // free the memory
-    (*env)->ReleaseStringUTFChars(env, obj_pp, str);
+    (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set typeChecksum
     fid = (*env)->GetFieldID(env,cls_pp,"typeChecksum","I");
