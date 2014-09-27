@@ -48,7 +48,7 @@ public class SubscriberElement extends SubscriptionCallback
 	private NtpTime deadline;
 	private NtpTime minSeparation;
 	
-	private Box box;
+	private BoxType box;
 	private ShapeDrawable shape;
 	
 	private View parentView;
@@ -67,9 +67,9 @@ public class SubscriberElement extends SubscriptionCallback
 		this.deadline = new NtpTime(6);
 		this.minSeparation = new NtpTime(0);
 		
-		this.box = new Box(appDomain, PublisherShape.getColorName(color));
+		this.box = new BoxType(appDomain, PublisherShape.getColorName(color));
 		SubsProp subscriberProperties = new SubsProp(this.box.getTopic(),
-				"Box",
+				"BoxType",
 				this.minSeparation,
 				this.deadline,
 				ORTEConstant.IMMEDIATE,
@@ -136,7 +136,7 @@ public class SubscriberElement extends SubscriptionCallback
 	 */
 	public void setShape()
 	{
-		switch (this.box.strength) {
+		switch (this.box.shape) {
 		case 0:
 			this.shape.setShape(new RectShape());
 			break;

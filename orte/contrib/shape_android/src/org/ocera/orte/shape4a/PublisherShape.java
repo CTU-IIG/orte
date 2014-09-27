@@ -54,7 +54,7 @@ public class PublisherShape extends ShapeDrawable
 	private NtpTime persistence;
 	
 	public Publication publication;
-	public Box box;
+	public BoxType box;
 	
 	/**
 	 * Set new {@link Shape}, strength and color.
@@ -84,15 +84,15 @@ public class PublisherShape extends ShapeDrawable
 		this.manual = false;
 		this.persistence = new NtpTime(5);
 
-		this.box = new Box(appDomain, PublisherShape.getColorName(c));
+		this.box = new BoxType(appDomain, PublisherShape.getColorName(c));
 		this.publisherProperties = new PublProp(this.box.getTopic(),
-				"Box",
+				"BoxType",
 				this.persistence,
 				s+1);
 		this.publication = appDomain.createPublication(this.publisherProperties, this.box);
 		
-		this.box.strength = s;
-		this.box.color = c;
+		this.box.shape = (byte) s;
+		this.box.color = (byte) c;
 
 		this.getPaint().setColor(PublisherShape.getColorConstant(c));
 		this.setPadding(0, 0, 0, 0);
@@ -107,7 +107,7 @@ public class PublisherShape extends ShapeDrawable
 	 * @return Object to send.
 	 * @since 1.0
 	 */
-	public Box toSend()
+	public BoxType toSend()
 	{
 		this.box.rectangle.top_left_x = (short) this.getBounds().left;
 		this.box.rectangle.top_left_y = (short) this.getBounds().top;
@@ -202,7 +202,7 @@ public class PublisherShape extends ShapeDrawable
 	 */
 	public String getShapeName()
 	{
-		switch (this.box.strength) {
+		switch (this.box.shape) {
 		case 0:
 			return "Square";
 		case 1:
