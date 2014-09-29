@@ -13,6 +13,7 @@ shared_LIBRARIES = jorte
 lib_LOADLIBES = orte
 
 INCLUDES = -I $(srcdir)/../include -I $(JAVA_HOME)/include  -I $(JAVA_HOME)/include/linux
+CFLAGS += -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 
 jorte_SOURCES = \
 onLoad.c \

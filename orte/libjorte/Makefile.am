@@ -39,7 +39,7 @@ libjorte_la_LDFLAGS = \
     -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
     -release $(LT_RELEASE) \
     -export-dynamic 
-libjorte_la_CFLAGS = $(AM_CFLAGS)
+libjorte_la_CFLAGS = $(AM_CFLAGS) -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 libjorte_la_LIBADD = $(top_builddir)/orte/liborte/liborte.la 
 
 EXTRA_DIST = Makefile Makefile.omk \
