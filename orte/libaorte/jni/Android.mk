@@ -57,7 +57,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := jorte
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_LDLIBS := -llog
-LOCAL_CFLAGS += -Wall 
+LOCAL_CFLAGS += -Wall -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 LOCAL_SRC_FILES := \
 libjorte/onLoad.c \
 libjorte/getNtpTime.c \
