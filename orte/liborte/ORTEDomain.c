@@ -741,8 +741,8 @@ err_sock:
   CDR_codec_release_buffer(&d->taskRecvUnicastMetatraffic.mb.cdrCodec);
 err_domainProp:
   if (!errno_save) errno_save = errno;
-  pthread_rwlock_init(&d->patternEntry.lock,NULL);
-  pthread_rwlock_init(&d->psEntry.subscriptionsLock,NULL);
+  pthread_rwlock_destroy(&d->patternEntry.lock);
+  pthread_rwlock_destroy(&d->psEntry.subscriptionsLock);
   pthread_rwlock_destroy(&d->psEntry.publicationsLock);
   pthread_rwlock_destroy(&d->subscriptions.lock);
   pthread_rwlock_destroy(&d->publications.lock);
