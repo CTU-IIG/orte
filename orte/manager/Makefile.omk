@@ -12,7 +12,7 @@ else
 bin_PROGRAMS = ortemanager
 endif
 
-TARGET_LOADLIBES ?= pthread
+TARGET_LOADLIBES ?= pthread rt
 
 lib_LOADLIBES =  orte $(TARGET_LOADLIBES)
 

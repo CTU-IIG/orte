@@ -11,7 +11,7 @@ h_publisher_SOURCES = h_publisher.c
 
 h_subscriber_SOURCES = h_subscriber.c
 
-TARGET_LOADLIBES ?= pthread
+TARGET_LOADLIBES ?= pthread rt
 
 lib_LOADLIBES =  orte $(TARGET_LOADLIBES)
 ifeq ($(TARGET_OS),win32)

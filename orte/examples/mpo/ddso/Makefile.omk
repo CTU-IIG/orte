@@ -8,8 +8,8 @@ shared_LIBRARIES = ddso
 
 bin_PROGRAMS = ddsop ddsos
 
-ddsop_LIBS =  orte pthread ddso
-ddsos_LIBS =  orte pthread ddso
+ddsop_LIBS =  orte pthread ddso rt
+ddsos_LIBS =  orte pthread ddso rt
 ifeq ($(TARGET_OS),win32)
 ddsop_LIBS +=  ws2_32
 ddsos_LIBS +=  ws2_32

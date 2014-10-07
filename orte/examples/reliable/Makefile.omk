@@ -13,7 +13,7 @@ r_subscriber_reliable_SOURCES = r_subscriber_reliable.c
 
 r_subscriber_besteffort_SOURCES = r_subscriber_besteffort.c
 
-TARGET_LOADLIBES ?= pthread
+TARGET_LOADLIBES ?= pthread rt
 
 lib_LOADLIBES =  orte $(TARGET_LOADLIBES)
 ifeq ($(TARGET_OS),win32)

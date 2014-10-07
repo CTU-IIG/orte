@@ -9,7 +9,7 @@ endif
 
 orteping_SOURCES = orteping.c
 
-TARGET_LOADLIBES ?= pthread
+TARGET_LOADLIBES ?= pthread rt
 
 lib_LOADLIBES =  orte $(TARGET_LOADLIBES)
 ifeq ($(TARGET_OS),win32)
