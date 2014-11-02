@@ -5,8 +5,6 @@
 #include <rtems/rtems_dhcp_failsafe.h>
 #include <bsp.h>
 
-static char ethernet_address[6] = {0x00, 0x04, 0x9F, 0x00, 0x27, 0x50 };
-
 #ifdef RTEMS_USE_LOOPBACK
 
 int rtems_bsdnet_loopattach(struct rtems_bsdnet_ifconfig *, int);
@@ -36,7 +34,7 @@ static struct rtems_bsdnet_ifconfig netdriver_config = {
 #endif /*RTEMS_USE_LOOPBACK*/
 	.ip_address = "192.168.3.66",
 	.ip_netmask = "255.255.255.0",
-	.hardware_address = ethernet_address,
+	.hardware_address = NULL,
 	.ignore_broadcast = 0,
 	.mtu = 0,
 	.rbuf_count = 0,
