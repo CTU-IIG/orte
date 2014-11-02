@@ -64,7 +64,7 @@
   #endif
 #endif
 
-#include "networkconfig-static.h"
+#include "networkconfig.h"
 
 #if RTEMS_VER_CODE < VER_CODE(4,7,99)
   #define rtems_shell_add_cmd shell_add_cmd
