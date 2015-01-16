@@ -238,8 +238,8 @@ matchMulticastAddresses(ObjectEntryOID *o1,ObjectEntryOID *o2)
   AppParams 	*ap1,*ap2;
   uint16_t      i,j;
   
-  if ((o1->guid.oid!=OID_APP) || 
-      (o1->guid.oid!=OID_APP)) return ORTE_FALSE;
+  if (o1->guid.oid!=OID_APP)
+    return ORTE_FALSE;
 
   ap1=o1->attributes;
   ap2=o2->attributes;
