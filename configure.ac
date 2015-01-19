@@ -42,6 +42,7 @@ AC_CANONICAL_TARGET
 AC_CONFIG_HEADER(orte/include/orte/orte_config.h)
 AM_INIT_AUTOMAKE(no-define)
 
+AC_CONFIG_MACRO_DIR([admin])
 
 # Activate maintainer mode
 AM_MAINTAINER_MODE
@@ -113,6 +114,7 @@ fi
 AC_PROG_CC
 AM_PROG_CC_C_O
 LT_INIT([win32-dll])
+PKG_PROG_PKG_CONFIG()
 
 ###############################
 # Checks for ability to compile ORTE_IDL

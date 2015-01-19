@@ -35,7 +35,8 @@ AC_DEFUN([AM_ORTE_IDL],
         CFLAGS="$CFLAGS $LIBIDL_CFLAGS"
 	LIBS="$LIBS $LIBIDL_LIBS"
 	#popt
-	AC_CHECK_LIB([popt], [poptSetOtherOptionHelp])
+	AC_CHECK_LIB([popt], [poptSetOtherOptionHelp],,
+			     [AC_MSG_ERROR([orte-idl requires popt library])])
   fi
 
   AM_CONDITIONAL(CONFIG_ORTE_IDL, [test $USE_ORTE_IDL = yes])
