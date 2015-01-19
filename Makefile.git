@@ -56,7 +56,7 @@ check-java.real:
 	test -d "$(JAVA_HOME)"
 	../configure --with-java=$(JAVA_HOME)
 	$(MAKE)
-	ant -f ../orte/java
+	ant -f ../orte/java/build.xml
 	test -f ../orte/java/lib/orte.jar
 
 check-android:
