@@ -1,22 +1,22 @@
 /**
  * 
- *	This file is part of shape4a.
+ *	This file is part of shape_android.
  *
- *  shape4a is free software: you can redistribute it and/or modify
+ *  shape_android is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  shape4a is distributed in the hope that it will be useful,
+ *  shape_android is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with shape4a.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with shape_android.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.ocera.orte.shape4a;
+package org.ocera.orte.shape_android;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.ShapeDrawable;
@@ -150,7 +150,7 @@ public class SubscriberElement extends SubscriptionCallback
 			this.shape.setShape(new RectShape());
 		}
 	}
-	
+
 	/**
 	 * Getter for enabled value. Should be object
 	 * drawn or not?
@@ -168,6 +168,24 @@ public class SubscriberElement extends SubscriptionCallback
 	 * @since 1.0
 	 */
 	public void setEnabled(boolean b) { this.enabled = b; }
+
+	/**
+	 * Getter for enabled value. Should be object
+	 * drawn or not?
+	 * 
+	 * @return Enabled?
+	 * @since 1.0
+	 */
+	public boolean getAllowScaling()	{ return this.box.allowScaling; }
+	
+	/**
+	 * Set value enabled. Should be object
+	 * drawn or not?
+	 * 
+	 * @param b Enable?
+	 * @since 1.0
+	 */
+	public void setAllowScaling(boolean b) { this.box.allowScaling = b; }
 
 	/**
 	 * Getter for receiving value. Should be object

@@ -1,27 +1,29 @@
 /**
  * 
- *	This file is part of shape4a.
+ *	This file is part of shape_android.
  *
- *  shape4a is free software: you can redistribute it and/or modify
+ *  shape_android is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  shape4a is distributed in the hope that it will be useful,
+ *  shape_android is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with shape4a.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with shape_android.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.ocera.orte.shape4a;
+package org.ocera.orte.shape_android;
 
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.types.MessageData;
 import org.ocera.orte.types.ORTEConstant;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -34,8 +36,8 @@ import android.util.Log;
 public class BoxType extends MessageData
 {
 	private static final byte FUZZY = 0;
-	private static final double DESTINATION_WIDTH = 389.0;
-	private static final double DESTINATION_HEIGHT = 331.0;
+	private static final double DESTINATION_WIDTH = 367.0; //389.0;
+	private static final double DESTINATION_HEIGHT = 261.0; //331.0;
 	
 	public byte color;
 	public byte shape;

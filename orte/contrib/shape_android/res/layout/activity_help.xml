@@ -1,0 +1,124 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.ocera.orte.shape_android.HelpActivity" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        
+	    <LinearLayout
+	        android:orientation="vertical"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="6dp">
+	        
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_intro_ORTE_header"
+			    android:paddingBottom="4dp" />
+			<TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_intro_ORTE"
+			    android:paddingBottom="4dp" />
+			<TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_intro_shape_header"
+			    android:paddingBottom="4dp" />
+			<TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_intro_shape"
+			    android:paddingBottom="4dp" />
+			
+			<TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_icons"
+			    android:paddingBottom="4dp"
+			    android:paddingTop="16dp" />
+			<LinearLayout
+		        android:orientation="horizontal"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content">
+		        <ImageView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:contentDescription="@string/help_refresh"
+		            android:src="@drawable/ic_action_refresh"
+		            android:background="@android:color/background_dark" />
+		        <TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/help_refresh"
+		            android:paddingLeft="4dp" />
+		    </LinearLayout>
+			<LinearLayout
+		        android:orientation="horizontal"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content">
+		        <ImageView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:contentDescription="@string/help_new"
+		            android:src="@drawable/ic_action_new"
+		            android:background="@android:color/background_dark" />
+		        <TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/help_new"
+		            android:paddingLeft="4dp" />
+		    </LinearLayout>
+		    
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_defaultMenu"
+			    android:paddingBottom="4dp"
+			    android:paddingTop="16dp" />
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_defaultMenu_element1"
+			    android:paddingBottom="4dp" />
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_defaultMenu_element2"
+			    android:paddingBottom="4dp" />
+		    
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_publishersMenu"
+			    android:paddingBottom="4dp"
+			    android:paddingTop="16dp" />
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_publishersMenu_element"
+			    android:paddingBottom="4dp" />
+		    
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_subscribersMenu"
+			    android:paddingBottom="4dp"
+			    android:paddingTop="16dp" />
+		    <TextView
+				android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/help_subscribersMenu_element"
+			    android:paddingBottom="4dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

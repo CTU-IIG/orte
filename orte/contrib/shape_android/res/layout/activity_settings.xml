@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+	<CheckBoxPreference
+	    android:defaultValue="true"
+	    android:key="prefScaling"
+	    android:summary="@string/settings_scaling_description"
+	    android:title="@string/settings_scaling" />
+
+	<EditTextPreference
+        android:title="@string/settings_managers"
+        android:summary="@string/settings_managers_description"
+        android:key="prefManagers"/>
+	
+</PreferenceScreen>
