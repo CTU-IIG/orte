@@ -14,6 +14,8 @@ gen/
 libs/
 obj/
 
+.settings/
+
 # Gradle files
 .gradle/
 build/

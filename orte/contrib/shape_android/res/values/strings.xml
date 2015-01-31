@@ -1,20 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">shape4a</string>
-    <string name="dialog_OK">OK</string>
-    <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_newPublisher">Color for new Publisher?</string>
-    <string name="dialog_publisherSettings">Publisher #</string>
-    <string name="dialog_delete">Delete</string>
-    <string name="dialog_add">Add</string>
+    <string name="app_name">ORTE demo application</string>
+    
+    <string name="title_activity_subscriber">Subscribers</string>
+    <string name="title_activity_publisher">Publishers</string>
+    <string name="title_activity_help">Help</string>
+    <string name="title_activity_settings">Settings</string>
+    
+    <string name="action_switch">Switch</string>
+    <string name="action_new">New</string>
     <string name="action_settings">Settings</string>
     <string name="action_help">Help</string>
+    
     <string name="action_blue">Blue</string>
     <string name="action_green">Green</string>
     <string name="action_red">Red</string>
     <string name="action_black">Black</string>
     <string name="action_yellow">Yellow</string>
-    <string name="action_new">New</string>
+    
+    <string name="dialog_OK">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_add">Add</string>
+    <string name="dialog_newPublisher">Color for new Publisher?</string>
+    <string name="dialog_publisherSettings">Publisher #</string>
+    
+    <string name="help_intro_ORTE_header"><big>About ORTE</big></string>
+    <string name="help_intro_ORTE">The Open Real-Time Ethernet (ORTE) is an open source implementation of Real-Time Publish-Subscribe (RTPS) communication protocol. RTPS is new application layer protocol targeted to real-time communication area, which is build on the top of standard UDP stack. Since there are many TCP/IP stack implementations under many operating systems and RTPS protocol does not have any other special HW/SW requirements, it should be easily ported to many HW/SW target platforms. Because it uses only UDP protocol, it retains control of timing and reliability. [<a href="http://orte.sourceforge.net/">source</a>]</string>
+    <string name="help_intro_shape_header"><big>About Shape</big></string>
+    <string name="help_intro_shape">Shape is demo application delivered with ORTE source code.</string>
+    
+    <string name="help_icons"><big>Icons</big></string>
+    <string name="help_refresh">Goes from Publishers to Subscribers and back.</string>
+    <string name="help_new">Create new Publisher.</string>
+    
+    <string name="help_defaultMenu"><big>Generic menu</big></string>
+    <string name="help_defaultMenu_element1"><b>Settings</b> - set up parameters like IP addresses of Managers, scaling, &#8230;</string>
+    <string name="help_defaultMenu_element2"><b>Help</b> - shows this help.</string>
+    
+    <string name="help_publishersMenu"><big>Publisher menu</big></string>
+    <string name="help_publishersMenu_element"><b>#n Color Shape</b> (i.e. #1 Red Circle) is how Publishers are denoted. #n is sequence number followed by color and shape. When Publisher is clicked, settings menu appear, where strength of Publisher may be changed. If two and more Publishers of same color are added, the one with the greatest strength is preferred by Subscribers.</string>
+    
+    <string name="help_subscribersMenu"><big>Subscriber menu</big></string>
+    <string name="help_subscribersMenu_element"><b>Blue, Green, Red, Black, Yellow</b> - subscribing to each color is set to enabled by default. However, the subscription may be deleted (and added again) for certain color and minimum separation time may be set.</string>
+    
+    <string name="settings_scaling">Scaling</string>
+    <string name="settings_scaling_description">Allow scaling for shapes</string>
+    <string name="settings_managers">Managers</string>
+    <string name="settings_managers_description">Comma separated Manager\'s IP addresses</string>
+    
 
 </resources>

@@ -1,27 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.ocera.orte.shape4a.MainActivity" >
+    tools:context="org.ocera.orte.shape_android.SubscriberActivity" >
+
+    <item
+        android:id="@+id/action_switch"
+        android:orderInCategory="5"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_switch"
+        android:icon="@drawable/ic_action_refresh" />
     
     <item android:id="@+id/action_blue"
           android:title="@string/action_blue"
-          app:showAsAction="never" />
+          android:showAsAction="never" />
     
     <item android:id="@+id/action_green"
           android:title="@string/action_green"
-          app:showAsAction="never" />
+          android:showAsAction="never" />
     
     <item android:id="@+id/action_red"
           android:title="@string/action_red"
-          app:showAsAction="never" />
+          android:showAsAction="never" />
     
     <item android:id="@+id/action_black"
           android:title="@string/action_black"
-          app:showAsAction="never" />
+          android:showAsAction="never" />
     
     <item android:id="@+id/action_yellow"
           android:title="@string/action_yellow"
-          app:showAsAction="never" />
+          android:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings" />
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="101"
+        android:showAsAction="never"
+        android:title="@string/action_help" />
 
 </menu>
