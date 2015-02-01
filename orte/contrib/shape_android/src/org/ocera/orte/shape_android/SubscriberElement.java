@@ -144,7 +144,7 @@ public class SubscriberElement extends SubscriptionCallback
 			this.shape.setShape(new OvalShape());
 			break;
 		case 2:
-			this.shape.setShape(new PathShape(PublisherShape.returnTrianglePath(), 96, 96));
+			this.shape.setShape(new PathShape(PublisherShape.returnTrianglePath(), 2*PublisherActivity.SHAPE_WIDTH, 2*PublisherActivity.SHAPE_HEIGHT));
 			break;
 		default:
 			this.shape.setShape(new RectShape());
@@ -240,6 +240,7 @@ public class SubscriberElement extends SubscriptionCallback
 	public void setScale(int currentWidth, int currentHeight)
 	{
 		this.box.setScale(currentWidth, currentHeight);
+		this.setShape();
 	}
 
 }

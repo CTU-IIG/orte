@@ -33,8 +33,8 @@ import android.util.Log;
  */
 public class BoxType extends MessageData
 {
-	private static final double DESTINATION_WIDTH = 367.0; //389.0;
-	private static final double DESTINATION_HEIGHT = 261.0; //331.0;
+	public static final double DESTINATION_WIDTH = 367.0; // empirically, in real it's 389.0;
+	public static final double DESTINATION_HEIGHT = 261.0; // empirically, in real it's 331.0;
 	
 	public int color;
 	public int shape;

@@ -18,8 +18,6 @@
  */
 package org.ocera.orte.shape_android;
 
-import java.util.regex.Pattern;
-
 import org.ocera.orte.DomainApp;
 import org.ocera.orte.Manager;
 import org.ocera.orte.types.NtpTime;
@@ -58,6 +56,9 @@ public class PublisherActivity extends Activity {
 	private static final int MINSEPARATION_MAX = 5;
 	private static final int RESULT_SETTINGS = 1;
 	
+	public static int SHAPE_WIDTH = 0;
+	public static int SHAPE_HEIGHT = 0;
+	
 	private WifiManager wifiManager;
 	private WifiLock wifiLock;
 	
@@ -92,6 +93,10 @@ public class PublisherActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_publisher);
+		
+		// count default shape size
+		SHAPE_WIDTH = (int) (this.getWindowManager().getDefaultDisplay().getWidth() * 25 / BoxType.DESTINATION_WIDTH);
+		SHAPE_HEIGHT = (int) (this.getWindowManager().getDefaultDisplay().getHeight() * 45 / BoxType.DESTINATION_HEIGHT);
 		
 		// From Robot_Demo project.
 		wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -178,6 +183,10 @@ public class PublisherActivity extends Activity {
 	{
 		super.onConfigurationChanged(newConfig);
 		
+		// count default shape size
+		SHAPE_WIDTH = (int) (this.getWindowManager().getDefaultDisplay().getWidth() * 25 / BoxType.DESTINATION_WIDTH);
+		SHAPE_HEIGHT = (int) (this.getWindowManager().getDefaultDisplay().getHeight() * 45 / BoxType.DESTINATION_HEIGHT);
+				
 		for (PublisherShape s : this.publisherView.shapes) {
 			s.setScale(this.getWindowManager().getDefaultDisplay().getWidth(), this.getWindowManager().getDefaultDisplay().getHeight());
 		}
