@@ -38,6 +38,7 @@ import org.ocera.orte.DomainApp;
  */
 public class PublisherView extends View
 {
+	//TODO maybe different speeds of shapes?
 	private static final int STEP_X = 2;
 	private static final int STEP_Y = 2;
 

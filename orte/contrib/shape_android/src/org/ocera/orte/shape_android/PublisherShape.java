@@ -45,8 +45,6 @@ public class PublisherShape extends ShapeDrawable
 	// Prefer at least 48x48 shape size (Full asset), for more
 	//  info, please refer to http://developer.android.com/
 	
-	private static final int SHAPE_WIDTH = 48;
-	private static final int SHAPE_HEIGHT = 48;
 	private boolean manual;
 	private int incX, incY;
 	
@@ -71,14 +69,14 @@ public class PublisherShape extends ShapeDrawable
 				:((s == 1)
 					?new OvalShape()
 					:((s == 2)
-						?new PathShape(new  Path(), 96, 96)
+						?new PathShape(new  Path(), PublisherActivity.SHAPE_WIDTH, PublisherActivity.SHAPE_HEIGHT)
 						:new RectShape()
 					)
 				)
 			);
 		
 		if (s == 2) { // fix triangle
-			this.setShape(new PathShape(PublisherShape.returnTrianglePath(), 96, 96));
+			this.setShape(new PathShape(PublisherShape.returnTrianglePath(), 2*PublisherActivity.SHAPE_WIDTH, 2*PublisherActivity.SHAPE_HEIGHT));
 		}
 		
 		this.manual = false;
@@ -96,7 +94,7 @@ public class PublisherShape extends ShapeDrawable
 
 		this.getPaint().setColor(PublisherShape.getColorConstant(c));
 		this.setPadding(0, 0, 0, 0);
-		this.setBounds(0, 0, SHAPE_WIDTH, SHAPE_HEIGHT);
+		this.setBounds(0, 0, PublisherActivity.SHAPE_WIDTH, PublisherActivity.SHAPE_HEIGHT);
 		
 		//Log.d("PublisherShape", "s: "+s+", c: "+c+", left: "+this.getBounds().left+", top: "+this.getBounds().top+", right: "+this.getBounds().right+", bottom: "+this.getBounds().bottom);
 	}
@@ -298,10 +296,10 @@ public class PublisherShape extends ShapeDrawable
 	{
 		Path path = new Path();
 		path.setFillType(FillType.EVEN_ODD);
-		path.moveTo(48, 0);
-		path.lineTo(96, 96);
-		path.lineTo(0, 96);
-		path.lineTo(48, 0);
+		path.moveTo(PublisherActivity.SHAPE_WIDTH, 0); // triangle top center
+		path.lineTo(2*PublisherActivity.SHAPE_WIDTH, 2*PublisherActivity.SHAPE_HEIGHT); // triangle right bottom corner
+		path.lineTo(0, 2*PublisherActivity.SHAPE_HEIGHT); // triangle left bottom corner
+		path.lineTo(PublisherActivity.SHAPE_WIDTH, 0); // back to triangle top center
 		path.close();
 		
 		return path;
@@ -327,5 +325,6 @@ public class PublisherShape extends ShapeDrawable
 	public void setScale(int currentWidth, int currentHeight)
 	{
 		this.box.setScale(currentWidth, currentHeight);
+		this.setBounds(this.box.rectangle.top_left_x, this.box.rectangle.top_left_y, this.box.rectangle.top_left_x+PublisherActivity.SHAPE_WIDTH, this.box.rectangle.top_left_y+PublisherActivity.SHAPE_HEIGHT);
 	}
 }
