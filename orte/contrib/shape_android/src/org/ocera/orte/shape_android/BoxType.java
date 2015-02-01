@@ -22,8 +22,6 @@ import org.ocera.orte.DomainApp;
 import org.ocera.orte.types.MessageData;
 import org.ocera.orte.types.ORTEConstant;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -35,12 +33,11 @@ import android.util.Log;
  */
 public class BoxType extends MessageData
 {
-	private static final byte FUZZY = 0;
 	private static final double DESTINATION_WIDTH = 367.0; //389.0;
 	private static final double DESTINATION_HEIGHT = 261.0; //331.0;
 	
-	public byte color;
-	public byte shape;
+	public int color;
+	public int shape;
 	public BoxRect rectangle = new BoxRect();
 	
 	public boolean allowScaling;
@@ -62,6 +59,7 @@ public class BoxType extends MessageData
 		}
 		
 		this.allowScaling = true;
+		this.buffer.order(null); // set buffer to Little endian (Shape uses this)
 	}
 
 	/* (non-Javadoc)
@@ -73,16 +71,10 @@ public class BoxType extends MessageData
 		buffer.rewind();
 		
 		// get color
-		this.color = buffer.get();
-		
-		// skip fuzzy bytes
-		buffer.get();buffer.get();buffer.get();
+		this.color = buffer.getInt();
 		
 		// get shape
-		this.shape = buffer.get();
-		
-		// skip fuzzy bytes
-		buffer.get();buffer.get();buffer.get();
+		this.shape = buffer.getInt();
 		
 		// get rect position (with scaling)
 		if (this.allowScaling) {
@@ -97,8 +89,6 @@ public class BoxType extends MessageData
 			this.rectangle.bottom_right_y = buffer.getShort();
 		}
 		
-		// don't care about last fuzzy byte because of buffer.rewind()
-		
 		//Log.d("BoxType", "receiving - color: "+this.color+", shape: "+this.shape+ ", rectangle:{"+this.rectangle.top_left_x+","+this.rectangle.top_left_y+","+this.rectangle.bottom_right_x+","+this.rectangle.bottom_right_y+",}");
 	}
 
@@ -111,16 +101,10 @@ public class BoxType extends MessageData
 		buffer.rewind();
 		
 		// put color
-		buffer.put(this.color);
-		
-		// put fuzzy bytes
-		buffer.put(BoxType.FUZZY);buffer.put(BoxType.FUZZY);buffer.put(BoxType.FUZZY);
+		buffer.putInt(this.color);
 		
 		// put shape
-		buffer.put(this.shape);
-		
-		// put fuzzy bytes
-		buffer.put(BoxType.FUZZY);buffer.put(BoxType.FUZZY);buffer.put(BoxType.FUZZY);
+		buffer.putInt(this.shape);
 		
 		// put rectange position (with scaling)
 		if (this.allowScaling) {
@@ -134,9 +118,6 @@ public class BoxType extends MessageData
 			buffer.putShort(this.rectangle.bottom_right_x);
 			buffer.putShort(this.rectangle.bottom_right_y);
 		}
-		
-		// put fuzzy byte
-		buffer.put(BoxType.FUZZY);
 	}
 
 	/* (non-Javadoc)
@@ -145,7 +126,7 @@ public class BoxType extends MessageData
 	@Override
 	public int getMaxDataLength()
 	{
-		return ORTEConstant.BYTE_FIELD_SIZE + ORTEConstant.LONG_FIELD_SIZE + 4*ORTEConstant.SHORT_FIELD_SIZE;
+		return 2*ORTEConstant.INT_FIELD_SIZE + 4*ORTEConstant.SHORT_FIELD_SIZE;
 	}
 	
 	/**
