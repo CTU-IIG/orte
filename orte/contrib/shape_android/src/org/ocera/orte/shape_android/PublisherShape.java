@@ -91,8 +91,8 @@ public class PublisherShape extends ShapeDrawable
 				s+1);
 		this.publication = appDomain.createPublication(this.publisherProperties, this.box);
 		
-		this.box.shape = (byte) s;
-		this.box.color = (byte) c;
+		this.box.shape = s;
+		this.box.color = c;
 
 		this.getPaint().setColor(PublisherShape.getColorConstant(c));
 		this.setPadding(0, 0, 0, 0);

@@ -18,6 +18,9 @@ obj/
 .project
 .classpath
 
+# temporary files
+*.swp
+
 # Gradle files
 .gradle/
 build/
