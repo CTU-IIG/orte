@@ -34,6 +34,8 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,6 +60,9 @@ public class PublisherActivity extends Activity {
 	
 	public static int SHAPE_WIDTH = 0;
 	public static int SHAPE_HEIGHT = 0;
+	
+	private PowerManager powerManager;
+	private WakeLock wakeLock;
 	
 	private WifiManager wifiManager;
 	private WifiLock wifiLock;
@@ -105,7 +110,10 @@ public class PublisherActivity extends Activity {
 					? WifiManager.WIFI_MODE_FULL_HIGH_PERF
 					: WifiManager.WIFI_MODE_FULL
 				), getClass().getName());
-
+		
+		powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		wakeLock = (WakeLock) powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass().getName() + " Dim");
+		
 		sp = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
 		// Start ORTE.
@@ -127,7 +135,7 @@ public class PublisherActivity extends Activity {
 	}
 
 	/**
-	 * When pause activity, release WiFi lock.
+	 * When pause activity, release WiFi lock and Wake lock.
 	 * 
 	 * @since 1.0
 	 */
@@ -137,10 +145,11 @@ public class PublisherActivity extends Activity {
 		super.onPause();
 		
 		wifiLock.release();
+		wakeLock.release();
 	}
 	
 	/**
-	 * When resume activity, acquire WiFi lock.
+	 * When resume activity, acquire WiFi lock and Wake lock.
 	 * 
 	 * @since 1.0
 	 */
@@ -150,6 +159,7 @@ public class PublisherActivity extends Activity {
 		super.onResume();
 		
 		wifiLock.acquire();
+		wakeLock.acquire();
 	}
 	
 	/**
