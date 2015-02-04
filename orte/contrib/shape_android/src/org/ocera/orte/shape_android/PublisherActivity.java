@@ -204,7 +204,7 @@ public class PublisherActivity extends Activity {
 			e.setScale(this.getWindowManager().getDefaultDisplay().getWidth(), this.getWindowManager().getDefaultDisplay().getHeight());
 		}
 		
-		//TODO	When change rotation in Subscriber view,
+		//TODO When change rotation in Subscriber view,
 		//		there is no change in Publisher view, which
 		//		leads to misbehavior. For example, there
 		//		is Publisher of Black color in Publisher view,
@@ -241,6 +241,7 @@ public class PublisherActivity extends Activity {
 			orteManager = new Manager(sp.getString("prefManagers", ""));
 			
 	    	break;
+	    default:
 	    }
 
     }
