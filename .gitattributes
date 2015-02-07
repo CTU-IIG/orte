@@ -1,0 +1,10 @@
+*.[ch] uncrustify
+/orte/liborte/rtl/* -uncrustify
+/orte/include/win32/** -uncrustify
+ul_* -uncrustify
+orte/liborte/pharlap/ -uncrustify
+/orte/contrib/shape/* -uncrustify
+getopt* -uncrustify
+/orte/liborte/pharlap/dll.c -uncrustify
+/orte/idl-compiler/** -uncrustify
+.git* export-ignore

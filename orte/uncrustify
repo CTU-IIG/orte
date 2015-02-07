@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Usage: Run this script and then 'git add -p' to commit the changes
+# you agree with.
+
+if ! git diff --quiet; then
+    echo >&2 "Error: Uncommited changes in worktree"
+    exit 1
+fi
+
+UNCRUSTIFY_CFG=${UNCRUSTIFY_CFG:-$0.cfg}
+
+git ls-files|git check-attr --stdin uncrustify|awk -F: '/uncrustify: set$/ {print $1}'|\
+    while read file; do
+	git show HEAD:$file | (set -x; uncrustify -c $UNCRUSTIFY_CFG -o $file)
+    done
