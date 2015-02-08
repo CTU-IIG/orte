@@ -1,0 +1,49 @@
+Shape for Android
+=================
+
+Shape for Android is demonstration application delivered with ORTE source code.
+
+How to make shape_android.apk
+-----------------------------
+1] Update Android SDK to include Android 4.0.3 (API 15)
+<path-to-sdk>/tools/android update sdk --no-ui --all --filter android-15
+
+2] Clone ORTE project from git
+git clone git://rtime.felk.cvut.cz/orte
+cd orte/orte
+
+3] Update libaorte and shape_android projects
+<path-to-sdk>/tools/android update project -p libaorte
+<path-to-sdk>/tools/android update project -p contrib/shape_android
+
+4] OPTIONAL - if you want, you may change name of shape_android project,
+by editing contrib/shape_android/build.xml. Default name is PublisherActivity,
+which is misleading (so I edited it to shape_android).
+
+5] Build libaorte
+cd libaorte
+<path-to-ndk>/ndk-build
+
+6] Build shape_android
+cd ../contrib/shape_android
+ant debug
+
+7] Install shape_android
+<path-to-sdk>/platform-tools/adb install -r bin/shape_android-debug.apk
+
+
+---
+!! Note that in case you haven't renamed the project, in step 7] you should run command:
+<path-to-sdk>/platform-tools/adb install -r bin/PublisherActivity-debug.apk
+
+!! Note that there is kind of problem with aapt for some architectures, when running
+"ant debug" command. On my pc - 32bit, Debian GNU/Linux 7.8 (wheezy), the problem
+was solved in directory <path-to-sdk>/build-tools/21.1.2 like this:
+
+$mv aapt _aapt
+$vi aapt
+#!/bin/bash
+qemu-i386 -cpu n270 -L / <path-to-sdk>/build-tools/21.1.2/_aapt $@
+
+Means that aapt is run in qemu. Build then was sucessful.
+
