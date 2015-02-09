@@ -44,3 +44,6 @@ clean:
 
 %.pdf: %.fig
 	fig2dev -L pdf $^ $@
+
+%.svg: %.uml
+	plantuml -tsvg $<

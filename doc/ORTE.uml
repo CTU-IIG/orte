@@ -1,0 +1,571 @@
+@startuml
+
+object sock_t {
+  int		fd
+  uint16_t	port
+}
+
+object MessageBuffer {
+  CDR_Codec	cdrCodec
+  CDR_Codec	*cdrCodecDirect
+  Boolean		needSend
+  Boolean		containsInfoReply
+}
+
+object TaskProp {
+  sock_t			sock
+  pthread_t			thread
+  Boolean			terminate
+  MessageBuffer	mb
+  ORTEDomain		*d
+}
+
+object TypeEntry {
+  gavl_cust_root_field_t	types
+  pthread_rwlock_t		lock
+}
+
+object TypeNode {
+  gavl_node_t		node
+  ORTETypeRegister	typeRegister
+}
+
+object PatternNode {
+  ul_list_node_t						node
+  PathName						topic
+  TypeName						type
+  ORTESubscriptionPatternCallBack		subscriptionCallBack
+  void								*param
+}
+
+object PatternEntry {
+  ul_list_head_t			patterns
+  ORTEPatternCheck		check
+  ORTEPatternMatch		match
+  void					*param
+  pthread_rwlock_t		lock
+}
+
+object AppParams {
+  HostId			hostId
+  AppId			appId
+  IPAddress		unicastIPAddressList[MAX_INTERFACES]
+  unsigned char		unicastIPAddressCount
+  IPAddress		metatrafficMulticastIPAddressList[MAX_INTERFACES]
+  unsigned char		metatrafficMulticastIPAddressCount
+  Port				metatrafficUnicastPort
+  Port				userdataUnicastPort
+  VendorId			vendorId
+  ProtocolVersion	protocolVersion
+  NtpTime			expirationTime
+  IPAddress		managerKeyList[MAX_INTERFACES]
+  unsigned char		managerKeyCount
+  SequenceNumber	vargAppsSequenceNumber
+}
+
+object "void EVH1(ORTEDomain *,ObjectEntryAID *,ul_htim_time_t *)" as EVH1
+
+object HTimFncRootNode {
+  ul_htim_node_t	htim
+  const char		*name
+  EVH1			*func
+  ObjectEntryAID	*objectEntryAID
+}
+
+object HTimNode {
+  ul_htim_queue_t	common
+  HTimFncRootNode	commonNode
+  ul_htim_queue_t	sendMetatraffic
+  HTimFncRootNode	sendMetatrafficNode
+  ul_htim_queue_t	sendUserData
+  HTimFncRootNode	sendUserDataNode
+}
+
+object "int EVH2(ORTEDomain *,void *)" as EVH2
+
+object HTimFncUserNode {
+  ul_htim_node_t	htim
+  const char		*name
+  pthread_rwlock_t	*lock
+  EVH2			*func
+  void				*arg1
+}
+
+object ObjectEntryOID {
+  gavl_node_t			oidNode
+  ObjectId				oid
+  GUID_RTPS			guid
+  ObjectEntryAID		*objectEntryAID
+  ObjectEntryHID		*objectEntryHID
+  void					*attributes
+  Boolean				appMOM
+  Boolean				privateCreated
+  HTimFncUserNode		expirationPurgeTimer
+  void					*instance
+  ORTERecvCallBack		recvCallBack
+  ORTESendCallBack		sendCallBack
+  void					*callBackParam
+  NtpTime				sendCallBackDelay
+  HTimFncUserNode		sendCallBackDelayTimer
+  gavl_node_t			psNode
+  ul_list_head_t			multicastRemoteReaders
+  int					multicastPort
+}
+
+object ObjectEntryAID {
+  gavl_node_t			aidNode
+  AppId				aid
+  HTimNode			htimUnicast
+  gavl_cust_root_field_t	oidRoot
+  ObjectEntryOID		*aobject
+}
+
+object ObjectEntryHID {
+  gavl_node_t			hidNode
+  HostId				hid
+  gavl_cust_root_field_t	aidRoot
+}
+
+object ObjectEntry {
+  gavl_cust_root_field_t	objRoot
+  pthread_rwlock_t		objRootLock
+  ul_htim_queue_t		htimRoot
+  pthread_rwlock_t		htimRootLock
+  pthread_cond_t		htimSendCond
+  pthread_mutex_t		htimSendMutex
+  int					htimSendCondValue
+  Boolean				htimNeedWakeUp
+}
+
+object ParameterSequence {
+  ul_list_node_t		node
+  ParameterId		parameterID
+  ParameterLength	parameterLength
+  Parameter		parameterLocal
+  u_char			*parameter
+}
+
+object "union parameter" as parameter {
+    u_char				asStr[MAX_PARAMETER_LOCAL_LENGTH]
+    NtpTime				asNtpTime
+    CORBA_unsigned_long	asLong
+    VendorId				asVendorId
+    ProtocolVersion		asProtocolVersion
+    SequenceNumber		asSequenceNumber
+    CORBA_octet			asOctet
+    IPAddress			asIPAddress
+    Port					asPort
+    uint32_t				asUInt32
+    TypeChecksum		asTypeChecksum
+}
+
+object CSChange {
+  ul_list_node_t		nodeList
+  gavl_node_t		nodeGAVL
+  SequenceNumber	sn
+  GUID_RTPS		guid
+  Boolean			alive
+  SequenceNumber	gapSN
+  ul_list_head_t		attributes
+  CDR_Codec		cdrCodec
+  ul_list_head_t		writerParticipants
+  int				remoteReaderCount
+  int				remoteReaderBest
+  int				remoteReaderStrict
+  NtpTime			remoteTimePublished
+  NtpTime			localTimeReceived
+}
+
+object CSTWriterParams {
+  unsigned int	registrationRetries
+  NtpTime		registrationPeriod
+  NtpTime		waitWhileDataUnderwayTime
+  NtpTime		repeatAnnounceTime
+  NtpTime		delayResponceTime
+  NtpTime		refreshPeriod
+  unsigned int	HBMaxRetries
+  Boolean		fullAcknowledge
+}
+
+object CSChangeForReader {
+  gavl_node_t				node
+  ul_list_node_t				participantNode
+  CSTRemoteReader			*cstRemoteReader
+  CSChange				*csChange
+  StateMachineChFReader	commStateChFReader
+  HTimFncUserNode			waitWhileDataUnderwayTimer
+}
+
+object CSTRemoteReader {
+  gavl_node_t			node
+  CSTWriter			*cstWriter
+  ObjectEntryOID		*sobject
+  ObjectEntryOID		*pobject
+  GUID_RTPS			guid
+  
+  gavl_cust_root_field_t	csChangeForReader
+  unsigned int			csChangesCounter
+
+  StateMachineHB		commStateHB
+  StateMachineSend		commStateSend
+  unsigned int			commStateToSentCounter
+
+  HTimFncUserNode		delayResponceTimer
+  HTimFncUserNode		repeatAnnounceTimer
+
+  unsigned int			HBRetriesCounter
+  
+  NtpTime				lastSentIssueTime
+  
+  ul_list_node_t			multicastNode
+}
+
+object CSTWriter {
+  ORTEDomain			*domain
+  gavl_node_t			node
+  GUID_RTPS			guid
+  ObjectEntryOID		*objectEntryOID
+
+  SequenceNumber		firstSN
+  SequenceNumber		lastSN
+
+  CSTWriterParams		params
+
+  ul_list_head_t			csChanges
+  unsigned int			csChangesCounter
+  gavl_cust_root_field_t	cstRemoteReader
+  unsigned int			cstRemoteReaderCounter
+  pthread_rwlock_t		lock
+
+  HTimFncUserNode		refreshPeriodTimer
+
+  unsigned int			registrationCounter
+  HTimFncUserNode		registrationTimer
+  
+  ORTETypeRegister		*typeRegister
+  
+  unsigned int			strictReliableCounter
+  unsigned int			bestEffortsCounter
+  pthread_cond_t		condCSChangeDestroyed
+  pthread_mutex_t		mutexCSChangeDestroyed
+  int					condValueCSChangeDestroyed
+}
+
+object CSTReaderParams {
+  NtpTime		delayResponceTimeMin
+  NtpTime		delayResponceTimeMax
+  NtpTime		repeatActiveQueryTime
+  Boolean		fullAcknowledge
+  unsigned int	ACKMaxRetries
+}
+
+object CSChangeFromWriter {
+  gavl_node_t				node
+  CSChange				*csChange
+  StateMachineChFWriter		commStateChFWriter
+}
+
+object CSTRemoteWriter {
+  gavl_node_t			node
+  CSTReader			*cstReader
+  ObjectEntryOID		*spobject
+  GUID_RTPS			guid
+  
+  gavl_cust_root_field_t	csChangeFromWriter
+  unsigned int			csChangesCounter
+  
+  SequenceNumber		sn
+  SequenceNumber		firstSN
+  SequenceNumber		lastSN
+
+  StateMachineACK		commStateACK
+
+  HTimFncUserNode		delayResponceTimer
+  HTimFncUserNode		repeatActiveQueryTimer
+
+  unsigned int			ACKRetriesCounter
+}
+
+object CSTReader {
+  ORTEDomain			*domain
+  gavl_node_t			node
+  GUID_RTPS			guid
+  ObjectEntryOID		*objectEntryOID
+
+  CSTReaderParams		params
+
+  ul_list_head_t			csChanges
+  gavl_cust_root_field_t	cstRemoteWriter
+  unsigned int			cstRemoteWriterCounter
+  pthread_rwlock_t		lock
+  
+  ORTETypeRegister		*typeRegister
+  
+  CSTRemoteWriter		*cstRemoteWriterSubscribed
+  HTimFncUserNode		deadlineTimer
+  HTimFncUserNode		persistenceTimer
+
+  unsigned int			strictReliableCounter
+  unsigned int			bestEffortsCounter
+  
+  Boolean				createdByPattern
+}
+
+object CSTPublications {
+  gavl_cust_root_field_t	cstWriter
+  pthread_rwlock_t		lock
+  uint32_t				counter
+}
+
+object CSTSubscriptions {
+  gavl_cust_root_field_t	cstReader
+  pthread_rwlock_t		lock
+  uint32_t				counter
+}
+
+object PSEntry {
+  gavl_cust_root_field_t	publications
+  pthread_rwlock_t		publicationsLock
+  gavl_cust_root_field_t	subscriptions
+  pthread_rwlock_t		subscriptionsLock
+}
+
+object ORTEDomain {
+  uint32_t					domain
+  GUID_RTPS				guid
+  AppParams				*appParams
+  ObjectEntryOID			*objectEntryOID
+  
+  TaskProp					taskRecvUnicastMetatraffic
+  TaskProp					taskRecvMulticastMetatraffic
+  TaskProp					taskRecvUnicastUserdata
+  TaskProp					taskRecvMulticastUserdata
+  TaskProp					taskSend
+
+  TypeEntry				typeEntry
+  ObjectEntry				objectEntry
+  PSEntry					psEntry
+  PatternEntry				patternEntry
+
+  ORTEDomainProp			domainProp
+  ORTEDomainAppEvents		domainEvents
+  
+  ORTEAppInfo				appInfo
+  ORTEPubInfo				pubInfo
+  ORTESubInfo				subInfo
+
+  CSTWriter				writerApplicationSelf
+  CSTReader				readerManagers
+  CSTReader				readerApplications
+  CSTWriter				writerManagers
+  CSTWriter				writerApplications
+  CSTWriter				writerPublications
+  CSTReader				readerPublications
+  CSTWriter				writerSubscriptions
+  CSTReader				readerSubscriptions
+
+  CSTPublications			publications
+  CSTSubscriptions			subscriptions
+}
+
+object CDR_Codec {
+  CDR_Endianness	host_endian
+  CDR_Endianness	data_endian
+  CORBA_octet		*buffer
+  unsigned int		buf_len
+  unsigned int		wptr_max
+  unsigned int		wptr
+  unsigned int		rptr
+  CORBA_boolean	readonly
+  CORBA_boolean	release_buffer
+}
+
+object ORTETypeRegister {
+  const char			*typeName
+  ORTETypeSerialize		serialize
+  ORTETypeDeserialize	deserialize
+  ORTETypeGetMaxSize	getMaxSize
+  unsigned int			maxSize
+}
+
+object ORTEDomainProp {
+  ORTETasksProp		tasksProp
+  ORTEIFProp			IFProp[MAX_INTERFACES]
+  unsigned char			IFCount
+  ORTEDomainBaseProp	baseProp
+  ORTEDomainWireProp	wireProp
+  ORTEMulticastProp		multicast
+  ORTEPublProp			publPropDefault
+  ORTESubsProp		subsPropDefault
+  char					*mgrs
+  char					*keys
+  IPAddress			appLocalManager
+  IPAddress			listen
+  char					version[60]
+  int					recvBuffSize
+  int					sendBuffSize
+}
+
+object ORTEAppInfo {
+  HostId			hostId
+  AppId			appId
+  IPAddress		*unicastIPAddressList
+  unsigned char		unicastIPAddressCount
+  IPAddress		*metatrafficMulticastIPAddressList
+  unsigned char		metatrafficMulticastIPAddressCount
+  Port				metatrafficUnicastPort
+  Port				userdataUnicastPort
+  VendorId			vendorId
+  ProtocolVersion	protocolVersion
+}
+
+object ORTEPubInfo {
+  const char	*topic
+  const char	*type
+  ObjectId		objectId
+}
+
+object ORTESubInfo {
+  const char	*topic
+  const char	*type
+  ObjectId		objectId
+}
+
+object ORTEIFProp {
+  int32_t		ifFlags
+  IPAddress	ipAddress
+}
+
+object ORTEDomainBaseProp {
+  unsigned int	registrationMgrRetries
+  NtpTime		registrationMgrPeriod
+  unsigned int	registrationAppRetries
+  NtpTime		registrationAppPeriod
+  NtpTime		expirationTime
+  NtpTime		refreshPeriod
+  NtpTime		purgeTime
+  NtpTime		repeatAnnounceTime
+  NtpTime		repeatActiveQueryTime
+  NtpTime		delayResponceTimeACKMin
+  NtpTime		delayResponceTimeACKMax
+  unsigned int	HBMaxRetries
+  unsigned int	ACKMaxRetries
+  NtpTime		maxBlockTime
+}
+
+object ORTEDomainWireProp {
+  unsigned int	metaBytesPerPacket
+  unsigned int	metaBytesPerFastPacket
+  unsigned int	metabitsPerACKBitmap
+  unsigned int	userBytesPerPacket
+}
+
+object ORTEPublProp {
+  PathName		topic
+  TypeName		typeName
+  TypeChecksum	typeChecksum
+  Boolean			expectsAck
+  NtpTime			persistence
+  uint32_t			reliabilityOffered
+  uint32_t			sendQueueSize
+  int32_t			strength
+  uint32_t			criticalQueueLevel
+  NtpTime			HBNornalRate
+  NtpTime			HBCQLRate
+  unsigned int		HBMaxRetries
+  NtpTime			maxBlockTime
+}
+
+object ORTESubsProp {
+  PathName		topic
+  TypeName		typeName
+  TypeChecksum	typeChecksum
+  NtpTime			minimumSeparation
+  uint32_t			recvQueueSize
+  uint32_t			reliabilityRequested
+  NtpTime			deadline
+  uint32_t			mode
+  IPAddress		multicast
+}
+
+TaskProp ..> sock_t
+TaskProp ..> MessageBuffer
+HTimNode ..> HTimFncRootNode
+HTimFncRootNode --> EVH1
+HTimFncUserNode --> EVH2
+ObjectEntryOID ..> HTimFncUserNode
+ObjectEntryAID --> ObjectEntryOID
+ObjectEntryAID ..> HTimNode
+ObjectEntryAID <-- HTimFncRootNode
+HTimNode o-- HTimFncUserNode
+HTimNode o-- HTimFncUserNode
+HTimNode o-- HTimFncUserNode
+ObjectEntryOID --> ObjectEntryHID
+ObjectEntryOID --> ObjectEntryAID
+ParameterSequence ..> parameter
+CSChangeForReader --> CSChange
+CSChangeForReader ..> HTimFncUserNode
+CSChangeForReader --> CSTRemoteReader
+CSTRemoteReader ..> HTimFncUserNode
+CSTRemoteReader --> ObjectEntryOID
+CSTRemoteReader --> CSTWriter
+CSTRemoteReader o-- CSChangeForReader
+CSTWriter ..> CSTWriterParams
+CSTWriter --> ObjectEntryOID
+CSTWriter --> ORTETypeRegister
+CSTWriter ..> HTimFncUserNode
+CSTWriter o-- CSChange
+CSTWriter o-- CSTRemoteReader
+CSChangeFromWriter --> CSChange
+CSTRemoteWriter -- CSTReader
+CSTRemoteWriter --> ObjectEntryOID
+CSTRemoteWriter ..> HTimFncUserNode
+CSTRemoteWriter o-- CSChangeFromWriter
+CSTReader --> ObjectEntryOID
+CSTReader ..> CSTReaderParams
+CSTReader ..> HTimFncUserNode
+CSTReader --> ORTETypeRegister
+CSTReader o-- CSChange
+CSTReader o-- CSTRemoteWriter
+ORTEDomain --> ObjectEntryOID
+ORTEDomain ..> TaskProp
+ORTEDomain ..> TypeEntry
+ORTEDomain ..> ObjectEntry
+ORTEDomain ..> PSEntry
+ORTEDomain ..> PatternEntry
+ORTEDomain ..> CSTWriter
+ORTEDomain ..> CSTReader
+ORTEDomain ..> CSTPublications
+ORTEDomain ..> CSTSubscriptions
+ORTEDomain --> AppParams
+ORTEDomain <-- CSTWriter
+ORTEDomain <-- CSTReader
+ORTEDomain ..> ORTEAppInfo
+ORTEDomain ..> ORTEPubInfo
+ORTEDomain ..> ORTESubInfo
+MessageBuffer --> CDR_Codec
+MessageBuffer ..> CDR_Codec
+CSChange ..> CDR_Codec
+CSChange o-- ParameterSequence
+CSChange o-- CSChangeForReader
+ORTEDomain <-- TaskProp
+ORTEDomain ..> ORTEDomainProp
+TypeNode ..> ORTETypeRegister
+TypeEntry o-- TypeNode
+PatternEntry o-- PatternNode
+ORTEDomainProp --|> ORTEIFProp
+ORTEDomainProp ..> ORTEDomainBaseProp
+ORTEDomainProp ..> ORTEDomainWireProp
+ORTEDomainProp ..> ORTEPublProp
+ORTEDomainProp ..> ORTESubsProp
+ObjectEntry o-- ObjectEntryHID
+ObjectEntry o-- HTimFncRootNode
+ObjectEntryHID o-- ObjectEntryAID
+ObjectEntryAID o-- ObjectEntryOID
+PSEntry o-- ObjectEntryOID
+PSEntry o-- ObjectEntryOID
+ObjectEntryOID o-- CSTRemoteReader
+CSTPublications o-- CSTWriter
+CSTSubscriptions o-- CSTReader
+
+@enduml
