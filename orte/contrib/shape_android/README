@@ -1,9 +1,9 @@
 Shape for Android
 =================
 
-Shape for Android is demonstration application delivered with ORTE source code.
+Shape for Android is a demonstration application delivered with ORTE source code.
 
-How to make shape_android.apk
+How to create shape_android.apk
 -----------------------------
 1] Update Android SDK to include Android 4.0.3 (API 15)
 <path-to-sdk>/tools/android update sdk --no-ui --all --filter android-15
@@ -14,22 +14,18 @@ cd orte/orte
 
 3] Update libaorte and shape_android projects
 <path-to-sdk>/tools/android update project -p libaorte
-<path-to-sdk>/tools/android update project -p contrib/shape_android
+<path-to-sdk>/tools/android update project -p contrib/shape_android -n orte_shape
 
-4] OPTIONAL - if you want, you may change name of shape_android project,
-by editing contrib/shape_android/build.xml. Default name is PublisherActivity,
-which is misleading (so I edited it to shape_android).
-
-5] Build libaorte
+4] Build libaorte
 cd libaorte
 <path-to-ndk>/ndk-build
 
-6] Build shape_android
+5] Build shape_android
 cd ../contrib/shape_android
 ant debug
 
-7] Install shape_android
-<path-to-sdk>/platform-tools/adb install -r bin/shape_android-debug.apk
+6] Install shape_android
+<path-to-sdk>/platform-tools/adb install -r bin/orte_shape-debug.apk
 
 
 ---
