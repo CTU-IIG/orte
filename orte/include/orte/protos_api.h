@@ -248,7 +248,6 @@ ORTEPublicationCreate(ORTEDomain *d,
  */
 extern int
 ORTEPublicationDestroy(ORTEPublication *cstWriter);
-extern int
 
 /**
  * ORTEPublicationPropertiesGet - read properties of a publication
@@ -257,6 +256,7 @@ extern int
  *
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstWriter is not valid cstWriter handle.
  */
+extern int
 ORTEPublicationPropertiesGet(ORTEPublication *cstWriter,ORTEPublProp *pp);
 
 /**
