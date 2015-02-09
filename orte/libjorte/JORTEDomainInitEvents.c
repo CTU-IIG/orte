@@ -36,28 +36,26 @@
 
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
-(JNIEnv *env, jobject obj)
+  (JNIEnv *env, jobject obj)
 {
   ORTEDomainAppEvents *evs;
 
   // memory allocation
-  evs = (ORTEDomainAppEvents *) malloc(sizeof(ORTEDomainAppEvents));
-  if(evs == 0)
-  {
+  evs = (ORTEDomainAppEvents *)malloc(sizeof(ORTEDomainAppEvents));
+  if (evs == 0) {
     printf(":!c: evs = NULL [not enough memory] \n");
     return 0;
   }
   // call the liborte function
-  if (!ORTEDomainInitEvents(evs))
-  {
+  if (!ORTEDomainInitEvents(evs)) {
     printf(":!c: events not initialized! \n");
     free(evs);
     return 0;
   }
   #ifdef TEST_STAGE
-     printf(":c: events initialized.. \n");
+  printf(":c: events initialized.. \n");
   #endif
 
-  return ((jlong) evs);
+  return ((jlong)evs);
 
 }

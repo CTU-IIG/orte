@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTEDomainPropDefaultGet
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
   (JNIEnv *, jclass);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefa
  * Method:    jORTEDomainPropSet
  * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropSet
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_types_DomainProp_jORTEDomainPropSet
   (JNIEnv *, jobject, jlong, jstring);
 
 /*
@@ -28,7 +30,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropS
  * Method:    jORTEDomainPropDestroy
  * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDestroy
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDestroy
   (JNIEnv *, jobject, jlong, jstring);
 
 #ifdef __cplusplus

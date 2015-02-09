@@ -12,7 +12,8 @@ extern "C" {
  * Method:    getConstant
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_tools_GetORTEConstant_getConstant
+JNIEXPORT jint JNICALL
+Java_org_ocera_orte_tools_GetORTEConstant_getConstant
   (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus

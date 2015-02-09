@@ -35,7 +35,7 @@
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT jstring JNICALL
 Java_org_ocera_orte_types_NtpTime_NtpTimeToStringUs
-(JNIEnv *env, jclass class, jobject j_ntpTime)
+  (JNIEnv *env, jclass class, jobject j_ntpTime)
 {
   char             buff[65];  // 32 + 32 + 1 end char
   NtpTime          time;
@@ -47,24 +47,24 @@ Java_org_ocera_orte_types_NtpTime_NtpTimeToStringUs
   ntpTimeClass = (*env)->GetObjectClass(env, j_ntpTime);
 
   // seconds - get object field ID
-  fieldID = (*env)->GetFieldID(env,ntpTimeClass,"seconds","I");
-  if(fieldID == NULL)
+  fieldID = (*env)->GetFieldID(env, ntpTimeClass, "seconds", "I");
+  if (fieldID == NULL)
     return((*env)->NewStringUTF(env, "error when reading Java NtpTime"));
   // get objects value
-  time.seconds = (int32_t) (*env)->GetIntField(env,j_ntpTime,fieldID);
+  time.seconds = (int32_t)(*env)->GetIntField(env, j_ntpTime, fieldID);
 
   // reset pointer
   fieldID = NULL;
 
   // fraction - get object field ID
-  fieldID = (*env)->GetFieldID(env,ntpTimeClass,"fraction","J");
-  if(fieldID == NULL)
+  fieldID = (*env)->GetFieldID(env, ntpTimeClass, "fraction", "J");
+  if (fieldID == NULL)
     return((*env)->NewStringUTF(env, "error when reading Java NtpTime"));
   // get object's value
-  time.fraction = (uint32_t) (*env)->GetLongField(env,j_ntpTime,fieldID);
+  time.fraction = (uint32_t)(*env)->GetLongField(env, j_ntpTime, fieldID);
 
   // calling an orte's function
-  NtpTimeToStringUs(time,buff);
+  NtpTimeToStringUs(time, buff);
   // return result of the conversion
   return((*env)->NewStringUTF(env, buff));
 }

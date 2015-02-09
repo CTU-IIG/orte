@@ -35,12 +35,12 @@
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_JOrte_jORTEVerbositySetOptions
-(JNIEnv *env, jclass cls, jstring j_options)
+  (JNIEnv *env, jclass cls, jstring j_options)
 {
-  const char * options;
+  const char *options;
 
-  // get options 
-  options = (*env)->GetStringUTFChars(env,j_options,0);
+  // get options
+  options = (*env)->GetStringUTFChars(env, j_options, 0);
   // call ORTE function
   ORTEVerbositySetOptions(options);
   // free memory

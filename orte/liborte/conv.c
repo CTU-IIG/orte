@@ -3,18 +3,18 @@
  *
  *  DEBUG:  section 7                 ordering conversion
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -39,58 +39,67 @@
 /**********************************************************************************/
 //get part of string, div. by semi.
 int
-getStringPart(char *string,char divChar,int *iterator,char *buff) {
+getStringPart(char *string, char divChar, int *iterator, char *buff)
+{
   char *cp;
   int len;
-  
-  if (!string || !buff) return -1;
-  len=strlen(string);
-  if (len<(*iterator)) return -2;
-  cp=string+(*iterator);
-  if (cp[0]!=0) {  //till is length>0
-    char *dcp,tcp; 
-    dcp=strchr(cp,divChar);
-    if (!dcp) dcp=cp+strlen(cp);
-    tcp=*dcp;         //save ending value
-    *dcp=0;           //temporary end of string
-    strcpy((char *)buff,cp);  
-    *dcp=tcp;         //restore value
-    if (dcp[0]!=0) (*iterator)+=dcp-cp+1;//next value
-    else (*iterator)=len;
+
+  if (!string || !buff)
+    return -1;
+  len = strlen(string);
+  if (len < (*iterator))
+    return -2;
+  cp = string+(*iterator);
+  if (cp[0] != 0) {  //till is length>0
+    char *dcp, tcp;
+    dcp = strchr(cp, divChar);
+    if (!dcp)
+      dcp = cp+strlen(cp);
+    tcp = *dcp;         //save ending value
+    *dcp = 0;           //temporary end of string
+    strcpy((char *)buff, cp);
+    *dcp = tcp;         //restore value
+    if (dcp[0] != 0)
+      (*iterator) += dcp-cp+1;           //next value
+    else
+      (*iterator) = len;
     return 1;
   }
   return 0;
 }
 
 /**********************************************************************************/
-char* 
-IPAddressToString(IPAddress ipAddress,char *buff) {
+char *
+IPAddressToString(IPAddress ipAddress, char *buff)
+{
   struct in_addr addr;
-  
-  addr.s_addr=htonl(ipAddress);
-  sprintf(buff,"%s",inet_ntoa(addr));
+
+  addr.s_addr = htonl(ipAddress);
+  sprintf(buff, "%s", inet_ntoa(addr));
   return buff;
 }
 
 /**********************************************************************************/
-IPAddress 
-StringToIPAddress(const char *string) {
-  IPAddress ipAddress=IPADDRESS_INVALID;
-#ifdef CONFIG_ORTE_MINGW   
+IPAddress
+StringToIPAddress(const char *string)
+{
+  IPAddress ipAddress = IPADDRESS_INVALID;
+
+#ifdef CONFIG_ORTE_MINGW
   unsigned long inetAddress = inet_addr(string);
 #else
   in_addr_t inetAddress = inet_addr(string);
 #endif
-  
-  if(inetAddress!=INADDR_NONE) {
-    ipAddress=ntohl(inetAddress);
+
+  if (inetAddress != INADDR_NONE) {
+    ipAddress = ntohl(inetAddress);
   }
 #if defined HAVE_GETHOSTBYNAME
   {
-    struct hostent *hostname; 
-    if (ipAddress==IPADDRESS_INVALID) {
-      if ((hostname=gethostbyname(string))) {
-        ipAddress=ntohl(*((long*)(hostname->h_addr_list[0])));
+    struct hostent *hostname;
+    if (ipAddress == IPADDRESS_INVALID) {
+      if ((hostname = gethostbyname(string))) {
+	ipAddress = ntohl(*((long *)(hostname->h_addr_list[0])));
       }
     }
   }
@@ -100,20 +109,22 @@ StringToIPAddress(const char *string) {
 
 /**********************************************************************************/
 char *
-NtpTimeToStringMs(NtpTime time,char *buff) {
-  int s,msec;
-  
+NtpTimeToStringMs(NtpTime time, char *buff)
+{
+  int s, msec;
+
   NtpTimeDisAssembToMs(s, msec, time);
-  sprintf(buff,"%d.%03d",s,msec);
+  sprintf(buff, "%d.%03d", s, msec);
   return buff;
 }
 
 /**********************************************************************************/
 char *
-NtpTimeToStringUs(NtpTime time,char *buff) {
-  int s,usec;
-  
+NtpTimeToStringUs(NtpTime time, char *buff)
+{
+  int s, usec;
+
   NtpTimeDisAssembToUs(s, usec, time);
-  sprintf(buff,"%d.%06d",s,usec);
+  sprintf(buff, "%d.%06d", s, usec);
   return buff;
 }

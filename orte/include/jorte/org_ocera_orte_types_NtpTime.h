@@ -12,7 +12,8 @@ extern "C" {
  * Method:    NtpTimeToStringMs
  * Signature: (Lorg/ocera/orte/types/NtpTime;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_NtpTime_NtpTimeToStringMs
+JNIEXPORT jstring JNICALL
+Java_org_ocera_orte_types_NtpTime_NtpTimeToStringMs
   (JNIEnv *, jclass, jobject);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_NtpTime_NtpTimeToStringMs
  * Method:    NtpTimeToStringUs
  * Signature: (Lorg/ocera/orte/types/NtpTime;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_NtpTime_NtpTimeToStringUs
+JNIEXPORT jstring JNICALL
+Java_org_ocera_orte_types_NtpTime_NtpTimeToStringUs
   (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus

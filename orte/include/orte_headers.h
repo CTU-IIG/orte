@@ -1,30 +1,30 @@
 /*
- *  $Id: orte_headers.h,v 0.0.0.1       2003/08/21 
+ *  $Id: orte_headers.h,v 0.0.0.1       2003/08/21
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
 #ifndef _ORTE_ALL_H
@@ -185,9 +185,9 @@ extern "C" {
 #endif
 
 #ifdef CONFIG_ORTE_UNIX
-  #define SOCK_BSD       
+  #define SOCK_BSD
 #elif CONFIG_ORTE_CYGWIN
-  #define SOCK_BSD         
+  #define SOCK_BSD
 #elif CONFIG_ORTE_MINGW
   #define SOCK_WIN
   #ifndef HAVE_PTHREAD_H
@@ -204,7 +204,7 @@ extern "C" {
 #elif defined CONFIG_ORTE_RTL
   #include <rtl/rwlock.h>
   #ifdef CONFIG_ORTE_RTL_ONETD
-    #define SOCK_BSD         
+    #define SOCK_BSD
     #include <rtl/compat_onetd.h>
   #elif CONFIG_ORTE_RTL_WIP
     #define SOCK_RTLWIP
@@ -213,7 +213,7 @@ extern "C" {
     #error "no UDP stack for RTLinux"
   #endif
 #elif defined CONFIG_ORTE_RTAI
-  #define SOCK_BSD  
+  #define SOCK_BSD
   #include <rtai/compat.h>
 #elif defined _MSC_VER
   #define SOCK_WIN
@@ -245,7 +245,7 @@ extern "C" {
   #define ioctl ioctlsocket
   #define ORTE_PACKAGE_STRING "orte 0.3.4"
   #define CONFIG_ORTE_WIN
-#endif
+#endif /* ifdef CONFIG_ORTE_UNIX */
 
 #ifdef __cplusplus
 } /* extern "C"*/

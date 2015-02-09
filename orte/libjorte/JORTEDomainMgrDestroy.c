@@ -37,7 +37,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
-(JNIEnv *env, jobject obj, jlong dhandle)
+  (JNIEnv *env, jobject obj, jlong dhandle)
 {
   jlong       h;
   jclass      cls;
@@ -46,61 +46,54 @@ Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
 
   do {
     // check domain handle
-    if (dhandle == 0)
-    {
+    if (dhandle == 0) {
       printf(":!c: ORTEDomainAppDestroy failed! [bad handle] \n");
       break;
     }
     // call ORTE function
-    if(!ORTEDomainMgrDestroy((ORTEDomain *) dhandle))
-    {
+    if (!ORTEDomainMgrDestroy((ORTEDomain *)dhandle)) {
       #ifdef TEST_STAGE
-        printf(":c: mgrDomain destroy failed.. \n");
+      printf(":c: mgrDomain destroy failed.. \n");
       #endif
       break;
     }
     // free domainEvents object
     // find cls
     cls = (*env)->GetObjectClass(env, obj);
-    if(cls == 0)
-    {
+    if (cls == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
       #endif
       break;
     }
     // fieldID
     fid = (*env)->GetFieldID(env,
-                             cls,
-                             "domainEventsContextHandle",
-                             "J");
-    if(fid == 0)
-    {
+			     cls,
+			     "domainEventsContextHandle",
+			     "J");
+    if (fid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: fid = NULL! \n");
+      printf(":!c: fid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // get value
     h = (*env)->GetLongField(env, obj, fid);
-    if(h)
-    {
-      JORTEDomainEventsContext_t *ctx = (JORTEDomainEventsContext_t*)h;
-      if(ctx->obj_de)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->obj_de \n");
-        #endif
-        (*env)->DeleteGlobalRef(env, ctx->obj_de);
+    if (h) {
+      JORTEDomainEventsContext_t *ctx = (JORTEDomainEventsContext_t *)h;
+      if (ctx->obj_de) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->obj_de \n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->obj_de);
       }
       //
-      free((void*)h);
+      free((void *)h);
     }
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     printf(":!c: ORTEDomainMgrDestroy failed!  \n");
     return 0;
   }

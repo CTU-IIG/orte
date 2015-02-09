@@ -37,43 +37,40 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationSend
-(JNIEnv *env, jobject obj, jlong pub_handle)
+  (JNIEnv *env, jobject obj, jlong pub_handle)
 {
   int       flag_ok = 0;
   int8_t    b;
+
   //
 
   #ifdef TEST_STAGE
-    printf(":c: jORTEPublicationSend() called.. \n");
+  printf(":c: jORTEPublicationSend() called.. \n");
   #endif
 
-  do
-  {
+  do {
     /////////////////////////////////////////////////
     // call ORTE function
-    b = ORTEPublicationSend((ORTEPublication *) pub_handle);
+    b = ORTEPublicationSend((ORTEPublication *)pub_handle);
     #ifdef TEST_STAGE
-      printf(":c: b = ORTEPublicationSend() = %d \n",b);
+    printf(":c: b = ORTEPublicationSend() = %d \n", b);
     #endif
-    if (b == ORTE_BAD_HANDLE)
-    {
+    if (b == ORTE_BAD_HANDLE) {
      #ifdef TEST_STAGE
-       printf(":!c: data not sent! [bad pub handle] \n");
+      printf(":!c: data not sent! [bad pub handle] \n");
      #endif
-     break;
+      break;
     }
-    if(b == ORTE_OK)
-    {
+    if (b == ORTE_OK) {
      #ifdef TEST_STAGE
-       printf(":c: data sent succesfuly.. \n");
+      printf(":c: data sent succesfuly.. \n");
      #endif
     }
     // set flag
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return 0;
   }
 

@@ -38,7 +38,7 @@
 
 JNIEXPORT jobject JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionGetStatus
-(JNIEnv *env, jobject obj, jlong j_appDomain_handle)
+  (JNIEnv *env, jobject obj, jlong j_appDomain_handle)
 {
   // jni types
   jclass           cls_ss = NULL; // class of SubsStatus
@@ -52,43 +52,38 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionGetStatus
   ORTESubsStatus  *subs_stat = &ss;
 
   #ifdef TEST_STAGE
-    printf(":c: ORTEPublicationGetStatus() called.. \n");
+  printf(":c: ORTEPublicationGetStatus() called.. \n");
   #endif
 
   // create new Status instance and set its fields
-  do
-  {
+  do {
     // call ORTE function
     b = ORTESubscriptionGetStatus((ORTESubscription *)j_appDomain_handle, subs_stat);
-    if(b == ORTE_BAD_HANDLE)
-    {
-     printf(":!c: publicationGetStatus() failed! [bad pub handle] \n");
-     break;
+    if (b == ORTE_BAD_HANDLE) {
+      printf(":!c: publicationGetStatus() failed! [bad pub handle] \n");
+      break;
     }
     // find cls
-    cls_ss = findClass(env,"org.ocera.orte.types.Status");
-    if(cls_ss == 0)
-    {
+    cls_ss = findClass(env, "org.ocera.orte.types.Status");
+    if (cls_ss == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: cls_ss = NULL \n");
+      printf(":!c: cls_ss = NULL \n");
       #endif
       break;
     }
     // call object constructor
-    mid = (*env)->GetMethodID(env,cls_ss,"<init>","()V");
-    if(mid == 0)
-    {
+    mid = (*env)->GetMethodID(env, cls_ss, "<init>", "()V");
+    if (mid == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: mid = NULL \n");
+      printf(":!c: mid = NULL \n");
       #endif
       break;
     }
     // new object
     obj_ss = (*env)->NewObject(env, cls_ss, mid);
-    if(obj_ss == 0)
-    {
+    if (obj_ss == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: obj_ss = NULL \n");
+      printf(":!c: obj_ss = NULL \n");
       #endif
       break;
     }
@@ -96,59 +91,55 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionGetStatus
     // setting object's fields
     // fieldID - strict
     fid = (*env)->GetFieldID(env,
-                             cls_ss,
-                             "strict",
-                             "J");
-    if(fid == NULL)
-    {
+			     cls_ss,
+			     "strict",
+			     "J");
+    if (fid == NULL) {
       #ifdef TEST_STAGE
-       printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                         obj_ss,
-                         fid,
-                         (jlong) subs_stat->strict);
+			 obj_ss,
+			 fid,
+			 (jlong)subs_stat->strict);
     // fieldID - bestEffort
     fid = (*env)->GetFieldID(env,
-                             cls_ss,
-                             "bestEffort",
-                             "J");
-    if(fid == NULL)
-    {
+			     cls_ss,
+			     "bestEffort",
+			     "J");
+    if (fid == NULL) {
       #ifdef TEST_STAGE
-       printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                         obj_ss,
-                         fid,
-                         (jlong) subs_stat->bestEffort);
+			 obj_ss,
+			 fid,
+			 (jlong)subs_stat->bestEffort);
     // fieldID - issues
     fid = (*env)->GetFieldID(env,
-                             cls_ss,
-                             "issues",
-                             "J");
-    if(fid == NULL)
-    {
+			     cls_ss,
+			     "issues",
+			     "J");
+    if (fid == NULL) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                         obj_ss,
-                         fid,
-                         (jlong) subs_stat->issues);
+			 obj_ss,
+			 fid,
+			 (jlong)subs_stat->issues);
     // set flag
     flag_ok = 1;
 
-  } while(0);
+  } while (0);
 
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return NULL;
   }
 

@@ -3,18 +3,18 @@
  *
  *  DEBUG:  section                     Manager
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *  GNU General Public License for more details.
  *
  */
- 
+
 #include "orte_all.h"
 
 #ifdef HAVE_INTTYPES_H
@@ -53,42 +53,54 @@
 //global variables
 static ORTEDomain          *d;
 static ORTEDomainProp      dp;
-static int32_t             opt,domain=ORTE_DEFAULT_DOMAIN;
-static Boolean             orteDaemon=ORTE_FALSE;
-static Boolean             orteWinService=ORTE_FALSE;
-static ORTEDomainAppEvents *events=NULL;
+static int32_t             opt, domain = ORTE_DEFAULT_DOMAIN;
+static Boolean             orteDaemon = ORTE_FALSE;
+static Boolean             orteWinService = ORTE_FALSE;
+static ORTEDomainAppEvents *events = NULL;
 
 //event system
 Boolean
-onMgrAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param) {
-  printf("%s 0x%"ORTE_PRI_HostId"-0x%"ORTE_PRI_AppId" was accepted\n",
-         (appInfo->appId & 0x3)==MANAGER ? "manager" : "application",
-         appInfo->hostId,appInfo->appId);
+onMgrAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
+{
+  printf("%s 0x%"ORTE_PRI_HostId "-0x%"ORTE_PRI_AppId " was accepted\n",
+	 (appInfo->appId & 0x3) == MANAGER ? "manager" : "application",
+	 appInfo->hostId, appInfo->appId);
   return ORTE_TRUE;
 }
 
 void
-onMgrAppDelete(const struct ORTEAppInfo *appInfo, void *param) {
-  printf("%s 0x%"ORTE_PRI_HostId"-0x%"ORTE_PRI_AppId" was deleted\n",
-         (appInfo->appId & 0x3)==MANAGER ? "manager" : "application",
-         appInfo->hostId,appInfo->appId);
+onMgrAppDelete(const struct ORTEAppInfo *appInfo, void *param)
+{
+  printf("%s 0x%"ORTE_PRI_HostId "-0x%"ORTE_PRI_AppId " was deleted\n",
+	 (appInfo->appId & 0x3) == MANAGER ? "manager" : "application",
+	 appInfo->hostId, appInfo->appId);
 }
 
 #if defined(_WIN32) || defined(__CYGWIN__)
 //Windows service support
-void serviceDispatchTable(void);  //forward declaration
-void removeService(void);         //forward declaration
-void installService(void);        //forward declaration
-int managerInit(void) {
-  d=ORTEDomainMgrCreate(domain,&dp,events,ORTE_TRUE);
-  if (d==NULL) return -1;
+void
+serviceDispatchTable(void);       //forward declaration
+void
+removeService(void);              //forward declaration
+void
+installService(void);             //forward declaration
+int
+managerInit(void)
+{
+  d = ORTEDomainMgrCreate(domain, &dp, events, ORTE_TRUE);
+  if (d == NULL)
+    return -1;
   return 0;
 }
-int managerStart(void) {
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
+int
+managerStart(void)
+{
+  ORTEDomainStart(d, ORTE_TRUE, ORTE_FALSE, ORTE_FALSE, ORTE_FALSE, ORTE_TRUE);
   return 0;
 }
-int managerStop(void) {
+int
+managerStop(void)
+{
   ORTEDomainMgrDestroy(d);
   return 0;
 }
@@ -96,32 +108,37 @@ int managerStop(void) {
 
 #ifdef CONFIG_ORTE_UNIX
 #ifdef HAVE_SYS_STAT_H
-  #include <sys/stat.h>		/* For umask() */
+  #include <sys/stat.h>         /* For umask() */
 #endif
 //Unix daemon support
-void waitForEndingCommand(void) {
-	sigset_t sigset;
-	sigemptyset(&sigset);
-	sigaddset(&sigset, SIGINT);
-	sigaddset(&sigset, SIGTERM);
-	{
+void
+waitForEndingCommand(void)
+{
+  sigset_t sigset;
+
+  sigemptyset(&sigset);
+  sigaddset(&sigset, SIGINT);
+  sigaddset(&sigset, SIGTERM);
+  {
 	#ifdef HAVE_SIGWAITINFO
-		sigwaitinfo(&sigset, NULL);
+    sigwaitinfo(&sigset, NULL);
 	#else /*HAVE_SIGWAITINFO*/
-		int sig;
-		sigwait(&sigset, &sig);
+    int sig;
+    sigwait(&sigset, &sig);
 	#endif /*HAVE_SIGWAITINFO*/
-	}
+  }
 }
-static int daemonInit(void) {
+static int
+daemonInit(void)
+{
   pid_t pid;
 
   if ((pid = fork()) < 0) {
     return -1;
   } else
-    if (pid != 0) {
-      exit(0);	/* parent vanishes */
-    }
+  if (pid != 0) {
+    exit(0);    /* parent vanishes */
+  }
   /* child process */
   setsid();
   umask(0);
@@ -130,9 +147,11 @@ static int daemonInit(void) {
   close(2);
   return 0;
 }
-#endif
+#endif /* ifdef CONFIG_ORTE_UNIX */
 
-static void usage(void) {
+static void
+usage(void)
+{
   printf("usage: ortemanager <parameters> \n");
   printf("  -p, --peer <IPAdd:IPAdd:...>  possible locations of fellow managers\n");
   printf("  -k, --key  <IPAdd:IPAdd:...>  manualy assigned manager's keys\n");
@@ -159,27 +178,29 @@ static void usage(void) {
   printf("  -h, --help                    this usage screen\n");
 }
 
-int main(int argc,char *argv[]) {
+int
+main(int argc, char *argv[])
+{
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   static struct option long_opts[] = {
-    { "peer",1,0, 'p' },
-    { "key",1,0, 'k' },
-    { "domain",1,0, 'd' },
-    { "verbosity",1,0, 'v' },
-    { "refresh",1,0, 'R' },
-    { "purge",1,0, 'P' },
-    { "metaMulticast",1,0, 'I' },
-    { "timetolive",1,0, 't' },
-    { "listen",1,0, 'L' },
+    { "peer", 1, 0, 'p' },
+    { "key", 1, 0, 'k' },
+    { "domain", 1, 0, 'd' },
+    { "verbosity", 1, 0, 'v' },
+    { "refresh", 1, 0, 'R' },
+    { "purge", 1, 0, 'P' },
+    { "metaMulticast", 1, 0, 'I' },
+    { "timetolive", 1, 0, 't' },
+    { "listen", 1, 0, 'L' },
 #ifdef CONFIG_ORTE_UNIX
-    { "daemon",1,0, 'D' },
+    { "daemon", 1, 0, 'D' },
 #endif
-    { "expiration",1,0, 'E' },
-    { "events",0,0, 'e' },
-    { "logfile",1,0, 'l' },
-    { "version",0,0, 'V' },
-    { "install_service",0,0, 'i' },
-    { "remove_service",0,0, 'r' },
+    { "expiration", 1, 0, 'E' },
+    { "events", 0, 0, 'e' },
+    { "logfile", 1, 0, 'l' },
+    { "version", 0, 0, 'V' },
+    { "install_service", 0, 0, 'i' },
+    { "remove_service", 0, 0, 'r' },
     { "help",  0, 0, 'h' },
     { 0, 0, 0, 0}
   };
@@ -189,86 +210,86 @@ int main(int argc,char *argv[]) {
   ORTEDomainPropDefaultGet(&dp);
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
-  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:I:t:L:l:VhDesir",&long_opts[0], NULL)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "k:p:d:v:R:E:P:I:t:L:l:VhDesir", &long_opts[0], NULL)) != EOF) {
 #else
   while ((opt = getopt(argc, argv, "k:p:d:v:R:E:P:I:t:L:l:VhDesir")) != EOF) {
 #endif
     switch (opt) {
       case 'p':
-        dp.mgrs=optarg;
-        break;
+	dp.mgrs = optarg;
+	break;
       case 'k':
-        dp.keys=optarg;
-        break;
+	dp.keys = optarg;
+	break;
       case 'd':
-        domain=strtol(optarg,NULL,0);
-        break;
+	domain = strtol(optarg, NULL, 0);
+	break;
       case 'v':
-        ORTEVerbositySetOptions(optarg);
-        break;
+	ORTEVerbositySetOptions(optarg);
+	break;
       case 'R':
-        NtpTimeAssembFromMs(dp.baseProp.refreshPeriod,strtol(optarg,NULL,0),0);
-        break;
+	NtpTimeAssembFromMs(dp.baseProp.refreshPeriod, strtol(optarg, NULL, 0), 0);
+	break;
       case 'P':
-        NtpTimeAssembFromMs(dp.baseProp.purgeTime,strtol(optarg,NULL,0),0);
-        break;
+	NtpTimeAssembFromMs(dp.baseProp.purgeTime, strtol(optarg, NULL, 0), 0);
+	break;
       case 'I':
-        dp.multicast.enabled=ORTE_TRUE;
-        dp.multicast.ipAddress=StringToIPAddress(optarg);
-        break;
+	dp.multicast.enabled = ORTE_TRUE;
+	dp.multicast.ipAddress = StringToIPAddress(optarg);
+	break;
       case 'L':
-        dp.listen=StringToIPAddress(optarg);
-        break;
+	dp.listen = StringToIPAddress(optarg);
+	break;
       case 't':
-        dp.multicast.ttl=strtol(optarg,NULL,0);
-        break;
+	dp.multicast.ttl = strtol(optarg, NULL, 0);
+	break;
       case 'E':
-        NtpTimeAssembFromMs(dp.baseProp.expirationTime,strtol(optarg,NULL,0),0);
-        break;
+	NtpTimeAssembFromMs(dp.baseProp.expirationTime, strtol(optarg, NULL, 0), 0);
+	break;
       case 'e':
-        events=(ORTEDomainAppEvents*)malloc(sizeof(ORTEDomainAppEvents));
-        ORTEDomainInitEvents(events);
-        events->onMgrNew=onMgrAppRemoteNew;
-        events->onAppRemoteNew=onMgrAppRemoteNew;
-        events->onMgrDelete=onMgrAppDelete;
-        events->onAppDelete=onMgrAppDelete;
-        break;
+	events = (ORTEDomainAppEvents *)malloc(sizeof(ORTEDomainAppEvents));
+	ORTEDomainInitEvents(events);
+	events->onMgrNew = onMgrAppRemoteNew;
+	events->onAppRemoteNew = onMgrAppRemoteNew;
+	events->onMgrDelete = onMgrAppDelete;
+	events->onAppDelete = onMgrAppDelete;
+	break;
       case 'l':
-        ORTEVerbositySetLogFile(optarg);
-        break;
+	ORTEVerbositySetLogFile(optarg);
+	break;
       case 'V':
-        printf("Open Real-Time Ethernet (%s).\n",dp.version);
-        exit(0);
-        break;
+	printf("Open Real-Time Ethernet (%s).\n", dp.version);
+	exit(0);
+	break;
       case 'D':
-        orteDaemon=ORTE_TRUE;
-        break;
+	orteDaemon = ORTE_TRUE;
+	break;
       #if defined(_WIN32) || defined(__CYGWIN__)
       case 's':
-        serviceDispatchTable();
-        exit(0);
-        break;
+	serviceDispatchTable();
+	exit(0);
+	break;
       case 'i':
-        installService();
-        orteWinService=ORTE_TRUE;
-        break;
+	installService();
+	orteWinService = ORTE_TRUE;
+	break;
       case 'r':
-        removeService();
-        exit(0);
-        break;
+	removeService();
+	exit(0);
+	break;
       #endif
       case 'h':
       default:
-        usage();
-        exit(opt == 'h' ? 0 : 1);
+	usage();
+	exit(opt == 'h' ? 0 : 1);
     }
   }
-  
-  if (orteWinService) { 
+
+  if (orteWinService) {
     exit(0);
   }
-  
-  d=ORTEDomainMgrCreate(domain,&dp,events,ORTE_TRUE);
+
+  d = ORTEDomainMgrCreate(domain, &dp, events, ORTE_TRUE);
   if (!d) {
     perror("ORTEDomainMgrCreate");
     exit(1);
@@ -279,62 +300,69 @@ int main(int argc,char *argv[]) {
     daemonInit();
   #endif
 
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE);
+  ORTEDomainStart(d, ORTE_TRUE, ORTE_FALSE, ORTE_FALSE, ORTE_FALSE, ORTE_TRUE);
   #ifndef CONFIG_ORTE_UNIX
-     while(1) ORTESleepMs(1000);
+  while (1)
+    ORTESleepMs(1000);
   #endif
 
   #ifdef CONFIG_ORTE_UNIX
   waitForEndingCommand();
   ORTEDomainMgrDestroy(d);
-  if (events) 
+  if (events)
     free(events);
   #endif
 
   exit(0);
 }
-#else
-char *verbosity="";
-MODULE_PARM(verbosity,"1s");
-MODULE_PARM_DESC(verbosity,"set verbosity level SECTION, up to LEVEL:...");
-char *peer="";
-MODULE_PARM(peer,"1s");
-MODULE_PARM_DESC(peer,"possible locations of fellow managers");
+#else /* ifndef CONFIG_ORTE_RT */
+char *verbosity = "";
+MODULE_PARM(verbosity, "1s");
+MODULE_PARM_DESC(verbosity, "set verbosity level SECTION, up to LEVEL:...");
+char *peer = "";
+MODULE_PARM(peer, "1s");
+MODULE_PARM_DESC(peer, "possible locations of fellow managers");
 MODULE_LICENSE("GPL");
-ORTEDomain *d=NULL;
+ORTEDomain *d = NULL;
 pthread_t  thread;
 
 void *
-domainInit(void *arg) {
+domainInit(void *arg)
+{
   ORTEDomainProp dp;
 
   ORTEDomainPropDefaultGet(&dp);
   ORTEVerbositySetOptions(verbosity);
-  dp.mgrs=peer;
-  d=ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_TRUE);
+  dp.mgrs = peer;
+  d = ORTEDomainMgrCreate(ORTE_DEFAULT_DOMAIN, &dp, NULL, ORTE_TRUE);
   return arg;
 }
 
 void *
-domainDestroy(void *arg) {
-  if (!d) return NULL;
+domainDestroy(void *arg)
+{
+  if (!d)
+    return NULL;
   ORTEDomainMgrDestroy(d);
   return arg;
 }
 
 int
-init_module(void) {
+init_module(void)
+{
   ORTEInit();
-  pthread_create(&thread,NULL,&domainInit,NULL);  //allocate resources in RT 
-  pthread_join(thread,NULL);
+  pthread_create(&thread, NULL, &domainInit, NULL);  //allocate resources in RT
+  pthread_join(thread, NULL);
   if (d)
-    ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_FALSE,ORTE_FALSE,ORTE_TRUE); //manager start
+    ORTEDomainStart(d, ORTE_TRUE, ORTE_FALSE, ORTE_FALSE, ORTE_FALSE, ORTE_TRUE);  //manager start
   return 0;
 }
 void
-cleanup_module(void) {
-  if (!d) return;
-  pthread_create(&thread,NULL,&domainDestroy,NULL);
-  pthread_join(thread,NULL);
+cleanup_module(void)
+{
+  if (!d)
+    return;
+  pthread_create(&thread, NULL, &domainDestroy, NULL);
+  pthread_join(thread, NULL);
 }
-#endif
+#endif /* ifndef CONFIG_ORTE_RT */

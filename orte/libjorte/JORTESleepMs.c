@@ -35,11 +35,10 @@
 
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_JOrte_jORTESleepMs
-(JNIEnv *env, jclass cls, jlong milisec)
+  (JNIEnv *env, jclass cls, jlong milisec)
 {
   #ifdef TEST_STAGE
-    printf(":c: orteSleep() called.. ZZzzzz \n");
+  printf(":c: orteSleep() called.. ZZzzzz \n");
   #endif
-  ORTESleepMs((unsigned int) milisec);
+  ORTESleepMs((unsigned int)milisec);
 }
-

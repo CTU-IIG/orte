@@ -3,18 +3,18 @@
  *
  *  DEBUG:  section                     m_subscriber
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -39,17 +39,20 @@
 static ORTEDomain        *d = NULL;
 static char              instance2Recv[64];
 
-int maxDataSize(ORTEGetMaxSizeParam *gms, int num) {
+int
+maxDataSize(ORTEGetMaxSizeParam *gms, int num)
+{
   return gms->max_size;
 }
 
 static void
-recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
-  char *instance=(char*)vinstance;
+recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
+{
+  char *instance = (char *)vinstance;
 
   switch (info->status) {
     case NEW_DATA:
-      printf("%s\n",instance);
+      printf("%s\n", instance);
       break;
     case DEADLINE:
       printf("deadline occurred\n");
@@ -59,25 +62,26 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
 
 
 static void *
-subscriberCreate(void *arg) {
+subscriberCreate(void *arg)
+{
   ORTESubscription    *s;
-  NtpTime             deadline,minimumSeparation;
+  NtpTime             deadline, minimumSeparation;
 
-  ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,maxDataSize,sizeof(instance2Recv));
-  NTPTIME_BUILD(deadline,10);
-  NTPTIME_BUILD(minimumSeparation,0);
-  s=ORTESubscriptionCreate(
-       d,
-       IMMEDIATE,
-       BEST_EFFORTS,
-       "Example HelloMsg",
-       "HelloMsg",
-       &instance2Recv,
-       &deadline,
-       &minimumSeparation,
-       recvCallBack,
-       NULL,
-       StringToIPAddress("225.0.0.2"));
+  ORTETypeRegisterAdd(d, "HelloMsg", NULL, NULL, maxDataSize, sizeof(instance2Recv));
+  NTPTIME_BUILD(deadline, 10);
+  NTPTIME_BUILD(minimumSeparation, 0);
+  s = ORTESubscriptionCreate(
+    d,
+    IMMEDIATE,
+    BEST_EFFORTS,
+    "Example HelloMsg",
+    "HelloMsg",
+    &instance2Recv,
+    &deadline,
+    &minimumSeparation,
+    recvCallBack,
+    NULL,
+    StringToIPAddress("225.0.0.2"));
   if (s == NULL) {
     printf("ORTESubscriptionCreate failed\n");
   }
@@ -85,15 +89,16 @@ subscriberCreate(void *arg) {
 }
 
 int
-main(int argc, char *args[]) {
+main(int argc, char *args[])
+{
   ORTEDomainProp dp;
-  
+
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
-  dp.multicast.enabled=ORTE_TRUE;
-  dp.multicast.ipAddress=StringToIPAddress("225.0.0.1");
+  dp.multicast.enabled = ORTE_TRUE;
+  dp.multicast.ipAddress = StringToIPAddress("225.0.0.1");
   ORTEVerbositySetOptions("ALL.10");
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_FALSE);
+  d = ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN, &dp, NULL, ORTE_FALSE);
   if (!d) {
     printf("ORTEDomainAppCreate failed!\n");
     return 0;
@@ -103,4 +108,3 @@ main(int argc, char *args[]) {
     ORTESleepMs(1000);
   return 0;
 }
-

@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTEPublicationCreate
  * Signature: (JLjava/lang/String;Ljava/lang/String;ILjava/nio/ByteBuffer;Lorg/ocera/orte/types/NtpTime;I)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_Publication_jORTEPublicationCreate
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationCreate
   (JNIEnv *, jobject, jlong, jstring, jstring, jobject, jobject, jint);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_Publication_jORTEPublicationCreate
  * Method:    jORTEPublicationDestroy
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationDestroy
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationDestroy
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -28,7 +30,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationDestr
  * Method:    jORTEPublicationSend
  * Signature: (JLorg/ocera/orte/types/MessageData;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationSend
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationSend
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -36,7 +39,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationSend
  * Method:    jORTEPublicationPropertiesGet
  * Signature: (J)Lorg/ocera/orte/types/PublProp;
  */
-JNIEXPORT jobject JNICALL Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
+JNIEXPORT jobject JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationPropertiesGet
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -44,7 +48,8 @@ JNIEXPORT jobject JNICALL Java_org_ocera_orte_Publication_jORTEPublicationProper
  * Method:    jORTEPublicationPropertiesSet
  * Signature: (JLorg/ocera/orte/types/PublProp;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
   (JNIEnv *, jobject, jlong, jobject);
 
 /*
@@ -52,7 +57,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Publication_jORTEPublicationPrope
  * Method:    jORTEPublicationGetStatus
  * Signature: (J)Lorg/ocera/orte/types/Status;
  */
-JNIEXPORT jobject JNICALL Java_org_ocera_orte_Publication_jORTEPublicationGetStatus
+JNIEXPORT jobject JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationGetStatus
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -60,10 +66,11 @@ JNIEXPORT jobject JNICALL Java_org_ocera_orte_Publication_jORTEPublicationGetSta
  * Method:    jORTEPublicationWaitForSubscriptions
  * Signature: (JLorg/ocera/orte/types/NtpTime;JJ)I
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_Publication_jORTEPublicationWaitForSubscriptions
+JNIEXPORT jint JNICALL
+Java_org_ocera_orte_Publication_jORTEPublicationWaitForSubscriptions
   (JNIEnv *, jobject, jlong, jobject, jlong, jlong);
 
 #ifdef __cplusplus
 }
 #endif
-#endif
+#endif /* ifndef _Included_org_ocera_orte_Publication */

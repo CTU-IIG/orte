@@ -21,32 +21,30 @@
   */
 
 
-typedef struct
-{
- JavaVM        *jvm;
- jobject        obj;
- jobject        rinfo;
- jobject        msg;
- jobject        obj_buf;  // byte buffer object
- CDR_Endianness cur_endian;
+typedef struct {
+  JavaVM        *jvm;
+  jobject        obj;
+  jobject        rinfo;
+  jobject        msg;
+  jobject        obj_buf; // byte buffer object
+  CDR_Endianness cur_endian;
 } JORTECallbackContext_t;
 
 
-typedef struct
-{
- JavaVM        *jvm;
- jobject        obj_de;  // domain events
+typedef struct {
+  JavaVM        *jvm;
+  jobject        obj_de; // domain events
 } JORTEDomainEventsContext_t;
 
 
 typedef enum {
-        ON_REG_FAIL       = 1,
-        ON_MGR_NEW        = 2,
-        ON_MGR_DELETE     = 3,
-        ON_APP_REMOTE_NEW = 4,
-        ON_APP_DELETE     = 5,
-        ON_PUB_REMOTE     = 6,
-        ON_PUB_DELETE     = 7,
-        ON_SUB_REMOTE     = 8,
-        ON_SUB_DELETE     = 9
-      } JORTEDomainEvents_t;
+  ON_REG_FAIL       = 1,
+  ON_MGR_NEW        = 2,
+  ON_MGR_DELETE     = 3,
+  ON_APP_REMOTE_NEW = 4,
+  ON_APP_DELETE     = 5,
+  ON_PUB_REMOTE     = 6,
+  ON_PUB_DELETE     = 7,
+  ON_SUB_REMOTE     = 8,
+  ON_SUB_DELETE     = 9
+} JORTEDomainEvents_t;

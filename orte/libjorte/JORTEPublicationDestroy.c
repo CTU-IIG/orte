@@ -35,20 +35,18 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationDestroy
-(JNIEnv *env, jclass cls, jlong pub_handle)
+  (JNIEnv *env, jclass cls, jlong pub_handle)
 {
   int8_t    b;
 
   // call ORTE function
-  b = ORTEPublicationDestroy((ORTEPublication *) pub_handle);
-  if (b == ORTE_BAD_HANDLE)
-  {
+  b = ORTEPublicationDestroy((ORTEPublication *)pub_handle);
+  if (b == ORTE_BAD_HANDLE) {
     printf(":!c: publication destroy failed! [bad publication handle] \n");
     return 1;
   }
   #ifdef TEST_STAGE
-    printf(":c: publication destroyed successfully.. \n");
+  printf(":c: publication destroyed successfully.. \n");
   #endif
   return 1;
 }
-

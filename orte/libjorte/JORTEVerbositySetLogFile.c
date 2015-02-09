@@ -35,12 +35,12 @@
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_JOrte_jORTEVerbositySetLogFile
-(JNIEnv *env, jclass cls, jstring j_logfile)
+  (JNIEnv *env, jclass cls, jstring j_logfile)
 {
-  const char * logfile;
+  const char *logfile;
 
   // get logfile
-  logfile = (*env)->GetStringUTFChars(env,j_logfile,0);
+  logfile = (*env)->GetStringUTFChars(env, j_logfile, 0);
   // call ORTE function
   ORTEVerbositySetLogFile(logfile);
   // free memory

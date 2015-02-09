@@ -4,8 +4,7 @@
 
 JNIEXPORT jint JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionPull
-(JNIEnv *env, jobject obj, jlong sub_handle)
+  (JNIEnv *env, jobject obj, jlong sub_handle)
 {
-  return ORTESubscriptionPull((ORTESubscription*)sub_handle);
+  return ORTESubscriptionPull((ORTESubscription *)sub_handle);
 }
-

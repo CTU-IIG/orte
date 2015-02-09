@@ -3,18 +3,18 @@
  *
  *  DEBUG:  section 1                   Debug
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,8 @@
 /* global debug variables */
 int db_level;
 int debugLevels[MAX_DEBUG_SECTIONS];
-int mem_check_counter=0;
-NtpTime zNtpTime,iNtpTime;
+int mem_check_counter = 0;
+NtpTime zNtpTime, iNtpTime;
 SequenceNumber noneSN;
 
 /*********************************************************************/
@@ -47,7 +47,7 @@ db_print_output(const char *format);
 /* globals */
 
 #ifndef CONFIG_ORTE_RT
-FILE *debug_log=NULL;       /* NULL */
+FILE *debug_log = NULL;       /* NULL */
 #endif
 
 /*********************************************************************/
@@ -55,42 +55,47 @@ FILE *debug_log=NULL;       /* NULL */
 
 #ifdef CONFIG_ORTE_RT
 static const char *
-debug_log_time(void) {
+debug_log_time(void)
+{
   struct timespec        time;
   static char            buf[64];
 
   clock_gettime(CLOCK_REALTIME, &time);
-  sprintf(buf, "%li.%03li", time.tv_sec,time.tv_nsec/1000000);
+  sprintf(buf, "%li.%03li", time.tv_sec, time.tv_nsec/1000000);
   return buf;
 }
 #else
 static const char *
-debug_log_time(void) {
+debug_log_time(void)
+{
   struct timeval        time;
   static char         buf[64];
 
-  gettimeofday(&time,NULL);
-  sprintf(buf, "%li.%03li", time.tv_sec,time.tv_usec/1000);
+  gettimeofday(&time, NULL);
+  sprintf(buf, "%li.%03li", time.tv_sec, time.tv_usec/1000);
   return buf;
 }
 #endif /* CONFIG_ORTE_RT */
 
 void
-db_print(const char *format,...) {
+db_print(const char *format, ...)
+{
   char f[256];
   va_list ap;
 
   va_start(ap, format);
-  sprintf(f, "%s | ",debug_log_time());
-  vsprintf(f+strlen(f),format,ap);
+  sprintf(f, "%s | ", debug_log_time());
+  vsprintf(f+strlen(f), format, ap);
   va_end(ap);
-  db_print_output(f);    
+  db_print_output(f);
 }
 
 void
-db_print_output(const char *format) {
+db_print_output(const char *format)
+{
 #ifndef CONFIG_ORTE_RT
-  if (debug_log == NULL) return;
+  if (debug_log == NULL)
+    return;
   fprintf(debug_log, "%s", format);
   fflush(debug_log);
 #else
@@ -99,45 +104,50 @@ db_print_output(const char *format) {
 }
 
 void
-debug_arg(const char *arg) {
-  int32_t s=0,l=0,i;
+debug_arg(const char *arg)
+{
+  int32_t s = 0, l = 0, i;
 
   if (!strncmp(arg, "ALL", 3)) {
     s = -1;
     arg += 4;
   } else {
     s = atoi(arg);
-    while (*arg && *arg++ != '.');
+    while (*arg && *arg++ != '.') ;
   }
   l = atoi(arg);
-  if (l < 0) l = 0;
-  if (l > 10) l = 10;
+  if (l < 0)
+    l = 0;
+  if (l > 10)
+    l = 10;
   if (s >= 0) {
     debugLevels[s] = l;
     return;
   }
   for (i = 0; i < MAX_DEBUG_SECTIONS; i++)
     debugLevels[i] = l;
-} 
+}
 
-void 
-debug_options(const char *options) {
+void
+debug_options(const char *options)
+{
   char *p = NULL;
   char *s = NULL;
 
   if (options) {
-    p=(char*)MALLOC(strlen(options)+1);
+    p = (char *)MALLOC(strlen(options)+1);
     if (p) {
       memcpy(p, options, strlen(options) + 1);
-    }    
+    }
     for (s = strtok(p, ":"); s; s = strtok(NULL, ":"))
       debug_arg(s);
     FREE(p);
-  }     
+  }
 }
 
 void
-debug_open_log(const char *logfile) {
+debug_open_log(const char *logfile)
+{
 #ifndef CONFIG_ORTE_RT
   if (logfile == NULL) {
     debug_log = stderr;
@@ -157,7 +167,8 @@ debug_open_log(const char *logfile) {
 }
 
 void
-db_init(const char *logfile, const char *options) {
+db_init(const char *logfile, const char *options)
+{
   int i;
 
   for (i = 0; i < MAX_DEBUG_SECTIONS; i++)
@@ -167,22 +178,26 @@ db_init(const char *logfile, const char *options) {
 }
 
 #ifdef ENABLE_MEM_CHECK
-void *mem_check_malloc(size_t size) { 
+void *
+mem_check_malloc(size_t size)
+{
   void *ptr;
-  
-  if ((ptr=malloc(size))) {
+
+  if ((ptr = malloc(size))) {
     mem_check_counter++;
-    debug(1,9) ("mem check: inc %d\n",mem_check_counter);
+    debug(1, 9) ("mem check: inc %d\n", mem_check_counter);
   }
   return ptr;
 }
 
-void mem_check_free(void *ptr) {
-  if(!ptr) {
+void
+mem_check_free(void *ptr)
+{
+  if (!ptr) {
 //    LOG_FATAL(KERN_CRIT "ul_mem_check_free : triing to free NULL ptr\n");
-  }else{
+  } else {
     mem_check_counter--;
-    debug(1,9) ("mem check: dec %d\n",mem_check_counter);
+    debug(1, 9) ("mem check: dec %d\n", mem_check_counter);
     free(ptr);
   }
 }

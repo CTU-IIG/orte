@@ -5,7 +5,8 @@
 #include "jorte/4all.h"
 #include "jorte/jorte_protos_api.h"
 
-jobject createPubInfo(JNIEnv *env, const ORTEPubInfo *pinfo)
+jobject
+createPubInfo(JNIEnv *env, const ORTEPubInfo *pinfo)
 {
   jclass    cls;
   jobject   obj;
@@ -13,62 +14,55 @@ jobject createPubInfo(JNIEnv *env, const ORTEPubInfo *pinfo)
   //
   int flag_ok = 0;
 
-  do
-  {
+  do {
     // find cls
     cls = findClass(env, "org.ocera.orte.types.PubInfo");
-    if(cls == 0)
-    {
+    if (cls == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: cls = NULL \n");
+      printf(":!c: cls = NULL \n");
       #endif
       break;
     }
     // call object constructor
     mid = (*env)->GetMethodID(env, cls, "<init>", "()V");
-    if(mid == 0)
-    {
+    if (mid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: constructor failed! \n");
+      printf(":!c: constructor failed! \n");
       #endif
       break;
     }
     // create new object
     obj = (*env)->NewObject(env, cls, mid);
-    if(obj == 0)
-    {
+    if (obj == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj = NULL \n");
+      printf(":!c: obj = NULL \n");
       #endif
       break;
     }
 /////////////////////////////////////////////////
     // set topic
-    if(!setTopic(env,cls,obj,pinfo->topic))
-    {
+    if (!setTopic(env, cls, obj, pinfo->topic)) {
       #ifdef TEST_STAGE
-        printf(":!c: seTopic() failed! \n");
+      printf(":!c: seTopic() failed! \n");
       #endif
       break;
     }
     // set type
-    if(!setType(env,cls,obj,pinfo->type))
-    {
+    if (!setType(env, cls, obj, pinfo->type)) {
       #ifdef TEST_STAGE
-        printf(":!c: seType() failed! \n");
+      printf(":!c: seType() failed! \n");
       #endif
       break;
     }
 /////////////////////////////////////////////////
 
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
-  if(!flag_ok)
-  {
+  if (!flag_ok) {
     //detach...()
     return NULL;
   }
 
-return obj;
+  return obj;
 }

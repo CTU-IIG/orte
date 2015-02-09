@@ -1,30 +1,30 @@
 /*
- *  $Id: protos_api.h,v 0.0.0.1             2003/09/10 
+ *  $Id: protos_api.h,v 0.0.0.1             2003/09/10
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
 #ifndef _PROTOS_API_H
@@ -36,15 +36,15 @@ extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
 // conv.c
-/** 
+/**
  * IPAddressToString - converts IP address IPAddress to its string representation
  * @ipAddress: source IP address
  * @buff: output buffer
  */
-extern char* 
-IPAddressToString(IPAddress ipAddress,char *buff);
+extern char *
+IPAddressToString(IPAddress ipAddress, char *buff);
 
-/** 
+/**
  * StringToIPAddress - converts IP address from string into IPAddress
  * @string: source string
  */
@@ -57,7 +57,7 @@ StringToIPAddress(const char *string);
  * @buff: output buffer
  */
 extern char *
-NtpTimeToStringMs(NtpTime time,char *buff);
+NtpTimeToStringMs(NtpTime time, char *buff);
 
 /**
  * NtpTimeToStringUs - converts NtpTime to its text representation in microseconds
@@ -65,7 +65,7 @@ NtpTimeToStringMs(NtpTime time,char *buff);
  * @buff: output buffer
  */
 extern char *
-NtpTimeToStringUs(NtpTime time,char *buff);
+NtpTimeToStringUs(NtpTime time, char *buff);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,10 +84,10 @@ NtpTimeToStringUs(NtpTime time,char *buff);
  */
 extern void
 ORTEDomainStart(ORTEDomain *d,
-                Boolean recvUnicastMetatrafficThread,
-                Boolean recvMulticastMetatrafficThread,
-	        Boolean recvUnicastUserdataThread,
-	        Boolean recvMulticastUserdataThread,
+		Boolean recvUnicastMetatrafficThread,
+		Boolean recvMulticastMetatrafficThread,
+		Boolean recvUnicastUserdataThread,
+		Boolean recvMulticastUserdataThread,
 		Boolean sendThread);
 /**
  * ORTEDomainPropDefaultGet - returns default properties of a domain
@@ -114,15 +114,15 @@ ORTEDomainInitEvents(ORTEDomainAppEvents *events);
  * ORTEDomainAppCreate - creates an application object within given domain
  * @domain: given domain
  * @prop: properties of application
- * @events: events associated with application or NULL 
+ * @events: events associated with application or NULL
  * @suspended: specifies whether threads of this application should be started as well (ORTE_FALSE) or stay suspended (ORTE_TRUE). See @ORTEDomainStart for details how to resume
  * suspended threads
  *
  * Creates new Application object and sets its properties and events. Return handle to created object or NULL in case of any error.
  */
-extern ORTEDomain * 
-ORTEDomainAppCreate(int domain,ORTEDomainProp *prop,ORTEDomainAppEvents *events,
-    Boolean suspended);
+extern ORTEDomain *
+ORTEDomainAppCreate(int domain, ORTEDomainProp *prop, ORTEDomainAppEvents *events,
+		    Boolean suspended);
 
 /**
  * ORTEDomainAppDestroy - destroy Application object
@@ -134,29 +134,29 @@ extern Boolean
 ORTEDomainAppDestroy(ORTEDomain *d);
 
 /**
- * ORTEDomainAppSubscriptionPatternAdd - create pattern-based subscription 
- * @d: domain object 
+ * ORTEDomainAppSubscriptionPatternAdd - create pattern-based subscription
+ * @d: domain object
  * @topic: pattern for topic
- * @type: pattern for type 
+ * @type: pattern for type
  * @subscriptionCallBack: pointer to callback function which will be called whenever any data are received through this subscription
  * @param: user params for callback function
  *
- * This function is intended to be used in application interesded in more published data from possibly more remote applications, which should be received through single 
- * subscription. These different publications are specified by pattern given to @topic and @type parameters. 
+ * This function is intended to be used in application interesded in more published data from possibly more remote applications, which should be received through single
+ * subscription. These different publications are specified by pattern given to @topic and @type parameters.
  *
- * For example suppose there are publications of topics like @temperatureEngine1, @temperatureEngine2, @temperatureEngine1Backup and @temperatureEngine2Backup 
- * somewhere on our network. We can subscribe to each of Engine1 temperations by creating single subscription with pattern for topic set to "temperatureEngine1*". 
+ * For example suppose there are publications of topics like @temperatureEngine1, @temperatureEngine2, @temperatureEngine1Backup and @temperatureEngine2Backup
+ * somewhere on our network. We can subscribe to each of Engine1 temperations by creating single subscription with pattern for topic set to "temperatureEngine1*".
  * Or, if we are interested only in values from backup measurements, we can use pattern "*Backup".
- * 
- * Syntax for patterns is the same as syntax for @fnmatch function, which is employed for pattern recognition.  
- * 
+ *
+ * Syntax for patterns is the same as syntax for @fnmatch function, which is employed for pattern recognition.
+ *
  * Returns ORTE_TRUE if successful or ORTE_FALSE in case of any error.
  */
 
-extern Boolean 
-ORTEDomainAppSubscriptionPatternAdd(ORTEDomain *d,const char *topic,
-    const char *type,ORTESubscriptionPatternCallBack subscriptionCallBack, 
-    void *param);
+extern Boolean
+ORTEDomainAppSubscriptionPatternAdd(ORTEDomain *d, const char *topic,
+				    const char *type, ORTESubscriptionPatternCallBack subscriptionCallBack,
+				    void *param);
 
 /**
  * ORTEDomainAppSubscriptionPatternRemove - remove subscription pattern
@@ -164,14 +164,14 @@ ORTEDomainAppSubscriptionPatternAdd(ORTEDomain *d,const char *topic,
  * @topic: pattern to be removed
  * @type: pattern to be removed
  *
- * Removes subscritions created by @ORTEDomainAppSubscriptionPatternAdd. Patterns for @type and @topic must be exactly the same strings as when 
+ * Removes subscritions created by @ORTEDomainAppSubscriptionPatternAdd. Patterns for @type and @topic must be exactly the same strings as when
  * @ORTEDomainAppSubscriptionPatternAdd function was called.
  *
  * Returns ORTE_TRUE if successful or ORTE_FALSE if none matching record was found
  */
-extern Boolean 
-ORTEDomainAppSubscriptionPatternRemove(ORTEDomain *d,const char *topic,
-    const char *type);
+extern Boolean
+ORTEDomainAppSubscriptionPatternRemove(ORTEDomain *d, const char *topic,
+				       const char *type);
 
 /**
  * ORTEDomainAppSubscriptionPatternDestroy - destroys all subscription patterns
@@ -181,7 +181,7 @@ ORTEDomainAppSubscriptionPatternRemove(ORTEDomain *d,const char *topic,
  *
  * Returns ORTE_TRUE if successful or ORTE_FALSE in case of any error.
  */
-extern Boolean 
+extern Boolean
 ORTEDomainAppSubscriptionPatternDestroy(ORTEDomain *d);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,15 +191,15 @@ ORTEDomainAppSubscriptionPatternDestroy(ORTEDomain *d);
  * ORTEDomainMgrCreate - create manager object in given domain
  * @domain: given domain
  * @prop: desired manager's properties
- * @events: manager's event handlers or NULL   
+ * @events: manager's event handlers or NULL
  * @suspended: specifies whether threads of this manager should be started as well (ORTE_FALSE) or stay suspended (ORTE_TRUE). See @ORTEDomainStart for details how to resume
- * suspended threads 
+ * suspended threads
  *
  * Creates new manager object and sets its properties and events. Return handle to created object or NULL in case of any error.
  */
 extern ORTEDomain *
 ORTEDomainMgrCreate(int domain, ORTEDomainProp *prop,
-    ORTEDomainAppEvents *events,Boolean suspended);
+		    ORTEDomainAppEvents *events, Boolean suspended);
 
 /**
  * ORTEDomainMgrDestroy - destroy manager object
@@ -214,25 +214,25 @@ ORTEDomainMgrDestroy(ORTEDomain *d);
 // ORTEPublication.c
 /**
  * ORTEAppPubAdd - creates new publication
- * @d: pointer to application object 
+ * @d: pointer to application object
  * @topic: name of topic
  * @typeName: data type description
  * @instance: output buffer where application stores data for publication
  * @persistence: persistence of publication
  * @strength: strength of publication
- * @sendCallBack: pointer to callback function 
+ * @sendCallBack: pointer to callback function
  * @sendCallBackParam: user parameters for callback function
  * @sendCallBackDelay: periode for timer which issues callback function
  *
  * Creates new publication object with specified parameters. The @sendCallBack function is called periodically with @sendCallBackDelay periode. In strict reliable mode the @sendCallBack
  * function will be called only if there is enough room in transmitting queue in order to prevent any data loss. The @sendCallBack function should prepare data to be published by
- * this publication and place them into @instance buffer. 
+ * this publication and place them into @instance buffer.
  *
  * Returns handle to publication object.
  */
-extern ORTEPublication * 
+extern ORTEPublication *
 ORTEPublicationCreate(ORTEDomain *d,
-                      const char *topic,
+		      const char *topic,
 		      const char *typeName,
 		      void *instance,
 		      NtpTime *persistence,
@@ -257,7 +257,7 @@ ORTEPublicationDestroy(ORTEPublication *cstWriter);
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstWriter is not valid cstWriter handle.
  */
 extern int
-ORTEPublicationPropertiesGet(ORTEPublication *cstWriter,ORTEPublProp *pp);
+ORTEPublicationPropertiesGet(ORTEPublication *cstWriter, ORTEPublProp *pp);
 
 /**
  * ORTEPublicationPropertiesSet - set properties of a publication
@@ -267,7 +267,7 @@ ORTEPublicationPropertiesGet(ORTEPublication *cstWriter,ORTEPublProp *pp);
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstWriter is not valid publication handle.
  */
 extern int
-ORTEPublicationPropertiesSet(ORTEPublication *cstWriter,ORTEPublProp *pp);
+ORTEPublicationPropertiesSet(ORTEPublication *cstWriter, ORTEPublProp *pp);
 
 /*
  * ORTEAppPublWaitForSubs - waits for given number of subscriptions
@@ -280,20 +280,20 @@ ORTEPublicationPropertiesSet(ORTEPublication *cstWriter,ORTEPublProp *pp);
 */
 extern int
 ORTEPublicationWaitForSubscriptions(ORTEPublication *cstWriter,
-                                    NtpTime wait,
+				    NtpTime wait,
 				    unsigned int retries,
 				    unsigned int noSubscriptions);
 
 /**
  * ORTEPublicationGetStatus - removes a publication
  * @cstWriter: pointer to cstWriter object which provides this publication
- * @status: pointer to ORTEPublStatus structure 
+ * @status: pointer to ORTEPublStatus structure
  *
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @happ is not valid publication handle.
  */
 
 extern int
-ORTEPublicationGetStatus(ORTEPublication *cstWriter,ORTEPublStatus *status);
+ORTEPublicationGetStatus(ORTEPublication *cstWriter, ORTEPublStatus *status);
 
 /**
  * ORTEPublicationSend - force publication object to issue new data
@@ -301,7 +301,7 @@ ORTEPublicationGetStatus(ORTEPublication *cstWriter,ORTEPublStatus *status);
  *
  * Returns ORTE_OK if successful.
  */
-extern int 
+extern int
 ORTEPublicationSend(ORTEPublication *cstWriter);
 
 /**
@@ -313,7 +313,7 @@ ORTEPublicationSend(ORTEPublication *cstWriter);
  */
 extern int
 ORTEPublicationSendEx(ORTEPublication *cstWriter,
-    ORTEPublicationSendParam *psp);
+		      ORTEPublicationSendParam *psp);
 
 /**
  * ORTEPublicationGetInstance - return pointer to an instance
@@ -336,18 +336,18 @@ ORTEPublicationGetInstance(ORTEPublication *cstWriter);
  * @topic: name of topic
  * @typeName: name of data type
  * @instance: pointer to output buffer
- * @deadline: deadline 
+ * @deadline: deadline
  * @minimumSeparation: minimum time interval between two publications sent by Publisher as requested by Subscriber (strict - minumSep musi byt 0)
  * @recvCallBack: callback function called when new Subscription has been received or if any change of subscription's status occures
- * @recvCallBackParam: user parameters for @recvCallBack 
+ * @recvCallBackParam: user parameters for @recvCallBack
  * @multicastIPAddress: in case multicast subscripton specify multicast IP address or use IPADDRESS_INVALID to unicast communication
  *
  * Returns handle to Subscription object.
  */
-extern ORTESubscription * 
+extern ORTESubscription *
 ORTESubscriptionCreate(ORTEDomain *d,
-                       SubscriptionMode mode,
-		       SubscriptionType sType,    
+		       SubscriptionMode mode,
+		       SubscriptionType sType,
 		       const char *topic,
 		       const char *typeName,
 		       void *instance,
@@ -356,7 +356,7 @@ ORTESubscriptionCreate(ORTEDomain *d,
 		       ORTERecvCallBack recvCallBack,
 		       void *recvCallBackParam,
 		       IPAddress multicastIPAddress);
-		       
+
 /**
  * ORTESubscriptionDestroy - removes a subscription
  * @cstReader: handle to subscriotion to be removed
@@ -369,20 +369,20 @@ ORTESubscriptionDestroy(ORTESubscription *cstReader);
 /**
  * ORTESubscriptionPropertiesGet - get properties of a subscription
  * @cstReader: handle to publication
- * @sp: pointer to ORTESubsProp structure where properties of subscrition will be stored 
+ * @sp: pointer to ORTESubsProp structure where properties of subscrition will be stored
  */
 extern int
-ORTESubscriptionPropertiesGet(ORTESubscription *cstReader,ORTESubsProp *sp);
+ORTESubscriptionPropertiesGet(ORTESubscription *cstReader, ORTESubsProp *sp);
 
 /**
  * ORTESubscriptionPropertiesSet - set properties of a subscription
  * @cstReader: handle to publication
  * @sp: pointer to ORTESubsProp structure containing desired properties of the subscription
  *
- * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstReader is not valid subscription handle. 
+ * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstReader is not valid subscription handle.
  */
 extern int
-ORTESubscriptionPropertiesSet(ORTESubscription *cstReader,ORTESubsProp *sp);
+ORTESubscriptionPropertiesSet(ORTESubscription *cstReader, ORTESubsProp *sp);
 
 /**
  * ORTESubscriptionWaitForPublications - waits for given number of publications
@@ -394,8 +394,8 @@ ORTESubscriptionPropertiesSet(ORTESubscription *cstReader,ORTESubsProp *sp);
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstReader is not valid subscription handle or ORTE_TIMEOUT if number of retries has been exhausted..
  */
 extern int
-ORTESubscriptionWaitForPublications(ORTESubscription *cstReader,NtpTime wait,
-    unsigned int retries,unsigned int noPublications);
+ORTESubscriptionWaitForPublications(ORTESubscription *cstReader, NtpTime wait,
+				    unsigned int retries, unsigned int noPublications);
 
 /**
  * ORTESubscriptionGetStatus - get status of a subscription
@@ -405,7 +405,7 @@ ORTESubscriptionWaitForPublications(ORTESubscription *cstReader,NtpTime wait,
  * Returns ORTE_OK if successful or ORTE_BAD_HANDLE if @cstReader is not valid subscription handle.
  */
 extern int
-ORTESubscriptionGetStatus(ORTESubscription *cstReader,ORTESubsStatus *status);
+ORTESubscriptionGetStatus(ORTESubscription *cstReader, ORTESubsStatus *status);
 
 /**
  * ORTESubscriptionPull - read data from receiving buffer
@@ -445,8 +445,8 @@ ORTESubscriptionGetInstance(ORTESubscription *cstReader);
  * Returns ORTE_OK if new data type has been succesfully registered.
  */
 extern int
-ORTETypeRegisterAdd(ORTEDomain *d,const char *typeName,ORTETypeSerialize ts,
-                    ORTETypeDeserialize ds,ORTETypeGetMaxSize gms,unsigned int ms);
+ORTETypeRegisterAdd(ORTEDomain *d, const char *typeName, ORTETypeSerialize ts,
+		    ORTETypeDeserialize ds, ORTETypeGetMaxSize gms, unsigned int ms);
 /**
  * ORTETypeRegisterDestroyAll - destroy all registered data types
  * @d: domain object handle
@@ -467,7 +467,7 @@ ORTETypeRegisterDestroyAll(ORTEDomain *d);
  * There are 10 levels of verbosity ranging from 1 (lowest) to 10 (highest).
  * It is possible to specify certain level of verbosity for each module of ORTE library. List of all supported modules can be found in  linorte/usedSections.txt file.
  * Every module has been aasigned with a number as can be seen in usedSections.txt file.
- * 
+ *
  * For instance:
  * options = "ALL,7"
  * Verbosity will be set to level 7 for all modules.
@@ -475,12 +475,12 @@ ORTETypeRegisterDestroyAll(ORTEDomain *d);
  * options = "51,7:32,5"
  * Modules 51 (RTPSCSTWrite.c) will use verbosity level 7 and module 32 (ORTEPublicationTimer.c) will use verbosity level 5.
  *
- * Maximum number of modules and verbosity levels can be changed in order to save some memory space if small memory footprint is neccessary. These values are defined as macros 
+ * Maximum number of modules and verbosity levels can be changed in order to save some memory space if small memory footprint is neccessary. These values are defined as macros
  * MAX_DEBUG_SECTIONS and MAX_DEBUG_LEVEL in file @include/defines.h.
  *
  * Return ORTE_OK if desired verbosity levels were successfuly set.
  */
-extern void 
+extern void
 ORTEVerbositySetOptions(const char *options);
 
 /**
@@ -489,7 +489,7 @@ ORTEVerbositySetOptions(const char *options);
  *
  * Sets output file where debug messages will be writen to. By default these messages are written to stdout.
  */
-extern void 
+extern void
 ORTEVerbositySetLogFile(const char *logfile);
 
 
@@ -499,8 +499,9 @@ ORTEVerbositySetLogFile(const char *logfile);
 /**
  * ORTEInit - initialization of ORTE layer (musi se zavolat)
 */
- 
-extern void ORTEInit(void);
+
+extern void
+ORTEInit(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 // ORTEMisc.c

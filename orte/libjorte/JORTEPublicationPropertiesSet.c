@@ -40,7 +40,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
-(JNIEnv *env, jobject obj, jlong j_appDomain_handle, jobject obj_pp)
+  (JNIEnv *env, jobject obj, jlong j_appDomain_handle, jobject obj_pp)
 {
   // jni types
   jclass         cls_pp = NULL;
@@ -56,19 +56,17 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
   ORTEPublProp  *publ_prop = &pp;
 
   #ifdef TEST_STAGE
-    printf(":c: jORTEPublicationPropertiesSet() called.. \n");
+  printf(":c: jORTEPublicationPropertiesSet() called.. \n");
   #endif
 
-  do
-  {
+  do {
     // get 'SubProp' instance's class
     cls_pp = (*env)->GetObjectClass(env, obj_pp);
     // second way how to get 'PublProp' instance's class
     //cls_pp = (*env)->FindClass(env,"org/ocera/orte/types/PublProp");
-    if(cls_pp == 0)
-    {
+    if (cls_pp == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: cls_pp = NULL \n");
+      printf(":!c: cls_pp = NULL \n");
       #endif
       break;
     }
@@ -77,296 +75,278 @@ Java_org_ocera_orte_Publication_jORTEPublicationPropertiesSet
     /////////////////////////////////////////////////
     // set topic
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "topic",
-                             "Ljava/lang/String;");
-    if(fid == 0)
-    {
+			     cls_pp,
+			     "topic",
+			     "Ljava/lang/String;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_str = (*env)->GetObjectField(env, obj_pp, fid);
-    if(obj_str == 0)
-    {
+    if (obj_str == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_str = NULL \n");
+      printf(":!c: obj_str = NULL \n");
       #endif
       break;
     }
-    str = (*env)->GetStringUTFChars(env,obj_str,0);
+    str = (*env)->GetStringUTFChars(env, obj_str, 0);
     // set structure's field
-    strncpy((char *)publ_prop->topic, (const char*)str, strlen(str) + 1);
+    strncpy((char *)publ_prop->topic, (const char *)str, strlen(str) + 1);
     #ifdef TEST_STAGE
-      printf(":c: topic = %s, publ_prop->topic = %s \n",
-             str, publ_prop->topic);
+    printf(":c: topic = %s, publ_prop->topic = %s \n",
+	   str, publ_prop->topic);
     #endif
     // free the memory
     (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set typeName
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "typeName",
-                             "Ljava/lang/String;");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "typeName",
+			     "Ljava/lang/String;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_str = (*env)->GetObjectField(env, obj_pp, fid);
-    if(obj_str == 0)
-    {
+    if (obj_str == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_str = NULL \n");
+      printf(":!c: obj_str = NULL \n");
       #endif
       break;
     }
-    str = (*env)->GetStringUTFChars(env,obj_str,0);
+    str = (*env)->GetStringUTFChars(env, obj_str, 0);
     // set structure's field
-    strncpy((char *)publ_prop->typeName, (const char*)str, strlen(str) + 1);
+    strncpy((char *)publ_prop->typeName, (const char *)str, strlen(str) + 1);
     #ifdef TEST_STAGE
-      printf(":c: typeName = %s, publ_prop->typeName = %s \n",
-             str, publ_prop->typeName);
+    printf(":c: typeName = %s, publ_prop->typeName = %s \n",
+	   str, publ_prop->typeName);
     #endif
     // free the memory
     (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set typeChecksum
-    fid = (*env)->GetFieldID(env,cls_pp,"typeChecksum","I");
-    if (fid == 0)
-    {
+    fid = (*env)->GetFieldID(env, cls_pp, "typeChecksum", "I");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    publ_prop->typeChecksum = (TypeChecksum) (*env)->GetIntField(env, obj_pp, fid);
+    publ_prop->typeChecksum = (TypeChecksum)(*env)->GetIntField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->typeChecksum = %"PRId32"\n",
-             publ_prop->typeChecksum);
+    printf(":c: check: publ_prop->typeChecksum = %" PRId32 "\n",
+	   publ_prop->typeChecksum);
     #endif
     /////////////////////////////////////////////////
     // set expectsAck
-    fid = (*env)->GetFieldID(env,cls_pp,"expectsAck","Z");
-    if (fid == 0)
-    {
+    fid = (*env)->GetFieldID(env, cls_pp, "expectsAck", "Z");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     jbool = (*env)->GetBooleanField(env, obj_pp, fid);
-    if (jbool == 0) publ_prop->expectsAck = ORTE_FALSE;
-      else publ_prop->expectsAck = ORTE_TRUE;
+    if (jbool == 0)
+      publ_prop->expectsAck = ORTE_FALSE;
+    else
+      publ_prop->expectsAck = ORTE_TRUE;
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->expectsAck = %"PRId8"\n", publ_prop->expectsAck);
+    printf(":c: check: publ_prop->expectsAck = %" PRId8 "\n", publ_prop->expectsAck);
     #endif
     /////////////////////////////////////////////////
     // set persistence
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "persistence",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "persistence",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_ntpT = (*env)->GetObjectField(env, obj_pp, fid);
-    if (obj_ntpT == 0)
-    {
+    if (obj_ntpT == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_ntpT = NULL \n");
+      printf(":!c: obj_ntpT = NULL \n");
       #endif
       break;
     }
     publ_prop->persistence = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->persistence: sec = %"PRId32", fract = %"PRIu32"  \n",
-             publ_prop->persistence.seconds, publ_prop->persistence.fraction);
+    printf(":c: check: publ_prop->persistence: sec = %" PRId32 ", fract = %" PRIu32 "  \n",
+	   publ_prop->persistence.seconds, publ_prop->persistence.fraction);
     #endif
     /////////////////////////////////////////////////
     // set reliabilityOffered
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "reliabilityOffered",
-                             "J");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "reliabilityOffered",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    publ_prop->reliabilityOffered = (uint32_t) (*env)->GetLongField(env, obj_pp, fid);
+    publ_prop->reliabilityOffered = (uint32_t)(*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->reliabilityOffered = %"PRIu32" \n",
-             publ_prop->reliabilityOffered);
+    printf(":c: check: publ_prop->reliabilityOffered = %" PRIu32 " \n",
+	   publ_prop->reliabilityOffered);
     #endif
     /////////////////////////////////////////////////
     // set sendQueueSize
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "sendQueueSize",
-                             "J");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "sendQueueSize",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    publ_prop->sendQueueSize = (uint32_t) (*env)->GetLongField(env,obj_pp,fid);
+    publ_prop->sendQueueSize = (uint32_t)(*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->sendQueueSize = %"PRIu32" \n",
-             publ_prop->sendQueueSize);
+    printf(":c: check: publ_prop->sendQueueSize = %" PRIu32 " \n",
+	   publ_prop->sendQueueSize);
     #endif
     /////////////////////////////////////////////////
     // set strength
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "strength",
-                             "I");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "strength",
+			     "I");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    publ_prop->strength = (int32_t) (*env)->GetIntField(env,obj_pp,fid);
+    publ_prop->strength = (int32_t)(*env)->GetIntField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->strength = %"PRId32" \n",
-             publ_prop->strength);
+    printf(":c: check: publ_prop->strength = %" PRId32 " \n",
+	   publ_prop->strength);
     #endif
     /////////////////////////////////////////////////
     // set criticalQueueLevel
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "criticalQueueLevel",
-                             "J");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "criticalQueueLevel",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    publ_prop->criticalQueueLevel = (uint32_t) (*env)->GetLongField(env, obj_pp, fid);
+    publ_prop->criticalQueueLevel = (uint32_t)(*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->criticalQueueLevel = %"PRIu32" \n",
-             publ_prop->criticalQueueLevel);
+    printf(":c: check: publ_prop->criticalQueueLevel = %" PRIu32 " \n",
+	   publ_prop->criticalQueueLevel);
     #endif
     /////////////////////////////////////////////////
     // set HBNornalRate
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "HBNornalRate",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "HBNornalRate",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_ntpT = (*env)->GetObjectField(env, obj_pp, fid);
     publ_prop->HBNornalRate = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-    printf(":c: check: publ_prop->HBNornalRate: sec = %"PRId32", fract = %"PRIu32"  \n",
-           publ_prop->HBNornalRate.seconds, publ_prop->HBNornalRate.fraction);
+    printf(":c: check: publ_prop->HBNornalRate: sec = %" PRId32 ", fract = %" PRIu32 "  \n",
+	   publ_prop->HBNornalRate.seconds, publ_prop->HBNornalRate.fraction);
     #endif
     /////////////////////////////////////////////////
     // set HBCQLRate
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "HBCQLRate",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "HBCQLRate",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_ntpT = (*env)->GetObjectField(env, obj_pp, fid);
-    if (obj_ntpT == 0)
-    {
+    if (obj_ntpT == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_ntpT = NULL \n");
+      printf(":!c: obj_ntpT = NULL \n");
       #endif
       break;
     }
     publ_prop->HBCQLRate = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->HBCQLRate: sec = %"PRId32", fract = %"PRIu32"  \n",
-             publ_prop->HBCQLRate.seconds, publ_prop->HBCQLRate.fraction);
+    printf(":c: check: publ_prop->HBCQLRate: sec = %" PRId32 ", fract = %" PRIu32 "  \n",
+	   publ_prop->HBCQLRate.seconds, publ_prop->HBCQLRate.fraction);
     #endif
     /////////////////////////////////////////////////
     // set HBMaxRetries
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "HBMaxRetries",
-                             "J");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "HBMaxRetries",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    publ_prop->HBMaxRetries = (unsigned int) (*env)->GetLongField(env, obj_pp, fid);
+    publ_prop->HBMaxRetries = (unsigned int)(*env)->GetLongField(env, obj_pp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->HBMaxRetries = %u \n",
-             publ_prop->HBMaxRetries);
+    printf(":c: check: publ_prop->HBMaxRetries = %u \n",
+	   publ_prop->HBMaxRetries);
     #endif
     /////////////////////////////////////////////////
     // set maxBlockTime
     fid = (*env)->GetFieldID(env,
-                             cls_pp,
-                             "maxBlockTime",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if (fid == 0)
-    {
+			     cls_pp,
+			     "maxBlockTime",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_ntpT = (*env)->GetObjectField(env, obj_pp, fid);
-    if (obj_ntpT == 0)
-    {
+    if (obj_ntpT == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_ntpT = NULL \n");
+      printf(":!c: obj_ntpT = NULL \n");
       #endif
       break;
     }
     publ_prop->maxBlockTime = getNtpTime(env, obj_ntpT);
     #ifdef TEST_STAGE
-      printf(":c: check: publ_prop->maxBlockTime: sec = %"PRId32", fract = %"PRIu32"  \n",
-             publ_prop->maxBlockTime.seconds, publ_prop->maxBlockTime.fraction);
+    printf(":c: check: publ_prop->maxBlockTime: sec = %" PRId32 ", fract = %" PRIu32 "  \n",
+	   publ_prop->maxBlockTime.seconds, publ_prop->maxBlockTime.fraction);
     #endif
     /////////////////////////////////////////////////
     // calling original native method
-    b = ORTEPublicationPropertiesSet((ORTEPublication *) j_appDomain_handle,
-                                     publ_prop);
-    if (b == ORTE_BAD_HANDLE)
-    {
+    b = ORTEPublicationPropertiesSet((ORTEPublication *)j_appDomain_handle,
+				     publ_prop);
+    if (b == ORTE_BAD_HANDLE) {
       printf(":c!: set pub properties failed! [bad pub handle] \n");
       break;
     }
     // set flag
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return 0;
   }
 

@@ -34,25 +34,25 @@
 
 JNIEXPORT jint JNICALL
 Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
-(JNIEnv *env, jclass cls, jlong handle, jstring jname, jlong jlength)
+  (JNIEnv *env, jclass cls, jlong handle, jstring jname, jlong jlength)
 {
   const char     *name;
   int            b;
 
   // get type name from JAVA env
-  name = (*env)->GetStringUTFChars(env,jname,0);
+  name = (*env)->GetStringUTFChars(env, jname, 0);
   // call ORTE function
-  b = ORTETypeRegisterAdd((ORTEDomain *) handle,
-                          name,
-                          NULL,
-                          NULL,
-                          NULL,
-                          (unsigned int) jlength);
+  b = ORTETypeRegisterAdd((ORTEDomain *)handle,
+			  name,
+			  NULL,
+			  NULL,
+			  NULL,
+			  (unsigned int)jlength);
   // free memmory space
-  (*env)->ReleaseStringUTFChars(env,jname,name);
+  (*env)->ReleaseStringUTFChars(env, jname, name);
   #ifdef TEST_STAGE
   printf(":c: jORTETypeRegisterAdd vraci %d [%d = ORTE_OK, %d = ORTE_BAD_HANDLE] \n",
-         b,ORTE_OK,ORTE_BAD_HANDLE);
+	 b, ORTE_OK, ORTE_BAD_HANDLE);
   #endif
   return b;
 

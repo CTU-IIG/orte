@@ -43,24 +43,24 @@
 // /////////////////////////////////////////////////////////////////////
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
-(JNIEnv *env, jobject obj, jint jdomain, jboolean jsusp)
+  (JNIEnv *env, jobject obj, jint jdomain, jboolean jsusp)
 {
   jlong     d;
 
   #ifdef TEST_STAGE
-    printf(":c: jsem pred ORTEDomainDefaultAppCreate() \n");
+  printf(":c: jsem pred ORTEDomainDefaultAppCreate() \n");
   #endif
   // call ORTE function
-  d = (jlong) ORTEDomainAppCreate((int)jdomain,
-                                 NULL,
-                                 NULL,
-                                 (Boolean) jsusp);
-  if(!d) {
+  d = (jlong)ORTEDomainAppCreate((int)jdomain,
+				 NULL,
+				 NULL,
+				 (Boolean)jsusp);
+  if (!d) {
     printf(":!c: ORTEDomainDefaultAppCreate() FAILED.. \n");
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainDefautlAppCreate() ok.. + %#"PRIxPTR"\n", (intptr_t)d);
+  printf(":c: ORTEDomainDefautlAppCreate() ok.. + %#" PRIxPTR "\n", (intptr_t)d);
   #endif
   return (d);
 }
@@ -70,12 +70,12 @@ Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
 // //////////////////////////////////////////////////////////////////////
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
-(JNIEnv *env, jobject obj,
- jint jdomain,
- jlong propHandle,
- jlong eventsHandle,
- jobject obj_de,
- jboolean jsusp)
+  (JNIEnv *env, jobject obj,
+  jint jdomain,
+  jlong propHandle,
+  jlong eventsHandle,
+  jobject obj_de,
+  jboolean jsusp)
 {
   // jni varibles
   JavaVM                 *jvm;
@@ -87,16 +87,15 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
   JORTEDomainEventsContext_t  *domain_events_cont;
 
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainAppCreate() called.. \n");
+  printf(":c: ORTEDomainAppCreate() called.. \n");
   #endif
   //assign domain events only if not null
-  if(obj_de != NULL) {
+  if (obj_de != NULL) {
     // memory alocation
-    domain_events_cont = (JORTEDomainEventsContext_t *) malloc(sizeof(JORTEDomainEventsContext_t));
+    domain_events_cont = (JORTEDomainEventsContext_t *)malloc(sizeof(JORTEDomainEventsContext_t));
     // get jvm
-    jint b = (*env)->GetJavaVM(env,&jvm);
-    if (b < 0)
-    {
+    jint b = (*env)->GetJavaVM(env, &jvm);
+    if (b < 0) {
       printf(":!c: getJavaVM() failed! \n");
       return 0;
     }
@@ -105,79 +104,77 @@ Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
     // domain events
     domain_events_cont->obj_de = (*env)->NewGlobalRef(env, obj_de);
     // get new events
-    dom_events = (ORTEDomainAppEvents *) eventsHandle;
+    dom_events = (ORTEDomainAppEvents *)eventsHandle;
     ////////////////////////////////////////////////
     // set new events & their prarameters
     // onRegFail
-    dom_events->onRegFail = (ORTEOnRegFail) onRegFail;
-    dom_events->onRegFailParam = (void *) domain_events_cont;
+    dom_events->onRegFail = (ORTEOnRegFail)onRegFail;
+    dom_events->onRegFailParam = (void *)domain_events_cont;
     // onMgrNew
-    dom_events->onMgrNew = (ORTEOnMgrNew) onMgrNew;
-    dom_events->onMgrNewParam = (void *) domain_events_cont;
+    dom_events->onMgrNew = (ORTEOnMgrNew)onMgrNew;
+    dom_events->onMgrNewParam = (void *)domain_events_cont;
     // onMgrDelete
-    dom_events->onMgrDelete = (ORTEOnMgrDelete) onMgrDelete;
-    dom_events->onMgrDeleteParam = (void *) domain_events_cont;
+    dom_events->onMgrDelete = (ORTEOnMgrDelete)onMgrDelete;
+    dom_events->onMgrDeleteParam = (void *)domain_events_cont;
     // onAppRemoteNew
-    dom_events->onAppRemoteNew = (ORTEOnAppRemoteNew) onAppRemoteNew;
-    dom_events->onAppRemoteNewParam = (void *) domain_events_cont;
+    dom_events->onAppRemoteNew = (ORTEOnAppRemoteNew)onAppRemoteNew;
+    dom_events->onAppRemoteNewParam = (void *)domain_events_cont;
     // onAppDelete
-    dom_events->onAppDelete = (ORTEOnAppDelete) onAppDelete;
-    dom_events->onAppDeleteParam = (void *) domain_events_cont;
+    dom_events->onAppDelete = (ORTEOnAppDelete)onAppDelete;
+    dom_events->onAppDeleteParam = (void *)domain_events_cont;
     // onPubRemoteNew
-    dom_events->onPubRemoteNew = (ORTEOnPubRemote) onPubRemoteNew;
-    dom_events->onPubRemoteNewParam = (void *) domain_events_cont;
+    dom_events->onPubRemoteNew = (ORTEOnPubRemote)onPubRemoteNew;
+    dom_events->onPubRemoteNewParam = (void *)domain_events_cont;
     // onPubRemoteChanged
-    dom_events->onPubRemoteChanged = (ORTEOnPubRemote) onPubRemoteChanged;
-    dom_events->onPubRemoteChangedParam = (void *) domain_events_cont;
+    dom_events->onPubRemoteChanged = (ORTEOnPubRemote)onPubRemoteChanged;
+    dom_events->onPubRemoteChangedParam = (void *)domain_events_cont;
     // onPubDelete
-    dom_events->onPubDelete = (ORTEOnPubDelete) onPubDelete;
-    dom_events->onPubDeleteParam = (void *) domain_events_cont;
+    dom_events->onPubDelete = (ORTEOnPubDelete)onPubDelete;
+    dom_events->onPubDeleteParam = (void *)domain_events_cont;
     // onSubRemoteNew
-    dom_events->onSubRemoteNew = (ORTEOnSubRemote) onSubRemoteNew;
-    dom_events->onSubRemoteNewParam = (void *) domain_events_cont;
+    dom_events->onSubRemoteNew = (ORTEOnSubRemote)onSubRemoteNew;
+    dom_events->onSubRemoteNewParam = (void *)domain_events_cont;
     // onSubRemoteChanged
-    dom_events->onSubRemoteChanged = (ORTEOnSubRemote) onSubRemoteChanged;
-    dom_events->onSubRemoteChangedParam = (void *) domain_events_cont;
+    dom_events->onSubRemoteChanged = (ORTEOnSubRemote)onSubRemoteChanged;
+    dom_events->onSubRemoteChangedParam = (void *)domain_events_cont;
     // onSubDelete
-    dom_events->onSubDelete = (ORTEOnSubDelete) onSubDelete;
-    dom_events->onSubDeleteParam = (void *) domain_events_cont;
+    dom_events->onSubDelete = (ORTEOnSubDelete)onSubDelete;
+    dom_events->onSubDeleteParam = (void *)domain_events_cont;
     ////////////////////////////////////////////////
     cls = (*env)->GetObjectClass(env, obj);
-    if(cls == 0)
-    {
+    if (cls == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: cls = NULL \n");
+      printf(":!c: cls = NULL \n");
       #endif
       return 0;
     }
     // fieldID - domainEventsContextHandle
     fid = (*env)->GetFieldID(env,
-                             cls,
-                             "domainEventsContextHandle",
-                             "J");
-    if(fid == 0)
-    {
+			     cls,
+			     "domainEventsContextHandle",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       return 0;
     }
     (*env)->SetLongField(env,
-                        obj,
-                        fid,
-                        (jlong) domain_events_cont);
+			 obj,
+			 fid,
+			 (jlong)domain_events_cont);
   }
   // call ORTE function
-  d = (jlong) ORTEDomainAppCreate((int)jdomain,
-                                 (ORTEDomainProp *) propHandle,
-                                 (ORTEDomainAppEvents *) eventsHandle,
-                                 (Boolean) jsusp);
-  if(!d) {
+  d = (jlong)ORTEDomainAppCreate((int)jdomain,
+				 (ORTEDomainProp *)propHandle,
+				 (ORTEDomainAppEvents *)eventsHandle,
+				 (Boolean)jsusp);
+  if (!d) {
     printf(":!c: creating app domain failed! [NULL handle]  \n");
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: ORTEDomainAppCreate() ok.. + %#"PRIxPTR"\n", (intptr_t)d);
+  printf(":c: ORTEDomainAppCreate() ok.. + %#" PRIxPTR "\n", (intptr_t)d);
   #endif
   return (d);
 }

@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTEInit
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEInit
+JNIEXPORT void JNICALL
+Java_org_ocera_orte_JOrte_jORTEInit
   (JNIEnv *, jclass);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEInit
  * Method:    jORTESleepMs
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTESleepMs
+JNIEXPORT void JNICALL
+Java_org_ocera_orte_JOrte_jORTESleepMs
   (JNIEnv *, jclass, jlong);
 
 /*
@@ -28,7 +30,8 @@ JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTESleepMs
  * Method:    jORTEVerbositySetOptions
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEVerbositySetOptions
+JNIEXPORT void JNICALL
+Java_org_ocera_orte_JOrte_jORTEVerbositySetOptions
   (JNIEnv *, jclass, jstring);
 
 /*
@@ -36,7 +39,8 @@ JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEVerbositySetOptions
  * Method:    jORTEVerbositySetLogFile
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEVerbositySetLogFile
+JNIEXPORT void JNICALL
+Java_org_ocera_orte_JOrte_jORTEVerbositySetLogFile
   (JNIEnv *, jclass, jstring);
 
 /*
@@ -44,10 +48,11 @@ JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEVerbositySetLogFile
  * Method:    jORTEAppSendThread
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_ocera_orte_JOrte_jORTEAppSendThread
+JNIEXPORT void JNICALL
+Java_org_ocera_orte_JOrte_jORTEAppSendThread
   (JNIEnv *, jclass, jlong);
 
 #ifdef __cplusplus
 }
 #endif
-#endif
+#endif /* ifndef _Included_org_ocera_orte_JOrte */

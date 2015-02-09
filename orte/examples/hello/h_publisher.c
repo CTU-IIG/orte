@@ -3,18 +3,18 @@
  *
  *  DEBUG:  section                     h_publisher
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@
   #define printf rtl_printf
 #elif defined CONFIG_ORTE_RTAI
   #include <linux/module.h>
-  #include <rtai/compat.h>  
+  #include <rtai/compat.h>
   #define printf rt_printk
 #else
   #include <stdio.h>
@@ -46,18 +46,19 @@
 #define exit return
 #endif
 
-static ORTEDomain        *d=NULL;
+static ORTEDomain        *d = NULL;
 static char              instance2Send[64];
-static int               counter=0;
+static int               counter = 0;
 
 static void
-sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) {
-  char *instance=(char*)vinstance;
+sendCallBack(const ORTESendInfo *info, void *vinstance, void *sendCallBackParam)
+{
+  char *instance = (char *)vinstance;
 
   switch (info->status) {
     case NEED_DATA:
       printf("Sampling publication, count %d\n", counter);
-      sprintf(instance,"Hello Universe! (%d)",counter++);
+      sprintf(instance, "Hello Universe! (%d)", counter++);
       break;
     case CQL:  //criticalQueueLevel
       break;
@@ -65,23 +66,24 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam) 
 }
 
 void *
-publisherCreate(void *arg) {
+publisherCreate(void *arg)
+{
   ORTEPublication     *p;
   NtpTime             persistence, delay;
 
-  ORTETypeRegisterAdd(d,"HelloMsg",NULL,NULL,NULL,sizeof(instance2Send));
-  NTPTIME_BUILD(persistence,3);
-  NTPTIME_BUILD(delay,1); 
-  p=ORTEPublicationCreate(
-       d,
-      "Example HelloMsg",
-      "HelloMsg",
-      &instance2Send,
-      &persistence,
-      1,
-      sendCallBack,
-      NULL,
-      &delay);
+  ORTETypeRegisterAdd(d, "HelloMsg", NULL, NULL, NULL, sizeof(instance2Send));
+  NTPTIME_BUILD(persistence, 3);
+  NTPTIME_BUILD(delay, 1);
+  p = ORTEPublicationCreate(
+    d,
+    "Example HelloMsg",
+    "HelloMsg",
+    &instance2Send,
+    &persistence,
+    1,
+    sendCallBack,
+    NULL,
+    &delay);
   if (p == NULL) {
     printf("ORTEPublicationCreate failed\n");
   }
@@ -92,16 +94,17 @@ publisherCreate(void *arg) {
 #ifndef CONFIG_ORTE_RT
 
 int
-main(int argc, char *args[]) {
+main(int argc, char *args[])
+{
   ORTEInit();
   ORTEVerbositySetOptions("ALL.10");
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
+  d = ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN, NULL, NULL, ORTE_FALSE);
   if (!d) {
     printf("ORTEDomainAppCreate failed!\n");
     return 0;
   }
-  publisherCreate((void*)d);
-  while(1) 
+  publisherCreate((void *)d);
+  while (1)
     ORTESleepMs(1000);
 
   ORTESleepMs(10000);
@@ -111,42 +114,46 @@ main(int argc, char *args[]) {
 }
 
 #else
-char *verbosity="";
-MODULE_PARM(verbosity,"1s");
-MODULE_PARM_DESC(verbosity,"set verbosity level SECTION, up to LEVEL:...");
-char *manager="127.0.0.1";
-MODULE_PARM(manager,"1s");
-MODULE_PARM_DESC(manager,"IP address of local manager");
+char *verbosity = "";
+MODULE_PARM(verbosity, "1s");
+MODULE_PARM_DESC(verbosity, "set verbosity level SECTION, up to LEVEL:...");
+char *manager = "127.0.0.1";
+MODULE_PARM(manager, "1s");
+MODULE_PARM_DESC(manager, "IP address of local manager");
 MODULE_LICENSE("GPL");
 pthread_t thread;
 
 void *
-domainInit(void *arg) {
+domainInit(void *arg)
+{
   ORTEDomainProp dp;
 
   ORTEVerbositySetOptions(verbosity);
   ORTEDomainPropDefaultGet(&dp);
-  dp.appLocalManager=StringToIPAddress(manager);
-  d=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,&dp,NULL,ORTE_TRUE);
+  dp.appLocalManager = StringToIPAddress(manager);
+  d = ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN, &dp, NULL, ORTE_TRUE);
   return arg;
 }
 
 void *
-domainDestroy(void *arg) {
-  if (!d) return NULL;
+domainDestroy(void *arg)
+{
+  if (!d)
+    return NULL;
   ORTEDomainAppDestroy(d);
   return arg;
 }
 
 int
-init_module(void) {
+init_module(void)
+{
 
   ORTEInit();
-  pthread_create(&thread,NULL,&domainInit,NULL);  //allocate resources in RT 
-  pthread_join(thread,NULL);
+  pthread_create(&thread, NULL, &domainInit, NULL);  //allocate resources in RT
+  pthread_join(thread, NULL);
   if (d) {
-    ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE); //application start
-    if (pthread_create(&thread,NULL,&publisherCreate,NULL)!=0)
+    ORTEDomainStart(d, ORTE_TRUE, ORTE_FALSE, ORTE_TRUE, ORTE_FALSE, ORTE_TRUE); //application start
+    if (pthread_create(&thread, NULL, &publisherCreate, NULL) != 0)
       printf("pthread_create failed!\n");
   } else
     printf("ORTEDomainAppCreate failed!\n");
@@ -155,13 +162,13 @@ init_module(void) {
 
 
 void
-cleanup_module(void) {
-  if (!d) return;
-  pthread_join(thread,NULL);
-  pthread_create(&thread,NULL,&domainDestroy,NULL);
-  pthread_join(thread,NULL);
+cleanup_module(void)
+{
+  if (!d)
+    return;
+  pthread_join(thread, NULL);
+  pthread_create(&thread, NULL, &domainDestroy, NULL);
+  pthread_join(thread, NULL);
 }
 
-#endif
-
-
+#endif /* ifndef CONFIG_ORTE_RT */

@@ -40,37 +40,35 @@
 
 JNIEXPORT jint JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationWaitForSubscriptions
-(JNIEnv *env, jobject obj, jlong j_appDomain_handle,
- jobject obj_ntpT, jlong jretries, jlong jnoSubscriptions)
+  (JNIEnv *env, jobject obj, jlong j_appDomain_handle,
+  jobject obj_ntpT, jlong jretries, jlong jnoSubscriptions)
 {
   int            i;
   NtpTime        wait;
 
   #ifdef TEST_STAGE
-    printf(":c: jORTEPublicationWaitForSubscriptions called.. \n");
+  printf(":c: jORTEPublicationWaitForSubscriptions called.. \n");
   #endif
 
   wait = getNtpTime(env, obj_ntpT);
   #ifdef TEST_STAGE
-    printf(":c: check: wait: sec = %"PRId32", fract = %"PRIu32"  \n",
-           wait.seconds, wait.fraction);
+  printf(":c: check: wait: sec = %" PRId32 ", fract = %" PRIu32 "  \n",
+	 wait.seconds, wait.fraction);
   #endif
 
   // calling original native method
-  i = ORTEPublicationWaitForSubscriptions((ORTEPublication *) j_appDomain_handle,
-                                          wait,
-                                          (unsigned int) jretries,
-                                          (unsigned int) jnoSubscriptions);
-  if (i == ORTE_BAD_HANDLE)
-  {
+  i = ORTEPublicationWaitForSubscriptions((ORTEPublication *)j_appDomain_handle,
+					  wait,
+					  (unsigned int)jretries,
+					  (unsigned int)jnoSubscriptions);
+  if (i == ORTE_BAD_HANDLE) {
     printf(":c!: wait for subscription failed! [bad sub handle] \n");
     return ORTE_BAD_HANDLE;
   }
-  if (i == ORTE_TIMEOUT)
-  {
+  if (i == ORTE_TIMEOUT) {
     printf(":c!: wait for subscriptions - timeout! [number of subscriptions exhausted] \n");
     return ORTE_TIMEOUT;
   }
-  if (i == ORTE_OK);
+  if (i == ORTE_OK) ;
   return ORTE_OK;
 }

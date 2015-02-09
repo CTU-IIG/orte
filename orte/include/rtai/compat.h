@@ -1,19 +1,19 @@
 /*
  *  $Id: compat.h,v 0.0.0.1             2004/11/14
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik       petr@smoliku.cz
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik       petr@smoliku.cz
  *  Author - this code:	 Jan Kiszka        jan.kiszka@web.de
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -45,36 +45,40 @@
 
 typedef __u32 in_addr_t;
 
-static inline in_addr_t inet_addr(const char *cp)
+static inline in_addr_t
+inet_addr(const char *cp)
 {
-    return rt_inet_aton(cp);
+  return rt_inet_aton(cp);
 }
 
 
 static char inet_ntoa_buf[16];
 
-static inline char *inet_ntoa(struct in_addr in)
+static inline char *
+inet_ntoa(struct in_addr in)
 {
-    unsigned char *octet;
+  unsigned char *octet;
 
-    octet = (unsigned char *)&(in.s_addr);
-    sprintf(inet_ntoa_buf, "%u.%u.%u.%u", octet[0], octet[1], octet[2], octet[3]);
+  octet = (unsigned char *)&(in.s_addr);
+  sprintf(inet_ntoa_buf, "%u.%u.%u.%u", octet[0], octet[1], octet[2], octet[3]);
 
-    return inet_ntoa_buf;
+  return inet_ntoa_buf;
 }
 
 
 #define CLOCK_REALTIME  0
 
-static inline void clock_gettime(int dummy, struct timespec *time)
+static inline void
+clock_gettime(int dummy, struct timespec *time)
 {
-    count2timespec(rt_get_time(), time);
+  count2timespec(rt_get_time(), time);
 }
 
 
-static inline int atoi(const char* nptr)
+static inline int
+atoi(const char *nptr)
 {
-    return simple_strtol(nptr, (char **)NULL, 10);
+  return simple_strtol(nptr, (char **)NULL, 10);
 }
 
 
@@ -114,13 +118,14 @@ static inline int atoi(const char* nptr)
 #define recvfrom                    recvfrom_rt
 #define sendto                      sendto_rt
 
-static inline int close(int s)
+static inline int
+close(int s)
 {
-    int result;
+  int result;
 
-    while ((result = close_rt(s)) == -EAGAIN)
-        rt_sleep(nano2count(100000000));
-    return result;
+  while ((result = close_rt(s)) == -EAGAIN)
+    rt_sleep(nano2count(100000000));
+  return result;
 }
 
 #endif /* _COMPAT_H */

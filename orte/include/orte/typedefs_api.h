@@ -1,30 +1,30 @@
 /*
- *  $Id: typedefs_api.h,v 0.0.0.1       2003/08/21 
+ *  $Id: typedefs_api.h,v 0.0.0.1       2003/08/21
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
 #ifndef _TYPEDEFS_API_H
@@ -41,14 +41,14 @@ typedef struct CSTReader ORTESubscription;        //forward declaration
 /**
  * enum SubscriptionMode - mode of subscription
  * @PULLED: polled
- * @IMMEDIATE: using callback function 
+ * @IMMEDIATE: using callback function
  *
  * Specifies whether user application will poll for data or whether a callback function will be called by ORTE middleware when new data will be available.
  */
 typedef enum SubscriptionMode {
-        PULLED           = 0x01,
-        IMMEDIATE        = 0x02
-      } SubscriptionMode;
+  PULLED           = 0x01,
+  IMMEDIATE        = 0x02
+} SubscriptionMode;
 
 /**
  * enum SubscriptionType - type of subcsription
@@ -58,21 +58,21 @@ typedef enum SubscriptionMode {
  * Specifies which mode will be used for this subscription.
  */
 typedef enum SubscriptionType {
-        BEST_EFFORTS     = 0x01,
-        STRICT_RELIABLE  = 0x02
-      } SubscriptionType;
+  BEST_EFFORTS     = 0x01,
+  STRICT_RELIABLE  = 0x02
+} SubscriptionType;
 
 /**
  * enum ORTERecvStatus - status of a subscription
  * @NEW_DATA: new data has arrived
- * @DEADLINE: deadline has occurred 
+ * @DEADLINE: deadline has occurred
  *
  * Specifies which event has occurred in the subscription object.
  */
 typedef enum ORTERecvStatus {
-        NEW_DATA         = 0x01, 
-        DEADLINE         = 0x02
-      } ORTERecvStatus;
+  NEW_DATA         = 0x01,
+  DEADLINE         = 0x02
+} ORTERecvStatus;
 
 /**
  * enum ORTESendStatus - status of a publication
@@ -82,12 +82,12 @@ typedef enum ORTERecvStatus {
  * Specifies which event has occurred in the publication object. Critical level of transmit queue is specified as one of publication properties (ORTEPublProp.criticalQueueLevel).
  */
 typedef enum ORTESendStatus {
-        NEED_DATA        = 0x01,
-        CQL              = 0x02
-      } ORTESendStatus;
+  NEED_DATA        = 0x01,
+  CQL              = 0x02
+} ORTESendStatus;
 
 /**
- * struct ORTEIFProp - interface flags 
+ * struct ORTEIFProp - interface flags
  * @ifFlags: flags
  * @ipAddress: IP address
  *
@@ -103,7 +103,7 @@ typedef struct ORTEIFProp {
  * @enabled: ORTE_TRUE if multicast enabled otherwise ORTE_FALSE
  * @ttl: time-to-live (TTL) for sent datagrams
  * @loopBackEnabled: ORTE_TRUE if data should be received by sender itself otherwise ORTE_FALSE
- * @ipAddress: desired multicast IP address 
+ * @ipAddress: desired multicast IP address
  *
  * Properties for ORTE multicast subsystem which is not fully supported yet. Multicast IP address is assigned by the ORTE middleware itself.
  */
@@ -117,11 +117,11 @@ typedef struct ORTEMulticastProp {
 
 /**
  * struct ORTETypeGetMaxSizeParam - parameters for function ORTETypeGetMaxSize
- * @host_endian: 
- * @data_endian: 
- * @data: 
- * @max_size: 
- * @recv_size: 
+ * @host_endian:
+ * @data_endian:
+ * @data:
+ * @max_size:
+ * @recv_size:
  * @csize:
  *
  * It used to determine maximal size of intermal buffer for incomming data
@@ -143,7 +143,7 @@ typedef int (*ORTETypeGetMaxSize)(ORTEGetMaxSizeParam *gms, int num);
 
 /**
  * struct ORTETypeRegister - registered data type
- * @typeName: name of data type 
+ * @typeName: name of data type
  * @serialize: pointer to serialization function
  * @deserialize: pointer to deserialization function
  * @getMaxSize: pointer to function given maximal data length
@@ -156,7 +156,7 @@ typedef struct ORTETypeRegister {
   ORTETypeSerialize      serialize;
   ORTETypeDeserialize    deserialize;
   ORTETypeGetMaxSize     getMaxSize;
-  unsigned int		 maxSize;
+  unsigned int           maxSize;
 } ORTETypeRegister;
 
 /**
@@ -179,10 +179,10 @@ typedef struct ORTETypeRegister {
  * @maxBlockTime: timeout for send functions if sending queue is full (default 30s)
  */
 typedef struct ORTEDomainBaseProp {
-  unsigned int		 registrationMgrRetries;
-  NtpTime		 registrationMgrPeriod;
-  unsigned int		 registrationAppRetries;
-  NtpTime		 registrationAppPeriod;
+  unsigned int           registrationMgrRetries;
+  NtpTime                registrationMgrPeriod;
+  unsigned int           registrationAppRetries;
+  NtpTime                registrationAppPeriod;
   NtpTime                expirationTime;
   NtpTime                refreshPeriod;
   NtpTime                purgeTime;
@@ -200,7 +200,7 @@ typedef struct ORTEDomainBaseProp {
  * @metaBytesPerPacket: maximum number of bytes in single frame (default 1500B)
  * @metaBytesPerFastPacket: maximum number of bytes in single frame if transmitting queue has reached @criticalQueueLevel level (see @ORTEPublProp struct)
  * @metabitsPerACKBitmap: not supported yet (default 32)
- * @userMaxSerDeserSize: maximum number of user data in frame (default 0x3000B) 
+ * @userMaxSerDeserSize: maximum number of user data in frame (default 0x3000B)
  */
 typedef struct ORTEDomainWireProp {
   unsigned int           metaBytesPerPacket;
@@ -212,14 +212,14 @@ typedef struct ORTEDomainWireProp {
 /**
  * struct ORTEPublProp - properties of a publication
  * @topic: the name of the information in the Network that is published or subscribed to
- * @typeName: the name of the type of this data 
+ * @typeName: the name of the type of this data
  * @typeChecksum: a checksum that identifies the CDR-representation of the data
  * @expectsAck: indicates wherther publication expects to receive ACKs to its messages
  * @persistence: indicates how long the issue is valid
  * @reliabilityOffered: reliability policy as offered by the publication
  * @sendQueueSize: size of transmitting queue
  * @strength: precedence of the issue sent by the publication
- * @criticalQueueLevel: treshold for transmitting queue content length indicating the queue can became full immediately 
+ * @criticalQueueLevel: treshold for transmitting queue content length indicating the queue can became full immediately
  * @HBNornalRate: how often send HBs to subscription objects
  * @HBCQLRate: how often send HBs to subscription objects if transmittiong queue has reached @criticalQueueLevel
  * @HBMaxRetries: how many times retransmit HBs if no replay from target object has not been received
@@ -227,7 +227,7 @@ typedef struct ORTEDomainWireProp {
  */
 typedef struct ORTEPublProp {
   PathName               topic;
-  TypeName               typeName; 
+  TypeName               typeName;
   TypeChecksum           typeChecksum;
   Boolean                expectsAck;
   NtpTime                persistence;
@@ -263,11 +263,11 @@ typedef struct ORTESubsProp {
   //additional parameters
   NtpTime                deadline;
   uint32_t               mode;
-  IPAddress		 multicast;
+  IPAddress              multicast;
 }  ORTESubsProp;
 
 /**
- * struct ORTEAppInfo - 
+ * struct ORTEAppInfo -
  * @hostId: hostId of application
  * @appId: appId of application
  * @unicastIPAddressList: unicast IP addresses of the host on which the application runs (there can be multiple addresses on a multi-NIC host)
@@ -308,7 +308,7 @@ typedef struct ORTEPubInfo {
  * struct ORTEPubInfo - information about subscription
  * @topic: the name of the information in the Network that is published or subscribed to
  * @type: the name of the type of this data
- * @objectId: object with this subscription 
+ * @objectId: object with this subscription
  */
 typedef struct ORTESubInfo {
   const char            *topic;
@@ -348,7 +348,7 @@ typedef struct ORTESubsStatus {
  * @senderGUID: GUID of object who sent this information
  * @localTimeReceived: local timestamp when data were received
  * @remoteTimePublished: remote timestam when data were published
- * @sn: sequencial number of data 
+ * @sn: sequencial number of data
  * @data_endian: endianness of received data
  */
 typedef struct ORTERecvInfo {
@@ -368,7 +368,7 @@ typedef struct ORTERecvInfo {
  * @topic: the name of the information
  * @type: the name of the type of this information
  * @senderGUID: GUID of object who sent this information
- * @sn: sequencial number of information 
+ * @sn: sequencial number of information
  */
 typedef struct ORTESendInfo {
   ORTESendStatus        status;
@@ -380,11 +380,11 @@ typedef struct ORTESendInfo {
 
 //CallBackRoutines
 
-typedef void 
-(*ORTERecvCallBack)(const ORTERecvInfo *info,void *instance, void *recvCallBackParam);
-typedef void 
-(*ORTESendCallBack)(const ORTESendInfo *info,void *instance, void *sendCallBackParam);
-typedef ORTESubscription*
+typedef void
+(*ORTERecvCallBack)(const ORTERecvInfo *info, void *instance, void *recvCallBackParam);
+typedef void
+(*ORTESendCallBack)(const ORTESendInfo *info, void *instance, void *sendCallBackParam);
+typedef ORTESubscription *
 (*ORTESubscriptionPatternCallBack)(const char *topic, const char *type, void *Param);
 
 /**
@@ -394,49 +394,49 @@ typedef ORTESubscription*
  */
 typedef struct ORTEPublicationSendParam {
   void                  *instance;
-  int			data_endian;
+  int                   data_endian;
 } ORTEPublicationSendParam;
 
 //Pattern
 typedef Boolean
 (*ORTEPatternCheck)(const char *string);
 typedef Boolean
-(*ORTEPatternMatch)(const char *topic,const char *pattern,void *param);
+(*ORTEPatternMatch)(const char *topic, const char *pattern, void *param);
 extern Boolean
 ORTEPatternCheckDefault(const char *topic);
 extern Boolean
-ORTEPatternMatchDefault(const char *topic,const char *pattern,void *param);
+ORTEPatternMatchDefault(const char *topic, const char *pattern, void *param);
 extern void
-ORTEPatternRegister(ORTEDomain *d,ORTEPatternCheck check,
-     ORTEPatternMatch match,void *param);
+ORTEPatternRegister(ORTEDomain *d, ORTEPatternCheck check,
+		    ORTEPatternMatch match, void *param);
 
 
 //Manager
 typedef void
 (*ORTEOnRegFail)(void *param);
-typedef Boolean 
+typedef Boolean
 (*ORTEOnMgrNew)(const struct ORTEAppInfo *appInfo, void *param);
-typedef void 
+typedef void
 (*ORTEOnMgrDelete)(const struct ORTEAppInfo *appInfo, void *param);
 //Application
-typedef Boolean 
+typedef Boolean
 (*ORTEOnAppRemoteNew)(const struct ORTEAppInfo *appInfo, void *param);
 typedef void (*ORTEOnAppDelete)
-(const struct ORTEAppInfo *appInfo, void *param);
+  (const struct ORTEAppInfo *appInfo, void *param);
 //Publication
-typedef Boolean 
+typedef Boolean
 (*ORTEOnPubRemote)(const struct ORTEAppInfo *appInfo,
-                   const struct ORTEPubInfo *pubInfo, void *param);
-typedef void 
+		   const struct ORTEPubInfo *pubInfo, void *param);
+typedef void
 (*ORTEOnPubDelete)(const struct ORTEAppInfo *appInfo,
-                   const struct ORTEPubInfo *pubInfo, void *param);
+		   const struct ORTEPubInfo *pubInfo, void *param);
 //Subscription
-typedef Boolean 
+typedef Boolean
 (*ORTEOnSubRemote)(const struct ORTEAppInfo *appInfo,
-                   const struct ORTESubInfo *subInfo, void *param);
-typedef void 
+		   const struct ORTESubInfo *subInfo, void *param);
+typedef void
 (*ORTEOnSubDelete)(const struct ORTEAppInfo *appInfo,
-                   const struct ORTESubInfo *subInfo, void *param);
+		   const struct ORTESubInfo *subInfo, void *param);
 
 /**
  * struct ORTEDomainAppEvents - Domain event handlers of an application
@@ -491,12 +491,12 @@ typedef struct ORTEDomainAppEvents {
 } ORTEDomainAppEvents;
 
 /**
- * struct ORTETaskProp - ORTE task properties, not supported 
+ * struct ORTETaskProp - ORTE task properties, not supported
  * @realTimeEnabled: not supported
  * @smtStackSize: not supported
  * @smtPriority: not supported
  * @rmtStackSize: not supported
- * @rmtPriority: not supported 
+ * @rmtPriority: not supported
  */
 typedef struct ORTETasksProp {
   Boolean                realTimeEnabled;
@@ -504,21 +504,21 @@ typedef struct ORTETasksProp {
   int                    smtPriority;
   int                    rmtStackSize;
   int                    rmtPriority;
-} ORTETasksProp; 
+} ORTETasksProp;
 
 /**
- * struct ORTEDomainApp - domain properties 
+ * struct ORTEDomainApp - domain properties
  * @tasksProp: task properties
  * @IFProp: properties of network interfaces
- * @IFCount: number of network interfaces	       
+ * @IFCount: number of network interfaces
  * @baseProp: base properties (see @ORTEDomainBaseProp for details)
  * @wireProp: wire properties (see @ORTEDomainWireProp for details)
- * @multicast: multicast properties (see @ORTEMulticastProp for details)	       
- * @publPropDefault: default properties of publiciations (see @ORTEPublProp for details)      
+ * @multicast: multicast properties (see @ORTEMulticastProp for details)
+ * @publPropDefault: default properties of publiciations (see @ORTEPublProp for details)
  * @subsPropDefault: default properties of subscriptions (see @ORTESubsProp for details)
- * @mgrs: list of known managers 	       
- * @keys: access keys for managers 	       
- * @appLocalManager: IP address of local manager (default localhost)      
+ * @mgrs: list of known managers
+ * @keys: access keys for managers
+ * @appLocalManager: IP address of local manager (default localhost)
  * @listen: IP address to listen on
  * @version: string product version
  * @recvBuffSize: receiving queue length
@@ -539,7 +539,7 @@ typedef struct ORTEDomainProp {
   IPAddress              listen;
   char                   version[60];             //string product version
   int                    recvBuffSize;
-  int                    sendBuffSize;      
+  int                    sendBuffSize;
 } ORTEDomainProp;
 
 #ifdef __cplusplus
@@ -547,4 +547,3 @@ typedef struct ORTEDomainProp {
 #endif
 
 #endif  /* _TYPEDEFS_API_H */
-

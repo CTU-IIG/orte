@@ -38,7 +38,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
-(JNIEnv *env, jobject obj, jlong subs_handle)
+  (JNIEnv *env, jobject obj, jlong subs_handle)
 {
   int8_t        b;
   jlong         h;
@@ -47,96 +47,85 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
   int           flag_ok = 0;
 
   #ifdef TEST_STAGE
-    printf(":c: ORTESubscriptionDestroy() called.. \n");
+  printf(":c: ORTESubscriptionDestroy() called.. \n");
   #endif
 
-  do
-  {
-    if(subs_handle)
-    {
+  do {
+    if (subs_handle) {
       // call ORTE function
-      b = ORTESubscriptionDestroy((ORTESubscription *) subs_handle);
-      if (b == ORTE_BAD_HANDLE)
-      {
-        printf(":!c: subscription destroy failed! [bad sub handle] \n");
-        break;
+      b = ORTESubscriptionDestroy((ORTESubscription *)subs_handle);
+      if (b == ORTE_BAD_HANDLE) {
+	printf(":!c: subscription destroy failed! [bad sub handle] \n");
+	break;
       }
       #ifdef TEST_STAGE
-        printf(":c: subscription destroy succesfuly.. \n");
+      printf(":c: subscription destroy succesfuly.. \n");
       #endif
     }
 
     // free callBack object
     // find cls
     cls = (*env)->GetObjectClass(env, obj);
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // fieldID
     fid = (*env)->GetFieldID(env,
-                             cls,
-                             "callbackContextHandle",
-                             "J");
-    if(fid == 0)
-    {
+			     cls,
+			     "callbackContextHandle",
+			     "J");
+    if (fid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: fid = NULL! \n");
+      printf(":!c: fid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // get value
     h = (*env)->GetLongField(env, obj, fid);
-    if(h)
-    {
+    if (h) {
       //JavaVM *jvm;
       //jint ret;
-      JORTECallbackContext_t *ctx = *((JORTECallbackContext_t**)h);
-      *((JORTECallbackContext_t**)h) = 0;
-      if(ctx->obj)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->obj \n");
-        #endif
-        (*env)->DeleteGlobalRef(env, ctx->obj);
+      JORTECallbackContext_t *ctx = *((JORTECallbackContext_t **)h);
+      *((JORTECallbackContext_t **)h) = 0;
+      if (ctx->obj) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->obj \n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->obj);
       }
-      if(ctx->rinfo)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->rinfo\n");
-        #endif
-        (*env)->DeleteGlobalRef(env, ctx->rinfo);
+      if (ctx->rinfo) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->rinfo\n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->rinfo);
       }
-      if(ctx->msg)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->msg\n");
-        #endif
-        (*env)->DeleteGlobalRef(env, ctx->msg);
+      if (ctx->msg) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->msg\n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->msg);
       }
-      if(ctx->obj_buf)
-      {
-        #ifdef TEST_STAGE
-          printf(":c: deleting ctx->obj_buf\n");
-        #endif
-        (*env)->DeleteGlobalRef(env, ctx->obj_buf);
+      if (ctx->obj_buf) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->obj_buf\n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->obj_buf);
       }
       //
       free(ctx);
     }
     // set flag
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
   #ifdef TEST_STAGE
-     printf(":c: flag_ok = %d \n",flag_ok);
+  printf(":c: flag_ok = %d \n", flag_ok);
   #endif
 
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return 0;
   }
 

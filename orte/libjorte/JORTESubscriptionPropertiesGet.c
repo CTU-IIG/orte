@@ -37,13 +37,13 @@
 
 JNIEXPORT jobject JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
-(JNIEnv *env, jobject obj, jlong j_appDomain_handle)
+  (JNIEnv *env, jobject obj, jlong j_appDomain_handle)
 {
   // jni types
   jclass         cls_sp   = NULL; // SubsProp class
   jclass         cls_ntpT = NULL; // NtpTime class
   jobject        obj_sp   = NULL; // instance of SubsProp
-  jobject        obj_ntpT = NULL ;// instance of NtpTime
+  jobject        obj_ntpT = NULL; // instance of NtpTime
   jfieldID       fid      = NULL;
   jmethodID      mid;
   //
@@ -53,249 +53,230 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
   ORTESubsProp  *subs_prop = &sp;
 
   #ifdef TEST_STAGE
-    printf(":c: ORTESubscriptionPropertiesGet() called.. \n");
+  printf(":c: ORTESubscriptionPropertiesGet() called.. \n");
   #endif
 
   // create new SubsProps instance and set its fields
-  do
-  {
+  do {
     // calling ORTE function
     b = ORTESubscriptionPropertiesGet((ORTESubscription *)j_appDomain_handle,
-                                      subs_prop);
-    if(b == ORTE_BAD_HANDLE)
-    {
-     printf(":!c: subscription get properties failed!  [bad sub handle] \n");
-     break;
+				      subs_prop);
+    if (b == ORTE_BAD_HANDLE) {
+      printf(":!c: subscription get properties failed!  [bad sub handle] \n");
+      break;
     }
     // get cls
     cls_sp = findClass(env, "org.ocera.orte.types.SubsProp");
-    if(cls_sp == 0)
-    {
+    if (cls_sp == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: cls_sp = NULL \n");
+      printf(":!c: cls_sp = NULL \n");
       #endif
       break;
     }
     // call object constructor
     mid = (*env)->GetMethodID(env, cls_sp, "<init>", "()V");
-    if(mid == 0)
-    {
+    if (mid == 0) {
     #ifdef TEST_STAGE
-       printf(":!c: mid = NULL \n");
+      printf(":!c: mid = NULL \n");
       #endif
       break;
     }
     // new object
     obj_sp = (*env)->NewObject(env, cls_sp, mid);
-    if(obj_sp == 0)
-    {
+    if (obj_sp == 0) {
     #ifdef TEST_STAGE
-       printf(":!c: obj_sp = NULL \n");
+      printf(":!c: obj_sp = NULL \n");
       #endif
       break;
     }
     #ifdef TEST_STAGE
-      printf(":c: instance of 'org.ocera.orte.types.SubsProp' created..\n");
+    printf(":c: instance of 'org.ocera.orte.types.SubsProp' created..\n");
     #endif
     // ///////////////////////////////////////////////
     // setting object's fields
     /////////////////////////////////////////////////
     // set topic
-    if(!setTopic(env,cls_sp,obj_sp,(const char *)subs_prop->topic))
-    {
+    if (!setTopic(env, cls_sp, obj_sp, (const char *)subs_prop->topic)) {
       #ifdef TEST_STAGE
-        printf(":!c: setTopic() failed! \n");
+      printf(":!c: setTopic() failed! \n");
       #endif
       break;
     }
     /////////////////////////////////////////////////
     // set type
-    if(!setType(env,cls_sp,obj_sp,(const char *)subs_prop->typeName))
-    {
+    if (!setType(env, cls_sp, obj_sp, (const char *)subs_prop->typeName)) {
       #ifdef TEST_STAGE
-        printf(":!c: setType() failed! \n");
+      printf(":!c: setType() failed! \n");
       #endif
       break;
     }
     /////////////////////////////////////////////////
     // fieldID - typeChecksum
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "typeChecksum",
-                             "I");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "typeChecksum",
+			     "I");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetIntField(env,
-                        obj_sp,
-                        fid,
-                        (jint) subs_prop->typeChecksum);
+			obj_sp,
+			fid,
+			(jint)subs_prop->typeChecksum);
     /////////////////////////////////////////////////
     // fieldID - minSeparation
     cls_ntpT = findClass(env, "org.ocera.orte.types.NtpTime");
-    if(cls_ntpT == 0)
-    {
+    if (cls_ntpT == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: cls_ntpT = NULL \n");
+      printf(":!c: cls_ntpT = NULL \n");
       #endif
       break;
     }
     // call object constructor
     mid = (*env)->GetMethodID(env, cls_ntpT, "<init>", "(IJ)V");
-    if(mid == 0)
-    {
+    if (mid == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: mid = NULL \n");
+      printf(":!c: mid = NULL \n");
       #endif
       break;
     }
     // new object
     obj_ntpT = (*env)->NewObject(env,
-                                 cls_ntpT,
-                                 mid,
-                                 (jint)  subs_prop->minimumSeparation.seconds,
-                                 (jlong) subs_prop->minimumSeparation.fraction);
-    if(obj_ntpT == 0)
-    {
+				 cls_ntpT,
+				 mid,
+				 (jint)subs_prop->minimumSeparation.seconds,
+				 (jlong)subs_prop->minimumSeparation.fraction);
+    if (obj_ntpT == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: obj_ntpT = NULL \n");
+      printf(":!c: obj_ntpT = NULL \n");
       #endif
       break;
     }
     #ifdef TEST_STAGE
-      printf(":c: instance of 'org.ocera.orte.types.NtpTime' created..\n");
+    printf(":c: instance of 'org.ocera.orte.types.NtpTime' created..\n");
     #endif
     // set 'SubsProp' NtpTime's field
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "minSeparation",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "minSeparation",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetObjectField(env,
-                           obj_sp,
-                           fid,
-                           obj_ntpT);
+			   obj_sp,
+			   fid,
+			   obj_ntpT);
     /////////////////////////////////////////////////
     // fieldID - deadline
     // pointers cls_ntpT, obj_ntpT already set
     // new object
     obj_ntpT = (*env)->NewObject(env,
-                                 cls_ntpT,
-                                 mid,
-                                 (jint)  subs_prop->deadline.seconds,
-                                 (jlong) subs_prop->deadline.fraction);
-    if(obj_ntpT == 0)
-    {
+				 cls_ntpT,
+				 mid,
+				 (jint)subs_prop->deadline.seconds,
+				 (jlong)subs_prop->deadline.fraction);
+    if (obj_ntpT == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: obj_ntpT = NULL \n");
+      printf(":!c: obj_ntpT = NULL \n");
       #endif
       break;
     }
     #ifdef TEST_STAGE
-      printf(":c: instance of 'org.ocera.orte.types.NtpTime' created..\n");
+    printf(":c: instance of 'org.ocera.orte.types.NtpTime' created..\n");
     #endif
     // set 'SubsProp' NtpTime's field
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "deadline",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "deadline",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetObjectField(env,
-                           obj_sp,
-                           fid,
-                           obj_ntpT);
+			   obj_sp,
+			   fid,
+			   obj_ntpT);
     /////////////////////////////////////////////////
     // fieldID - recvQueueSize
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "recvQueueSize",
-                             "J");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "recvQueueSize",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                         obj_sp,
-                         fid,
-                         (jlong) subs_prop->recvQueueSize);
+			 obj_sp,
+			 fid,
+			 (jlong)subs_prop->recvQueueSize);
     /////////////////////////////////////////////////
     // fieldID - reliabilityRequested
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "reliabilityRequested",
-                             "J");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "reliabilityRequested",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                         obj_sp,
-                         fid,
-                         (jlong) subs_prop->reliabilityRequested);
+			 obj_sp,
+			 fid,
+			 (jlong)subs_prop->reliabilityRequested);
     /////////////////////////////////////////////////
     // fieldID - mode
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "mode",
-                             "I");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "mode",
+			     "I");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetIntField(env,
-                        obj_sp,
-                        fid,
-                        (jint) subs_prop->mode);
+			obj_sp,
+			fid,
+			(jint)subs_prop->mode);
     /////////////////////////////////////////////////
     // fieldID - multicastIPAddr
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "multicastIPAddr",
-                             "J");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "multicastIPAddr",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                         obj_sp,
-                         fid,
-                         (jlong) subs_prop->multicast);
+			 obj_sp,
+			 fid,
+			 (jlong)subs_prop->multicast);
     // set flag
     flag_ok = 1;
 
-  } while(0);
+  } while (0);
 
   // return created object
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return NULL;
   }
 

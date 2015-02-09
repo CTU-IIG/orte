@@ -17,9 +17,10 @@
 
 /* functions */
 
-rtems_task Init(
+rtems_task
+Init(
   rtems_task_argument argument
-);
+  );
 
 /* configuration information */
 
@@ -91,9 +92,9 @@ rtems_task Init(
 #define CONFIGURE_INIT_TASK_STACK_SIZE  (10*1024)
 #define CONFIGURE_INIT_TASK_PRIORITY    120
 #define CONFIGURE_INIT_TASK_INITIAL_MODES (RTEMS_PREEMPT | \
-                                           RTEMS_NO_TIMESLICE | \
-                                           RTEMS_NO_ASR | \
-                                           RTEMS_INTERRUPT_LEVEL(0))
+					   RTEMS_NO_TIMESLICE |	\
+					   RTEMS_NO_ASR | \
+					   RTEMS_INTERRUPT_LEVEL(0))
 
 #include <rtems/confdefs.h>
 

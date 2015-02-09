@@ -35,11 +35,10 @@
 
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_JOrte_jORTEInit
-(JNIEnv *env, jclass cls)
+  (JNIEnv *env, jclass cls)
 {
   ORTEInit();
   #ifdef TEST_STAGE
-    printf(":c: ORTE initialized [ORTEInit()].. \n");
+  printf(":c: ORTE initialized [ORTEInit()].. \n");
   #endif
 }
-

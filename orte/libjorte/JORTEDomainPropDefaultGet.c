@@ -36,26 +36,24 @@
 
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_types_DomainProp_jORTEDomainPropDefaultGet
-(JNIEnv *env, jclass cls)
+  (JNIEnv *env, jclass cls)
 {
   ORTEDomainProp *dprop;
 
   // memory allocation
-  dprop = (ORTEDomainProp *) malloc(sizeof(ORTEDomainProp));
-  if (dprop == NULL)
-  {
-     printf(":!c: not enough memory to alocate DomainProp!");
-     return 0;
+  dprop = (ORTEDomainProp *)malloc(sizeof(ORTEDomainProp));
+  if (dprop == NULL) {
+    printf(":!c: not enough memory to alocate DomainProp!");
+    return 0;
   }
   // call ORTE function
-  if (!ORTEDomainPropDefaultGet(dprop))
-  {
+  if (!ORTEDomainPropDefaultGet(dprop)) {
     printf(":!c: ORTEDomainPropDefaultGet() failed.. \n");
     free(dprop);
     return 0;
   }
   #ifdef TEST_STAGE
-    printf(":c: default domain properties created.. \n");
+  printf(":c: default domain properties created.. \n");
   #endif
-  return ((jlong) dprop);
+  return ((jlong)dprop);
 }

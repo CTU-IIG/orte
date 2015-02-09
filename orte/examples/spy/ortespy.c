@@ -1,33 +1,33 @@
 /*
- *  $Id: ortespy.c,v 0.0.0.1            2003/10/07 
+ *  $Id: ortespy.c,v 0.0.0.1            2003/10/07
  *
  *  DEBUG:  section                     ortespy
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
- */ 
+ *
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,21 +53,23 @@
 #endif
 
 static ORTEDomain              *d;
-static NtpTime                 deadline,minimumSeparation;
+static NtpTime                 deadline, minimumSeparation;
 static int32_t                 instanceRecv;
 
 static void
-recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) {
+recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
+{
   char lbuff[MAX_STRING_NTPTIME_LENGTH];
   char rbuff[MAX_STRING_NTPTIME_LENGTH];
+
   switch (info->status) {
     case NEW_DATA:
       printf("| %-10s | %-9s | %-9s | %-18s | %-18s |\n",
-             "NEW_DATA",
-             info->topic,
-             info->type,
-             NtpTimeToStringUs(info->localTimeReceived, lbuff),
-             NtpTimeToStringUs(info->remoteTimePublished, rbuff));
+	     "NEW_DATA",
+	     info->topic,
+	     info->type,
+	     NtpTimeToStringUs(info->localTimeReceived, lbuff),
+	     NtpTimeToStringUs(info->remoteTimePublished, rbuff));
       break;
     case DEADLINE:
 //      printf("deadline occurred\n");
@@ -75,25 +77,29 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam) 
   }
 }
 
-ORTESubscription*
-subscriptionCallBack(const char *topic, const char *type, void *param) {
-  ORTETypeRegisterAdd(d,type,NULL,NULL,NULL,0);   
-  if (strcmp((const char *)topic, (const char*)"Red")==0) return NULL;
+ORTESubscription *
+subscriptionCallBack(const char *topic, const char *type, void *param)
+{
+  ORTETypeRegisterAdd(d, type, NULL, NULL, NULL, 0);
+  if (strcmp((const char *)topic, (const char *)"Red") == 0)
+    return NULL;
   return ORTESubscriptionCreate(
-        d,
-        IMMEDIATE,
-        BEST_EFFORTS,
-        topic,
-        type,
-        &instanceRecv,
-        &deadline,
-        &minimumSeparation,
-        recvCallBack,
-        NULL,
-        IPADDRESS_INVALID);
+	   d,
+	   IMMEDIATE,
+	   BEST_EFFORTS,
+	   topic,
+	   type,
+	   &instanceRecv,
+	   &deadline,
+	   &minimumSeparation,
+	   recvCallBack,
+	   NULL,
+	   IPADDRESS_INVALID);
 }
 
-static void usage(void) {
+static void
+usage(void)
+{
   printf("usage: ortespy <parameters> \n");
   printf("  -d, --domain <domain>         working manager domain\n");
   printf("  -v, --verbosity <level>       set verbosity level SECTION, up to LEVEL:...\n");
@@ -108,77 +114,77 @@ static void usage(void) {
   printf("  -h, --help                    this usage screen\n");
 }
 
-int main(int argc,char *argv[]) {
+int
+main(int argc, char *argv[])
+{
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   static struct option long_opts[] = {
-    { "domain",1,0, 'd' },
-    { "verbosity",1,0, 'v' },
-    { "refresh",1,0, 'R' },
-    { "purge",1,0, 'P' },
-    { "expiration",1,0, 'E' },
-    { "metaMulticast",1,0, 'I' },
-    { "logfile",1,0, 'l' },
-    { "version",0,0, 'V' },
+    { "domain", 1, 0, 'd' },
+    { "verbosity", 1, 0, 'v' },
+    { "refresh", 1, 0, 'R' },
+    { "purge", 1, 0, 'P' },
+    { "expiration", 1, 0, 'E' },
+    { "metaMulticast", 1, 0, 'I' },
+    { "logfile", 1, 0, 'l' },
+    { "version", 0, 0, 'V' },
     { "help",  0, 0, 'h' },
     { 0, 0, 0, 0}
   };
 #endif
-  ORTEDomainProp          dp; 
-  int                     opt,domain=ORTE_DEFAULT_DOMAIN;
-  
+  ORTEDomainProp          dp;
+  int                     opt, domain = ORTE_DEFAULT_DOMAIN;
+
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
-  NTPTIME_BUILD(deadline,3); 
-  NTPTIME_BUILD(minimumSeparation,0); 
+  NTPTIME_BUILD(deadline, 3);
+  NTPTIME_BUILD(minimumSeparation, 0);
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
-  while ((opt = getopt_long(argc, argv, "d:v:R:E:I:P:l:Vh",&long_opts[0], NULL)) != EOF) {
+  while ((opt = getopt_long(argc, argv, "d:v:R:E:I:P:l:Vh", &long_opts[0], NULL)) != EOF) {
 #else
   while ((opt = getopt(argc, argv, "d:v:R:E:I:P:l:Vh")) != EOF) {
 #endif
     switch (opt) {
       case 'd':
-        domain=strtol(optarg,NULL,0);
-        break;
+	domain = strtol(optarg, NULL, 0);
+	break;
       case 'v':
-        ORTEVerbositySetOptions(optarg);
-        break;
+	ORTEVerbositySetOptions(optarg);
+	break;
       case 'R':
-        NtpTimeAssembFromMs(dp.baseProp.refreshPeriod,strtol(optarg,NULL,0),0);
-        break;
+	NtpTimeAssembFromMs(dp.baseProp.refreshPeriod, strtol(optarg, NULL, 0), 0);
+	break;
       case 'P':
-        NtpTimeAssembFromMs(dp.baseProp.purgeTime,strtol(optarg,NULL,0),0);
-        break;
+	NtpTimeAssembFromMs(dp.baseProp.purgeTime, strtol(optarg, NULL, 0), 0);
+	break;
       case 'E':
-        NtpTimeAssembFromMs(dp.baseProp.expirationTime,strtol(optarg,NULL,0),0);
-        break;
+	NtpTimeAssembFromMs(dp.baseProp.expirationTime, strtol(optarg, NULL, 0), 0);
+	break;
       case 'I':
-        dp.multicast.enabled=ORTE_TRUE;
-        dp.multicast.ipAddress=StringToIPAddress(optarg);
-        break;	
+	dp.multicast.enabled = ORTE_TRUE;
+	dp.multicast.ipAddress = StringToIPAddress(optarg);
+	break;
       case 'l':
-        ORTEVerbositySetLogFile(optarg);
+	ORTEVerbositySetLogFile(optarg);
       case 'V':
-        printf("Open Real-Time Ethernet (%s).\n",dp.version);
-        exit(0);
-        break;
+	printf("Open Real-Time Ethernet (%s).\n", dp.version);
+	exit(0);
+	break;
       case 'h':
       default:
-        usage();
-        exit(opt == 'h' ? 0 : 1);
+	usage();
+	exit(opt == 'h' ? 0 : 1);
     }
   }
-  //Create application     
+  //Create application
   printf("|------------------------------------------------------------------------------|\n");
-  printf("| %-10s | %-9s | %-9s | %-18s | %-18s |\n", 
-         "status", "type","topic","time received", "time sent");
+  printf("| %-10s | %-9s | %-9s | %-18s | %-18s |\n",
+	 "status", "type", "topic", "time received", "time sent");
   printf("|------------------------------------------------------------------------------|\n");
-  d=ORTEDomainAppCreate(domain,&dp,NULL,ORTE_TRUE);
-  ORTEDomainAppSubscriptionPatternAdd(d,"*","*",subscriptionCallBack,NULL);
-  ORTEDomainStart(d,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE,ORTE_FALSE,ORTE_TRUE);
-  while (1) {
+  d = ORTEDomainAppCreate(domain, &dp, NULL, ORTE_TRUE);
+  ORTEDomainAppSubscriptionPatternAdd(d, "*", "*", subscriptionCallBack, NULL);
+  ORTEDomainStart(d, ORTE_TRUE, ORTE_FALSE, ORTE_TRUE, ORTE_FALSE, ORTE_TRUE);
+  while (1)
     ORTESleepMs(1000);
-  }
   exit(0);
 }
-

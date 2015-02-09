@@ -35,17 +35,16 @@
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_tools_JORTEConversions_StringToIPAddress
-(JNIEnv *env, jclass class, jstring jstrIP)
+  (JNIEnv *env, jclass class, jstring jstrIP)
 {
   const char *charIP;
   long        longIP;
 
   // get IP
-  charIP = (*env)->GetStringUTFChars(env,jstrIP,0);
+  charIP = (*env)->GetStringUTFChars(env, jstrIP, 0);
   // call ORTE function
   longIP = (long)StringToIPAddress(charIP);
   // free memory
   (*env)->ReleaseStringUTFChars(env, jstrIP, charIP);
   return(longIP);
 }
-

@@ -8,12 +8,12 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_types_DomainEvents_jORTEDomainEventsDestroy
-(JNIEnv *env, jobject obj, jlong handle)
+  (JNIEnv *env, jobject obj, jlong handle)
 {
-  free((void*)handle);
+  free((void *)handle);
 
   #ifdef TEST_STAGE
-     printf(":c: events destroyed.. \n");
+  printf(":c: events destroyed.. \n");
   #endif
 
   return 1;

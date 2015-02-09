@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTESubscriptionCreate
  * Signature: (JIILjava/lang/String;Ljava/lang/String;ILorg/ocera/orte/types/MessageData;Lorg/ocera/orte/types/NtpTime;Lorg/ocera/orte/types/NtpTime;Lorg/ocera/orte/SubscriptionCallback;J)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   (JNIEnv *, jobject, jlong, jint, jint, jstring, jstring, jobject, jint, jobject, jobject, jobject, jobject, jlong);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
  * Method:    jORTESubscriptionDestroy
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -28,7 +30,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionDes
  * Method:    jORTESubscriptionPropertiesGet
  * Signature: (J)Lorg/ocera/orte/types/SubsProp;
  */
-JNIEXPORT jobject JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
+JNIEXPORT jobject JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesGet
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -36,7 +39,8 @@ JNIEXPORT jobject JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionProp
  * Method:    jORTESubscriptionPropertiesSet
  * Signature: (JLorg/ocera/orte/types/SubsProp;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
   (JNIEnv *, jobject, jlong, jobject);
 
 /*
@@ -44,7 +48,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionPro
  * Method:    jORTESubscriptionGetStatus
  * Signature: (J)Lorg/ocera/orte/types/Status;
  */
-JNIEXPORT jobject JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionGetStatus
+JNIEXPORT jobject JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionGetStatus
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -52,7 +57,8 @@ JNIEXPORT jobject JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionGetS
  * Method:    jORTESubscriptionWaitForPublications
  * Signature: (JLorg/ocera/orte/types/NtpTime;JJ)I
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionWaitForPublications
+JNIEXPORT jint JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionWaitForPublications
   (JNIEnv *, jobject, jlong, jobject, jlong, jlong);
 
 /*
@@ -60,10 +66,11 @@ JNIEXPORT jint JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionWaitFor
  * Method:    jORTESubscriptionPull
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_Subscription_jORTESubscriptionPull
+JNIEXPORT jint JNICALL
+Java_org_ocera_orte_Subscription_jORTESubscriptionPull
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }
 #endif
-#endif
+#endif /* ifndef _Included_org_ocera_orte_Subscription */

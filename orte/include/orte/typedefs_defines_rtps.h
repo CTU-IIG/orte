@@ -1,32 +1,32 @@
 /*
- *  $Id: typedefs_defines_rtps.h,v 0.0.0.1 2003/08/21 
+ *  $Id: typedefs_defines_rtps.h,v 0.0.0.1 2003/08/21
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
- 
+
 #ifndef _TYPEDEFS_DEFINES_RTPS_H
 #define _TYPEDEFS_DEFINES_RTPS_H
 
@@ -52,10 +52,10 @@ typedef int32_t                  TypeChecksum;
 /*             Wire Protocol Specification (WPS)                 */
 /*****************************************************************/
 
-         
+
 /*
   Host identifier.
-   
+
   for example: IP address working nodes
 */
 typedef uint32_t                 HostId;
@@ -63,9 +63,9 @@ typedef uint32_t                 HostId;
 
 /*
   Application identifier.
- 
+
   composed from: 3 bytes - instance Id
-                 1 byte  - appKind (1 - ManagedApplication, 2 - Manager) 
+                 1 byte  - appKind (1 - ManagedApplication, 2 - Manager)
 */
 typedef uint32_t                 AppId;
 #define AID_UNKNOWN              0x00
@@ -74,9 +74,9 @@ typedef uint32_t                 AppId;
 
 /*
   Object identifier.
-   
+
   composed from: 3 bytes - instance Id
-                 1 byte  - objKind  
+                 1 byte  - objKind
 */
 typedef uint32_t                 ObjectId;
 
@@ -105,45 +105,45 @@ typedef uint32_t                 ObjectId;
 #define OID_RESMETAOBJ       0xC0
 
 typedef struct {
-       HostId                hid;
-       AppId                 aid;
-       ObjectId              oid;
-     } GUID_RTPS;    
+  HostId                hid;
+  AppId                 aid;
+  ObjectId              oid;
+} GUID_RTPS;
 
 typedef struct {
-       int8_t                major;
-       int8_t                minor;
-     } VendorId;
+  int8_t                major;
+  int8_t                minor;
+} VendorId;
 
-#define VENDOR_ID_UNKNOWN(id)    {id.major=0;id.minor=0;}
-#define VENDOR_ID_RTI(id)        {id.major=1;id.minor=1;}
-#define VENDOR_ID_OCERA(id)      {id.major=0;id.minor=0;}
-
-typedef struct {
-       int8_t                major;
-       int8_t                minor;
-     } ProtocolVersion;
-
-#define PROTOCOL_VERSION_1_0(pv) {pv.major=1;pv.minor=0;}
+#define VENDOR_ID_UNKNOWN(id)    {id.major = 0; id.minor = 0; }
+#define VENDOR_ID_RTI(id)        {id.major = 1; id.minor = 1; }
+#define VENDOR_ID_OCERA(id)      {id.major = 0; id.minor = 0; }
 
 typedef struct {
-       int32_t               high;
-       int32_t               low;
-     } SequenceNumber;
+  int8_t                major;
+  int8_t                minor;
+} ProtocolVersion;
+
+#define PROTOCOL_VERSION_1_0(pv) {pv.major = 1; pv.minor = 0; }
+
+typedef struct {
+  int32_t               high;
+  int32_t               low;
+} SequenceNumber;
 
 
-#define SEQUENCE_NUMBER_NONE(sn)    {sn.high=0;sn.low=0;}
-#define SEQUENCE_NUMBER_UNKNOWN(sn) {sn.high=0x7fffffff;sn.low=0xffffffff;}
+#define SEQUENCE_NUMBER_NONE(sn)    {sn.high = 0; sn.low = 0; }
+#define SEQUENCE_NUMBER_UNKNOWN(sn) {sn.high = 0x7fffffff; sn.low = 0xffffffff; }
 
 
 typedef struct {
-       int32_t               seconds;    /* time in seconds */
-       uint32_t              fraction;   /* time in seconds / 2^32 */
-     } NtpTime;
+  int32_t               seconds;         /* time in seconds */
+  uint32_t              fraction;        /* time in seconds / 2^32 */
+} NtpTime;
 
-#define NTPTIME_ZERO(t)          {t.seconds=0;t.fraction=0;}
-#define NTPTIME_BUILD(t,s)       {t.seconds=s;t.fraction=0;}
-#define NTPTIME_INFINITE(t)      {t.seconds=0xffffffff;t.fraction=0;}
+#define NTPTIME_ZERO(t)          {t.seconds = 0; t.fraction = 0; }
+#define NTPTIME_BUILD(t, s)       {t.seconds = s; t.fraction = 0; }
+#define NTPTIME_INFINITE(t)      {t.seconds = 0xffffffff; t.fraction = 0; }
 
 typedef uint32_t                 IPAddress;
 
@@ -154,38 +154,38 @@ typedef uint32_t                 Port;
 #define PORT_INVALID             0
 
 typedef enum {
-       PAD                       = 0x01,
-       VAR                       = 0x02,
-       ISSUE                     = 0x03,
-       ACK                       = 0x06,
-       HEARTBEAT                 = 0x07,
-       GAP                       = 0x08,
-       INFO_TS                   = 0x09,
-       INFO_SRC                  = 0x0c,
-       INFO_REPLY                = 0x0d,
-       INFO_DST                  = 0x0e,
-       APP_QUIT                  = 0x90
-     } SubmessageId;
+  PAD                       = 0x01,
+  VAR                       = 0x02,
+  ISSUE                     = 0x03,
+  ACK                       = 0x06,
+  HEARTBEAT                 = 0x07,
+  GAP                       = 0x08,
+  INFO_TS                   = 0x09,
+  INFO_SRC                  = 0x0c,
+  INFO_REPLY                = 0x0d,
+  INFO_DST                  = 0x0e,
+  APP_QUIT                  = 0x90
+} SubmessageId;
 
 typedef struct {
-       ProtocolVersion           sourceVersion;
-       VendorId                  sourceVendorId;
-       HostId                    sourceHostId;
-       AppId                     sourceAppId;
-       HostId                    destHostId;
-       AppId                     destAppId;
-       IPAddress                 unicastReplyIPAddress;
-       Port                      unicastReplyPort;
-       IPAddress                 multicastReplyIPAddress;
-       Port                      multicastReplyPort;
-       Boolean                   haveTimestamp;
-       NtpTime                   timestamp;          
-     } MessageInterpret;
+  ProtocolVersion           sourceVersion;
+  VendorId                  sourceVendorId;
+  HostId                    sourceHostId;
+  AppId                     sourceAppId;
+  HostId                    destHostId;
+  AppId                     destAppId;
+  IPAddress                 unicastReplyIPAddress;
+  Port                      unicastReplyPort;
+  IPAddress                 multicastReplyIPAddress;
+  Port                      multicastReplyPort;
+  Boolean                   haveTimestamp;
+  NtpTime                   timestamp;
+} MessageInterpret;
 
 
 #define PID_PAD                             0x00
 #define PID_SENTINEL                        0x01
-#define PID_EXPIRATION_TIME                 0x02     
+#define PID_EXPIRATION_TIME                 0x02
 #define PID_PERSISTENCE                     0x03
 #define PID_MINIMUM_SEPARATION              0x04
 #define PID_TOPIC                           0x05
@@ -220,40 +220,40 @@ typedef uint16_t ParameterLength;
 
 /* State Machines */
 typedef enum {
-        MAYSENDHB                           = 0x01,
-        MUSTSENDHB                          = 0x02,
-        SENDHB                              = 0x03
-      } StateMachineHB;
+  MAYSENDHB                           = 0x01,
+  MUSTSENDHB                          = 0x02,
+  SENDHB                              = 0x03
+} StateMachineHB;
 
 typedef enum {
-        NOTHNIGTOSEND                       = 0x01,
-        MUSTSENDDATA                        = 0x02
-      } StateMachineSend;
+  NOTHNIGTOSEND                       = 0x01,
+  MUSTSENDDATA                        = 0x02
+} StateMachineSend;
 
 typedef enum {
-        NEW                                 = 0x01,
-        TOSEND                              = 0x02,
-        UNDERWAY                            = 0x03,
-        UNACKNOWLEDGED                      = 0x04,
-        ANNOUCED                            = 0x05,
-        ACKNOWLEDGED                        = 0x06
-      } StateMachineChFReader;
+  NEW                                 = 0x01,
+  TOSEND                              = 0x02,
+  UNDERWAY                            = 0x03,
+  UNACKNOWLEDGED                      = 0x04,
+  ANNOUCED                            = 0x05,
+  ACKNOWLEDGED                        = 0x06
+} StateMachineChFReader;
 
 typedef enum {
-        WAITING                             = 0x01,
-        PULLING                             = 0x02,
-        ACKPENDING                          = 0x03
-      } StateMachineACK;
+  WAITING                             = 0x01,
+  PULLING                             = 0x02,
+  ACKPENDING                          = 0x03
+} StateMachineACK;
 
 typedef enum {
-        FUTURE                              = 0x01,
-        REQUESTED                           = 0x02,
-        MISSING                             = 0x03,
-        RECEIVED                            = 0x04
-      } StateMachineChFWriter;
+  FUTURE                              = 0x01,
+  REQUESTED                           = 0x02,
+  MISSING                             = 0x03,
+  RECEIVED                            = 0x04
+} StateMachineChFWriter;
 
 #ifdef __cplusplus
 } /* extern "C"*/
 #endif
-            
+
 #endif /* _TYPEDEFS_DEFINES_RTPS_H */

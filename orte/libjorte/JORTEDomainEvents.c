@@ -18,74 +18,67 @@ onRegFail(void *param)
   jclass           cls;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onRegFail()' called.. \n");
+  printf(":c: event func. 'onRegFail()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onRegFail",
-                              "()V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onRegFail",
+			      "()V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid);
+			   domain_events_cont->obj_de,
+			   mid);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -106,84 +99,76 @@ onMgrNew(const struct ORTEAppInfo *appInfo, void *param)
   jobject          obj_ainfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onMgrNew()' called.. \n");
+  printf(":c: event func. 'onMgrNew()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onMgrNew",
-                              "(Lorg/ocera/orte/types/AppInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onMgrNew",
+			      "(Lorg/ocera/orte/types/AppInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -204,84 +189,76 @@ onMgrDelete(const struct ORTEAppInfo *appInfo, void *param)
   jobject          obj_ainfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onMgrDelete()' called.. \n");
+  printf(":c: event func. 'onMgrDelete()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onMgrDelete",
-                              "(Lorg/ocera/orte/types/AppInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onMgrDelete",
+			      "(Lorg/ocera/orte/types/AppInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -303,85 +280,77 @@ onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param)
   jobject          obj_ainfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onAppRemoteNew()' called.. \n");
+  printf(":c: event func. 'onAppRemoteNew()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
 
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onAppRemoteNew",
-                              "(Lorg/ocera/orte/types/AppInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onAppRemoteNew",
+			      "(Lorg/ocera/orte/types/AppInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -402,84 +371,76 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
   jobject          obj_ainfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onAppDelete()' called.. \n");
+  printf(":c: event func. 'onAppDelete()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onAppDelete",
-                              "(Lorg/ocera/orte/types/AppInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onAppDelete",
+			      "(Lorg/ocera/orte/types/AppInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -492,8 +453,8 @@ onAppDelete(const struct ORTEAppInfo *appInfo, void *param)
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onPubRemoteNew(const struct ORTEAppInfo *appInfo,
-               const struct ORTEPubInfo *pubInfo,
-               void *param)
+	       const struct ORTEPubInfo *pubInfo,
+	       void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
@@ -503,94 +464,85 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
   jobject          obj_pinfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onPubRemoteNew()' called.. \n");
+  printf(":c: event func. 'onPubRemoteNew()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create PubInfo instance
     obj_pinfo = createPubInfo(env, pubInfo);
-    if(obj_pinfo == 0)
-    {
+    if (obj_pinfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_pinfo = NULL! \n");
+      printf(":!c: obj_pinfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onPubRemoteNew",
-                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onPubRemoteNew",
+			      "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo,
-                           obj_pinfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo,
+			   obj_pinfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -603,8 +555,8 @@ onPubRemoteNew(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
-                   const struct ORTEPubInfo *pubInfo,
-                   void *param)
+		   const struct ORTEPubInfo *pubInfo,
+		   void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
@@ -614,94 +566,85 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
   jobject          obj_pinfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onPubRemoteChanged()' called.. \n");
+  printf(":c: event func. 'onPubRemoteChanged()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create PubInfo instance
     obj_pinfo = createPubInfo(env, pubInfo);
-    if(obj_pinfo == 0)
-    {
+    if (obj_pinfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_pinfo = NULL! \n");
+      printf(":!c: obj_pinfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onPubRemoteChanged",
-                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onPubRemoteChanged",
+			      "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo,
-                           obj_pinfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo,
+			   obj_pinfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -716,8 +659,8 @@ onPubRemoteChanged(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onPubDelete(const struct ORTEAppInfo *appInfo,
-            const struct ORTEPubInfo *pubInfo,
-            void *param)
+	    const struct ORTEPubInfo *pubInfo,
+	    void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
@@ -727,94 +670,85 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
   jobject          obj_pinfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onPubDelete()' called.. \n");
+  printf(":c: event func. 'onPubDelete()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create PubInfo instance
     obj_pinfo = createPubInfo(env, pubInfo);
-    if(obj_pinfo == 0)
-    {
+    if (obj_pinfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_pinfo = NULL! \n");
+      printf(":!c: obj_pinfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onPubDelete",
-                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onPubDelete",
+			      "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/PubInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo,
-                           obj_pinfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo,
+			   obj_pinfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -827,8 +761,8 @@ onPubDelete(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onSubRemoteNew(const struct ORTEAppInfo *appInfo,
-               const struct ORTESubInfo *subInfo,
-               void *param)
+	       const struct ORTESubInfo *subInfo,
+	       void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
@@ -838,94 +772,85 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
   jclass           cls;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onSubRemoteNew()' called.. \n");
+  printf(":c: event func. 'onSubRemoteNew()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create SubInfo instance
     obj_sinfo = createSubInfo(env, subInfo);
-    if(obj_sinfo == 0)
-    {
+    if (obj_sinfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_sinfo = NULL! \n");
+      printf(":!c: obj_sinfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onSubRemoteNew",
-                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onSubRemoteNew",
+			      "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo,
-                           obj_sinfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo,
+			   obj_sinfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -938,8 +863,8 @@ onSubRemoteNew(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
-                   const struct ORTESubInfo *subInfo,
-                   void *param)
+		   const struct ORTESubInfo *subInfo,
+		   void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
@@ -949,94 +874,85 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
   jobject          obj_sinfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onSubRemoteChanged()' called.. \n");
+  printf(":c: event func. 'onSubRemoteChanged()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create SubInfo instance
     obj_sinfo = createSubInfo(env, subInfo);
-    if(obj_sinfo == 0)
-    {
+    if (obj_sinfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_sinfo = NULL! \n");
+      printf(":!c: obj_sinfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onSubRemoteChanged",
-                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onSubRemoteChanged",
+			      "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo,
-                           obj_sinfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo,
+			   obj_sinfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 
@@ -1049,8 +965,8 @@ onSubRemoteChanged(const struct ORTEAppInfo *appInfo,
 // /////////////////////////////////////////////////////////////////////
 Boolean
 onSubDelete(const struct ORTEAppInfo *appInfo,
-            const struct ORTESubInfo *subInfo,
-            void *param)
+	    const struct ORTESubInfo *subInfo,
+	    void *param)
 {
 // ///////////////////////////////// SPOLECNA CAST //
   JavaVM          *jvm = NULL;
@@ -1060,94 +976,85 @@ onSubDelete(const struct ORTEAppInfo *appInfo,
   jobject          obj_sinfo;
   jmethodID        mid;
   //
-  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t*) param;
+  JORTEDomainEventsContext_t   *domain_events_cont = (JORTEDomainEventsContext_t *)param;
   int flag_ok = 0;
 
   #ifdef TEST_STAGE
-      printf(":c: event func. 'onSubDelete()' called.. \n");
+  printf(":c: event func. 'onSubDelete()' called.. \n");
   #endif
 
-  do
-  {
+  do {
 // ///////////////////////////////// SPOLECNA CAST //
-    if(domain_events_cont->jvm == 0)
-    {
+    if (domain_events_cont->jvm == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: jvm = NULL! \n");
+      printf(":!c: jvm = NULL! \n");
      #endif
-     break;
+      break;
     }
     jvm = domain_events_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: env = NULL! \n");
+      printf(":!c: env = NULL! \n");
      #endif
-     break;
+      break;
     }
     // find class
     cls = findClass(env, "org.ocera.orte.types.DomainEvents");
-    if(cls == 0)
-    {
+    if (cls == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: cls = NULL! \n");
+      printf(":!c: cls = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create AppInfo instance
     obj_ainfo = createAppInfo(env, appInfo);
-    if(obj_ainfo == 0)
-    {
+    if (obj_ainfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_ainfo = NULL! \n");
+      printf(":!c: obj_ainfo = NULL! \n");
      #endif
-     break;
+      break;
     }
     // create SubInfo instance
     obj_sinfo = createSubInfo(env, subInfo);
-    if(obj_sinfo == 0)
-    {
+    if (obj_sinfo == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: obj_sinfo = NULL! \n");
+      printf(":!c: obj_sinfo = NULL! \n");
      #endif
-     break;
+      break;
     }
 // ///////////////////////////////// SPOLECNA CAST //
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "onSubDelete",
-                              "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "onSubDelete",
+			      "(Lorg/ocera/orte/types/AppInfo;Lorg/ocera/orte/types/SubInfo;)V");
+    if (mid == 0) {
      #ifdef TEST_STAGE
-       printf(":!c: mid = NULL! \n");
+      printf(":!c: mid = NULL! \n");
      #endif
-     break;
+      break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           domain_events_cont->obj_de,
-                           mid,
-                           obj_ainfo,
-                           obj_sinfo);
+			   domain_events_cont->obj_de,
+			   mid,
+			   obj_ainfo,
+			   obj_sinfo);
     flag_ok = 1;
-  } while(0);
+  } while (0);
   // while broken
-  if(flag_ok)
-  {
-    if((*jvm)->DetachCurrentThread(jvm) != 0)
-    {
+  if (flag_ok) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       printf(":c!: DetachCurrentThread fault! \n");
-      return  ORTE_FALSE;
+      return ORTE_FALSE;
     }
   }
 

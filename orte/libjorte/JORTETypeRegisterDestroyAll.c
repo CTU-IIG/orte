@@ -35,17 +35,17 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_DomainApp_jORTETypeRegisterDestroyAll
-(JNIEnv *env, jclass cls, jlong j_app_domain_handle)
+  (JNIEnv *env, jclass cls, jlong j_app_domain_handle)
 {
   int b;
 
-  if(j_app_domain_handle == 0)
-  {
+  if (j_app_domain_handle == 0) {
     printf(":!c: can not destroy all reg. types! [bad handle] \n");
     return 0;
   }
   // call ORTE function
-  b = ORTETypeRegisterDestroyAll((ORTEDomain *) j_app_domain_handle);
-  if(b == ORTE_OK) return 1;
+  b = ORTETypeRegisterDestroyAll((ORTEDomain *)j_app_domain_handle);
+  if (b == ORTE_OK)
+    return 1;
   return 0;
 }

@@ -12,7 +12,8 @@ extern "C" {
  * Method:    IPAddressToString
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_ocera_orte_tools_Conversions_IPAddressToString
+JNIEXPORT jstring JNICALL
+Java_org_ocera_orte_tools_Conversions_IPAddressToString
   (JNIEnv *, jclass, jlong);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jstring JNICALL Java_org_ocera_orte_tools_Conversions_IPAddressToStrin
  * Method:    StringToIPAddress
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_tools_Conversions_StringToIPAddress
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_tools_Conversions_StringToIPAddress
   (JNIEnv *, jclass, jstring);
 
 #ifdef __cplusplus

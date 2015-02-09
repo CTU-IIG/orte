@@ -25,37 +25,37 @@ extern NtpTime
 getNtpTime(JNIEnv *env, jobject obj);
 
 extern Boolean
-onSubDelete(const struct ORTEAppInfo *appInfo,const struct ORTESubInfo *subInfo,void *param);
+onSubDelete(const struct ORTEAppInfo *appInfo, const struct ORTESubInfo *subInfo, void *param);
 
 extern Boolean
-onSubRemoteChanged(const struct ORTEAppInfo *appInfo,const struct ORTESubInfo *subInfo,void *param);
+onSubRemoteChanged(const struct ORTEAppInfo *appInfo, const struct ORTESubInfo *subInfo, void *param);
 
 extern Boolean
-onSubRemoteNew(const struct ORTEAppInfo *appInfo,const struct ORTESubInfo *subInfo,void *param);
+onSubRemoteNew(const struct ORTEAppInfo *appInfo, const struct ORTESubInfo *subInfo, void *param);
 
 extern Boolean
-onPubDelete(const struct ORTEAppInfo *appInfo,const struct ORTEPubInfo *pubInfo,void *param);
+onPubDelete(const struct ORTEAppInfo *appInfo, const struct ORTEPubInfo *pubInfo, void *param);
 
 extern Boolean
-onPubRemoteChanged(const struct ORTEAppInfo *appInfo,const struct ORTEPubInfo *pubInfo,void *param);
+onPubRemoteChanged(const struct ORTEAppInfo *appInfo, const struct ORTEPubInfo *pubInfo, void *param);
 
 extern Boolean
-onPubRemoteNew(const struct ORTEAppInfo *appInfo,const struct ORTEPubInfo *pubInfo,void *param);
+onPubRemoteNew(const struct ORTEAppInfo *appInfo, const struct ORTEPubInfo *pubInfo, void *param);
 
 extern Boolean
-onAppDelete(const struct ORTEAppInfo *appInfo,void *param);
+onAppDelete(const struct ORTEAppInfo *appInfo, void *param);
 
 extern Boolean
-onAppRemoteNew(const struct ORTEAppInfo *appInfo,void *param);
+onAppRemoteNew(const struct ORTEAppInfo *appInfo, void *param);
 
 extern Boolean
-onMgrDelete(const struct ORTEAppInfo *appInfo,void *param);
+onMgrDelete(const struct ORTEAppInfo *appInfo, void *param);
 
 extern Boolean
-onMgrNew(const struct ORTEAppInfo *appInfo,void *param);
+onMgrNew(const struct ORTEAppInfo *appInfo, void *param);
 
 extern Boolean
 onRegFail(void *param);
 
 extern jclass
-findClass(JNIEnv *env, const char* name);
+findClass(JNIEnv *env, const char *name);

@@ -28,7 +28,8 @@
 #include  "jorte/jorte_protos_api.h"
 
 
-NtpTime getNtpTime(JNIEnv *env, jobject obj)
+NtpTime
+getNtpTime(JNIEnv *env, jobject obj)
 {
   NtpTime          time;
   jfieldID         fieldID;
@@ -38,19 +39,19 @@ NtpTime getNtpTime(JNIEnv *env, jobject obj)
   ntpTimeClass = (*env)->GetObjectClass(env, obj);
 
   /* get object field ID - NtpTime.seconds */
-  fieldID = (*env)->GetFieldID(env,ntpTimeClass,"seconds","I");
+  fieldID = (*env)->GetFieldID(env, ntpTimeClass, "seconds", "I");
 // if(fieldID == NULL) return(NTPTIME_ZERO(time)); // NEFUNGUJE
-  /* get objects value */
-  time.seconds = (int32_t) (*env)->GetIntField(env,obj,fieldID);
+/* get objects value */
+  time.seconds = (int32_t)(*env)->GetIntField(env, obj, fieldID);
 
   /* reset pointer  */
   fieldID = NULL;
 
   /* get object field ID  - NtpTime.fraction */
-  fieldID = (*env)->GetFieldID(env,ntpTimeClass,"fraction","J");
+  fieldID = (*env)->GetFieldID(env, ntpTimeClass, "fraction", "J");
 //  if(fieldID == NULL) return(NTPTIME_ZERO(time)); // NEFUNGUJE
-  /* get object's value */
-  time.fraction = (uint32_t) (*env)->GetLongField(env,obj,fieldID);
+/* get object's value */
+  time.fraction = (uint32_t)(*env)->GetLongField(env, obj, fieldID);
 
   return(time);
 

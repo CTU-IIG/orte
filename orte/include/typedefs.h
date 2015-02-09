@@ -1,30 +1,30 @@
 /*
- *  $Id: typedefs.h,v 0.0.0.1           2003/08/21 
+ *  $Id: typedefs.h,v 0.0.0.1           2003/08/21
  *
- *  -------------------------------------------------------------------  
- *                                ORTE                                 
- *                      Open Real-Time Ethernet                       
- *                                                                    
- *                      Copyright (C) 2001-2006                       
- *  Department of Control Engineering FEE CTU Prague, Czech Republic  
- *                      http://dce.felk.cvut.cz                       
- *                      http://www.ocera.org                          
- *                                                                    
- *  Author: 		 Petr Smolik	petr@smoliku.cz             
- *  Advisor: 		 Pavel Pisa                                   
- *  Project Responsible: Zdenek Hanzalek                              
+ *  -------------------------------------------------------------------
+ *                                ORTE
+ *                      Open Real-Time Ethernet
+ *
+ *                      Copyright (C) 2001-2006
+ *  Department of Control Engineering FEE CTU Prague, Czech Republic
+ *                      http://dce.felk.cvut.cz
+ *                      http://www.ocera.org
+ *
+ *  Author:              Petr Smolik	petr@smoliku.cz
+ *  Advisor:             Pavel Pisa
+ *  Project Responsible: Zdenek Hanzalek
  *  --------------------------------------------------------------------
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
 #ifndef _TYPEDEFS_H
@@ -35,15 +35,15 @@ extern "C" {
 #endif
 
 typedef struct CSTWriter CSTWriter;               //forward declarations
-typedef struct CSTRemoteReader CSTRemoteReader;               
-typedef struct CSTReader CSTReader;               
+typedef struct CSTRemoteReader CSTRemoteReader;
+typedef struct CSTReader CSTReader;
 typedef struct ObjectEntryOID ObjectEntryOID;
 typedef struct ObjectEntryHID ObjectEntryHID;
 typedef struct ObjectEntryAID ObjectEntryAID;
-typedef struct ObjectEntry ObjectEntry; 
+typedef struct ObjectEntry ObjectEntry;
 
 /**
- * struct sock_t - 
+ * struct sock_t -
  */
 typedef struct sock_t {
   int         fd;
@@ -54,25 +54,25 @@ typedef struct sock_t {
  * struct  - MessageBuffer
  */
 typedef struct MessageBuffer {
-  CDR_Codec		 cdrCodec;
+  CDR_Codec              cdrCodec;
   CDR_Codec              *cdrCodecDirect;
   Boolean                needSend;
   Boolean                containsInfoReply;
 } MessageBuffer;
 /**
- * struct TaskProp - 
+ * struct TaskProp -
  */
 typedef struct TaskProp {
   sock_t                 sock;
   pthread_t              thread;
   Boolean                terminate;
-  MessageBuffer		 mb;
-  ORTEDomain	 	 *d;
+  MessageBuffer          mb;
+  ORTEDomain             *d;
 } TaskProp;
 
 
 /**
- * struct typeEntry - 
+ * struct typeEntry -
  */
 typedef struct TypeEntry {
   gavl_cust_root_field_t types;        //Types
@@ -80,7 +80,7 @@ typedef struct TypeEntry {
 } TypeEntry;
 
 /**
- * struct typeNode - 
+ * struct typeNode -
  */
 typedef struct TypeNode {
   gavl_node_t            node;
@@ -88,7 +88,7 @@ typedef struct TypeNode {
 } TypeNode;
 
 /**
- * struct PatternsNode - 
+ * struct PatternsNode -
  */
 typedef struct PatternNode {
   ul_list_node_t         node;
@@ -99,7 +99,7 @@ typedef struct PatternNode {
 } PatternNode;
 
 /**
- * struct PatternEntry - 
+ * struct PatternEntry -
  */
 typedef struct PatternEntry {
   ul_list_head_t         patterns;
@@ -108,7 +108,7 @@ typedef struct PatternEntry {
   void                   *param;
   pthread_rwlock_t       lock;
 } PatternEntry;
-  
+
 /**
  * struct AppParams - Manager & ManagedApplication
  */
@@ -119,7 +119,7 @@ typedef struct AppParams {
   unsigned char          unicastIPAddressCount;
   IPAddress              metatrafficMulticastIPAddressList[MAX_INTERFACES];
   unsigned char          metatrafficMulticastIPAddressCount;
-  IPAddress              managerKeyList[MAX_INTERFACES];//useful only for manager
+  IPAddress              managerKeyList[MAX_INTERFACES]; //useful only for manager
   unsigned char          managerKeyCount;           //useful only for manager
   Port                   metatrafficUnicastPort;
   Port                   userdataUnicastPort;
@@ -129,9 +129,9 @@ typedef struct AppParams {
   SequenceNumber         vargAppsSequenceNumber;    //useful only for manager
 } AppParams;
 
-typedef void EVH1(ORTEDomain *,ObjectEntryAID *,ul_htim_time_t *);
+typedef void EVH1(ORTEDomain *, ObjectEntryAID *, ul_htim_time_t *);
 /**
- * struct HTimFncRootNode - 
+ * struct HTimFncRootNode -
  */
 typedef struct HTimFncRootNode {
   ul_htim_node_t        htim;
@@ -141,10 +141,10 @@ typedef struct HTimFncRootNode {
 } HTimFncRootNode;
 
 /**
- * struct HTimNode - 
+ * struct HTimNode -
  */
 typedef struct HTimNode {
-  ul_htim_queue_t        common;              //timing queue for a timer function  
+  ul_htim_queue_t        common;              //timing queue for a timer function
   HTimFncRootNode        commonNode;          //root node
   ul_htim_queue_t        sendMetatraffic;     //timing queue for sendMetatraffic
   HTimFncRootNode        sendMetatrafficNode; //root node
@@ -153,9 +153,9 @@ typedef struct HTimNode {
 } HTimNode;
 
 /**
- * struct HTimFncUserNode - 
+ * struct HTimFncUserNode -
  */
-typedef int EVH2(ORTEDomain *,void *);
+typedef int EVH2(ORTEDomain *, void *);
 typedef struct HTimFncUserNode {
   ul_htim_node_t        htim;
   const char            *name;
@@ -177,7 +177,7 @@ struct ObjectEntryOID{
   void                   *attributes;  //atributes of object
   Boolean                appMOM;
   Boolean                privateCreated;  //object created by me self app
-  HTimFncUserNode	 expirationPurgeTimer;
+  HTimFncUserNode        expirationPurgeTimer;
   //only for private CSTPublication,CSTSubscription
   void                   *instance;    //data Codec
   ORTERecvCallBack       recvCallBack;
@@ -189,7 +189,7 @@ struct ObjectEntryOID{
   gavl_node_t            psNode;
   //multicast
   ul_list_head_t         multicastRemoteReaders;
-  int			 multicastPort;
+  int                    multicastPort;
 };
 struct ObjectEntryAID {
   gavl_node_t            aidNode;
@@ -209,14 +209,14 @@ struct ObjectEntry{
   pthread_rwlock_t       objRootLock;
   ul_htim_queue_t        htimRoot;     //root of tree htimers
   pthread_rwlock_t       htimRootLock;
-  pthread_cond_t	 htimSendCond; //for wake up
-  pthread_mutex_t	 htimSendMutex;
-  int			 htimSendCondValue;
+  pthread_cond_t         htimSendCond; //for wake up
+  pthread_mutex_t        htimSendMutex;
+  int                    htimSendCondValue;
   Boolean                htimNeedWakeUp;
 };
 
 /**
- * struct ParameterSequence - 
+ * struct ParameterSequence -
  */
 typedef struct ParameterSequence {
   ul_list_node_t         node;
@@ -224,22 +224,22 @@ typedef struct ParameterSequence {
   ParameterLength        parameterLength;
   union {
     u_char               asStr[MAX_PARAMETER_LOCAL_LENGTH];
-    NtpTime		 asNtpTime;
+    NtpTime              asNtpTime;
     CORBA_unsigned_long  asLong;
-    VendorId		 asVendorId;
-    ProtocolVersion	 asProtocolVersion;
-    SequenceNumber	 asSequenceNumber;
-    CORBA_octet		 asOctet;
-    IPAddress		 asIPAddress;
-    Port		 asPort;
-    uint32_t		 asUInt32;
-    TypeChecksum	 asTypeChecksum;
+    VendorId             asVendorId;
+    ProtocolVersion      asProtocolVersion;
+    SequenceNumber       asSequenceNumber;
+    CORBA_octet          asOctet;
+    IPAddress            asIPAddress;
+    Port                 asPort;
+    uint32_t             asUInt32;
+    TypeChecksum         asTypeChecksum;
   } parameterLocal;
   u_char                 *parameter;
-} ParameterSequence; 
+} ParameterSequence;
 
 /**
- * struct CSChange - 
+ * struct CSChange -
  */
 typedef struct CSChange {
   ul_list_node_t         nodeList;
@@ -259,14 +259,14 @@ typedef struct CSChange {
   //receiving informations
   NtpTime                remoteTimePublished;
   NtpTime                localTimeReceived;
-} CSChange; 
+} CSChange;
 
 /**
- * struct CSTWriterParams - 
+ * struct CSTWriterParams -
  */
 typedef struct CSTWriterParams {
-  unsigned int		 registrationRetries;
-  NtpTime		 registrationPeriod;
+  unsigned int           registrationRetries;
+  NtpTime                registrationPeriod;
   NtpTime                waitWhileDataUnderwayTime;
   NtpTime                repeatAnnounceTime;
   NtpTime                delayResponceTime;
@@ -276,7 +276,7 @@ typedef struct CSTWriterParams {
 } CSTWriterParams;
 
 /**
- * struct CSChangeForReader - 
+ * struct CSChangeForReader -
  */
 typedef struct CSChangeForReader {
   gavl_node_t            node;
@@ -288,7 +288,7 @@ typedef struct CSChangeForReader {
 } CSChangeForReader;
 
 /**
- * struct CSTRemoteReader - 
+ * struct CSTRemoteReader -
  */
 struct CSTRemoteReader {
   gavl_node_t            node;
@@ -296,30 +296,30 @@ struct CSTRemoteReader {
   ObjectEntryOID         *sobject; /* to send object */
   ObjectEntryOID         *pobject; /* physical object (for multicast is differnet than sobject) */
   GUID_RTPS              guid;
-  
+
   gavl_cust_root_field_t csChangeForReader;
   unsigned int           csChangesCounter;
 
   //comm states
   StateMachineHB         commStateHB;
   StateMachineSend       commStateSend;
-  unsigned int		 commStateToSentCounter;
+  unsigned int           commStateToSentCounter;
 
   //timing properties
   HTimFncUserNode        delayResponceTimer;
   HTimFncUserNode        repeatAnnounceTimer;
 
   unsigned int           HBRetriesCounter;
-  
+
   NtpTime                lastSentIssueTime;
-  
+
   //multicast
   ul_list_node_t         multicastNode; //connected into objectEntryOID
 };
 
 typedef struct CSTPublications CSTPublications;
 /**
- * struct CSTWriter - 
+ * struct CSTWriter -
  */
 struct CSTWriter {
   ORTEDomain             *domain;
@@ -340,22 +340,22 @@ struct CSTWriter {
 
   HTimFncUserNode        refreshPeriodTimer;
 
-  unsigned int		 registrationCounter;
+  unsigned int           registrationCounter;
   HTimFncUserNode        registrationTimer;
-  
+
   //ser./deser. function
   ORTETypeRegister       *typeRegister;
-  
+
   //only for CSTPublications
   unsigned int           strictReliableCounter;
   unsigned int           bestEffortsCounter;
-  pthread_cond_t	 condCSChangeDestroyed; //for wake up
-  pthread_mutex_t	 mutexCSChangeDestroyed;
-  int			 condValueCSChangeDestroyed;
+  pthread_cond_t         condCSChangeDestroyed; //for wake up
+  pthread_mutex_t        mutexCSChangeDestroyed;
+  int                    condValueCSChangeDestroyed;
 };
 
 /**
- * struct CSTReaderParams - 
+ * struct CSTReaderParams -
  */
 typedef struct CSTReaderParams {
   NtpTime                delayResponceTimeMin;
@@ -366,7 +366,7 @@ typedef struct CSTReaderParams {
 } CSTReaderParams;
 
 /**
- * struct CSChangeFromWriter - 
+ * struct CSChangeFromWriter -
  */
 typedef struct CSChangeFromWriter {
   gavl_node_t            node;
@@ -375,17 +375,17 @@ typedef struct CSChangeFromWriter {
 } CSChangeFromWriter;
 
 /**
- * struct CSTRemoteWriter - 
+ * struct CSTRemoteWriter -
  */
 typedef struct CSTRemoteWriter {
   gavl_node_t            node;
   CSTReader              *cstReader;
   ObjectEntryOID         *spobject;   /* sender, physical object */
   GUID_RTPS              guid;
-  
+
   gavl_cust_root_field_t csChangeFromWriter;
   unsigned int           csChangesCounter;
-  
+
   SequenceNumber         sn;
   SequenceNumber         firstSN;
   SequenceNumber         lastSN;
@@ -402,7 +402,7 @@ typedef struct CSTRemoteWriter {
 
 typedef struct CSTSubscriptions CSTSubscriptions;
 /**
- * struct CSTReader - 
+ * struct CSTReader -
  */
 struct CSTReader {
   ORTEDomain             *domain;
@@ -416,10 +416,10 @@ struct CSTReader {
   gavl_cust_root_field_t cstRemoteWriter;
   unsigned int           cstRemoteWriterCounter;
   pthread_rwlock_t       lock;
-  
+
   //ser./deser. function
   ORTETypeRegister       *typeRegister;
-  
+
   //only for CSTSubcriptions
   CSTRemoteWriter       *cstRemoteWriterSubscribed;
   HTimFncUserNode        deadlineTimer;
@@ -427,47 +427,47 @@ struct CSTReader {
 
   unsigned int           strictReliableCounter;
   unsigned int           bestEffortsCounter;
-  
+
   Boolean                createdByPattern;
 };
 
 /**
- * struct CSTPublications - 
+ * struct CSTPublications -
  */
 struct CSTPublications {
   gavl_cust_root_field_t cstWriter;
-  pthread_rwlock_t       lock;        
-  uint32_t               counter;  
-};
-  
-/**
- * struct CSTSubscriptions - 
- */
-struct CSTSubscriptions {
-  gavl_cust_root_field_t cstReader;
-  pthread_rwlock_t       lock;        
-  uint32_t               counter;  
+  pthread_rwlock_t       lock;
+  uint32_t               counter;
 };
 
 /**
- * struct PSEntry - 
+ * struct CSTSubscriptions -
+ */
+struct CSTSubscriptions {
+  gavl_cust_root_field_t cstReader;
+  pthread_rwlock_t       lock;
+  uint32_t               counter;
+};
+
+/**
+ * struct PSEntry -
  */
 typedef struct PSEntry {
   gavl_cust_root_field_t publications;
-  pthread_rwlock_t       publicationsLock;        
+  pthread_rwlock_t       publicationsLock;
   gavl_cust_root_field_t subscriptions;
-  pthread_rwlock_t       subscriptionsLock;        
-} PSEntry ;
-  
+  pthread_rwlock_t       subscriptionsLock;
+} PSEntry;
+
 /**
- * struct ORTEDomain - 
+ * struct ORTEDomain -
  */
 struct ORTEDomain {
   uint32_t               domain;      //domain value
   GUID_RTPS              guid;        //guid of self application
   AppParams              *appParams;  //self parameters (share from objectEntry)
-  ObjectEntryOID         *objectEntryOID;//entry point for self OID
-  
+  ObjectEntryOID         *objectEntryOID; //entry point for self OID
+
   ////////////////////////////////////////////////////
   //variables for tasks
   TaskProp               taskRecvUnicastMetatraffic;
@@ -485,15 +485,15 @@ struct ORTEDomain {
 
   ORTEDomainProp         domainProp;
   ORTEDomainAppEvents    domainEvents;
-  
+
   ////////////////////////////////////////////////////
   //information used by event system
   ORTEAppInfo            appInfo;
   ORTEPubInfo            pubInfo;
   ORTESubInfo            subInfo;
-    
+
   ////////////////////////////////////////////////////
-  //communication objects 
+  //communication objects
   CSTWriter              writerApplicationSelf;  //Manager,App
   CSTReader              readerManagers;         //Manager,App
   CSTReader              readerApplications;     //Manager,App
@@ -513,4 +513,3 @@ struct ORTEDomain {
 #endif
 
 #endif  /* _TYPEDEFS_H */
-

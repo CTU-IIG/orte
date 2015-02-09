@@ -1,5 +1,5 @@
 /*
- *  $Id: compat.h,v 0.0.0.1             2003/12/19 
+ *  $Id: compat.h,v 0.0.0.1             2003/12/19
  *
  *  AUTHOR: Michal Sojka                sojka1@fel.cvut.cz
  *
@@ -10,12 +10,12 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  */
 
 #ifndef _COMPAT_H
@@ -32,9 +32,10 @@
 #define ioctl(a, b, c) (-1)
 
 
-static inline int atoi(const char* nptr)
+static inline int
+atoi(const char *nptr)
 {
-    return simple_strtol(nptr, (char **)NULL, 10);
+  return simple_strtol(nptr, (char **)NULL, 10);
 }
 
 #endif /* _COMPAT_H */

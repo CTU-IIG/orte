@@ -36,20 +36,19 @@
 // ve fci chybi 2 Multicast argumenty - maji se dodat???
 JNIEXPORT void JNICALL
 Java_org_ocera_orte_Domain_jORTEDomainStart
-(JNIEnv *env, jclass cls, jlong dom_handle,
- jboolean recvUnicastMetatrafficThread,
- jboolean recvUnicastUserDataThread,
- jboolean sendThread)
+  (JNIEnv *env, jclass cls, jlong dom_handle,
+  jboolean recvUnicastMetatrafficThread,
+  jboolean recvUnicastUserDataThread,
+  jboolean sendThread)
 {
   // vyresit problemy s booleanem
-  ORTEDomainStart((ORTEDomain *) dom_handle,
-                  (Boolean) recvUnicastMetatrafficThread,
-                  ORTE_FALSE, // Multicast !
-                  (Boolean) recvUnicastUserDataThread,
-                  ORTE_FALSE, // Multicast !
-                  (Boolean) sendThread);
+  ORTEDomainStart((ORTEDomain *)dom_handle,
+		  (Boolean)recvUnicastMetatrafficThread,
+		  ORTE_FALSE, // Multicast !
+		  (Boolean)recvUnicastUserDataThread,
+		  ORTE_FALSE, // Multicast !
+		  (Boolean)sendThread);
   #ifdef TEST_STAGE
-    printf(":c: starting domain thread [ORTEDomainStart()].. \n");
+  printf(":c: starting domain thread [ORTEDomainStart()].. \n");
   #endif
 }
-

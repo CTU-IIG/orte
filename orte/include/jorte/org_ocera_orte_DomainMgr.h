@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTEDomainDefaultMgrCreate
  * Signature: (IZ)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreate
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreate
   (JNIEnv *, jobject, jint, jboolean);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainMgr_jORTEDomainDefaultMgrCreat
  * Method:    jORTEDomainMgrCreate
  * Signature: (IJJZ)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainMgr_jORTEDomainMgrCreate
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_DomainMgr_jORTEDomainMgrCreate
   (JNIEnv *, jobject, jint, jlong, jlong, jobject obj_de, jboolean);
 
 /*
@@ -28,7 +30,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainMgr_jORTEDomainMgrCreate
  * Method:    jORTEDomainMgrDestroy
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_DomainMgr_jORTEDomainMgrDestroy
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus

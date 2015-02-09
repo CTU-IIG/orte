@@ -40,7 +40,7 @@
 int counter = 0;
 
 void
-sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
+sendCallBack(const ORTESendInfo *info, void *vinstance, void *sendCallBackParam)
 {
 
   printf(":c: zacatek sendCallBack()..\n");
@@ -62,14 +62,14 @@ sendCallBack(const ORTESendInfo *info,void *vinstance, void *sendCallBackParam)
 // native method
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_Publication_jORTEPublicationCreate
-(JNIEnv   *env ,
- jobject   obj,
- jlong     dom_handle,
- jstring   j_topic,
- jstring   j_type_name,
- jobject   j_instance,
- jobject   j_persistence,
- jint      j_strength)
+  (JNIEnv   *env,
+  jobject   obj,
+  jlong     dom_handle,
+  jstring   j_topic,
+  jstring   j_type_name,
+  jobject   j_instance,
+  jobject   j_persistence,
+  jint      j_strength)
 {
   ORTEPublication  *p = 0;
   ORTEDomain       *d;
@@ -81,75 +81,68 @@ Java_org_ocera_orte_Publication_jORTEPublicationCreate
   int               flag_ok = 0;
 
   // check domain handle
-  d = (ORTEDomain *) dom_handle;
-  if(d == 0)
-  {
+  d = (ORTEDomain *)dom_handle;
+  if (d == 0) {
     printf(":!c: publication create failed! [bad domain handle] \n");
     return 0;
   }
   // get topic
   topic = (*env)->GetStringUTFChars(env, j_topic, 0);
-  if(topic == 0)
-  {
+  if (topic == 0) {
     // OutOfMemoryError already thrown
     #ifdef TEST_STAGE
-      printf(":!c: topic = NULL \n");
+    printf(":!c: topic = NULL \n");
     #endif
     return 0;
   }
   // get typeName
   typeName = (*env)->GetStringUTFChars(env, j_type_name, 0);
-  if(typeName == 0)
-  {
+  if (typeName == 0) {
     // OutOfMemoryError already thrown
     #ifdef TEST_STAGE
-      printf(":!c: typeName = NULL \n");
+    printf(":!c: typeName = NULL \n");
     #endif
     // free memory
     (*env)->ReleaseStringUTFChars(env, j_topic, topic);
     return 0;
   }
 
-  do
-  {
+  do {
     // get persistence
     persistence = getNtpTime(env, j_persistence);
     // get strenght
-    strength = (int) j_strength;
+    strength = (int)j_strength;
     // get direct ByteBuffer pointer from Java
     buffer = (*env)->GetDirectBufferAddress(env, j_instance);
-    if(buffer == 0)
-    {
+    if (buffer == 0) {
       printf(":!c: buffer create failed! \n");
       break;
     }
     // call ORTE function
     p = ORTEPublicationCreate(d,
-                              topic,
-                              typeName,
-                              buffer,
-                              &persistence,
-                              strength,
-                              sendCallBack, // BUDE NULL!!
-                              NULL,
-                              NULL);
-    if(p == 0)
-    {
+			      topic,
+			      typeName,
+			      buffer,
+			      &persistence,
+			      strength,
+			      sendCallBack, // BUDE NULL!!
+			      NULL,
+			      NULL);
+    if (p == 0) {
       printf(":!c: publication create failed! \n");
       break;
     }
     // set flag
     flag_ok = 1;
-  }  while(0);
+  }  while (0);
 
   // free memory in every case
   (*env)->ReleaseStringUTFChars(env, j_topic, topic);
   (*env)->ReleaseStringUTFChars(env, j_type_name, typeName);
   //
-  if (flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return 0;
   }
-  return ((jlong) p);
+  return ((jlong)p);
 
 }

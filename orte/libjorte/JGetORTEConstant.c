@@ -32,7 +32,7 @@
 
 /* macro for comparing 2 strings */
 /* if(a==b) -> strcmp = 0 */
-#define compare(a,b) ((strcmp((const char *)(a), (const char*)(b)) == 0) ? 1 : 0)
+#define compare(a, b) ((strcmp((const char *)(a), (const char *)(b)) == 0) ? 1 : 0)
 
 
 /* global variables */
@@ -47,13 +47,13 @@ jmethodID  globalMid;
 /* native function - prototype declared in pregenerated header */
 JNIEXPORT jint JNICALL
 Java_org_ocera_tools_GetORTEConstant_getConstant
-(JNIEnv *env, jobject jobj, jstring jname)
+  (JNIEnv *env, jobject jobj, jstring jname)
 {
   const char    *constant;
   int            const_value = 0;
 
   /* get the constant name from JAVA Enviromnent*/
-  constant = (*env)->GetStringUTFChars(env,jname,0);
+  constant = (*env)->GetStringUTFChars(env, jname, 0);
 
 
 
@@ -64,36 +64,36 @@ Java_org_ocera_tools_GetORTEConstant_getConstant
 
   /* RTPS_HEADER_LENGTH */
   #ifdef RTPS_HEADER_LENGTH
-    if (compare(constant,"RTPS_HEADER_LENGTH"))
-      const_value = RTPS_HEADER_LENGTH;
+  if (compare(constant, "RTPS_HEADER_LENGTH"))
+    const_value = RTPS_HEADER_LENGTH;
   #endif
 
 
   /* MAX_PATHNAME */
   #ifdef MAX_PATHNAME
-    if (compare(constant,"MAX_PATHNAME"))
-      const_value = MAX_PATHNAME;
+  if (compare(constant, "MAX_PATHNAME"))
+    const_value = MAX_PATHNAME;
   #endif
 
 
   /* MAX_TYPENAME */
   #ifdef MAX_TYPENAME
-    if (compare(constant,"MAX_TYPENAME"))
-      const_value = MAX_TYPENAME;
+  if (compare(constant, "MAX_TYPENAME"))
+    const_value = MAX_TYPENAME;
   #endif
 
 
   /* ORTE_TRUE */
   #ifdef ORTE_TRUE
-    if (compare(constant,"ORTE_TRUE"))
-      const_value = ORTE_TRUE;
+  if (compare(constant, "ORTE_TRUE"))
+    const_value = ORTE_TRUE;
   #endif
 
 
   /* ORTE_FALSE */
   #ifdef ORTE_FALSE
-    if (compare(constant,"ORTE_FALSE"))
-      const_value = ORTE_FALSE;
+  if (compare(constant, "ORTE_FALSE"))
+    const_value = ORTE_FALSE;
   #endif
 
 /*
@@ -116,7 +116,8 @@ OID_WRITE_APPSELF
 
 
   /* return the result value*/
-  if (const_value == 0) return (-1);
+  if (const_value == 0)
+    return (-1);
 
   return (const_value);
 
@@ -153,7 +154,3 @@ int get_const(char *konstanta)
 // napoveda cpp
 
 */
-
-
-
-

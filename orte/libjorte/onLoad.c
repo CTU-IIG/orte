@@ -5,7 +5,9 @@ static jmethodID findClassM;
 static jmethodID findLoadedClassM;
 static jobject classLoader;
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM *vm, void *reserved)
+{
   JNIEnv *env;
   jclass testCl;
   jclass clClass;
@@ -26,7 +28,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
+JNIEXPORT void JNICALL
+JNI_OnUnload(JavaVM *vm, void *reserved)
+{
   JNIEnv *env;
 
   (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_6);
@@ -34,7 +38,9 @@ JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
   (*env)->DeleteGlobalRef(env, classLoader);
 }
 
-jclass findClass(JNIEnv *env, const char* name) {
+jclass
+findClass(JNIEnv *env, const char *name)
+{
   jclass cl;
 
   if ((cl = (*env)->CallObjectMethod(env, classLoader, findLoadedClassM, (*env)->NewStringUTF(env, name))) == NULL) {

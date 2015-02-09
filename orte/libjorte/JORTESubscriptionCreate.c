@@ -44,7 +44,7 @@
  * ****************************************************************** */
 
 void
-recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
+recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
 {
   // jni varialbles
   JavaVM          *jvm = 0;
@@ -57,113 +57,106 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
   jfieldID         fid = 0;
   jmethodID        mid = 0;
   jmethodID        mid_callback = 0;
+
   //
   // if the subscriber has been destroyed, return
-  if((*(JORTECallbackContext_t**)recvCallBackParam) == 0)
+  if ((*(JORTECallbackContext_t **)recvCallBackParam) == 0)
     return;
 
-  JORTECallbackContext_t   *callback_cont = *((JORTECallbackContext_t**)recvCallBackParam);
+  JORTECallbackContext_t   *callback_cont = *((JORTECallbackContext_t **)recvCallBackParam);
 
   #ifdef TEST_STAGE
-    printf("\n\n:c: --------------- recvCallBack called.. --------------- \n");
+  printf("\n\n:c: --------------- recvCallBack called.. --------------- \n");
   #endif
 
-  do
-  {
+  do {
     // set local variables from struct
-    if(callback_cont->jvm == 0)
-    {
+    if (callback_cont->jvm == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: jvm = NULL \n");
+      printf(":!c: jvm = NULL \n");
       #endif
       break;
     }
     jvm = callback_cont->jvm;
     // get env
     (*jvm)->AttachCurrentThread(jvm,
-                                #ifdef __ANDROID__
-                                  &env,
-                                #else
-                                  (void **)&env,
-                                #endif
-                                NULL);
-    if(env == 0)
-    {
+				#ifdef __ANDROID__
+				&env,
+				#else
+				(void **)&env,
+				#endif
+				NULL);
+    if (env == 0) {
       #ifdef TEST_STAGE
-       printf(":!c: env = NULL \n");
+      printf(":!c: env = NULL \n");
       #endif
       break;
     }
     //
     // set byte order only if it differs from that currently set
-    if(info->data_endian != callback_cont->cur_endian) {
+    if (info->data_endian != callback_cont->cur_endian) {
       //prepare ByteOrder
       cls = (*env)->FindClass(env, "java/nio/ByteOrder");
       if (cls == 0) {
-        #ifdef TEST_STAGE
-          printf(":!c: cls = NULL \n");
-        #endif
+	#ifdef TEST_STAGE
+	printf(":!c: cls = NULL \n");
+	#endif
       }
-      if(info->data_endian == BigEndian) {
-        fid = (*env)->GetStaticFieldID(env,
-                                       cls,
-                                       "BIG_ENDIAN",
-                                       "Ljava/nio/ByteOrder;");
-        callback_cont->cur_endian = BigEndian;
+      if (info->data_endian == BigEndian) {
+	fid = (*env)->GetStaticFieldID(env,
+				       cls,
+				       "BIG_ENDIAN",
+				       "Ljava/nio/ByteOrder;");
+	callback_cont->cur_endian = BigEndian;
+      } else {
+	fid = (*env)->GetStaticFieldID(env,
+				       cls,
+				       "LITTLE_ENDIAN",
+				       "Ljava/nio/ByteOrder;");
+	callback_cont->cur_endian = LittleEndian;
       }
-      else {
-        fid = (*env)->GetStaticFieldID(env,
-                                       cls,
-                                       "LITTLE_ENDIAN",
-                                       "Ljava/nio/ByteOrder;");
-        callback_cont->cur_endian = LittleEndian;
-      }
-      if(fid == 0) {
-        #ifdef TEST_STAGE
-          printf(":!c: fid = NULL \n");
-        #endif
+      if (fid == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: fid = NULL \n");
+	#endif
       }
       obj_bo = (*env)->GetStaticObjectField(env, cls, fid);
-      if(obj_bo == 0) {
-        #ifdef TEST_STAGE
-          printf(":!c: cls = NULL \n");
-        #endif
+      if (obj_bo == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: cls = NULL \n");
+	#endif
       }
 
       // set byte order to ByteBuffer
       // get BB class
       cls = (*env)->GetObjectClass(env, callback_cont->obj_buf);
-      if(cls == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: cls = NULL \n");
-        #endif
+      if (cls == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: cls = NULL \n");
+	#endif
       }
       // get methodID - order(ByteOrder)
       mid = (*env)->GetMethodID(env,
-                                cls,
-                                "order",
-                                "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
-      if(mid == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: mid = NULL \n");
-        #endif
+				cls,
+				"order",
+				"(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+      if (mid == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: mid = NULL \n");
+	#endif
       }
 
       // set ByteOrder
-      if((*env)->CallObjectMethod(env,callback_cont->obj_buf,mid,obj_bo) == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: set byte order failed.. \n");
-        #endif
+      if ((*env)->CallObjectMethod(env, callback_cont->obj_buf, mid, obj_bo) == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: set byte order failed.. \n");
+	#endif
       }
     }
     //
-    if(callback_cont->obj == 0)
-    {
+    if (callback_cont->obj == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj = NULL \n");
+      printf(":!c: obj = NULL \n");
       #endif
       break;
     }
@@ -173,154 +166,144 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
 
 
       #ifdef TEST_STAGE
-         printf(":c: #0 \n");
-         printf(":c: env = %#"PRIxPTR", obj_msg = %#"PRIxPTR" \n", (intptr_t)env, (intptr_t)obj_msg);
+    printf(":c: #0 \n");
+    printf(":c: env = %#" PRIxPTR ", obj_msg = %#" PRIxPTR " \n", (intptr_t)env, (intptr_t)obj_msg);
       #endif
 
 
-	//
-    if(rinfo == 0)
-    {
+    //
+    if (rinfo == 0) {
       // find cls
       cls = findClass(env, "org.ocera.orte.types.RecvInfo");
-      if(cls == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: cls = NULL \n");
-        #endif
-        break;
+      if (cls == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: cls = NULL \n");
+	#endif
+	break;
       }
       // call object constructor
       mid = (*env)->GetMethodID(env, cls, "<init>", "()V");
-      if(mid == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: constructor failed! \n");
-        #endif
-        break;
+      if (mid == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: constructor failed! \n");
+	#endif
+	break;
       }
       // create new object
       rinfo = (*env)->NewObject(env, cls, mid);
-      if(rinfo == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: rinfo = NULL \n");
-        #endif
-        break;
+      if (rinfo == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: rinfo = NULL \n");
+	#endif
+	break;
       }
       // create global reference
       callback_cont->rinfo = (*env)->NewGlobalRef(env, rinfo);
-      if (callback_cont->rinfo == 0)
-      {
-        #ifdef TEST_STAGE
-          printf(":!c: callback_cont->rinfo = NULL \n");
-        #endif
-        break;
+      if (callback_cont->rinfo == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: callback_cont->rinfo = NULL \n");
+	#endif
+	break;
       }
     }
     ////////////////////////////////////////////////////
     // set RecvInfo instance
-    if(setRecvInfo(env,info,callback_cont->rinfo) == 0)
-    {
+    if (setRecvInfo(env, info, callback_cont->rinfo) == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: setRecvInfo() failed! \n");
+      printf(":!c: setRecvInfo() failed! \n");
       #endif
       break;
     }
     ////////////////////////////////////////////////////
     // control print - only in TEST_STAGE
     #ifdef TEST_STAGE
-      printf(":c: rinfo created :] \n");
-      printf(":c:----- ORTERecvInfo members  ------ \n");
-      printf(":c:    recvStatus: %#x \n", info->status);
-      printf(":c:    senderGuid: hid = %#"PRIx32", aid = %#"PRIx32", oid = %#"PRIx32" \n",
-             info->senderGUID.hid,info->senderGUID.aid,info->senderGUID.oid);
-      printf(":c:         topic: %s \n",info->topic);
-      printf(":c:          type: %s \n",info->type);
-      printf(":c: localTimeRecv: sec = %"PRId32", fract = %"PRIu32" \n",
-             info->localTimeReceived.seconds,info->localTimeReceived.fraction);
-      printf(":c: remoteTimePub: sec = %"PRId32", fract = %"PRIu32" \n",
-             info->remoteTimePublished.seconds,info->remoteTimePublished.fraction);
-      printf(":c:         seqNr: high = %"PRId32", low = %"PRIu32" \n",info->sn.high,info->sn.low);
-      printf(":c:---------------------------------- \n");
+    printf(":c: rinfo created :] \n");
+    printf(":c:----- ORTERecvInfo members  ------ \n");
+    printf(":c:    recvStatus: %#x \n", info->status);
+    printf(":c:    senderGuid: hid = %#" PRIx32 ", aid = %#" PRIx32 ", oid = %#" PRIx32 " \n",
+	   info->senderGUID.hid, info->senderGUID.aid, info->senderGUID.oid);
+    printf(":c:         topic: %s \n", info->topic);
+    printf(":c:          type: %s \n", info->type);
+    printf(":c: localTimeRecv: sec = %" PRId32 ", fract = %" PRIu32 " \n",
+	   info->localTimeReceived.seconds, info->localTimeReceived.fraction);
+    printf(":c: remoteTimePub: sec = %" PRId32 ", fract = %" PRIu32 " \n",
+	   info->remoteTimePublished.seconds, info->remoteTimePublished.fraction);
+    printf(":c:         seqNr: high = %" PRId32 ", low = %" PRIu32 " \n", info->sn.high, info->sn.low);
+    printf(":c:---------------------------------- \n");
     #endif
     ////////////////////////////////////////////////////
     // update MessageData instance
     // get cls
     cls_msg = (*env)->GetObjectClass(env, obj_msg);
-    if(cls_msg == 0)
-    {
+    if (cls_msg == 0) {
       #ifdef TEST_STAGE
-         printf(":!c: cls_msg = NULL \n");
+      printf(":!c: cls_msg = NULL \n");
       #endif
       break;
     }
     /////////////////////////////////////////////////////
     // methodID - read()
     mid = (*env)->GetMethodID(env,
-                              cls_msg,
-                              "read",
-                              "()V");
-    if(mid == 0)
-    {
+			      cls_msg,
+			      "read",
+			      "()V");
+    if (mid == 0) {
       #ifdef TEST_STAGE
-         printf(":!c: mid = NULL \n");
+      printf(":!c: mid = NULL \n");
       #endif
       break;
     }
     // call method
     (*env)->CallVoidMethod(env,
-                           obj_msg,
-                           mid);
+			   obj_msg,
+			   mid);
 
-   /* *************************** *
-    *  call JAVA CallBack method  *
-    * *************************** */
+    /* *************************** *
+     *  call JAVA CallBack method  *
+     * *************************** */
       #ifdef TEST_STAGE
-        printf(":c: call JAVA CallBack method \n");
+    printf(":c: call JAVA CallBack method \n");
       #endif
 
 
-	// get class
-    cls = (*env)->GetObjectClass(env,callback_cont->obj);
-    if(cls == 0)
-    {
+    // get class
+    cls = (*env)->GetObjectClass(env, callback_cont->obj);
+    if (cls == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: cls = NULL \n");
+      printf(":!c: cls = NULL \n");
       #endif
       break;
     }
     // get method ID
     mid = (*env)->GetMethodID(env,
-                              cls,
-                              "callback",
-                              "(Lorg/ocera/orte/types/RecvInfo;Lorg/ocera/orte/types/MessageData;)V");
-    if(mid == 0)
-    {
+			      cls,
+			      "callback",
+			      "(Lorg/ocera/orte/types/RecvInfo;Lorg/ocera/orte/types/MessageData;)V");
+    if (mid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: cls = NULL \n");
+      printf(":!c: cls = NULL \n");
       #endif
       break;
     }
     mid_callback = mid;
     //
     #ifdef TEST_STAGE
-      printf(":c: volam callback metodu.. halo jsi tam?? \n");
+    printf(":c: volam callback metodu.. halo jsi tam?? \n");
     #endif
     // call object's method
     (*env)->CallVoidMethod(env,
-                           callback_cont->obj, /*obj*/
-                           mid_callback,
-                           callback_cont->rinfo,
-                           obj_msg);
-  } while(0);
+			   callback_cont->obj, /*obj*/
+			   mid_callback,
+			   callback_cont->rinfo,
+			   obj_msg);
+  } while (0);
 
   // detach current thread
-  if((*jvm)->DetachCurrentThread(jvm) != 0)
-     printf(":c!: DetachCurrentThread failed! \n");
+  if ((*jvm)->DetachCurrentThread(jvm) != 0)
+    printf(":c!: DetachCurrentThread failed! \n");
   //
   #ifdef TEST_STAGE
-     printf(":c: ------------ thats all from recvCallBack ------------ \n\n");
+  printf(":c: ------------ thats all from recvCallBack ------------ \n\n");
   #endif
 
 }
@@ -330,20 +313,20 @@ recvCallBack(const ORTERecvInfo *info,void *vinstance, void *recvCallBackParam)
  * ****************************************************************** */
 JNIEXPORT jlong JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
-(JNIEnv   *env,
- jobject   obj,
- jlong     dhandle,   // appDomain handle
- jint      jsmode,    // subs mode
- jint      jstype,    // subs type
- jstring   jtopic,    // subs topic
- jstring   jtname,    // subs typeName
- jobject   jinstance, // direct ByteBuffer
- jint      jbyteOrder,// byte order of ByteBuffer
- jobject   obj_msg,   // messageData instance
- jobject   jdeadline,
- jobject   jminSeparation,
- jobject   obj_callback,
- jlong     j_multicastIP)
+  (JNIEnv   *env,
+  jobject   obj,
+  jlong     dhandle,  // appDomain handle
+  jint      jsmode,   // subs mode
+  jint      jstype,   // subs type
+  jstring   jtopic,   // subs topic
+  jstring   jtname,   // subs typeName
+  jobject   jinstance, // direct ByteBuffer
+  jint      jbyteOrder, // byte order of ByteBuffer
+  jobject   obj_msg,  // messageData instance
+  jobject   jdeadline,
+  jobject   jminSeparation,
+  jobject   obj_callback,
+  jlong     j_multicastIP)
 {
   // jni variables
   JavaVM                 *jvm;
@@ -365,69 +348,63 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   const char             *typename = 0;
   void                   *buffer;
   int                     flag_ok = 0;
+
   // memory alocation
   // don't forget use free() funct.!!
-  callback_cont = (JORTECallbackContext_t*)malloc(sizeof(JORTECallbackContext_t));
-  callback_cont_ptr = (JORTECallbackContext_t**)malloc(sizeof(JORTECallbackContext_t*));
+  callback_cont = (JORTECallbackContext_t *)malloc(sizeof(JORTECallbackContext_t));
+  callback_cont_ptr = (JORTECallbackContext_t **)malloc(sizeof(JORTECallbackContext_t *));
   *callback_cont_ptr = callback_cont;
 
-  do
-  {
+  do {
 
     // get direct ByteBuffer pointer from Java
     buffer = (*env)->GetDirectBufferAddress(env, jinstance);
     // check obj_callback
-    if (obj_callback == 0)
-    {
+    if (obj_callback == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_callback = NULL \n");
+      printf(":!c: obj_callback = NULL \n");
       #endif
       break;
     }
     // get jvm
-    jint b = (*env)->GetJavaVM(env,&jvm);
-    if (b <  0)
-    {
+    jint b = (*env)->GetJavaVM(env, &jvm);
+    if (b <  0) {
       #ifdef TEST_STAGE
-        printf(":!c: getJavaVM() failed! \n");
+      printf(":!c: getJavaVM() failed! \n");
       #endif
       break;
     }
-    if (b == 0)
-    {
+    if (b == 0) {
       #ifdef TEST_STAGE
-        printf(":c: getJavaVM succesfull.. \n");
+      printf(":c: getJavaVM succesfull.. \n");
       #endif
     }
     callback_cont->jvm = jvm;
-    callback_cont->cur_endian = (CDR_Endianness) jbyteOrder;
+    callback_cont->cur_endian = (CDR_Endianness)jbyteOrder;
     // create global references
     callback_cont->obj = (*env)->NewGlobalRef(env, obj_callback);
     //
-    if (callback_cont->obj == 0)
-    {
+    if (callback_cont->obj == 0) {
       #ifdef TEST_STAGE
-        printf(":c: global reference not created! \n");
+      printf(":c: global reference not created! \n");
       #endif
       break;
     }
     // create global references
     callback_cont->obj_buf = (*env)->NewGlobalRef(env, jinstance);
     //
-    if (callback_cont->obj_buf == 0)
-    {
+    if (callback_cont->obj_buf == 0) {
       #ifdef TEST_STAGE
-        printf(":c: global reference not created! \n");
+      printf(":c: global reference not created! \n");
       #endif
       break;
     }
     // create global references
     callback_cont->msg = (*env)->NewGlobalRef(env, obj_msg);
     //
-    if (callback_cont->msg == 0)
-    {
+    if (callback_cont->msg == 0) {
       #ifdef TEST_STAGE
-        printf(":c: global reference not created! \n");
+      printf(":c: global reference not created! \n");
       #endif
       break;
     }
@@ -435,77 +412,74 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     callback_cont->rinfo = 0;
     //
     cls = (*env)->GetObjectClass(env, obj);
-    if(cls == 0)
-    {
+    if (cls == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: cls = NULL \n");
+      printf(":!c: cls = NULL \n");
       #endif
       break;
     }
     // fieldID - callbackContextHandle
     fid = (*env)->GetFieldID(env,
-                             cls,
-                             "callbackContextHandle",
-                             "J");
-    if(fid == 0)
-    {
+			     cls,
+			     "callbackContextHandle",
+			     "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     (*env)->SetLongField(env,
-                        obj,
-                        fid,
-                        (jlong) callback_cont_ptr);
+			 obj,
+			 fid,
+			 (jlong)callback_cont_ptr);
     #ifdef TEST_STAGE
-       printf(":c: ORTESubscriptionCreate() calling..\n");
+    printf(":c: ORTESubscriptionCreate() calling..\n");
     #endif
     //
-    d = (ORTEDomain *) dhandle;
-    if (d == 0)
-    {
+    d = (ORTEDomain *)dhandle;
+    if (d == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: d = NULL [bad domain handle] \n");
+      printf(":!c: d = NULL [bad domain handle] \n");
       #endif
       break;
     }
     //
-    smode = (SubscriptionMode) jsmode;
-    stype = (SubscriptionType) jstype;
+    smode = (SubscriptionMode)jsmode;
+    stype = (SubscriptionType)jstype;
     topic = (*env)->GetStringUTFChars(env, jtopic, 0);
     typename = (*env)->GetStringUTFChars(env, jtname, 0);
-    deadline = getNtpTime(env, jdeadline);//
-    minSeparation = getNtpTime(env, jminSeparation);//
+    deadline = getNtpTime(env, jdeadline); //
+    minSeparation = getNtpTime(env, jminSeparation); //
     // call ORTE function
     s = ORTESubscriptionCreate(d,
-                               smode,
-                               stype,
-                               topic,
-                               typename,
-                               buffer,
-                               &deadline,
-                               &minSeparation,
-                               recvCallBack,
-                               (void*)callback_cont_ptr,
-                               (uint32_t) j_multicastIP);
-    if (s == 0)
-    {
+			       smode,
+			       stype,
+			       topic,
+			       typename,
+			       buffer,
+			       &deadline,
+			       &minSeparation,
+			       recvCallBack,
+			       (void *)callback_cont_ptr,
+			       (uint32_t)j_multicastIP);
+    if (s == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: s = NULL [subscription not created] \n");
+      printf(":!c: s = NULL [subscription not created] \n");
       #endif
       break;
     }
 
     // set flag
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
   // free memory
   (*env)->ReleaseStringUTFChars(env, jtopic, topic);
   (*env)->ReleaseStringUTFChars(env, jtname, typename);
   // returns handle of new created Subscription
-  if(flag_ok == 0) return 0;
-  return ((jlong) s);
+  if (flag_ok == 0)
+    return 0;
+  return ((jlong)s);
 
 }

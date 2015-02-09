@@ -40,7 +40,7 @@
 
 JNIEXPORT jboolean JNICALL
 Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
-(JNIEnv *env, jobject obj, jlong j_appDomain_handle, jobject obj_sp)
+  (JNIEnv *env, jobject obj, jlong j_appDomain_handle, jobject obj_sp)
 {
   // jni types
   jclass         cls_sp = NULL;
@@ -56,17 +56,15 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
   ORTESubsProp  *subs_prop = &sp;
 
   #ifdef TEST_STAGE
-    printf(":c: jORTESubscriptionPropertiesSet() called.. \n");
+  printf(":c: jORTESubscriptionPropertiesSet() called.. \n");
   #endif
 
-  do
-  {
+  do {
     // get SubsProp instance's class
     cls_sp = (*env)->GetObjectClass(env, obj_sp);
     // second way how to get 'SubProp' instance's class
     //cls_sp = (*env)->FindClass(env,"org/ocera/orte/types/SubsProp");
-    if(cls_sp == 0)
-    {
+    if (cls_sp == 0) {
       printf(":!c: class 'org.ocera.orte.types.SubsProp' not found! \n");
       break;
     }
@@ -75,161 +73,151 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     /////////////////////////////////////////////////
     // set topic
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "topic",
-                             "Ljava/lang/String;");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "topic",
+			     "Ljava/lang/String;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_str = (*env)->GetObjectField(env, obj_sp, fid);
-    if(obj_str == 0)
-    {
+    if (obj_str == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_str = NULL \n");
+      printf(":!c: obj_str = NULL \n");
       #endif
       break;
     }
-    str = (*env)->GetStringUTFChars(env,obj_str,0);
+    str = (*env)->GetStringUTFChars(env, obj_str, 0);
     // Set the structure field.
-    strncpy((char *)subs_prop->topic, (const char*)str, strlen(str) + 1);
+    strncpy((char *)subs_prop->topic, (const char *)str, strlen(str) + 1);
     #ifdef TEST_STAGE
-      printf(":c: topic = %s, subs_prop->topic = %s \n",
-             str, subs_prop->topic);
+    printf(":c: topic = %s, subs_prop->topic = %s \n",
+	   str, subs_prop->topic);
     #endif
     // free the memory
     (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set topic - typeName
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "typeName",
-                             "Ljava/lang/String;");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "typeName",
+			     "Ljava/lang/String;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     obj_str = (*env)->GetObjectField(env, obj_sp, fid);
-    if(obj_str == 0)
-    {
+    if (obj_str == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: obj_str = NULL \n");
+      printf(":!c: obj_str = NULL \n");
       #endif
       break;
     }
-    str = (*env)->GetStringUTFChars(env,obj_str,0);
+    str = (*env)->GetStringUTFChars(env, obj_str, 0);
     // Set the structure field.
-    strncpy((char *)subs_prop->typeName, (const char*)str, strlen(str) + 1);
+    strncpy((char *)subs_prop->typeName, (const char *)str, strlen(str) + 1);
     #ifdef TEST_STAGE
-      printf(":c: typeName = %s, subs_prop->typeName = %s \n",
-             str, subs_prop->typeName);
+    printf(":c: typeName = %s, subs_prop->typeName = %s \n",
+	   str, subs_prop->typeName);
     #endif
     // free the memory
     (*env)->ReleaseStringUTFChars(env, obj_str, str);
     /////////////////////////////////////////////////
     // set topic - typeChecksum
-    fid = (*env)->GetFieldID(env,cls_sp,"typeChecksum","I");
-    if(fid == 0)
-    {
+    fid = (*env)->GetFieldID(env, cls_sp, "typeChecksum", "I");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    subs_prop->typeChecksum = (TypeChecksum) (*env)->GetIntField(env, obj_sp, fid);
+    subs_prop->typeChecksum = (TypeChecksum)(*env)->GetIntField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->typeChecksum = %"PRId32"\n",
-             subs_prop->typeChecksum);
+    printf(":c: check: subs_prop->typeChecksum = %" PRId32 "\n",
+	   subs_prop->typeChecksum);
     #endif
     /////////////////////////////////////////////////
     // set topic - minimumSeparation
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "minSeparation",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "minSeparation",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     j_minSeparation = (*env)->GetObjectField(env, obj_sp, fid);
     subs_prop->minimumSeparation = getNtpTime(env, j_minSeparation);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->minimumSeparation: sec = %"PRId32", fract = %"PRIu32" \n",
-             subs_prop->minimumSeparation.seconds,
-             subs_prop->minimumSeparation.fraction);
+    printf(":c: check: subs_prop->minimumSeparation: sec = %" PRId32 ", fract = %" PRIu32 " \n",
+	   subs_prop->minimumSeparation.seconds,
+	   subs_prop->minimumSeparation.fraction);
     #endif
     /////////////////////////////////////////////////
     // set topic - recvQueueSize
-    fid = (*env)->GetFieldID(env,cls_sp,"recvQueueSize","J");
-    if(fid == 0)
-    {
+    fid = (*env)->GetFieldID(env, cls_sp, "recvQueueSize", "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    subs_prop->recvQueueSize = (uint32_t) (*env)->GetLongField(env, obj_sp, fid);
+    subs_prop->recvQueueSize = (uint32_t)(*env)->GetLongField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->recvQueueSize = %"PRIu32" \n",
-             subs_prop->recvQueueSize);
+    printf(":c: check: subs_prop->recvQueueSize = %" PRIu32 " \n",
+	   subs_prop->recvQueueSize);
     #endif
     /////////////////////////////////////////////////
     // set topic - reliabilityRequested
-    fid = (*env)->GetFieldID(env,cls_sp,"reliabilityRequested","J");
-    if(fid == 0)
-    {
+    fid = (*env)->GetFieldID(env, cls_sp, "reliabilityRequested", "J");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    subs_prop->reliabilityRequested = (uint32_t) (*env)->GetLongField(env, obj_sp, fid);
+    subs_prop->reliabilityRequested = (uint32_t)(*env)->GetLongField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->reliabilityRequested = %"PRIu32" \n",
-             subs_prop->reliabilityRequested);
+    printf(":c: check: subs_prop->reliabilityRequested = %" PRIu32 " \n",
+	   subs_prop->reliabilityRequested);
     #endif
     /////////////////////////////////////////////////
     // set topic - deadline
     fid = (*env)->GetFieldID(env,
-                             cls_sp,
-                             "deadline",
-                             "Lorg/ocera/orte/types/NtpTime;");
-    if(fid == 0)
-    {
+			     cls_sp,
+			     "deadline",
+			     "Lorg/ocera/orte/types/NtpTime;");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
     j_deadline = (*env)->GetObjectField(env, obj_sp, fid);
     subs_prop->deadline = getNtpTime(env, j_deadline);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->deadline: sec = %"PRId32", fract = %"PRIu32"  \n",
-             subs_prop->deadline.seconds, subs_prop->deadline.fraction);
+    printf(":c: check: subs_prop->deadline: sec = %" PRId32 ", fract = %" PRIu32 "  \n",
+	   subs_prop->deadline.seconds, subs_prop->deadline.fraction);
     #endif
     /////////////////////////////////////////////////
     // set topic - mode
-    fid = (*env)->GetFieldID(env,cls_sp,"mode","I");
-    if(fid == 0)
-    {
+    fid = (*env)->GetFieldID(env, cls_sp, "mode", "I");
+    if (fid == 0) {
       #ifdef TEST_STAGE
-        printf(":!c: fid = NULL \n");
+      printf(":!c: fid = NULL \n");
       #endif
       break;
     }
-    subs_prop->mode = (uint32_t) (*env)->GetIntField(env, obj_sp, fid);
+    subs_prop->mode = (uint32_t)(*env)->GetIntField(env, obj_sp, fid);
     #ifdef TEST_STAGE
-      printf(":c: check: subs_prop->mode = %"PRIu32" \n",
-             subs_prop->mode);
+    printf(":c: check: subs_prop->mode = %" PRIu32 " \n",
+	   subs_prop->mode);
     #endif
 /*
     /////////////////////////////////////////////////
@@ -249,18 +237,16 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionPropertiesSet
     #endif
 */
     // calling original native method
-    b = ORTESubscriptionPropertiesSet((ORTESubscription *) j_appDomain_handle, subs_prop);
-    if (b == ORTE_BAD_HANDLE)
-    {
+    b = ORTESubscriptionPropertiesSet((ORTESubscription *)j_appDomain_handle, subs_prop);
+    if (b == ORTE_BAD_HANDLE) {
       printf(":c!: cannot set new Subscription Properties! [bad sub handle] \n");
       break;
     }
     // set flag
     flag_ok = 1;
-  } while(0);
+  } while (0);
 
-  if(flag_ok == 0)
-  {
+  if (flag_ok == 0) {
     return 0;
   }
 

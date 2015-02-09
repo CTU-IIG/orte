@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTEDomainDefaultAppCreate
  * Signature: (IZ)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreate
   (JNIEnv *, jobject, jint, jboolean);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainDefaultAppCreat
  * Method:    jORTEDomainAppCreate
  * Signature: (IJJLorg/ocera/orte/types/DomainEvents;Z)J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
   (JNIEnv *, jobject, jint, jlong, jlong, jobject, jboolean);
 
 /*
@@ -28,7 +30,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainAppCreate
  * Method:    jORTEDomainAppDestroy
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainAppDestroy
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_DomainApp_jORTEDomainAppDestroy
   (JNIEnv *, jobject, jlong);
 
 /*
@@ -36,7 +39,8 @@ JNIEXPORT jboolean JNICALL Java_org_ocera_orte_DomainApp_jORTEDomainAppDestroy
  * Method:    jORTETypeRegisterAdd
  * Signature: (JLjava/lang/String;J)I
  */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
+JNIEXPORT jint JNICALL
+Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
   (JNIEnv *, jobject, jlong, jstring, jlong);
 
 /*
@@ -44,10 +48,11 @@ JNIEXPORT jint JNICALL Java_org_ocera_orte_DomainApp_jORTETypeRegisterAdd
  * Method:    jORTETypeRegisterDestroyAll
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_DomainApp_jORTETypeRegisterDestroyAll
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_DomainApp_jORTETypeRegisterDestroyAll
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }
 #endif
-#endif
+#endif /* ifndef _Included_org_ocera_orte_DomainApp */

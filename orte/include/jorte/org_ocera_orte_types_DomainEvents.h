@@ -12,7 +12,8 @@ extern "C" {
  * Method:    jORTEDomainInitEvents
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
+JNIEXPORT jlong JNICALL
+Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEvents
   (JNIEnv *, jobject);
 
 /*
@@ -20,7 +21,8 @@ JNIEXPORT jlong JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainInitEv
  * Method:    jORTEDomainEventsDestroy
  * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_ocera_orte_types_DomainEvents_jORTEDomainEventsDestroy
+JNIEXPORT jboolean JNICALL
+Java_org_ocera_orte_types_DomainEvents_jORTEDomainEventsDestroy
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
