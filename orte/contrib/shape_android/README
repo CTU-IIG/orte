@@ -5,8 +5,8 @@ Shape for Android is a demonstration application delivered with ORTE source code
 
 How to create shape_android.apk
 -----------------------------
-1] Update Android SDK to include Android 4.0.3 (API 15)
-<path-to-sdk>/tools/android update sdk --no-ui --all --filter android-15
+1] Update Android SDK to include last Android 5.0.1 (API 21)
+<path-to-sdk>/tools/android update sdk --no-ui --all --filter android-21
 
 2] Clone ORTE project from git
 git clone git://rtime.felk.cvut.cz/orte
@@ -29,17 +29,15 @@ ant debug
 
 
 ---
-!! Note that in case you haven't renamed the project, in step 7] you should run command:
-<path-to-sdk>/platform-tools/adb install -r bin/PublisherActivity-debug.apk
-
 !! Note that there is kind of problem with aapt for some architectures, when running
 "ant debug" command. On my pc - 32bit, Debian GNU/Linux 7.8 (wheezy), the problem
 was solved in directory <path-to-sdk>/build-tools/21.1.2 like this:
 
 $mv aapt _aapt
-$vi aapt
-#!/bin/bash
-qemu-i386 -cpu n270 -L / <path-to-sdk>/build-tools/21.1.2/_aapt $@
+$cat <<EOF > aapt
+>#!/bin/bash
+>qemu-i386 -cpu n270 -L / <path-to-sdk>/build-tools/21.1.2/_aapt $@
+>EOF
 
-Means that aapt is run in qemu. Build then was sucessful.
+It means that aapt is run in qemu. Build then was sucessful.
 
