@@ -228,6 +228,56 @@ objectEntryInit(ObjectEntry *oe)
   return 0;
 }
 
+static void
+publicationsInit(CSTPublications *p)
+{
+  p->counter = 0;
+  CSTWriter_init_root_field(p);
+  pthread_rwlock_init(&p->lock, NULL);
+}
+
+static void
+subscriptionsInit(CSTSubscriptions *s)
+{
+  s->counter = 0;
+  CSTReader_init_root_field(s);
+  pthread_rwlock_init(&s->lock, NULL);
+}
+
+static void
+psEntryInit(PSEntry *e)
+{
+  PublicationList_init_root_field(e);
+  pthread_rwlock_init(&e->publicationsLock, NULL);
+  SubscriptionList_init_root_field(e);
+  pthread_rwlock_init(&e->subscriptionsLock, NULL);
+}
+
+static void
+patternEntryInit(ORTEDomain *d)
+{
+  pthread_rwlock_init(&d->patternEntry.lock, NULL);
+  Pattern_init_head(&d->patternEntry);
+  ORTEPatternRegister(d, ORTEPatternCheckDefault, ORTEPatternMatchDefault, NULL);
+}
+
+static void
+printLocalAddresses(ORTEDomain *d)
+{
+  char iflocal[MAX_INTERFACES*MAX_STRING_IPADDRESS_LENGTH];
+  char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  int i;
+
+  iflocal[0] = 0;
+  if (d->domainProp.IFCount) {
+    for (i = 0; i < d->domainProp.IFCount; i++)
+      strcat(iflocal, IPAddressToString(d->domainProp.IFProp[i].ipAddress, sIPAddress));
+    debug(30, 2) ("ORTEDomainCreate: localIPAddres(es) %s\n", iflocal);
+  } else {
+    debug(30, 2) ("ORTEDomainCreate: no active interface card\n");
+  }
+}
+
 ORTEDomain *
 ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		 ORTEDomainAppEvents *events, Boolean manager)
@@ -237,8 +287,6 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   AppParams         *appParams;
   CSTWriterParams   cstWriterParams;
   CSTReaderParams   cstReaderParams;
-  char              iflocal[MAX_INTERFACES*MAX_STRING_IPADDRESS_LENGTH];
-  char              sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
   char              sbuff[128];
   int               i;
   uint16_t          port = 0;
@@ -263,6 +311,10 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       goto err_domainProp;
     }
   }
+  if (!d->domainProp.IFCount && d->domainProp.multicast.enabled) {
+    debug(30, 0) ("ORTEDomainCreate: for multicast have to be active an interface\n");
+    goto err_domainProp;
+  }
   ORTEDomainProp *dp = &d->domainProp;
 
   initTaskProp(&d->taskRecvUnicastMetatraffic,   d, dp->recvBuffSize);
@@ -278,36 +330,13 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   if (objectEntryInit(&d->objectEntry) == -1)
     goto err_sock;
 
-  //publication,subscriptions
-  d->publications.counter = d->subscriptions.counter = 0;
-  CSTWriter_init_root_field(&d->publications);
-  CSTReader_init_root_field(&d->subscriptions);
-  pthread_rwlock_init(&d->publications.lock, NULL);
-  pthread_rwlock_init(&d->subscriptions.lock, NULL);
-  //publication,subscriptions lists
-  PublicationList_init_root_field(&d->psEntry);
-  pthread_rwlock_init(&d->psEntry.publicationsLock, NULL);
-  SubscriptionList_init_root_field(&d->psEntry);
-  pthread_rwlock_init(&d->psEntry.subscriptionsLock, NULL);
+  publicationsInit(&d->publications);
+  subscriptionsInit(&d->subscriptions);
+  psEntryInit(&d->psEntry);
 
-  //pattern
-  pthread_rwlock_init(&d->patternEntry.lock, NULL);
-  ORTEPatternRegister(d, ORTEPatternCheckDefault, ORTEPatternMatchDefault, NULL);
-  Pattern_init_head(&d->patternEntry);
+  patternEntryInit(d);
 
-  //print local IP addresses
-  iflocal[0] = 0;
-  if (d->domainProp.IFCount) {
-    for (i = 0; i < d->domainProp.IFCount; i++)
-      strcat(iflocal, IPAddressToString(d->domainProp.IFProp[i].ipAddress, sIPAddress));
-    debug(30, 2) ("ORTEDomainCreate: localIPAddres(es) %s\n", iflocal);
-  } else {
-    debug(30, 2) ("ORTEDomainCreate: no active interface card\n");
-    if (d->domainProp.multicast.enabled) {
-      debug(30, 0) ("ORTEDomainCreate: for multicast have to be active an interface\n");
-      goto err_domainProp;
-    }
-  }
+  printLocalAddresses(d);
 
   //DomainEvents
   if (events != NULL) {
@@ -572,6 +601,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       guid.aid = AID_UNKNOWN;
       guid.oid = OID_APP;
       if (!objectEntryFind(d, &guid)) {
+	char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
 	appParams = (AppParams *)MALLOC(sizeof(AppParams));
 	AppParamsInit(appParams);
 	appParams->hostId = guid.hid;
@@ -605,6 +635,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       guid.aid = AID_UNKNOWN;
       guid.oid = OID_APP;
       if (!objectEntryFind(d, &guid)) {
+	char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
 	appParams = (AppParams *)MALLOC(sizeof(AppParams));
 	AppParamsInit(appParams);
 	appParams->hostId = guid.hid;
