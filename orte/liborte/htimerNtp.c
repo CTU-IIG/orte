@@ -171,14 +171,13 @@ htimerUnicastSendMetatraffic_run_expired(ORTEDomain *d,
 					 ul_htim_time_t *pact_time)
 {
   HTimFncUserNode *timer;
-  int             retValue;
 
   while ((timer = htimerUnicastSendMetatraffic_cut_expired(objectEntryAID, pact_time))) {
     if (timer->lock)
       pthread_rwlock_wrlock(timer->lock);
     debug(2, 10) ("htimerUnicastMetatraffic: %s\n",
 		  timer->name);
-    retValue = timer->func(d, timer->arg1);
+    timer->func(d, timer->arg1);
     while (d->taskSend.mb.needSend) {
       ORTESendData(d, objectEntryAID, ORTE_TRUE);
       timer->func(d, timer->arg1);
@@ -235,12 +234,11 @@ htimerUnicastSendUserData_run_expired(ORTEDomain *d,
 				      ul_htim_time_t *pact_time)
 {
   HTimFncUserNode *timer;
-  int             retValue;
 
   while ((timer = htimerUnicastSendUserData_cut_expired(objectEntryAID, pact_time))) {
     if (timer->lock)
       pthread_rwlock_wrlock(timer->lock);
-    retValue = timer->func(d, timer->arg1);
+    timer->func(d, timer->arg1);
     while (d->taskSend.mb.needSend) {
       ORTESendData(d, objectEntryAID, ORTE_FALSE);
       timer->func(d, timer->arg1);

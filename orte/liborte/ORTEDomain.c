@@ -563,7 +563,6 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       guid.aid = AID_UNKNOWN;
       guid.oid = OID_APP;
       if (!objectEntryFind(d, &guid)) {
-	CSTRemoteReader *cstRemoteReader;
 	appParams = (AppParams *)MALLOC(sizeof(AppParams));
 	AppParamsInit(appParams);
 	appParams->hostId = guid.hid;
@@ -580,11 +579,11 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 	  objectEntryOID->multicastPort = 0;
 	}
 	appParams->userdataUnicastPort = 0;  //Manager support only metatraffic
-	cstRemoteReader = CSTWriterAddRemoteReader(d,
-						   &d->writerApplicationSelf,
-						   objectEntryOID,
-						   OID_READ_MGR,
-						   objectEntryOID);
+	CSTWriterAddRemoteReader(d,
+				 &d->writerApplicationSelf,
+				 objectEntryOID,
+				 OID_READ_MGR,
+				 objectEntryOID);
 	debug(29, 2) ("ORTEDomainCreate: add fellow manager (%s)\n",
 		      IPAddressToString(ipAddress, sIPAddress));
       }
