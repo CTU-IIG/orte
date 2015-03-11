@@ -40,7 +40,7 @@ CSTWriterRegistrationTimer(ORTEDomain *d, void *vcstWriter)
 
   debug(52, 10) ("CSTWriterRegistrationTimer: start\n");
 
-  debug(52, 5) ("CSTWriterRegistrationTimer: OID: 0xx%x - retries = %d\n",
+  debug(52, 5) ("CSTWriterRegistrationTimer: OID: 0x%x - retries = %d\n",
 		cstWriter->guid.oid, cstWriter->registrationCounter);
   eventDetach(d,
 	      cstWriter->objectEntryOID->objectEntryAID,
