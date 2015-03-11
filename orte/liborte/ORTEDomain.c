@@ -683,7 +683,6 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   cstReaderParams.delayResponceTimeMax = d->domainProp.baseProp.delayResponceTimeACKMax;
   cstReaderParams.ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries;
   if (manager) {
-    cstReaderParams.ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries;
     cstReaderParams.repeatActiveQueryTime = iNtpTime;  //RM cann't repeatly send ACKf
   } else {
     cstReaderParams.repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime;
