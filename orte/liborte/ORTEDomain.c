@@ -434,6 +434,61 @@ bindSendSock(ORTEDomain *d)
   return 0;
 }
 
+static AppParams *
+appParamsNew(ORTEDomain *d)
+{
+  int i;
+  char sbuff[128];
+  AppParams *appParams = (AppParams *)MALLOC(sizeof(AppParams));
+
+  if (!appParams) {
+    return NULL;
+  }
+  AppParamsInit(appParams);
+  appParams->expirationTime = d->domainProp.baseProp.expirationTime;
+  VENDOR_ID_OCERA(appParams->vendorId);
+  appParams->hostId = d->guid.hid;
+  appParams->appId = d->guid.aid;
+  appParams->metatrafficUnicastPort = d->taskRecvUnicastMetatraffic.sock.port;
+  appParams->userdataUnicastPort = d->taskRecvUnicastUserdata.sock.port;
+  //fill unicast/multicast ip addresses
+  if (d->domainProp.IFCount) {
+    for (i = 0; i < d->domainProp.IFCount; i++)
+      appParams->unicastIPAddressList[i] = d->domainProp.IFProp[i].ipAddress;
+    appParams->unicastIPAddressCount = d->domainProp.IFCount;
+  }
+  if (d->domainProp.multicast.enabled &&
+      IN_MULTICAST(d->domainProp.multicast.ipAddress)) {
+    appParams->metatrafficMulticastIPAddressList[appParams->metatrafficMulticastIPAddressCount] =
+      d->domainProp.multicast.ipAddress;
+    appParams->metatrafficMulticastIPAddressCount++;
+  } else {
+    if (!d->domainProp.IFCount) {
+      appParams->unicastIPAddressList[appParams->unicastIPAddressCount] =
+	StringToIPAddress("127.0.0.1");
+      appParams->unicastIPAddressCount++;
+    }
+  }
+  //KeyList
+  if (!d->domainProp.keys) {
+    appParams->managerKeyList[0] = StringToIPAddress("127.0.0.1");
+    for (i = 0; i < d->domainProp.IFCount; i++)
+      appParams->managerKeyList[i+1] = d->domainProp.IFProp[i].ipAddress;
+    if (d->domainProp.multicast.enabled &&
+	IN_MULTICAST(d->domainProp.multicast.ipAddress)) {
+      appParams->managerKeyList[i+1] = d->domainProp.multicast.ipAddress;
+      i++;
+    }
+    appParams->managerKeyCount = i+1;
+  } else {
+    appParams->managerKeyCount = i = 0;
+    while (getStringPart(d->domainProp.keys, ':', &i, sbuff))
+      appParams->managerKeyList[appParams->managerKeyCount++] =
+	StringToIPAddress(sbuff);
+  }
+  return appParams;
+}
+
 ORTEDomain *
 ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		 ORTEDomainAppEvents *events, Boolean manager)
@@ -530,56 +585,13 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   d->taskSend.mb.containsInfoReply = ORTE_FALSE;
   d->taskSend.mb.cdrCodecDirect = NULL;
 
-  //Self object data & fellow managers object data
-  appParams = (AppParams *)MALLOC(sizeof(AppParams));
-  if (!appParams) {
+  /* Create application object */
+  d->appParams = appParamsNew(d);
+  if (!d->appParams)
     goto err_sock;
-  }
-  AppParamsInit(appParams);
-  appParams->expirationTime = d->domainProp.baseProp.expirationTime;
-  VENDOR_ID_OCERA(appParams->vendorId);
-  appParams->hostId = d->guid.hid;
-  appParams->appId = d->guid.aid;
-  appParams->metatrafficUnicastPort = d->taskRecvUnicastMetatraffic.sock.port;
-  appParams->userdataUnicastPort = d->taskRecvUnicastUserdata.sock.port;
-  //fill unicast/multicast ip addresses
-  if (d->domainProp.IFCount) {
-    for (i = 0; i < d->domainProp.IFCount; i++)
-      appParams->unicastIPAddressList[i] = d->domainProp.IFProp[i].ipAddress;
-    appParams->unicastIPAddressCount = d->domainProp.IFCount;
-  }
-  if (d->domainProp.multicast.enabled &&
-      IN_MULTICAST(d->domainProp.multicast.ipAddress)) {
-    appParams->metatrafficMulticastIPAddressList[appParams->metatrafficMulticastIPAddressCount] =
-      d->domainProp.multicast.ipAddress;
-    appParams->metatrafficMulticastIPAddressCount++;
-  } else {
-    if (!d->domainProp.IFCount) {
-      appParams->unicastIPAddressList[appParams->unicastIPAddressCount] =
-	StringToIPAddress("127.0.0.1");
-      appParams->unicastIPAddressCount++;
-    }
-  }
-  //KeyList
-  if (!d->domainProp.keys) {
-    appParams->managerKeyList[0] = StringToIPAddress("127.0.0.1");
-    for (i = 0; i < d->domainProp.IFCount; i++)
-      appParams->managerKeyList[i+1] = d->domainProp.IFProp[i].ipAddress;
-    if (d->domainProp.multicast.enabled &&
-	IN_MULTICAST(d->domainProp.multicast.ipAddress)) {
-      appParams->managerKeyList[i+1] = d->domainProp.multicast.ipAddress;
-      i++;
-    }
-    appParams->managerKeyCount = i+1;
-  } else {
-    appParams->managerKeyCount = i = 0;
-    while (getStringPart(d->domainProp.keys, ':', &i, sbuff))
-      appParams->managerKeyList[appParams->managerKeyCount++] =
-	StringToIPAddress(sbuff);
-  }
-  d->appParams = appParams;
+
   //insert object, doesn't need to be locked
-  d->objectEntryOID = objectEntryAdd(d, &d->guid, (void *)appParams);
+  d->objectEntryOID = objectEntryAdd(d, &d->guid, (void *)d->appParams);
   d->objectEntryOID->privateCreated = ORTE_TRUE;
 
 
