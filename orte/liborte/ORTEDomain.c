@@ -178,6 +178,23 @@ ORTEDomainInitEvents(ORTEDomainAppEvents *events)
 
 
 /*****************************************************************************/
+static void
+generateLocalGUID(ORTEDomain *d, Boolean manager)
+{
+  if (d->domainProp.IFCount > 0)
+    d->guid.hid = d->domainProp.IFProp[0].ipAddress;
+  else
+    d->guid.hid = StringToIPAddress("127.0.0.1");
+  if (manager) {
+    d->guid.aid = (d->taskSend.sock.port<<8)+MANAGER;
+  } else {
+    d->guid.aid = (d->taskSend.sock.port<<8)+MANAGEDAPPLICATION;
+  }
+  d->guid.oid = OID_APP;
+  debug(30, 2) ("ORTEDomainCreate: GUID: %#10.8x,%#10.8x,%#10.8x\n",
+		GUID_PRINTF(d->guid));
+}
+
 ORTEDomain *
 ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		 ORTEDomainAppEvents *events, Boolean manager)
@@ -478,20 +495,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     goto err_sock;
   }
 
-  /************************************************************************/
-  //Generates local GUID
-  if (d->domainProp.IFCount > 0)
-    d->guid.hid = d->domainProp.IFProp[0].ipAddress;
-  else
-    d->guid.hid = StringToIPAddress("127.0.0.1");
-  if (manager) {
-    d->guid.aid = (d->taskSend.sock.port<<8)+MANAGER;
-  } else {
-    d->guid.aid = (d->taskSend.sock.port<<8)+MANAGEDAPPLICATION;
-  }
-  d->guid.oid = OID_APP;
-  debug(30, 2) ("ORTEDomainCreate: GUID: %#10.8x,%#10.8x,%#10.8x\n",
-		GUID_PRINTF(d->guid));
+  generateLocalGUID(d, manager);
 
   //create HEADER of message for sending task
   RTPSHeaderCreate(&d->taskSend.mb.cdrCodec, d->guid.hid, d->guid.aid);
