@@ -195,16 +195,19 @@ generateLocalGUID(ORTEDomain *d, Boolean manager)
 		GUID_PRINTF(d->guid));
 }
 
-static void
+static int
 initTaskProp(TaskProp *tp, ORTEDomain *d, int buffSize)
 {
   tp->d = d;
   tp->terminate = ORTE_TRUE;
   tp->sock.port = 0;
   CDR_codec_init_static(&tp->mb.cdrCodec);
-  if (buffSize)
+  if (buffSize) {
     CDR_buffer_init(&tp->mb.cdrCodec, buffSize);
-  sock_init_udp(&tp->sock);
+    if (!tp->mb.cdrCodec.buffer)
+      return -1;
+  }
+  return sock_init_udp(&tp->sock);
 }
 
 static int
@@ -469,12 +472,13 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   }
   ORTEDomainProp *dp = &d->domainProp;
 
-  initTaskProp(&d->taskRecvUnicastMetatraffic,   d, dp->recvBuffSize);
-  initTaskProp(&d->taskRecvUnicastUserdata,      d, !manager ? dp->recvBuffSize : 0);
-  initTaskProp(&d->taskRecvMulticastMetatraffic, d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0);
-  initTaskProp(&d->taskRecvMulticastUserdata,    d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0);
+  if (-1 == initTaskProp(&d->taskRecvUnicastMetatraffic,   d, dp->recvBuffSize) ||
+      -1 == initTaskProp(&d->taskRecvUnicastUserdata,      d, !manager ? dp->recvBuffSize : 0) ||
+      -1 == initTaskProp(&d->taskRecvMulticastMetatraffic, d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0) ||
+      -1 == initTaskProp(&d->taskRecvMulticastUserdata,    d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0) ||
+      -1 == initTaskProp(&d->taskSend, d, dp->sendBuffSize))
+    goto err_domainProp;
 
-  initTaskProp(&d->taskSend, d, dp->sendBuffSize);
   d->taskSend.mb.cdrCodec.wptr_max = dp->wireProp.metaBytesPerPacket;
   assert(d->taskSend.mb.cdrCodec.wptr_max <= d->taskSend.mb.cdrCodec.buf_len);
   d->taskSend.mb.cdrCodec.data_endian = FLAG_ENDIANNESS;
@@ -517,32 +521,6 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 
   if (bindSendSock(d) == -1)
     goto err_sock;
-
-  /************************************************************************/
-  /* tests for valid resources */
-  if ((d->taskRecvUnicastMetatraffic.sock.fd < 0) ||
-      (d->taskSend.sock.fd < 0) ||
-      (d->domainProp.multicast.enabled &&
-       (d->taskRecvUnicastUserdata.sock.fd < 0)) ||
-      (d->domainProp.multicast.enabled &&
-       (d->taskRecvMulticastUserdata.sock.fd < 0)) ||
-      (d->domainProp.multicast.enabled &&
-       (d->taskRecvMulticastMetatraffic.sock.fd < 0))) {
-    debug(30, 0) ("ORTEDomainCreate: Error creating socket(s).\n");
-    goto err_sock;
-  }
-
-  if ((!d->taskRecvUnicastMetatraffic.mb.cdrCodec.buffer) ||
-      (!d->taskSend.mb.cdrCodec.buffer) ||
-      (d->domainProp.multicast.enabled && !manager &&
-       !d->taskRecvUnicastUserdata.mb.cdrCodec.buffer) ||
-      (d->domainProp.multicast.enabled && !manager &&
-       !d->taskRecvMulticastUserdata.mb.cdrCodec.buffer) ||
-      (d->domainProp.multicast.enabled && !manager &&
-       !d->taskRecvMulticastMetatraffic.mb.cdrCodec.buffer)) {    //no a memory
-    debug(30, 0) ("ORTEDomainCreate: Error creating buffer(s).\n");
-    goto err_sock;
-  }
 
   generateLocalGUID(d, manager);
 
