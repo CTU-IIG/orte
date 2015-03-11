@@ -684,6 +684,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   cstReaderParams.ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries;
   if (manager) {
     cstReaderParams.repeatActiveQueryTime = iNtpTime;  //RM cann't repeatly send ACKf
+    /* MS: Why is fullAcknowledge not initialized here? */
   } else {
     cstReaderParams.repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime;
     cstReaderParams.fullAcknowledge = ORTE_TRUE;
