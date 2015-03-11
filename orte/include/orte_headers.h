@@ -47,6 +47,8 @@ extern "C" {
   #error ""
 #endif
 
+#include <assert.h>             /* TODO: autoconfize this */
+
 #ifdef HAVE_ARPA_INET_H
   #include <arpa/inet.h>
 #endif

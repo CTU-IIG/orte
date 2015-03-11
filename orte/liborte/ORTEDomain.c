@@ -195,6 +195,18 @@ generateLocalGUID(ORTEDomain *d, Boolean manager)
 		GUID_PRINTF(d->guid));
 }
 
+static void
+initTaskProp(TaskProp *tp, ORTEDomain *d, int buffSize)
+{
+  tp->d = d;
+  tp->terminate = ORTE_TRUE;
+  tp->sock.port = 0;
+  CDR_codec_init_static(&tp->mb.cdrCodec);
+  if (buffSize)
+    CDR_buffer_init(&tp->mb.cdrCodec, buffSize);
+  sock_init_udp(&tp->sock);
+}
+
 ORTEDomain *
 ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		 ORTEDomainAppEvents *events, Boolean manager)
@@ -222,21 +234,27 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     return NULL;        //no memory
   //initialization local values
   d->domain = domain;
-  d->taskRecvUnicastMetatraffic.d = d;
-  d->taskRecvUnicastMetatraffic.terminate = ORTE_TRUE;
-  d->taskRecvMulticastMetatraffic.d = d;
-  d->taskRecvMulticastMetatraffic.terminate = ORTE_TRUE;
-  d->taskRecvUnicastUserdata.d = d;
-  d->taskRecvUnicastUserdata.terminate = ORTE_TRUE;
-  d->taskRecvMulticastUserdata.d = d;
-  d->taskRecvMulticastUserdata.terminate = ORTE_TRUE;
-  d->taskSend.d = d;
-  d->taskSend.terminate = ORTE_TRUE;
-  d->taskRecvUnicastMetatraffic.sock.port = 0;
-  d->taskRecvMulticastMetatraffic.sock.port = 0;
-  d->taskRecvUnicastUserdata.sock.port = 0;
-  d->taskRecvMulticastUserdata.sock.port = 0;
-  d->taskSend.sock.port = 0;
+
+  //create domainProp
+  if (prop != NULL) {
+    memcpy(&d->domainProp, prop, sizeof(ORTEDomainProp));
+  } else {
+    if (!ORTEDomainPropDefaultGet(&d->domainProp)) {
+      goto err_domainProp;
+    }
+  }
+  ORTEDomainProp *dp = &d->domainProp;
+
+  initTaskProp(&d->taskRecvUnicastMetatraffic,   d, dp->recvBuffSize);
+  initTaskProp(&d->taskRecvUnicastUserdata,      d, !manager ? dp->recvBuffSize : 0);
+  initTaskProp(&d->taskRecvMulticastMetatraffic, d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0);
+  initTaskProp(&d->taskRecvMulticastUserdata,    d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0);
+
+  initTaskProp(&d->taskSend, d, dp->sendBuffSize);
+  d->taskSend.mb.cdrCodec.wptr_max = dp->wireProp.metaBytesPerPacket;
+  assert(d->taskSend.mb.cdrCodec.wptr_max <= d->taskSend.mb.cdrCodec.buf_len);
+  d->taskSend.mb.cdrCodec.data_endian = FLAG_ENDIANNESS;
+
   //init structure objectEntry
   pthread_condattr_init(&attr);
 #if defined HAVE_PTHREAD_CONDATTR_SETCLOCK && HAVE_DECL_CLOCK_MONOTONIC
@@ -268,15 +286,6 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   ORTEPatternRegister(d, ORTEPatternCheckDefault, ORTEPatternMatchDefault, NULL);
   Pattern_init_head(&d->patternEntry);
 
-  //create domainProp
-  if (prop != NULL) {
-    memcpy(&d->domainProp, prop, sizeof(ORTEDomainProp));
-  } else {
-    if (!ORTEDomainPropDefaultGet(&d->domainProp)) {
-      goto err_domainProp;
-    }
-  }
-
   //print local IP addresses
   iflocal[0] = 0;
   if (d->domainProp.IFCount) {
@@ -298,39 +307,9 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
     memset(&d->domainEvents, 0, sizeof(ORTEDomainAppEvents));
   }
 
-  //local buffers
-  CDR_codec_init_static(&d->taskRecvUnicastMetatraffic.mb.cdrCodec);
-  CDR_codec_init_static(&d->taskRecvMulticastMetatraffic.mb.cdrCodec);
-  CDR_codec_init_static(&d->taskRecvUnicastUserdata.mb.cdrCodec);
-  CDR_codec_init_static(&d->taskRecvMulticastUserdata.mb.cdrCodec);
-  CDR_codec_init_static(&d->taskSend.mb.cdrCodec);
-  CDR_buffer_init(&d->taskRecvUnicastMetatraffic.mb.cdrCodec,
-		  d->domainProp.recvBuffSize);
-  CDR_buffer_init(&d->taskSend.mb.cdrCodec,
-		  d->domainProp.sendBuffSize);
-  d->taskSend.mb.cdrCodec.wptr_max = d->domainProp.wireProp.metaBytesPerPacket;
-  if (!manager) {
-    CDR_buffer_init(&d->taskRecvUnicastUserdata.mb.cdrCodec,
-		    d->domainProp.recvBuffSize);
-    if (d->domainProp.multicast.enabled) {
-      CDR_buffer_init(&d->taskRecvMulticastMetatraffic.mb.cdrCodec,
-		      d->domainProp.recvBuffSize);
-      CDR_buffer_init(&d->taskRecvMulticastUserdata.mb.cdrCodec,
-		      d->domainProp.recvBuffSize);
-    }
-  }
-  d->taskSend.mb.cdrCodec.data_endian = FLAG_ENDIANNESS;
-
   //TypeRegister
   ORTEType_init_root_field(&d->typeEntry);
   pthread_rwlock_init(&d->typeEntry.lock, NULL);
-
-  //Sockets
-  sock_init_udp(&d->taskRecvUnicastMetatraffic.sock);
-  sock_init_udp(&d->taskRecvMulticastMetatraffic.sock);
-  sock_init_udp(&d->taskRecvUnicastUserdata.sock);
-  sock_init_udp(&d->taskRecvMulticastUserdata.sock);
-  sock_init_udp(&d->taskSend.sock);
 
   /************************************************************************/
   /* UnicastMetatraffic */

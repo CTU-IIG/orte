@@ -34,8 +34,6 @@
 extern "C" {
 #endif
 
-#define orte_assert(x)
-
 #include "orte_headers.h"
 #include "orte/cdr.h"
 #include "ul_gavl.h"
