@@ -435,7 +435,7 @@ bindSendSock(ORTEDomain *d)
 }
 
 static AppParams *
-appParamsNew(ORTEDomain *d)
+appSelfParamsNew(ORTEDomain *d)
 {
   int i;
   char sbuff[128];
@@ -489,17 +489,90 @@ appParamsNew(ORTEDomain *d)
   return appParams;
 }
 
+static void
+writerApplicationSelfInit(ORTEDomain *d, Boolean manager)
+{
+  CSTWriterParams cstWriterParams;
+
+  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
+  cstWriterParams.refreshPeriod = d->domainProp.baseProp.refreshPeriod;
+  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
+  NTPTIME_ZERO(cstWriterParams.delayResponceTime);
+  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
+  if (manager) {
+    cstWriterParams.registrationRetries = d->domainProp.baseProp.registrationMgrRetries;
+    cstWriterParams.registrationPeriod = d->domainProp.baseProp.registrationMgrPeriod;
+    cstWriterParams.fullAcknowledge = ORTE_FALSE;
+  } else {
+    cstWriterParams.registrationRetries = d->domainProp.baseProp.registrationAppRetries;
+    cstWriterParams.registrationPeriod = d->domainProp.baseProp.registrationAppPeriod;
+    cstWriterParams.fullAcknowledge = ORTE_TRUE;
+  }
+  CSTWriterInit(d, &d->writerApplicationSelf, d->objectEntryOID,
+		OID_WRITE_APPSELF, &cstWriterParams, NULL);
+}
+
+static ObjectEntryOID *
+fellowManagerNew(ORTEDomain *d, GUID_RTPS guid, uint16_t port)
+{
+  AppParams *appParams;
+  IPAddress ipAddress = guid.hid;
+
+  appParams = (AppParams *)MALLOC(sizeof(AppParams));
+  AppParamsInit(appParams);
+  appParams->hostId = guid.hid;
+  appParams->appId = guid.aid;
+  appParams->metatrafficUnicastPort = d->appParams->metatrafficUnicastPort;
+  ObjectEntryOID *objectEntryOID = objectEntryAdd(d, &guid, (void *)appParams);
+  if (d->domainProp.multicast.enabled && IN_MULTICAST(ipAddress)) {
+    appParams->metatrafficMulticastIPAddressList[0] = ipAddress;
+    appParams->metatrafficMulticastIPAddressCount = 1;
+    objectEntryOID->multicastPort = port;
+  } else {
+    appParams->unicastIPAddressList[0] = ipAddress;
+    appParams->unicastIPAddressCount = 1;
+    objectEntryOID->multicastPort = 0;
+  }
+  appParams->userdataUnicastPort = 0;   //Manager support only metatraffic
+
+  char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  debug(29, 2) ("ORTEDomainCreate: add fellow manager (%s)\n",
+		IPAddressToString(ipAddress, sIPAddress));
+
+  return objectEntryOID;
+}
+
+static ObjectEntryOID *
+managerNew(ORTEDomain *d, GUID_RTPS guid, uint16_t port)
+{
+  ObjectEntryOID *objectEntryOID;
+  AppParams *appParams;
+
+  appParams = (AppParams *)MALLOC(sizeof(AppParams));
+  AppParamsInit(appParams);
+  appParams->hostId = guid.hid;
+  appParams->appId = guid.aid;
+  appParams->metatrafficUnicastPort = port;
+  appParams->userdataUnicastPort = 0;  //Manager support only metatraffic
+  appParams->unicastIPAddressList[0] = d->domainProp.appLocalManager;
+  appParams->unicastIPAddressCount = 1;
+  objectEntryOID = objectEntryAdd(d, &guid, (void *)appParams);
+
+  char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
+  debug(30, 2) ("ORTEDomainCreate: add manager (%s)\n",
+		IPAddressToString(d->domainProp.appLocalManager, sIPAddress));
+
+  return objectEntryOID;
+}
+
 ORTEDomain *
 ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 		 ORTEDomainAppEvents *events, Boolean manager)
 {
   ORTEDomain        *d;
-  ObjectEntryOID    *objectEntryOID;
-  AppParams         *appParams;
   CSTWriterParams   cstWriterParams;
   CSTReaderParams   cstReaderParams;
   char              sbuff[128];
-  int               i;
   int               errno_save = 0;
 
   debug(30, 2)  ("ORTEDomainCreate: %s compiled: %s,%s\n",
@@ -586,7 +659,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   d->taskSend.mb.cdrCodecDirect = NULL;
 
   /* Create application object */
-  d->appParams = appParamsNew(d);
+  d->appParams = appSelfParamsNew(d);
   if (!d->appParams)
     goto err_sock;
 
@@ -598,82 +671,32 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   /************************************************************************/
   //CST objects
   //  writerApplicationSelf (WAS)
-  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
-  cstWriterParams.refreshPeriod = d->domainProp.baseProp.refreshPeriod;
-  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
-  NTPTIME_ZERO(cstWriterParams.delayResponceTime);
-  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
+  writerApplicationSelfInit(d, manager);
   if (manager) {
-    cstWriterParams.registrationRetries = d->domainProp.baseProp.registrationMgrRetries;
-    cstWriterParams.registrationPeriod = d->domainProp.baseProp.registrationMgrPeriod;
-    cstWriterParams.fullAcknowledge = ORTE_FALSE;
-  } else {
-    cstWriterParams.registrationRetries = d->domainProp.baseProp.registrationAppRetries;
-    cstWriterParams.registrationPeriod = d->domainProp.baseProp.registrationAppPeriod;
-    cstWriterParams.fullAcknowledge = ORTE_TRUE;
-  }
-  CSTWriterInit(d, &d->writerApplicationSelf, d->objectEntryOID,
-		OID_WRITE_APPSELF, &cstWriterParams, NULL);
-  if (manager) {
-    i = 0;
+    int i = 0;
     while (getStringPart(d->domainProp.mgrs, ':', &i, sbuff) > 0) {
-      GUID_RTPS guid;
       IPAddress ipAddress = StringToIPAddress(sbuff);
-      guid.hid = ipAddress;
-      guid.aid = AID_UNKNOWN;
-      guid.oid = OID_APP;
+      GUID_RTPS guid = { .hid = ipAddress, .aid = AID_UNKNOWN, .oid = OID_APP };
       if (!objectEntryFind(d, &guid)) {
-	char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
-	appParams = (AppParams *)MALLOC(sizeof(AppParams));
-	AppParamsInit(appParams);
-	appParams->hostId = guid.hid;
-	appParams->appId = guid.aid;
-	appParams->metatrafficUnicastPort = d->appParams->metatrafficUnicastPort;
-	objectEntryOID = objectEntryAdd(d, &guid, (void *)appParams);
-	if (d->domainProp.multicast.enabled && IN_MULTICAST(ipAddress)) {
-	  appParams->metatrafficMulticastIPAddressList[0] = ipAddress;
-	  appParams->metatrafficMulticastIPAddressCount = 1;
-	  objectEntryOID->multicastPort = port;
-	} else {
-	  appParams->unicastIPAddressList[0] = ipAddress;
-	  appParams->unicastIPAddressCount = 1;
-	  objectEntryOID->multicastPort = 0;
-	}
-	appParams->userdataUnicastPort = 0;  //Manager support only metatraffic
+	ObjectEntryOID *objectEntryOID = fellowManagerNew(d, guid, port);
 	CSTWriterAddRemoteReader(d,
 				 &d->writerApplicationSelf,
 				 objectEntryOID,
 				 OID_READ_MGR,
 				 objectEntryOID);
-	debug(29, 2) ("ORTEDomainCreate: add fellow manager (%s)\n",
-		      IPAddressToString(ipAddress, sIPAddress));
       }
     }
   } else {
     //  add to WAS remote writer(s)
     if (d->domainProp.appLocalManager) {
-      GUID_RTPS guid;
-      guid.hid = d->domainProp.appLocalManager;
-      guid.aid = AID_UNKNOWN;
-      guid.oid = OID_APP;
+      GUID_RTPS guid = { .hid = d->domainProp.appLocalManager, .aid = AID_UNKNOWN, .oid = OID_APP };
       if (!objectEntryFind(d, &guid)) {
-	char sIPAddress[MAX_STRING_IPADDRESS_LENGTH];
-	appParams = (AppParams *)MALLOC(sizeof(AppParams));
-	AppParamsInit(appParams);
-	appParams->hostId = guid.hid;
-	appParams->appId = guid.aid;
-	appParams->metatrafficUnicastPort = port;
-	appParams->userdataUnicastPort = 0;  //Manager support only metatraffic
-	appParams->unicastIPAddressList[0] = d->domainProp.appLocalManager;
-	appParams->unicastIPAddressCount = 1;
-	objectEntryOID = objectEntryAdd(d, &guid, (void *)appParams);
+	ObjectEntryOID *objectEntryOID = managerNew(d, guid, port);
 	CSTWriterAddRemoteReader(d,
 				 &d->writerApplicationSelf,
 				 objectEntryOID,
 				 OID_READ_MGR,
 				 objectEntryOID);
-	debug(30, 2) ("ORTEDomainCreate: add manager (%s)\n",
-		      IPAddressToString(d->domainProp.appLocalManager, sIPAddress));
       }
     }
   }
@@ -777,8 +800,6 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
 //err:
   if (!errno_save)
     errno_save = errno;
-  /* TODO */
-  FREE(appParams);
 err_sock:
   if (!errno_save)
     errno_save = errno;
