@@ -337,7 +337,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
       debug(30, 2) ("ORTEDomainCreate: set value IP_MULTICAST_LOOP: %u\n",
 		    loop);
 
-      //joint to multicast group
+      //join to multicast group
       memset(&mreq, 0, sizeof(mreq));
       mreq.imr_multiaddr.s_addr = htonl(d->domainProp.multicast.ipAddress);
       mreq.imr_interface.s_addr = htonl(INADDR_ANY);
