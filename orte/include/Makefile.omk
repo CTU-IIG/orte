@@ -10,6 +10,9 @@ ifeq ($(ORTE_ENABLE),y)
 ifeq ($(TARGET_OS),win32)
 renamed_include_HEADERS = \
 orte/orte_config_omk_win32.h->orte/orte_config.h
+else ifeq ($(firstword $(OMK_RULES_TYPE)),rtems)
+renamed_include_HEADERS = \
+orte/orte_config_omk_rtems.h->orte/orte_config.h
 else
 renamed_include_HEADERS = \
 orte/orte_config_omk_linux.h->orte/orte_config.h
