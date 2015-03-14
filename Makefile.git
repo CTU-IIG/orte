@@ -39,6 +39,7 @@ check-windows-omk.real:
 	echo "CXX=i686-w64-mingw32-g++" >> config.omk
 	echo "AR=i686-w64-mingw32-ar" >> config.omk
 	echo "LD=i686-w64-mingw32-ld" >> config.omk
+	echo "TARGET_LOADLIBES=pthread" >> config.omk
 	ln -s ../orte ../Makefile ../Makefile.omk ../Makefile.rules .
 	make
 
