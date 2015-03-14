@@ -193,6 +193,7 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   int               i;
   uint16_t          port = 0;
   int               errno_save = 0;
+  pthread_condattr_t attr;
 
   debug(30, 2)  ("ORTEDomainCreate: %s compiled: %s,%s\n",
 		 ORTE_PACKAGE_STRING, __DATE__, __TIME__);
@@ -220,11 +221,16 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   d->taskRecvMulticastUserdata.sock.port = 0;
   d->taskSend.sock.port = 0;
   //init structure objectEntry
+  pthread_condattr_init(&attr);
+#if defined HAVE_PTHREAD_CONDATTR_SETCLOCK && HAVE_DECL_CLOCK_MONOTONIC
+  if (pthread_condattr_setclock(&attr, CLOCK_MONOTONIC) != 0)
+    goto err_free;
+#endif
   ObjectEntryHID_init_root_field(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.objRootLock, NULL);
   htimerRoot_init_queue(&d->objectEntry);
   pthread_rwlock_init(&d->objectEntry.htimRootLock, NULL);
-  pthread_cond_init(&d->objectEntry.htimSendCond, NULL);
+  pthread_cond_init(&d->objectEntry.htimSendCond, &attr);
   pthread_mutex_init(&d->objectEntry.htimSendMutex, NULL);
   d->objectEntry.htimSendCondValue = 0;
   d->objectEntry.htimNeedWakeUp = ORTE_TRUE;
@@ -757,6 +763,7 @@ err_domainProp:
   pthread_mutex_destroy(&d->objectEntry.htimSendMutex);
   pthread_rwlock_destroy(&d->objectEntry.htimRootLock);
   pthread_rwlock_destroy(&d->objectEntry.objRootLock);
+err_free:
   FREE(d);
   errno = errno_save;
   return NULL;

@@ -143,6 +143,10 @@ if test -z "${CONFIG_ORTE_RT}" ; then
   )
 fi
 
+AC_CHECK_FUNCS([pthread_condattr_setclock])
+AC_CHECK_LIB([rt], [clock_gettime])
+AC_CHECK_DECLS([CLOCK_MONOTONIC], [], [], [[#include <time.h>]])
+
 ###############################
 # enable GNU source
 AH_VERBATIM([_GNU_SOURCE],[

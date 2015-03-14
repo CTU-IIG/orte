@@ -70,7 +70,12 @@ CSTWriterInit(ORTEDomain *d, CSTWriter *cstWriter, ObjectEntryOID *object,
   cstWriter->domain = d;
   cstWriter->typeRegister = typeRegister;
   if ((cstWriter->guid.oid & 0x07) == OID_PUBLICATION) {
-    pthread_cond_init(&cstWriter->condCSChangeDestroyed, NULL);
+    pthread_condattr_t attr;
+    pthread_condattr_init(&attr);
+#if defined HAVE_PTHREAD_CONDATTR_SETCLOCK && HAVE_DECL_CLOCK_MONOTONIC
+    pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+#endif
+    pthread_cond_init(&cstWriter->condCSChangeDestroyed, &attr);
     pthread_mutex_init(&cstWriter->mutexCSChangeDestroyed, NULL);
     cstWriter->condValueCSChangeDestroyed = 0;
   }

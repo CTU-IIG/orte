@@ -260,18 +260,26 @@ getActualNtpTime(void)
 {
   NtpTime               result;
 
+#if HAVE_DECL_CLOCK_MONOTONIC
+  struct timespec       time;
+
+  clock_gettime(CLOCK_MONOTONIC, &time);
+  /* FIXME: Introduce NtpTimeAssembFromNs ather than using division. */
+  NtpTimeAssembFromUs(result, time.tv_sec, time.tv_nsec / 1000);
+#else /* !HAVE_DECL_CLOCK_MONOTONIC */
 #ifndef CONFIG_ORTE_RT
   struct timeval        time;
 
   gettimeofday(&time, NULL);
   NtpTimeAssembFromUs(result, time.tv_sec, time.tv_usec);
   NtpTimeAssembFromUs(result, time.tv_sec, time.tv_usec);
-#else
+#else /* !CONFIG_ORTE_RT */
   struct timespec        time;
 
   clock_gettime(CLOCK_REALTIME, &time);
   time.tv_nsec /= 1000;  //conver to us
   NtpTimeAssembFromUs(result, time.tv_sec, time.tv_nsec);
-#endif
+#endif /* CONFIG_ORTE_RT */
+#endif /* HAVE_DECL_CLOCK_MONOTONIC */
   return result;
 }

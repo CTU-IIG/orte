@@ -44,10 +44,14 @@
 /* #undef HAVE_ASM_BYTEORDER_H */
 
 /* Define to 1 if you have the <byteswap.h> header file. */
-/* #undef HAVE_BYTESWAP_H */
+#define HAVE_BYTESWAP_H 1
 
 /* Define to 1 if you have the <ctype.h> header file. */
 #define HAVE_CTYPE_H 1
+
+/* Define to 1 if you have the declaration of `CLOCK_MONOTONIC', and to 0 if
+   you don't. */
+#define HAVE_DECL_CLOCK_MONOTONIC 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
@@ -73,6 +77,9 @@
 /* Define for ORTE getopt_long self implemetation */
 /* #undef HAVE_GETPOT_LONG_ORTE */
 
+/* Define to 1 if you have the `gettimeofday' function. */
+/* #undef HAVE_GETTIMEOFDAY */
+
 /* Define to 1 if you have the <ifaddrs.h> header file. */
 #define HAVE_IFADDRS_H 1
 
@@ -90,6 +97,9 @@
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
+
+/* Define to 1 if you have the `rt' library (-lrt). */
+#define HAVE_LIBRT 1
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 /* #undef HAVE_LIBSOCKET */
@@ -142,6 +152,9 @@
 /* Define to 1 if you have the <onetd.h> header file. */
 /* #undef HAVE_ONETD_H */
 
+/* Define to 1 if you have the `pthread_condattr_setclock' function. */
+#define HAVE_PTHREAD_CONDATTR_SETCLOCK 1
+
 /* Define to 1 if you have the <pthread.h> header file. */
 #define HAVE_PTHREAD_H 1
 
@@ -156,6 +169,9 @@
 
 /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
+
+/* Define to 1 if you have the `sigwaitinfo' function. */
+#define HAVE_SIGWAITINFO 1
 
 /* Define to 1 if you have the <stdarg.h> header file. */
 #define HAVE_STDARG_H 1
@@ -223,9 +239,6 @@
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #define LT_OBJDIR ".libs/"
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-/* #undef NO_MINUS_C_MINUS_O */
 
 /* Define to the address where bug reports for this package should be sent. */
 #define ORTE_PACKAGE_BUGREPORT "orte@rtime.felk.cvut.cz"
