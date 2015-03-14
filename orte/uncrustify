@@ -12,5 +12,5 @@ UNCRUSTIFY_CFG=${UNCRUSTIFY_CFG:-$0.cfg}
 
 git ls-files|git check-attr --stdin uncrustify|awk -F: '/uncrustify: set$/ {print $1}'|\
     while read file; do
-	git show HEAD:$file | (set -x; uncrustify -c $UNCRUSTIFY_CFG -o $file)
+	git show :$file | (set -x; uncrustify -c $UNCRUSTIFY_CFG -o $file)
     done
