@@ -16,7 +16,7 @@ FPublisher::FPublisher(QWidget *parent)
 bool FPublisher::initPublisher(int icolor,int istrength)
 {
     NtpTime	persistence;
-    const char 	*topic;
+    const char 	*topic = "";
 
     ORTEInit();
     domain=ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN,NULL,NULL,ORTE_FALSE);
