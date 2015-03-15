@@ -65,11 +65,9 @@ static void *
 subscriberCreate(void *arg)
 {
   ORTESubscription    *s;
-  NtpTime             deadline, minimumSeparation;
+  NtpTime             deadline = NTPTIME_INITIALIZER(10), minimumSeparation = NTPTIME_INITIALIZER(0);
 
   ORTETypeRegisterAdd(d, "IDA_OCTETSTRING", NULL, NULL, maxDataSize, sizeof(instance2Recv));
-  NTPTIME_BUILD(deadline, 10);
-  NTPTIME_BUILD(minimumSeparation, 0);
   s = ORTESubscriptionCreate(
     d,
     IMMEDIATE,

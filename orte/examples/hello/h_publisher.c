@@ -69,11 +69,10 @@ void *
 publisherCreate(void *arg)
 {
   ORTEPublication     *p;
-  NtpTime             persistence, delay;
+  NtpTime             persistence = NTPTIME_INITIALIZER(3);
+  NtpTime             delay = NTPTIME_INITIALIZER(1);
 
   ORTETypeRegisterAdd(d, "HelloMsg", NULL, NULL, NULL, sizeof(instance2Send));
-  NTPTIME_BUILD(persistence, 3);
-  NTPTIME_BUILD(delay, 1);
   p = ORTEPublicationCreate(
     d,
     "Example HelloMsg",

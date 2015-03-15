@@ -63,14 +63,12 @@ int
 main(int argc, char *args[])
 {
   ORTESubscription *s;
-  NtpTime         deadline, minimumSeparation;
+  NtpTime         deadline = NTPTIME_INITIALIZER(3), minimumSeparation = NTPTIME_INITIALIZER(0);
 
   ORTEInit();
   //ORTEVerbositySetOptions("ALL,10");
   d = ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN, NULL, NULL, ORTE_FALSE);
   ORTETypeRegisterAdd(d, "HelloMsg", NULL, NULL, NULL, sizeof(instance2Recv));
-  NTPTIME_BUILD(deadline, 3);
-  NTPTIME_BUILD(minimumSeparation, 0);
   s = ORTESubscriptionCreate(
     d,
     IMMEDIATE,

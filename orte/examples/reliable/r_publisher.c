@@ -64,13 +64,11 @@ int
 main(int argc, char *args[])
 {
   ORTEPublication *p;
-  NtpTime         persistence, repeating;
+  NtpTime         persistence = NTPTIME_INITIALIZER(3), repeating = NTPTIME_INITIALIZER(1);
 
   ORTEInit();
   d = ORTEDomainAppCreate(ORTE_DEFAULT_DOMAIN, NULL, NULL, ORTE_FALSE);
   ORTETypeRegisterAdd(d, "HelloMsg", NULL, NULL, NULL, sizeof(instance2Send));
-  NTPTIME_BUILD(persistence, 3);
-  NTPTIME_BUILD(repeating, 1);
   p = ORTEPublicationCreate(
     d,
     "Reliable HelloMsg",

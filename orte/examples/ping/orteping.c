@@ -159,7 +159,8 @@ main(int argc, char *argv[])
   int                     opt, domain = ORTE_DEFAULT_DOMAIN;
   int32_t                 strength = 1;
   int32_t                 instanceSend = 0, instanceRecv = 0;
-  NtpTime                 persistence, deadline, minimumSeparation, delay;
+  NtpTime                 persistence, deadline, minimumSeparation = NTPTIME_INITIALIZER(0);
+  NtpTime                 delay = NTPTIME_INITIALIZER(1);
   Boolean                 havePublisher = ORTE_FALSE;
   Boolean                 haveSubscriber = ORTE_FALSE;
   IPAddress               smIPAddress = IPADDRESS_INVALID;
@@ -167,8 +168,6 @@ main(int argc, char *argv[])
 
   ORTEInit();
   ORTEDomainPropDefaultGet(&dp);
-  NTPTIME_BUILD(minimumSeparation, 0);
-  NTPTIME_BUILD(delay, 1); //1s
 
 #if defined HAVE_GETOPT_LONG || defined HAVE_GETOPT_LONG_ORTE
   while ((opt = getopt_long(argc, argv, "m:S:d:v:R:E:P:l:I:i:t:D:Vhpsq", &long_opts[0], NULL)) != EOF) {
