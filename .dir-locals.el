@@ -7,4 +7,5 @@
   (c-basic-offset . 2)
   (c-file-style . "linux")
   (c-file-offsets
-   (case-label . +))))
+   (case-label . +)
+   (inextern-lang . 0))))
