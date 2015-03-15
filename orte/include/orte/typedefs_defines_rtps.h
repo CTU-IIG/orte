@@ -145,6 +145,8 @@ typedef struct {
 #define NTPTIME_BUILD(t, s)       {t.seconds = s; t.fraction = 0; }
 #define NTPTIME_INFINITE(t)      {t.seconds = 0xffffffff; t.fraction = 0; }
 
+#define NTPTIME_INITIALIZER(sec_float) {(int32_t)sec_float, (uint32_t)((sec_float - (int32_t)sec_float) * (1ULL<<32))}
+
 typedef uint32_t                 IPAddress;
 
 #define IPADDRESS_INVALID        0

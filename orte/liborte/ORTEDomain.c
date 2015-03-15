@@ -492,22 +492,21 @@ appSelfParamsNew(ORTEDomain *d)
 static void
 writerApplicationSelfInit(ORTEDomain *d, Boolean manager)
 {
-  CSTWriterParams cstWriterParams;
+  CSTWriterParams cstWriterParams = {
+    .waitWhileDataUnderwayTime = NTPTIME_INITIALIZER(0),
+    .refreshPeriod             = d->domainProp.baseProp.refreshPeriod,
+    .repeatAnnounceTime        = d->domainProp.baseProp.repeatAnnounceTime,
+    .delayResponceTime         = NTPTIME_INITIALIZER(0),
+    .HBMaxRetries              = d->domainProp.baseProp.HBMaxRetries,
+    .registrationRetries       = manager ?
+				 d->domainProp.baseProp.registrationMgrRetries :
+				 d->domainProp.baseProp.registrationAppRetries,
+    .registrationPeriod        = manager ?
+				 d->domainProp.baseProp.registrationMgrPeriod :
+				 d->domainProp.baseProp.registrationAppPeriod,
+    .fullAcknowledge           = manager ? ORTE_FALSE : ORTE_TRUE,
+  };
 
-  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
-  cstWriterParams.refreshPeriod = d->domainProp.baseProp.refreshPeriod;
-  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
-  NTPTIME_ZERO(cstWriterParams.delayResponceTime);
-  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
-  if (manager) {
-    cstWriterParams.registrationRetries = d->domainProp.baseProp.registrationMgrRetries;
-    cstWriterParams.registrationPeriod = d->domainProp.baseProp.registrationMgrPeriod;
-    cstWriterParams.fullAcknowledge = ORTE_FALSE;
-  } else {
-    cstWriterParams.registrationRetries = d->domainProp.baseProp.registrationAppRetries;
-    cstWriterParams.registrationPeriod = d->domainProp.baseProp.registrationAppPeriod;
-    cstWriterParams.fullAcknowledge = ORTE_TRUE;
-  }
   CSTWriterInit(d, &d->writerApplicationSelf, d->objectEntryOID,
 		OID_WRITE_APPSELF, &cstWriterParams, NULL);
 }
@@ -587,13 +586,14 @@ readerManagersInit(ORTEDomain *d, Boolean manager)
 static void
 readerApplicationsInit(ORTEDomain *d)
 {
-  CSTReaderParams cstReaderParams;
+  CSTReaderParams cstReaderParams = {
+    .delayResponceTimeMin = d->domainProp.baseProp.delayResponceTimeACKMin,
+    .delayResponceTimeMax = d->domainProp.baseProp.delayResponceTimeACKMax,
+    .ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries,
+    .repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime,
+    .fullAcknowledge = ORTE_TRUE,
+  };
 
-  cstReaderParams.delayResponceTimeMin = d->domainProp.baseProp.delayResponceTimeACKMin;
-  cstReaderParams.delayResponceTimeMax = d->domainProp.baseProp.delayResponceTimeACKMax;
-  cstReaderParams.ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries;
-  cstReaderParams.repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime;
-  cstReaderParams.fullAcknowledge = ORTE_TRUE;
   CSTReaderInit(d, &d->readerApplications, d->objectEntryOID,
 		OID_READ_APP, &cstReaderParams, NULL);
 }
@@ -601,16 +601,17 @@ readerApplicationsInit(ORTEDomain *d)
 static void
 writerApplicationsInit(ORTEDomain *d)
 {
-  CSTWriterParams cstWriterParams;
+  CSTWriterParams cstWriterParams = {
+    .registrationRetries       = 0,
+    .registrationPeriod        = NTPTIME_INITIALIZER(0),
+    .waitWhileDataUnderwayTime = NTPTIME_INITIALIZER(0),
+    .refreshPeriod             = iNtpTime,  //only WAS,WM can refresh csChange(s)
+    .repeatAnnounceTime        = d->domainProp.baseProp.repeatAnnounceTime,
+    .delayResponceTime         = NTPTIME_INITIALIZER(0.020),
+    .HBMaxRetries              = d->domainProp.baseProp.HBMaxRetries,
+    .fullAcknowledge           = ORTE_FALSE,
+  };
 
-  cstWriterParams.registrationRetries = 0;
-  NTPTIME_ZERO(cstWriterParams.registrationPeriod);
-  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
-  cstWriterParams.refreshPeriod = iNtpTime;  //only WAS,WM can refresh csChange(s)
-  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
-  NtpTimeAssembFromMs(cstWriterParams.delayResponceTime, 0, 20);
-  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
-  cstWriterParams.fullAcknowledge = ORTE_FALSE;
   CSTWriterInit(d, &d->writerApplications, d->objectEntryOID,
 		OID_WRITE_APP, &cstWriterParams, NULL);
 }
@@ -618,16 +619,17 @@ writerApplicationsInit(ORTEDomain *d)
 static void
 writerManagersInit(ORTEDomain *d)
 {
-  CSTWriterParams cstWriterParams;
+  CSTWriterParams cstWriterParams = {
+    .registrationRetries       = 0,
+    .registrationPeriod        = NTPTIME_INITIALIZER(0),
+    .waitWhileDataUnderwayTime = NTPTIME_INITIALIZER(0),
+    .refreshPeriod             = d->domainProp.baseProp.refreshPeriod,
+    .repeatAnnounceTime        = d->domainProp.baseProp.repeatAnnounceTime,
+    .delayResponceTime         = NTPTIME_INITIALIZER(0.02),
+    .HBMaxRetries              = d->domainProp.baseProp.HBMaxRetries,
+    .fullAcknowledge           = ORTE_TRUE,
+  };
 
-  cstWriterParams.registrationRetries = 0;
-  NTPTIME_ZERO(cstWriterParams.registrationPeriod);
-  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
-  cstWriterParams.refreshPeriod = d->domainProp.baseProp.refreshPeriod;
-  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
-  NtpTimeAssembFromMs(cstWriterParams.delayResponceTime, 0, 20);
-  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
-  cstWriterParams.fullAcknowledge = ORTE_TRUE;
   CSTWriterInit(d, &d->writerManagers, d->objectEntryOID,
 		OID_WRITE_MGR, &cstWriterParams, NULL);
 }
@@ -635,16 +637,17 @@ writerManagersInit(ORTEDomain *d)
 static void
 writerPublicationsInit(ORTEDomain *d)
 {
-  CSTWriterParams cstWriterParams;
+  CSTWriterParams cstWriterParams = {
+    .registrationRetries       = 0,
+    .registrationPeriod        = NTPTIME_INITIALIZER(0),
+    .waitWhileDataUnderwayTime = NTPTIME_INITIALIZER(0),
+    .refreshPeriod             = d->domainProp.baseProp.refreshPeriod,
+    .repeatAnnounceTime        = d->domainProp.baseProp.repeatAnnounceTime,
+    .delayResponceTime         = NTPTIME_INITIALIZER(0.020),
+    .HBMaxRetries              = d->domainProp.baseProp.HBMaxRetries,
+    .fullAcknowledge           = ORTE_TRUE,
+  };
 
-  cstWriterParams.registrationRetries = 0;
-  NTPTIME_ZERO(cstWriterParams.registrationPeriod);
-  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
-  cstWriterParams.refreshPeriod = d->domainProp.baseProp.refreshPeriod;
-  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
-  NtpTimeAssembFromMs(cstWriterParams.delayResponceTime, 0, 20);
-  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
-  cstWriterParams.fullAcknowledge = ORTE_TRUE;
   CSTWriterInit(d, &d->writerPublications, d->objectEntryOID,
 		OID_WRITE_PUBL, &cstWriterParams, NULL);
 }
@@ -652,16 +655,17 @@ writerPublicationsInit(ORTEDomain *d)
 static void
 writerSubscriptionsInit(ORTEDomain *d)
 {
-  CSTWriterParams cstWriterParams;
+  CSTWriterParams cstWriterParams = {
+    .registrationRetries       = 0,
+    .registrationPeriod        = NTPTIME_INITIALIZER(0),
+    .waitWhileDataUnderwayTime = NTPTIME_INITIALIZER(0),
+    .refreshPeriod             = d->domainProp.baseProp.refreshPeriod,
+    .repeatAnnounceTime        = d->domainProp.baseProp.repeatAnnounceTime,
+    .delayResponceTime         = NTPTIME_INITIALIZER(0.020),
+    .HBMaxRetries              = d->domainProp.baseProp.HBMaxRetries,
+    .fullAcknowledge           = ORTE_TRUE,
+  };
 
-  cstWriterParams.registrationRetries = 0;
-  NTPTIME_ZERO(cstWriterParams.registrationPeriod);
-  NTPTIME_ZERO(cstWriterParams.waitWhileDataUnderwayTime);
-  cstWriterParams.refreshPeriod = d->domainProp.baseProp.refreshPeriod;
-  cstWriterParams.repeatAnnounceTime = d->domainProp.baseProp.repeatAnnounceTime;
-  NtpTimeAssembFromMs(cstWriterParams.delayResponceTime, 0, 20);
-  cstWriterParams.HBMaxRetries = d->domainProp.baseProp.HBMaxRetries;
-  cstWriterParams.fullAcknowledge = ORTE_TRUE;
   CSTWriterInit(d, &d->writerSubscriptions, d->objectEntryOID,
 		OID_WRITE_SUBS, &cstWriterParams, NULL);
 }
@@ -669,13 +673,14 @@ writerSubscriptionsInit(ORTEDomain *d)
 static void
 readerPublicationsInit(ORTEDomain *d)
 {
-  CSTReaderParams cstReaderParams;
+  CSTReaderParams cstReaderParams = {
+    .delayResponceTimeMin  = d->domainProp.baseProp.delayResponceTimeACKMin,
+    .delayResponceTimeMax  = d->domainProp.baseProp.delayResponceTimeACKMax,
+    .ACKMaxRetries         = d->domainProp.baseProp.ACKMaxRetries,
+    .repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime,
+    .fullAcknowledge       = ORTE_TRUE,
+  };
 
-  cstReaderParams.delayResponceTimeMin = d->domainProp.baseProp.delayResponceTimeACKMin;
-  cstReaderParams.delayResponceTimeMax = d->domainProp.baseProp.delayResponceTimeACKMax;
-  cstReaderParams.ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries;
-  cstReaderParams.repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime;
-  cstReaderParams.fullAcknowledge = ORTE_TRUE;
   CSTReaderInit(d, &d->readerPublications, d->objectEntryOID,
 		OID_READ_PUBL, &cstReaderParams, NULL);
 }
@@ -683,13 +688,14 @@ readerPublicationsInit(ORTEDomain *d)
 static void
 readerSubscriptionsInit(ORTEDomain *d)
 {
-  CSTReaderParams cstReaderParams;
+  CSTReaderParams cstReaderParams = {
+    .delayResponceTimeMin  = d->domainProp.baseProp.delayResponceTimeACKMin,
+    .delayResponceTimeMax  = d->domainProp.baseProp.delayResponceTimeACKMax,
+    .ACKMaxRetries         = d->domainProp.baseProp.ACKMaxRetries,
+    .repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime,
+    .fullAcknowledge       = ORTE_TRUE,
+  };
 
-  cstReaderParams.delayResponceTimeMin = d->domainProp.baseProp.delayResponceTimeACKMin;
-  cstReaderParams.delayResponceTimeMax = d->domainProp.baseProp.delayResponceTimeACKMax;
-  cstReaderParams.ACKMaxRetries = d->domainProp.baseProp.ACKMaxRetries;
-  cstReaderParams.repeatActiveQueryTime = d->domainProp.baseProp.repeatActiveQueryTime;
-  cstReaderParams.fullAcknowledge = ORTE_TRUE;
   CSTReaderInit(d, &d->readerSubscriptions, d->objectEntryOID,
 		OID_READ_SUBS, &cstReaderParams, NULL);
 }
