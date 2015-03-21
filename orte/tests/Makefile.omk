@@ -1,0 +1,9 @@
+ifneq ($(firstword $(OMK_RULES_TYPE)),rtems)
+
+test_PROGRAMS = hello
+hello_SOURCES = hello.c
+
+TARGET_LOADLIBES ?= pthread rt
+lib_LOADLIBES = orte $(TARGET_LOADLIBES)
+
+endif
