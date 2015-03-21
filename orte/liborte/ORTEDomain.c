@@ -196,7 +196,7 @@ generateLocalGUID(ORTEDomain *d, Boolean manager)
 }
 
 static int
-initTaskProp(TaskProp *tp, ORTEDomain *d, int buffSize)
+initTaskProp(ORTEDomain *d, TaskProp *tp, int buffSize)
 {
   tp->d = d;
   tp->terminate = ORTE_TRUE;
@@ -733,11 +733,11 @@ ORTEDomainCreate(int domain, ORTEDomainProp *prop,
   }
   ORTEDomainProp *dp = &d->domainProp;
 
-  if (-1 == initTaskProp(&d->taskRecvUnicastMetatraffic,   d, dp->recvBuffSize) ||
-      -1 == initTaskProp(&d->taskRecvUnicastUserdata,      d, !manager ? dp->recvBuffSize : 0) ||
-      -1 == initTaskProp(&d->taskRecvMulticastMetatraffic, d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0) ||
-      -1 == initTaskProp(&d->taskRecvMulticastUserdata,    d, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0) ||
-      -1 == initTaskProp(&d->taskSend, d, dp->sendBuffSize))
+  if (-1 == initTaskProp(d, &d->taskRecvUnicastMetatraffic,   dp->recvBuffSize) ||
+      -1 == initTaskProp(d, &d->taskRecvUnicastUserdata,      !manager ? dp->recvBuffSize : 0) ||
+      -1 == initTaskProp(d, &d->taskRecvMulticastMetatraffic, !manager && dp->multicast.enabled ? dp->recvBuffSize : 0) ||
+      -1 == initTaskProp(d, &d->taskRecvMulticastUserdata,    !manager && dp->multicast.enabled ? dp->recvBuffSize : 0) ||
+      -1 == initTaskProp(d, &d->taskSend, dp->sendBuffSize))
     goto err_domainProp;
 
   d->taskSend.mb.cdrCodec.wptr_max = dp->wireProp.metaBytesPerPacket;
