@@ -28,6 +28,7 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 
 // library header file's path
 #include "orte_all.h"
@@ -54,6 +55,7 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
   jobject          rinfo = 0;
   jobject          obj_msg;
   jobject          obj_bo = 0;
+  jobject          obj_info_buffer = 0;
   jfieldID         fid = 0;
   jmethodID        mid = 0;
   jmethodID        mid_callback = 0;
@@ -205,15 +207,24 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
 	#endif
 	break;
       }
+      // lookup getBuffer() ID
+      mid = (*env)->GetMethodID(env, cls, "getBuffer", "()Ljava/nio/ByteBuffer;");
+      if (mid == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: getBuffer() failed! \n");
+	#endif
+	break;
+      }
+      // get ByteBuffer reference
+      if ((obj_info_buffer = (void*)((*env)->CallObjectMethod(env, callback_cont->rinfo, mid))) == 0) {
+	#ifdef TEST_STAGE
+	printf(":!c: get ByteBuffer from RecvInfo failed. \n");
+	#endif
+      }
+      callback_cont->info_buf = (*env)->GetDirectBufferAddress(env, obj_info_buffer);
     }
     ////////////////////////////////////////////////////
-    // set RecvInfo instance
-    if (setRecvInfo(env, info, callback_cont->rinfo) == 0) {
-      #ifdef TEST_STAGE
-      printf(":!c: setRecvInfo() failed! \n");
-      #endif
-      break;
-    }
+    memcpy(callback_cont->info_buf, (void*)info, sizeof(ORTERecvInfo));
     ////////////////////////////////////////////////////
     // control print - only in TEST_STAGE
     #ifdef TEST_STAGE

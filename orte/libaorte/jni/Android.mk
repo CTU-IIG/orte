@@ -66,7 +66,6 @@ libjorte/setTopic.c \
 libjorte/createAppInfo.c \
 libjorte/createPubInfo.c \
 libjorte/createSubInfo.c \
-libjorte/setRecvInfo.c \
 libjorte/JGetORTEConstant.c \
 libjorte/JIPAddressToString.c \
 libjorte/JNtpTimeToStringMs.c \
@@ -90,6 +89,7 @@ libjorte/JORTEPublicationPropertiesSet.c \
 libjorte/JORTEPublicationPropertiesGet.c \
 libjorte/JORTEPublicationGetStatus.c \
 libjorte/JORTEPublicationWaitForSubscriptions.c \
+libjorte/JORTERecvInfoHelpers.c \
 libjorte/JORTESleepMs.c \
 libjorte/JORTESubscriptionCreate.c \
 libjorte/JORTESubscriptionDestroy.c \
@@ -107,3 +107,4 @@ libjorte/JStringToIPAddress.c
 LOCAL_STATIC_LIBRARIES := orte
 
 include $(BUILD_SHARED_LIBRARY)
+
