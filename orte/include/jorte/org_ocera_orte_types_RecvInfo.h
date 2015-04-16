@@ -9,35 +9,19 @@ extern "C" {
 #endif
 /*
  * Class:     org_ocera_orte_types_RecvInfo
- * Method:    get_ORTERecvInfo_size
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_types_RecvInfo_get_1ORTERecvInfo_1size
-  (JNIEnv *, jobject);
-
-/*
- * Class:     org_ocera_orte_types_RecvInfo
- * Method:    get_ORTERecvStatus_size
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_types_RecvInfo_get_1ORTERecvStatus_1size
-  (JNIEnv *, jobject);
-
-/*
- * Class:     org_ocera_orte_types_RecvInfo
- * Method:    get_char_ptr_size
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_org_ocera_orte_types_RecvInfo_get_1char_1ptr_1size
-  (JNIEnv *, jobject);
-
-/*
- * Class:     org_ocera_orte_types_RecvInfo
  * Method:    get_string
  * Signature: (J)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_RecvInfo_get_1string
   (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     org_ocera_orte_types_RecvInfo
+ * Method:    c_helper
+ * Signature: (Ljava/nio/ByteBuffer;)V
+ */
+JNIEXPORT void JNICALL Java_org_ocera_orte_types_RecvInfo_c_1helper
+  (JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus
 }
