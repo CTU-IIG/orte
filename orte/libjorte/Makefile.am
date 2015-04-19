@@ -26,6 +26,7 @@ JORTEInit.c \
 JORTEPublicationCreate.c \
 JORTEPublicationDestroy.c \
 JORTEPublicationSend.c \
+JORTERecvInfoHelpers.c \
 JORTESleepMs.c \
 JORTESubscriptionCreate.c \
 JORTESubscriptionDestroy.c \
@@ -54,7 +55,7 @@ JORTESubscriptionWaitForPublications.c \
 JORTETypeRegisterDestroyAll.c \
 JORTEVerbositySetLogFile.c \
 JORTEVerbositySetOptions.c \
-setRecvInfo.c setTopic.c setType.c
+setTopic.c setType.c
 
 dist-hook:
 	cp -f  $(srcdir)/Makefile $(distdir)/Makefile
