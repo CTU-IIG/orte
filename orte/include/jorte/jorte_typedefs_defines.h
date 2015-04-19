@@ -30,6 +30,9 @@ typedef struct {
   void          *info_buf; // RecvInfo buffer pointer
   jmethodID  mid_read;
   jmethodID  mid_callback;
+  jmethodID  mid_order;
+  jobject    obj_BO_BE;
+  jobject    obj_BO_LE;
   CDR_Endianness cur_endian;
 } JORTECallbackContext_t;
 

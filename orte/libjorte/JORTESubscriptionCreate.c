@@ -50,17 +50,15 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
   // jni varialbles
   JavaVM          *jvm = 0;
   JNIEnv          *env = 0;
-  jclass           cls = 0; // local reference!
   jobject          obj_bo = 0;
-  jfieldID         fid = 0;
-  jmethodID        mid = 0;
 
-  //
+  JORTECallbackContext_t   *callback_cont;
+
   // if the subscriber has been destroyed, return
   if ((*(JORTECallbackContext_t **)recvCallBackParam) == 0)
     return;
 
-  JORTECallbackContext_t   *callback_cont = *((JORTECallbackContext_t **)recvCallBackParam);
+  callback_cont = *((JORTECallbackContext_t **)recvCallBackParam);
 
   #ifdef TEST_STAGE
   printf("\n\n:c: --------------- recvCallBack called.. --------------- \n");
@@ -70,55 +68,32 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
     // set local variables from struct
     jvm = callback_cont->jvm;
     // get env
-    (*jvm)->AttachCurrentThread(jvm,
+    if((*jvm)->AttachCurrentThread(jvm,
 				#ifdef __ANDROID__
 				&env,
 				#else
 				(void **)&env,
 				#endif
-				NULL);
-    if (env == 0) {
+				NULL) != JNI_OK)
+    {
       #ifdef TEST_STAGE
-      printf(":!c: env = NULL \n");
+      printf(":!c: recvCallBack: AttachCurrentThread() failed \n");
       #endif
-      break;
+      return;
     }
-    //
+
     // set byte order only if it differs from that currently set
     if (info->data_endian != callback_cont->cur_endian) {
-      //prepare ByteOrder
-      cls = (*env)->FindClass(env, "java/nio/ByteOrder");
       if (info->data_endian == BigEndian) {
-	fid = (*env)->GetStaticFieldID(env,
-				       cls,
-				       "BIG_ENDIAN",
-				       "Ljava/nio/ByteOrder;");
+	obj_bo = callback_cont->obj_BO_BE;
 	callback_cont->cur_endian = BigEndian;
       } else {
-	fid = (*env)->GetStaticFieldID(env,
-				       cls,
-				       "LITTLE_ENDIAN",
-				       "Ljava/nio/ByteOrder;");
+	obj_bo = callback_cont->obj_BO_LE;
 	callback_cont->cur_endian = LittleEndian;
       }
-      obj_bo = (*env)->GetStaticObjectField(env, cls, fid);
 
       // set byte order to ByteBuffer
-      // get BB class
-      cls = (*env)->GetObjectClass(env, callback_cont->obj_buf);
-      // get methodID - order(ByteOrder)
-      mid = (*env)->GetMethodID(env,
-				cls,
-				"order",
-				"(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
-
-      // set ByteOrder
-      if ((*env)->CallObjectMethod(env, callback_cont->obj_buf, mid, obj_bo) == 0) {
-	#ifdef TEST_STAGE
-	printf(":!c: set byte order failed.. \n");
-	#endif
-        break;
-      }
+      (*env)->CallObjectMethod(env, callback_cont->obj_buf, callback_cont->mid_order, obj_bo);
     }
 
       #ifdef TEST_STAGE
@@ -168,13 +143,12 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
   } while (0);
 
   // detach current thread
-  if ((*jvm)->DetachCurrentThread(jvm) != 0)
+  if ((*jvm)->DetachCurrentThread(jvm) != JNI_OK)
     printf(":c!: DetachCurrentThread failed! \n");
   //
   #ifdef TEST_STAGE
   printf(":c: ------------ thats all from recvCallBack ------------ \n\n");
   #endif
-
 }
 
 /* ****************************************************************** *
@@ -239,16 +213,16 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     }
     // get jvm
     jint b = (*env)->GetJavaVM(env, &jvm);
-    if (b <  0) {
+    if (b == JNI_OK) {
+      #ifdef TEST_STAGE
+      printf(":c: getJavaVM succesfull.. \n");
+      #endif
+    }
+    else {
       #ifdef TEST_STAGE
       printf(":!c: getJavaVM() failed! \n");
       #endif
       break;
-    }
-    if (b == 0) {
-      #ifdef TEST_STAGE
-      printf(":c: getJavaVM succesfull.. \n");
-      #endif
     }
     callback_cont->jvm = jvm;
     callback_cont->cur_endian = (CDR_Endianness)jbyteOrder;
@@ -360,12 +334,28 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
         break;
     }
     // get ByteBuffer reference
-    if ((obj_info_buffer = (void*)((*env)->CallObjectMethod(env, callback_cont->rinfo, mid))) == 0) {
-        #ifdef TEST_STAGE
-        printf(":!c: get ByteBuffer from RecvInfo failed. \n");
-        #endif
-    }
+    obj_info_buffer = (*env)->CallObjectMethod(env, callback_cont->rinfo, mid);
     callback_cont->info_buf = (*env)->GetDirectBufferAddress(env, obj_info_buffer);
+    // create global references for ByteOrders
+    cls = (*env)->FindClass(env, "java/nio/ByteOrder");
+    fid = (*env)->GetStaticFieldID(env,
+                                   cls,
+                                   "BIG_ENDIAN",
+                                   "Ljava/nio/ByteOrder;");
+    callback_cont->obj_BO_BE = (*env)->GetStaticObjectField(env, cls, fid);
+    callback_cont->obj_BO_BE = (*env)->NewGlobalRef(env, callback_cont->obj_BO_BE);
+    fid = (*env)->GetStaticFieldID(env,
+                                   cls,
+                                   "LITTLE_ENDIAN",
+                                   "Ljava/nio/ByteOrder;");
+    callback_cont->obj_BO_LE = (*env)->GetStaticObjectField(env, cls, fid);
+    callback_cont->obj_BO_LE = (*env)->NewGlobalRef(env, callback_cont->obj_BO_LE);
+    // get methodID - order(ByteOrder)
+    cls = (*env)->GetObjectClass(env, callback_cont->obj_buf);
+    callback_cont->mid_order = (*env)->GetMethodID(env,
+                                                   cls,
+                                                   "order",
+                                                   "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
     //
     cls = (*env)->GetObjectClass(env, obj);
     if (cls == 0) {
