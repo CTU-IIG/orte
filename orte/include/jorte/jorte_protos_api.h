@@ -9,9 +9,6 @@ setTopic(JNIEnv *env, jclass cls, jobject obj, const char *topic);
 extern int
 setType(JNIEnv *env, jclass cls, jobject obj, const char *type);
 
-extern int
-setRecvInfo(JNIEnv *env, const ORTERecvInfo *rinfo, jobject obj);
-
 extern jobject
 createAppInfo(JNIEnv *env, const ORTEAppInfo *ainfo);
 

@@ -22,7 +22,6 @@ setTopic.c \
 createAppInfo.c \
 createPubInfo.c \
 createSubInfo.c \
-setRecvInfo.c \
 JGetORTEConstant.c \
 JIPAddressToString.c \
 JNtpTimeToStringMs.c \
@@ -46,6 +45,7 @@ JORTEPublicationPropertiesSet.c \
 JORTEPublicationPropertiesGet.c \
 JORTEPublicationGetStatus.c \
 JORTEPublicationWaitForSubscriptions.c \
+JORTERecvInfoHelpers.c \
 JORTESleepMs.c \
 JORTESubscriptionCreate.c \
 JORTESubscriptionDestroy.c \
