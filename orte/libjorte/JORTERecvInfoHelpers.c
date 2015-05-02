@@ -19,7 +19,7 @@
  * Signature: (Ljava/nio/ByteBuffer;)V
  */
 JNIEXPORT void JNICALL Java_org_ocera_orte_types_RecvInfo_c_1helper
-  (JNIEnv *env, jobject obj, jobject b_buffer) {
+  (JNIEnv *env, jclass cls, jobject b_buffer) {
 
     int32_t* buffer = (*env)->GetDirectBufferAddress(env, b_buffer);
     
@@ -48,6 +48,6 @@ JNIEXPORT void JNICALL Java_org_ocera_orte_types_RecvInfo_c_1helper
  * Signature: (J)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_RecvInfo_get_1string
-  (JNIEnv *env, jobject obj, jlong string_ptr) {
+  (JNIEnv *env, jclass cls, jlong string_ptr) {
     return (*env)->NewStringUTF(env, (char*) string_ptr);
   }

@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (J)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_RecvInfo_get_1string
-  (JNIEnv *, jobject, jlong);
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     org_ocera_orte_types_RecvInfo
@@ -21,7 +21,7 @@ JNIEXPORT jstring JNICALL Java_org_ocera_orte_types_RecvInfo_get_1string
  * Signature: (Ljava/nio/ByteBuffer;)V
  */
 JNIEXPORT void JNICALL Java_org_ocera_orte_types_RecvInfo_c_1helper
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus
 }

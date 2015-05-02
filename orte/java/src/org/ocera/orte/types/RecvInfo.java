@@ -50,15 +50,17 @@ public class RecvInfo
    *     [15]  offsetof(SequenceNumber,high),
    *     [16]  offsetof(SequenceNumber,low)
    */
-  private ByteBuffer      helper_buffer;
+  static ByteBuffer      helper_buffer;
+
+  static {
+    helper_buffer = ByteBuffer.allocateDirect(17*Integer.SIZE/8);
+    helper_buffer.order(ByteOrder.nativeOrder());
+    c_helper(helper_buffer);
+  }
 
   public RecvInfo()
   {
 	//System.out.println(":j: instance of RecvInfo created..");
-    this.helper_buffer = ByteBuffer.allocateDirect(17*Integer.SIZE/8);
-    this.helper_buffer.order(ByteOrder.nativeOrder());
-    this.c_helper(helper_buffer);
-
     this.info_buffer = ByteBuffer.allocateDirect(helper_buffer.getInt(0));
     this.info_buffer.order(ByteOrder.nativeOrder());
   }
@@ -191,7 +193,7 @@ public class RecvInfo
   
   /* NATIVE FUNCTIONS */
   
-  private native String get_string(long string_pointer);
-  private native void c_helper(ByteBuffer buffer);
+  static native String get_string(long string_pointer);
+  static native void c_helper(ByteBuffer buffer);
   
 }
