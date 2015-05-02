@@ -93,50 +93,12 @@ public class RecvInfo
 
   public String getTopic()
   {
-    long topic_pointer;
-    
-    switch(helper_buffer.getInt(Integer.SIZE*2/8)) {
-      case 4:
-        topic_pointer = info_buffer.getInt(helper_buffer.getInt(Integer.SIZE*4/8));
-        break;
-      case 8:
-        topic_pointer = info_buffer.getLong(helper_buffer.getInt(Integer.SIZE*4/8));
-        break;
-      case 1:
-        topic_pointer = info_buffer.get(helper_buffer.getInt(Integer.SIZE*4/8));
-        break;
-      case 2:
-        topic_pointer = info_buffer.getShort(helper_buffer.getInt(Integer.SIZE*4/8));
-        break;
-      default:
-        return null;
-    }
-    
-    return get_string(topic_pointer);
+    return getString(Integer.SIZE*4/8);
   }
 
   public String getTypeName()
   {
-    long type_pointer;
-    
-    switch(helper_buffer.getInt(Integer.SIZE*2/8)) {
-      case 4:
-        type_pointer = info_buffer.getInt(helper_buffer.getInt(Integer.SIZE*5/8));
-        break;
-      case 8:
-        type_pointer = info_buffer.getLong(helper_buffer.getInt(Integer.SIZE*5/8));
-        break;
-      case 1:
-        type_pointer = info_buffer.get(helper_buffer.getInt(Integer.SIZE*5/8));
-        break;
-      case 2:
-        type_pointer = info_buffer.getShort(helper_buffer.getInt(Integer.SIZE*5/8));
-        break;
-      default:
-        return null;
-    }
-    
-    return get_string(type_pointer);
+    return getString(Integer.SIZE*5/8);
   }
 
   public GUID_RTPS getSenderGuid()
@@ -190,7 +152,28 @@ public class RecvInfo
   {
     return this.info_buffer;
   }
-  
+
+  private String getString(int offset) {
+    long string_pointer;
+    
+    switch(helper_buffer.getInt(Integer.SIZE*2/8)) {
+      case 4:
+        string_pointer = info_buffer.getInt(helper_buffer.getInt(offset));
+        break;
+      case 8:
+        string_pointer = info_buffer.getLong(helper_buffer.getInt(offset));
+        break;
+      case 1:
+        string_pointer = info_buffer.get(helper_buffer.getInt(offset));
+        break;
+      case 2:
+        string_pointer = info_buffer.getShort(helper_buffer.getInt(offset));
+        break;
+    }
+    
+    return get_string(string_pointer);
+  }
+
   /* NATIVE FUNCTIONS */
   
   static native String get_string(long string_pointer);
