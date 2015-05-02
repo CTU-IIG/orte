@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <stddef.h>
+#include <assert.h>
 
 // library header file's path
 #include "orte_all.h"
@@ -20,6 +21,17 @@
  */
 JNIEXPORT void JNICALL Java_org_ocera_orte_types_RecvInfo_c_1helper
   (JNIEnv *env, jclass cls, jobject b_buffer) {
+
+    _Static_assert(sizeof(char*) == 1 || \
+                   sizeof(char*) == 2 || \
+                   sizeof(char*) == 4 || \
+                   sizeof(char*) == 8, \
+                   "char* has incompatible size");
+    _Static_assert(sizeof(ORTERecvStatus) == 1 || \
+                   sizeof(ORTERecvStatus) == 2 || \
+                   sizeof(ORTERecvStatus) == 4 || \
+                   sizeof(ORTERecvStatus) == 8, \
+                   "ORTERecvStatus has incompatible size");
 
     int32_t* buffer = (*env)->GetDirectBufferAddress(env, b_buffer);
     
