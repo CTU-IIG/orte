@@ -54,7 +54,7 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
 
   JORTECallbackContext_t   *callback_cont;
 
-  // if the subscriber has been destroyed, return
+  // HACK: if the subscriber has been destroyed, return
   if ((*(JORTECallbackContext_t **)recvCallBackParam) == 0)
     return;
 
@@ -193,6 +193,8 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
   const char             *typename = 0;
   void                   *buffer;
   int                     flag_ok = 0;
+
+  /* HACK: allocate space for callback context structure and than for a pointer to it */
 
   // memory alocation
   // don't forget use free() funct.!!

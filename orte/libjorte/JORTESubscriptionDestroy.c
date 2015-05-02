@@ -88,8 +88,12 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
     if (h) {
       //JavaVM *jvm;
       //jint ret;
+
+      /* HACK */
       JORTECallbackContext_t *ctx = *((JORTECallbackContext_t **)h);
       *((JORTECallbackContext_t **)h) = 0;
+      /**/
+
       if (ctx->obj) {
 	#ifdef TEST_STAGE
 	printf(":c: deleting ctx->obj \n");
