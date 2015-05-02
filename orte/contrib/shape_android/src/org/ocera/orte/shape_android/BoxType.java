@@ -59,7 +59,6 @@ public class BoxType extends MessageData
 		}
 		
 		this.allowScaling = true;
-		this.buffer.order(null); // set buffer to Little endian (Shape uses this)
 	}
 
 	/* (non-Javadoc)
