@@ -172,6 +172,8 @@ public class PublisherActivity extends Activity {
 	{
 		super.onDestroy();
 
+		handler.removeCallbacks(redraw);
+
 		for (PublisherShape shape : publisherView.shapes)
 			shape.killMe();
 
