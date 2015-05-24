@@ -154,7 +154,7 @@ public class RecvInfo
   }
 
   private String getString(int offset) {
-    long string_pointer;
+    long string_pointer = -1;
     
     switch(helper_buffer.getInt(Integer.SIZE*2/8)) {
       case 4:
