@@ -14,7 +14,7 @@ MainForm::MainForm(QWidget *parent)
 void MainForm::about()
 {
     QMessageBox::about( this, "ORTE application demo",
-                        "This application demonstrates usege of ORTE library\n\n"
+                        "This application demonstrates usage of ORTE library\n\n"
 			"Petr Smolik (c) 2004-2008\n"
 			"OCERA team");
 }
