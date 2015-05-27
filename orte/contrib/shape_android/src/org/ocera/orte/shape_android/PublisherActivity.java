@@ -171,7 +171,15 @@ public class PublisherActivity extends Activity {
 	public void onDestroy()
 	{
 		super.onDestroy();
-		
+
+		handler.removeCallbacks(redraw);
+
+		for (PublisherShape shape : publisherView.shapes)
+			shape.killMe();
+
+		for (SubscriberElement element : subscriberView.elements)
+			element.killMe();
+
 		if (appDomain != null) {
 			appDomain.destroy();
 			appDomain = null;

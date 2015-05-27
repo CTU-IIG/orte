@@ -243,4 +243,15 @@ public class SubscriberElement extends SubscriptionCallback
 		this.setShape();
 	}
 
+        /**
+         * When subscriber is removed, destroy subscription.
+         * 
+         * @since 1.0
+         */
+	public void killMe() {
+		if (this.subscription != null) {
+			this.subscription.destroy();
+			this.subscription = null;
+		}
+	}
 }

@@ -312,7 +312,10 @@ public class PublisherShape extends ShapeDrawable
 	 */
 	public void killMe()
 	{
-		this.publication.destroy();
+		if (this.publication != null) {
+			this.publication.destroy();
+			this.publication = null;
+		}
 	}
 	
 	/**
