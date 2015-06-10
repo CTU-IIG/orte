@@ -49,6 +49,7 @@ extern "C" {
 #include "org_ocera_orte_JOrte.h"
 #include "org_ocera_orte_Manager.h"
 #include "org_ocera_orte_Publication.h"
+#include "org_ocera_orte_types_RecvInfo.h"
 #include "org_ocera_orte_Subscription.h"
 
 #ifdef __cplusplus

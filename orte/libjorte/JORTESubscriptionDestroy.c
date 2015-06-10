@@ -88,8 +88,12 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
     if (h) {
       //JavaVM *jvm;
       //jint ret;
+
+      /* HACK */
       JORTECallbackContext_t *ctx = *((JORTECallbackContext_t **)h);
       *((JORTECallbackContext_t **)h) = 0;
+      /**/
+
       if (ctx->obj) {
 	#ifdef TEST_STAGE
 	printf(":c: deleting ctx->obj \n");
@@ -113,6 +117,18 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionDestroy
 	printf(":c: deleting ctx->obj_buf\n");
 	#endif
 	(*env)->DeleteGlobalRef(env, ctx->obj_buf);
+      }
+      if (ctx->obj_BO_BE) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->obj_BO_BE\n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->obj_BO_BE);
+      }
+      if (ctx->obj_BO_LE) {
+	#ifdef TEST_STAGE
+	printf(":c: deleting ctx->obj_BO_LE\n");
+	#endif
+	(*env)->DeleteGlobalRef(env, ctx->obj_BO_LE);
       }
       //
       free(ctx);
