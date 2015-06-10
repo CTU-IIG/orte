@@ -68,14 +68,13 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
     // set local variables from struct
     jvm = callback_cont->jvm;
     // get env
-    if((*jvm)->AttachCurrentThread(jvm,
+    if ((*jvm)->AttachCurrentThread(jvm,
 				#ifdef __ANDROID__
-				&env,
+				    &env,
 				#else
-				(void **)&env,
+				    (void **)&env,
 				#endif
-				NULL) != JNI_OK)
-    {
+				    NULL) != JNI_OK) {
       #ifdef TEST_STAGE
       printf(":!c: recvCallBack: AttachCurrentThread() failed \n");
       #endif
@@ -102,7 +101,7 @@ recvCallBack(const ORTERecvInfo *info, void *vinstance, void *recvCallBackParam)
       #endif
 
     ////////////////////////////////////////////////////
-    memcpy(callback_cont->info_buf, (void*)info, sizeof(ORTERecvInfo));
+    memcpy(callback_cont->info_buf, (void *)info, sizeof(ORTERecvInfo));
     ////////////////////////////////////////////////////
 
     // control print - only in TEST_STAGE
@@ -219,8 +218,7 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
       #ifdef TEST_STAGE
       printf(":c: getJavaVM succesfull.. \n");
       #endif
-    }
-    else {
+    } else {
       #ifdef TEST_STAGE
       printf(":!c: getJavaVM() failed! \n");
       #endif
@@ -247,9 +245,9 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     }
     // get callback method ID
     callback_cont->mid_callback = (*env)->GetMethodID(env,
-			      cls,
-			      "callback",
-			      "(Lorg/ocera/orte/types/RecvInfo;Lorg/ocera/orte/types/MessageData;)V");
+						      cls,
+						      "callback",
+						      "(Lorg/ocera/orte/types/RecvInfo;Lorg/ocera/orte/types/MessageData;)V");
     if (callback_cont->mid_callback == 0) {
       #ifdef TEST_STAGE
       printf(":!c: mid_callback = NULL \n");
@@ -285,9 +283,9 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     /////////////////////////////////////////////////////
     // methodID - read()
     callback_cont->mid_read = (*env)->GetMethodID(env,
-			      cls,
-			      "read",
-			      "()V");
+						  cls,
+						  "read",
+						  "()V");
     if (callback_cont->mid_read == 0) {
       #ifdef TEST_STAGE
       printf(":!c: mid_read = NULL \n");
@@ -298,42 +296,42 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     // find cls
     cls = findClass(env, "org.ocera.orte.types.RecvInfo");
     if (cls == 0) {
-        #ifdef TEST_STAGE
-        printf(":!c: cls = NULL \n");
-        #endif
-        break;
+	#ifdef TEST_STAGE
+      printf(":!c: cls = NULL \n");
+	#endif
+      break;
     }
     // call object constructor
     mid = (*env)->GetMethodID(env, cls, "<init>", "()V");
     if (mid == 0) {
-        #ifdef TEST_STAGE
-        printf(":!c: constructor failed! \n");
-        #endif
-        break;
+	#ifdef TEST_STAGE
+      printf(":!c: constructor failed! \n");
+	#endif
+      break;
     }
     // create new object
     callback_cont->rinfo = (*env)->NewObject(env, cls, mid);
     if (callback_cont->rinfo == 0) {
-        #ifdef TEST_STAGE
-        printf(":!c: rinfo = NULL \n");
-        #endif
-        break;
+	#ifdef TEST_STAGE
+      printf(":!c: rinfo = NULL \n");
+	#endif
+      break;
     }
     // create global reference
     callback_cont->rinfo = (*env)->NewGlobalRef(env, callback_cont->rinfo);
     if (callback_cont->rinfo == 0) {
-        #ifdef TEST_STAGE
-        printf(":!c: callback_cont->rinfo = NULL \n");
-        #endif
-        break;
+	#ifdef TEST_STAGE
+      printf(":!c: callback_cont->rinfo = NULL \n");
+	#endif
+      break;
     }
     // lookup getBuffer() ID
     mid = (*env)->GetMethodID(env, cls, "getBuffer", "()Ljava/nio/ByteBuffer;");
     if (mid == 0) {
-        #ifdef TEST_STAGE
-        printf(":!c: getBuffer() failed! \n");
-        #endif
-        break;
+	#ifdef TEST_STAGE
+      printf(":!c: getBuffer() failed! \n");
+	#endif
+      break;
     }
     // get ByteBuffer reference
     obj_info_buffer = (*env)->CallObjectMethod(env, callback_cont->rinfo, mid);
@@ -341,23 +339,23 @@ Java_org_ocera_orte_Subscription_jORTESubscriptionCreate
     // create global references for ByteOrders
     cls = (*env)->FindClass(env, "java/nio/ByteOrder");
     fid = (*env)->GetStaticFieldID(env,
-                                   cls,
-                                   "BIG_ENDIAN",
-                                   "Ljava/nio/ByteOrder;");
+				   cls,
+				   "BIG_ENDIAN",
+				   "Ljava/nio/ByteOrder;");
     callback_cont->obj_BO_BE = (*env)->GetStaticObjectField(env, cls, fid);
     callback_cont->obj_BO_BE = (*env)->NewGlobalRef(env, callback_cont->obj_BO_BE);
     fid = (*env)->GetStaticFieldID(env,
-                                   cls,
-                                   "LITTLE_ENDIAN",
-                                   "Ljava/nio/ByteOrder;");
+				   cls,
+				   "LITTLE_ENDIAN",
+				   "Ljava/nio/ByteOrder;");
     callback_cont->obj_BO_LE = (*env)->GetStaticObjectField(env, cls, fid);
     callback_cont->obj_BO_LE = (*env)->NewGlobalRef(env, callback_cont->obj_BO_LE);
     // get methodID - order(ByteOrder)
     cls = (*env)->GetObjectClass(env, callback_cont->obj_buf);
     callback_cont->mid_order = (*env)->GetMethodID(env,
-                                                   cls,
-                                                   "order",
-                                                   "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+						   cls,
+						   "order",
+						   "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
     //
     cls = (*env)->GetObjectClass(env, obj);
     if (cls == 0) {
