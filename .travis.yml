@@ -1,0 +1,4 @@
+language: c
+script:
+  - make
+  - ./orte/uncrustify && git diff --exit-code
