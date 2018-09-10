@@ -1,12 +1,5 @@
 language: c
-# before_install:
-#   - sudo apt-get update -qq
-#   - sudo apt-get install -qq uncrustify
-install:
-  - wget http://downloads.sourceforge.net/project/uncrustify/uncrustify/uncrustify-0.59/uncrustify-0.59.tar.gz
-  - tar -xzvf uncrustify-0.59.tar.gz
-  - ( cd uncrustify-0.59 && ./configure --prefix=$HOME/local && make && make install )
-  - export PATH=$PATH:$HOME/local/bin
+addons: { apt: { packages: [ uncrustify ] } }
 script:
   - make
   - ./orte/uncrustify && git diff --exit-code
