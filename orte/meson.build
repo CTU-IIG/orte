@@ -1,0 +1,8 @@
+# subdir('contrib')
+subdir('idl-compiler')
+subdir('include')
+# subdir('java')
+# subdir('libjorte')
+subdir('liborte')
+subdir('manager')
+subdir('examples')
