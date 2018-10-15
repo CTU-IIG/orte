@@ -1,5 +1,20 @@
-language: c
-addons: { apt: { packages: [ uncrustify ] } }
-script:
-  - make
-  - ./orte/uncrustify && git diff --exit-code
+language: python
+
+matrix:
+  include:
+    - name: OMK build
+      addons: { apt: { packages: [ uncrustify ] } }
+      script:
+        - make
+        - ./orte/uncrustify && git diff --exit-code
+    - name: Meson build
+      python: 3.6
+      addons: { apt: { packages: [ libpopt-dev, libidl-dev ] } }
+      script:
+        - meson builddir
+        - ninja -C builddir
+      install:
+        - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+        - unzip -q ninja-linux.zip -d build
+        - export PATH="$PWD/build:$PATH"
+        - pip install meson
