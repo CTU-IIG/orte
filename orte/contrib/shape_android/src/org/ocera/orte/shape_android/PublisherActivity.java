@@ -104,7 +104,7 @@ public class PublisherActivity extends Activity {
 		SHAPE_HEIGHT = (int) (this.getWindowManager().getDefaultDisplay().getHeight() * 45 / BoxType.DESTINATION_HEIGHT);
 		
 		// From Robot_Demo project.
-		wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		wifiLock = (WifiLock) wifiManager.createWifiLock((
 					(android.os.Build.VERSION.SDK_INT >= 12)
 					? WifiManager.WIFI_MODE_FULL_HIGH_PERF
