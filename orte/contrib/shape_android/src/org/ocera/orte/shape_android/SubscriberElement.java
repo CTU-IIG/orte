@@ -34,6 +34,8 @@ import org.ocera.orte.types.RecvInfo;
 import org.ocera.orte.types.SubsProp;
 import org.ocera.orte.types.ORTEConstant;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Subscribing objects are made by this class.
  * 
@@ -55,6 +57,8 @@ public class SubscriberElement extends SubscriptionCallback
 	
 	private boolean receiving;
 	private boolean enabled;
+
+	public final ReentrantLock lock = new ReentrantLock();
 
 	/**
 	 * Set default variables of subscriber's object.
@@ -99,20 +103,31 @@ public class SubscriberElement extends SubscriptionCallback
 	{
 		switch (info.getRecvStatus()) {
 		case ORTEConstant.NEW_DATA:
-			this.receiving = true;
-			//Log.d("SubscriberElement", "new data: " + (int) ((Box) msg).strength + "(was "+ this.box.strength +"); " + ((Box) msg).rectangle.top_left_x + ", " + ((Box) msg).rectangle.top_left_y + ", "  +((Box) msg).rectangle.bottom_right_x + ", " + ((Box) msg).rectangle.bottom_right_y);
-			
-			this.shape.getBounds().left = this.box.rectangle.top_left_x;
-			this.shape.getBounds().top = this.box.rectangle.top_left_y;
-			this.shape.getBounds().right = this.box.rectangle.bottom_right_x;
-			this.shape.getBounds().bottom = this.box.rectangle.bottom_right_y;
-			
-			this.setShape();
+
+			lock.lock();
+			try {
+				this.receiving = true;
+				//Log.d("SubscriberElement", "new data: " + (int) ((Box) msg).strength + "(was "+ this.box.strength +"); " + ((Box) msg).rectangle.top_left_x + ", " + ((Box) msg).rectangle.top_left_y + ", "  +((Box) msg).rectangle.bottom_right_x + ", " + ((Box) msg).rectangle.bottom_right_y);
+
+				this.shape.setBounds(this.box.rectangle.top_left_x,
+						this.box.rectangle.top_left_y,
+						this.box.rectangle.bottom_right_x,
+						this.box.rectangle.bottom_right_y);
+
+				this.setShape();
+			} finally {
+				lock.unlock();
+			}
 
 			this.parentView.postInvalidate();
 			break;
 		case ORTEConstant.DEADLINE:
-			this.receiving = false;
+			lock.lock();
+			try {
+				this.receiving = false;
+			} finally {
+				lock.unlock();
+			}
 			this.parentView.postInvalidate();
 			break;
 		}

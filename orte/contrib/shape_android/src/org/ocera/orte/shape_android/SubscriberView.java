@@ -56,7 +56,12 @@ public class SubscriberView extends View {
 	protected void onDraw(Canvas canvas)
 	{
 		for (SubscriberElement element : elements) {
-			if (element.getReceiving() && element.getEnabled()) element.drawMe(canvas);
+			element.lock.lock();
+			try {
+				if (element.getReceiving() && element.getEnabled()) element.drawMe(canvas);
+			} finally {
+				element.lock.unlock();
+			}
 		}
 	}
 	
