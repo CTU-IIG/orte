@@ -46,6 +46,7 @@ public class PublisherShape extends ShapeDrawable
 	//  info, please refer to http://developer.android.com/
 	
 	private boolean manual;
+	private int pointerId;
 	private int incX, incY;
 	
 	private PublProp publisherProperties;
@@ -285,6 +286,24 @@ public class PublisherShape extends ShapeDrawable
 	 * @since 1.0
 	 */
 	public boolean getManual() { return this.manual; }
+
+	/**
+	 * Set the touch pointer ID associated with
+	 * this shape.
+	 *
+	 * @param pointerId
+	 * @since 1.0
+	 */
+	public void setPointerId(int pointerId) { this.pointerId = pointerId; }
+
+	/**
+	 * Get the touch pointer ID associated with
+	 * this shape.
+	 *
+	 * @return Pointer ID.
+	 * @since 1.0
+	 */
+	public int getPointerId() { return this.pointerId; }
 
 	/**
 	 * Make triangle path for new instance.

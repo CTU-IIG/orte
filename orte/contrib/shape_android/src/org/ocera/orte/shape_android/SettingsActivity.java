@@ -45,7 +45,7 @@ public class SettingsActivity extends PreferenceActivity
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.activity_settings);
 		
-		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		EditTextPreference pref = (EditTextPreference) findPreference("prefManagers");
 
 		//TODO should be done in respect to @strings

@@ -115,8 +115,9 @@ public class PublisherView extends View
 		
 		switch (event.getActionMasked()) {
 		case MotionEvent.ACTION_DOWN:
-			myX = (int) event.getX();
-			myY = (int) event.getY();
+		case MotionEvent.ACTION_POINTER_DOWN:
+			myX = (int) event.getX(event.getActionIndex());
+			myY = (int) event.getY(event.getActionIndex());
 			
 			for (PublisherShape shape : shapes) {
 				if (myX <= shape.getBounds().right
@@ -124,26 +125,27 @@ public class PublisherView extends View
 						&& myY >= shape.getBounds().top
 						&& myY <= shape.getBounds().bottom) {
 					shape.setManual(true);
+					shape.setPointerId(event.getPointerId(event.getActionIndex()));
 					break;
 				}
 			}
 			
 			return true;
 		case MotionEvent.ACTION_MOVE:
-			myX = (int) event.getX();
-			myY = (int) event.getY();
-			
 			for (PublisherShape shape : shapes) {
 				if (shape.getManual()) {
+					myX = (int) event.getX(event.findPointerIndex(shape.getPointerId()));
+					myY = (int) event.getY(event.findPointerIndex(shape.getPointerId()));
+
 					shape.setBounds((int) (myX - shape.getShape().getWidth()/2), (int) (myY - shape.getShape().getHeight()/2), (int) (myX + shape.getShape().getWidth()/2), (int) (myY + shape.getShape().getHeight()/2));
-					break;
 				}
 			}
 			
 			return true;
 		case MotionEvent.ACTION_UP:
-			myX = (int) event.getX();
-			myY = (int) event.getY();
+		case MotionEvent.ACTION_POINTER_UP:
+			myX = (int) event.getX(event.getActionIndex());
+			myY = (int) event.getY(event.getActionIndex());
 			
 			for (PublisherShape shape : shapes) {
 				if (myX <= shape.getBounds().right
