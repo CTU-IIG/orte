@@ -14,6 +14,8 @@ MyQFrame::MyQFrame( QWidget *parent)
 {
     mousePressed=0;
     objects[0]=objects[1]=objects[2]=objects[3]=objects[4]=0;
+
+    connect(this,SIGNAL(changed()),this,SLOT(update()));
 }
 
 
@@ -33,12 +35,12 @@ void MyQFrame::activateObject(int object,int color, int shape) {
 void MyQFrame::deactivateObject(int object) {
     if (object>4) return;
     objects[object]=0;
-    update();
+    emit changed();
 }
 
 void MyQFrame::setPosition(int object,QRect position) {
     positions[object]=position;
-    update();
+    emit changed();
 }
 
 void MyQFrame::paintEvent(QPaintEvent*)

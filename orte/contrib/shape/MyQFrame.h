@@ -41,6 +41,9 @@ public:
     int mousePressed;
     int mouseX;
     int mouseY;
+
+signals:
+    void changed(void);
 };
 
 #endif // MyQFRAME_H
