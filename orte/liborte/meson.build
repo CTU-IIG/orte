@@ -1,18 +1,9 @@
 liborte_args = []
 
-if (host_machine.system() == 'windows')
-  liborte_args += ['-include', 'orte/orte_config_omk_win32.h']
-elif (host_machine.system() == 'linux')
-  liborte_args += ['-include', 'orte/orte_config_omk_linux.h']
-else
-  liborte_args += ['-include', 'orte/orte_config_omk_linux.h']
-endif
-
-
-
 liborte = library(
   'orte',
   [
+    orte_config_h,
     'conv.c',
     'debug.c',
     'event.c',
