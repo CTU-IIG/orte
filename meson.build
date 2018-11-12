@@ -1,3 +1,3 @@
-project('orte', 'c')
+project('orte', ['c', 'cpp'])
 
 subdir('orte')
