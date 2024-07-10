@@ -69,6 +69,5 @@ Java_org_ocera_orte_Publication_jORTEPublicationWaitForSubscriptions
     printf(":c!: wait for subscriptions - timeout! [number of subscriptions exhausted] \n");
     return ORTE_TIMEOUT;
   }
-  if (i == ORTE_OK) ;
   return ORTE_OK;
 }

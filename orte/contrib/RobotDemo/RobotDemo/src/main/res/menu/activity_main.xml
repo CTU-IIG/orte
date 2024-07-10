@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/crane"
+        android:title="Crane: up"
+        android:orderInCategory="1"
+        android:showAsAction="never">
+    </item>
+    
+    <item android:id="@+id/magnet"
+        android:title="Magnet"
+        android:orderInCategory="2"
+        android:checkable="true"
+        android:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/voltage"
+        android:title="Voltage monitor"
+        android:orderInCategory="3"
+        android:showAsAction="never">
+    </item>
+    
+    <item android:id="@+id/managers"
+        android:title="Fellow managers"
+        android:orderInCategory="4"
+        android:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/about"
+        android:title="About"
+        android:orderInCategory="5"
+        android:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/exit"
+        android:title="Exit"
+        android:orderInCategory="6"
+        android:showAsAction="never">
+    </item>
+</menu>

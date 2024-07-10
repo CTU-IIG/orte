@@ -1,9 +1,9 @@
-Shape for Android
+RoboDruid for Android
 =================
 
-Shape for Android is a demonstration application delivered with ORTE source code.
+RoboDruid for Android is a demonstration application used to control a small robot
 
-How to create shape_android.apk
+How to create RobotDemo.apk
 -----------------------------
 1. Install openjdk-17-jdk
 
@@ -19,14 +19,14 @@ How to create shape_android.apk
 6. Accept all licenses, so Gradle can download all dependencies
    $ ./sdkmanager --sdk_root=<Android SDK root>/AndroidSdk --licenses
 
-7. $ cd <orte root>/orte/contrib/shape_android
+7. $ cd <orte root>/orte/contrib/RobotDemo
 
 8. Build libaorte library
    $ ./gradlew :libaorte:assembleDebug
 
-9. Build shape_android demo application:
-   $ ./gradlew :shape_android:assembleDebug
+9. Build RoboDruid demo application:
+   $ ./gradlew :RobotDemo:assembleDebug
 
 10. To install using ADB
    $ cd <Android SDK root>/platform-tools
-   $ ./adb install <orte root>/orte/contrib/shape_android/shape_android/build/outputs/apk/debug/shape_android-debug.apk
+   $ ./adb install <orte root>/orte/contrib/RobotDemo/RobotDemo/build/outputs/apk/debug/RobotDemo-debug.apk
