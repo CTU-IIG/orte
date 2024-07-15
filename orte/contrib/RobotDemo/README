@@ -21,12 +21,15 @@ How to create RobotDemo.apk
 
 7. $ cd <orte root>/orte/contrib/RobotDemo
 
-8. Build libaorte library
+8. Set sdk path in local.properties
+   echo "sdk.dir=<Android SDK root>" > local.properties
+
+9. Build libaorte library
    $ ./gradlew :libaorte:assembleDebug
 
-9. Build RoboDruid demo application:
+10. Build RoboDruid demo application:
    $ ./gradlew :RobotDemo:assembleDebug
 
-10. To install using ADB
+11. To install using ADB
    $ cd <Android SDK root>/platform-tools
    $ ./adb install <orte root>/orte/contrib/RobotDemo/RobotDemo/build/outputs/apk/debug/RobotDemo-debug.apk
